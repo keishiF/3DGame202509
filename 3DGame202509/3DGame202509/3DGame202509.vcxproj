@@ -83,7 +83,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)Collider;$(ProjectDir)General;$(ProjectDir)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -103,7 +103,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)Collider;$(ProjectDir)General;$(ProjectDir)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -119,7 +119,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)Collider;$(ProjectDir)General;$(ProjectDir)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,7 +139,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)Collider;$(ProjectDir)General;$(ProjectDir)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
