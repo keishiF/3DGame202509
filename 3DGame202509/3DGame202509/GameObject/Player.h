@@ -16,6 +16,9 @@ public:
 	void Update(Input& input);
 	void Draw();
 
+	// プレイヤーの位置を取得
+	Vec3 GetPos() const { return m_pos; }
+
 	// ダメージを受けた時の処理をまとめる関数
 	void OnDamage();
 

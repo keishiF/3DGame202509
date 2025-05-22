@@ -25,7 +25,7 @@ GameScene::GameScene(SceneController& controller) :
 {
 	m_player = std::make_shared<Player>();
 	m_camera = std::make_shared<Camera>();
-	m_camera->SetCamera();
+	m_camera->SetCamera(m_player);
 }
 
 GameScene::~GameScene()
@@ -47,7 +47,7 @@ void GameScene::NormalUpdate(Input& input)
 	++m_blinkFrame;
 
 	m_player->Update(input);
-	m_camera->Update();
+	m_camera->Update(m_player);
 
 	if (input.IsPress(CheckHitKeyAll()))
 	{

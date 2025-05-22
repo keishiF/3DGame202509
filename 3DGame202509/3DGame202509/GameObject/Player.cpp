@@ -11,6 +11,8 @@ namespace
 	constexpr float kJumpSpeed = 20.0f;
 	// 重力
 	constexpr float kGravity = 0.75f;
+	// プレイヤーのモデルの拡大値
+	constexpr float kModelScale = 15.0f;
 }
 
 Player::Player() :
@@ -22,6 +24,9 @@ Player::Player() :
 	m_gravity(kGravity),
 	m_frameCount(0.0f)
 {
+	m_model = MV1LoadModel("Data/Model/Player.mv1");
+	assert(m_model >= 0);
+	MV1SetScale(m_model, VGet(kModelScale, kModelScale, kModelScale));
 }
 
 Player::~Player()
