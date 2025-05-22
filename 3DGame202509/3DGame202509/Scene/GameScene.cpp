@@ -49,7 +49,7 @@ void GameScene::NormalUpdate(Input& input)
 	m_player->Update(input);
 	m_camera->Update(m_player);
 
-	if (input.IsPress(CheckHitKeyAll()))
+	if (input.IsPress(PAD_INPUT_5))
 	{
 		m_update = &GameScene::FadeOutUpdate;
 		m_draw = &GameScene::FadeDraw;

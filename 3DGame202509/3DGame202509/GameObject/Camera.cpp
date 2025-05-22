@@ -10,7 +10,7 @@ namespace
 }
 
 Camera::Camera() :
-	m_pos(0.0f, 300.0f, 200.0f),
+	m_pos(0.0f, 300.0f, 300.0f),
 	m_lookAtPos(0.0f, 0.0f, 0.0f),
 	m_fov(DX_PI_F / 3.0f),
 	m_cameraRotX(0.0f),

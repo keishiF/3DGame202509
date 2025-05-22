@@ -12,7 +12,7 @@ namespace
 	// 重力
 	constexpr float kGravity = 0.75f;
 	// プレイヤーのモデルの拡大値
-	constexpr float kModelScale = 15.0f;
+	constexpr float kModelScale = 20.0f;
 }
 
 Player::Player() :
@@ -24,7 +24,7 @@ Player::Player() :
 	m_gravity(kGravity),
 	m_frameCount(0.0f)
 {
-	m_model = MV1LoadModel("Data/Model/Player.mv1");
+	m_model = MV1LoadModel("Data/Model/Player1.mv1");
 	assert(m_model >= 0);
 	MV1SetScale(m_model, VGet(kModelScale, kModelScale, kModelScale));
 }
@@ -36,6 +36,35 @@ Player::~Player()
 
 void Player::Update(Input& input)
 {
+	if (input.IsPress(PAD_INPUT_LEFT))
+	{
+		m_vec.x = kSpeed;
+	}
+	else if (input.IsPress(PAD_INPUT_RIGHT))
+	{
+		m_vec.x = -kSpeed;
+	}
+	else
+	{
+		m_vec.x = 0.0f;
+	}
+
+	if (input.IsPress(PAD_INPUT_UP))
+	{
+		m_vec.z = -kSpeed;
+	}
+	else if (input.IsPress(PAD_INPUT_DOWN))
+	{
+		m_vec.z = kSpeed;
+	}
+	else
+	{
+		m_vec.z = 0.0f;
+	}
+
+	//m_vec.Normalize();
+	m_pos += m_vec;
+
 	MV1SetPosition(m_model, VGet(m_pos.x, m_pos.y, m_pos.z));
 }
 
