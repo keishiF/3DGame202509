@@ -128,6 +128,6 @@ void GameScene::DrawField()
 		start.x = x;
 		end.x = x;
 
-		DrawLine3D(VGet(start.x, start.y, start.z), VGet(end.x, end.y, end.z), 0x0000ff);
+		DrawLine3D(VGet(start.x, start.y, start.z), VGet(end.x, end.y, end.z), 0x00ff00);
 	}
 }
