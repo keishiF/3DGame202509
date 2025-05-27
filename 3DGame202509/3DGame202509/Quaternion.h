@@ -4,6 +4,10 @@
 
 class Quaternion
 {
+public:
+	Quaternion()
+	{
 
+	}
 };
 
