@@ -148,6 +148,7 @@
     <ClCompile Include="General\Application.cpp" />
     <ClCompile Include="General\Input.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\ResultScene.cpp" />
     <ClCompile Include="Scene\SceneBase.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="GameObject\Player.h" />
     <ClInclude Include="General\Application.h" />
     <ClInclude Include="General\Input.h" />
+    <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\ResultScene.h" />
     <ClInclude Include="Scene\SceneBase.h" />
