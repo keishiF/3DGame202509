@@ -3,6 +3,10 @@
 
 namespace
 {
+	// アニメーション名
+	const char* kIdleAnimName = "Idle";
+	const char* kRunAnimName  = "Running_A";
+
 	// HPの初期値
 	constexpr int kHp = 100;
 	// 移動速度
