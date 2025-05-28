@@ -22,9 +22,32 @@ public:
 	// ダメージを受けた時の処理をまとめる関数
 	void OnDamage();
 
+	// アニメーション関連
+private:
+	struct AnimData
+	{
+		int attachNo = -1;
+		float frame = 0.0f;
+		bool isLoop = false;
+		bool isEnd = false;
+	};
+	// アニメーションのアタッチ
+	void AttachAnim(AnimData& data, const char* animName, bool isLoop);
+	// アニメーションの更新
+	void UpdateAnim(AnimData& data);
+	// アニメーションブレンド率の更新
+	void UpdateAnimBlend();
+	// アニメーションの変更
+	void ChangeAnim(const char* animName, bool isLoop);
+
 private:
 	// プレイヤーのモデル
 	int m_model;
+	// アニメーション
+	AnimData m_nextAnim;
+	AnimData m_prevAnim;
+	// アニメーションを滑らかに変更するためのブレンド率
+	float m_blendRate;
 	// プレイヤーの位置
 	Vec3 m_pos;
 	// プレイヤーの移動量
@@ -33,6 +56,9 @@ private:
 	int m_hp;
 	float m_jumpSpeed;
 	float m_gravity;
+	// プレイヤーの状態フラグ
+	bool m_isAttack;
+	bool m_isRun;
 
 	// 経過フレームを測る
 	float m_frameCount;
