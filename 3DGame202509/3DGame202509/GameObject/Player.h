@@ -22,6 +22,17 @@ public:
 	// ダメージを受けた時の処理をまとめる関数
 	void OnDamage();
 
+	// プレイヤーのステート
+private:
+	void IdleInit(Input& input);
+	void IdleUpdate(Input& input);
+
+	void RunInit(Input& input);
+	void RunUpdate(Input& input);
+
+	void AttackInit(Input& input);
+	void AttackUpdate(Input& input);
+
 	// アニメーション関連
 private:
 	struct AnimData
@@ -62,5 +73,8 @@ private:
 
 	// 経過フレームを測る
 	float m_frameCount;
+
+	using PlayerState = void(Player::*)(Input&);
+	PlayerState m_state;
 };
 
