@@ -51,6 +51,7 @@ void GameScene::Draw()
 
 void GameScene::NormalUpdate(Input& input)
 {
+	++m_frame;
 	++m_blinkFrame;
 
 	m_player->Update(input);

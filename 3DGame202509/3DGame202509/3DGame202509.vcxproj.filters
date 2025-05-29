@@ -31,6 +31,12 @@
     <Filter Include="ヘッダー ファイル\General">
       <UniqueIdentifier>{0267dabf-cdb9-4f6a-a2aa-d8955cac2454}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Animation">
+      <UniqueIdentifier>{db3e7de8-ada1-43e1-b9ae-84b8ec17bfc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Animation">
+      <UniqueIdentifier>{a272665e-4e14-46bd-9c4f-6fcde3ca0ec1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -67,10 +73,7 @@
       <Filter>ソース ファイル\General</Filter>
     </ClCompile>
     <ClCompile Include="Animation.cpp">
-      <Filter>ソース ファイル\General</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimData.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -111,10 +114,10 @@
       <Filter>ヘッダー ファイル\General</Filter>
     </ClInclude>
     <ClInclude Include="Animation.h">
-      <Filter>ヘッダー ファイル\General</Filter>
+      <Filter>ヘッダー ファイル\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="AnimData.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="AnimationData.h">
+      <Filter>ヘッダー ファイル\Animation</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

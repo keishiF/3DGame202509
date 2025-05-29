@@ -1,17 +1,21 @@
 #pragma once
+#include "AnimationData.h"
 
 class Animation
 {
 public:
-	void Init();
-	void AttachAnim(Animation& data, int model, const char* animName, bool isLoop);
-	void UpdateAnim(Animation& data, int model);
-	void UpdateAnimBlend(Animation& prevAnim, Animation& nextAnim, int model);
-	void ChangeAnim(int model, const char* animName, bool isLoop);
+	void Init(AnimationData prev, AnimationData next, int model, float blendRate);
+
+	void AttachAnim(AnimationData next, const char* animName, bool isLoop);
+	void PrevUpdateAnim();
+	void NextUpdateAnim();
+	void UpdateAnimBlend();
+	void ChangeAnim(const char* animName, bool isLoop);
 
 private:
-	int   m_attachNo;
-	float m_frame;
-	bool  m_isEnd;
-	bool  m_isLoop;
+	AnimationData m_prev;
+	AnimationData m_next;
+	int m_model;
+	float m_blendRate;
 };
+

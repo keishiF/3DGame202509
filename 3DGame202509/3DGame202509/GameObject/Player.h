@@ -2,6 +2,8 @@
 
 #include "Input.h"
 #include "Vec3.h"
+#include "Animation.h"
+#include "AnimationData.h"
 #include <memory>
 
 class Player
@@ -56,15 +58,13 @@ private:
 	void UpdateAnimBlend();
 	// アニメーションの変更
 	void ChangeAnim(const char* animName, bool isLoop);
+	// アニメーション
+	AnimData m_nextAnim;
+	AnimData m_prevAnim;
 
 private:
 	// プレイヤーのモデル
 	int m_model;
-	// アニメーション
-	AnimData m_nextAnim;
-	AnimData m_prevAnim;
-	// アニメーションを滑らかに変更するためのブレンド率
-	float m_blendRate;
 	// プレイヤーの位置
 	Vec3 m_pos;
 	// プレイヤーの移動量
@@ -85,5 +85,13 @@ private:
 	// プレイヤーの状態を管理するための関数ポインタ
 	using PlayerState = void(Player::*)(Input&);
 	PlayerState m_state;
+
+	// アニメーション関連
+	AnimationData m_prev;
+	AnimationData m_next;
+	Animation m_anim;
+
+	// アニメーションを滑らかに変更するためのブレンド率
+	float m_blendRate;
 };
 

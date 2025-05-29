@@ -1,8 +1,8 @@
 #include "Player.h"
 
+#include "Animation.h"
 #include "DxLib.h"
 #include <cassert>
-#include "Animation.h"
 
 namespace
 {
@@ -36,7 +36,6 @@ namespace
 
 Player::Player() :
 	m_model(-1),
-	m_blendRate(0.0f),
 	m_pos(0.0f, 0.0f, 0.0f),
 	m_vec(0.0f, 0.0f, 0.0f),
 	m_hp(kHp),
@@ -47,13 +46,15 @@ Player::Player() :
 	m_isStab(false),
 	m_isRun(false),
 	m_frameCount(0.0f),
-	m_state(&Player::IdleInit)
+	m_state(&Player::IdleInit),
+	m_blendRate(0.0f)
 {
 	m_model = MV1LoadModel("Data/Model/Player/Player1.mv1");
 	assert(m_model >= 0);
+	MV1SetScale(m_model, VGet(kPlayerModelScale, kPlayerModelScale, kPlayerModelScale));
+
 	AttachAnim(m_nextAnim, kIdleAnimName, true);
 	m_blendRate = 1.0f;
-	MV1SetScale(m_model, VGet(kPlayerModelScale, kPlayerModelScale, kPlayerModelScale));
 }
 
 Player::~Player()
@@ -285,14 +286,14 @@ void Player::StabAttackUpdate(Input& input)
 	}
 
 	// アニメーション終了時にフラグが立っていれば次の攻撃状態に移行
-	if (m_nextAnim.isEnd && m_isChop)
+	if (m_next.isEnd && m_isChop)
 	{
 		m_isChop = false;
 		m_state = &Player::ChopAttackInit;
 	}
 
 	// アニメーションが終了したら待機状態に戻る
-	if (m_nextAnim.isEnd)
+	if (m_next.isEnd)
 	{
 		m_state = &Player::IdleInit;
 	}
