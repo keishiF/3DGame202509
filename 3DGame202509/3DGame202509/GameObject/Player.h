@@ -1,6 +1,5 @@
 #pragma once
 
-#include "DxLib.h"
 #include "Input.h"
 #include "Vec3.h"
 #include <memory>
@@ -24,14 +23,21 @@ public:
 
 	// プレイヤーのステート
 private:
+	// 待機状態
 	void IdleInit(Input& input);
 	void IdleUpdate(Input& input);
 
+	// 移動状態
 	void RunInit(Input& input);
 	void RunUpdate(Input& input);
 
-	void AttackInit(Input& input);
-	void AttackUpdate(Input& input);
+	// 各攻撃状態
+	void ChopAttackInit(Input& input);
+	void ChopAttackUpdate(Input& input);
+	void SliceAttackInit(Input& input);
+	void SliceAttackUpdate(Input& input);
+	void StabAttackInit(Input& input);
+	void StabAttackUpdate(Input& input);
 
 	// アニメーション関連
 private:
@@ -68,12 +74,15 @@ private:
 	float m_jumpSpeed;
 	float m_gravity;
 	// プレイヤーの状態フラグ
-	bool m_isAttack;
+	bool m_isChop;
+	bool m_isSlice;
+	bool m_isStab;
 	bool m_isRun;
 
 	// 経過フレームを測る
 	float m_frameCount;
 
+	// プレイヤーの状態を管理するための関数ポインタ
 	using PlayerState = void(Player::*)(Input&);
 	PlayerState m_state;
 };
