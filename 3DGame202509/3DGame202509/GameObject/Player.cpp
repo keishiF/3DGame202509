@@ -1,6 +1,5 @@
 #include "Player.h"
 
-#include "Animation.h"
 #include "DxLib.h"
 #include <cassert>
 
@@ -15,12 +14,8 @@ namespace
 	const char* kChopAttackAnimName	  = "1H_Melee_Attack_Chop";
 	const char* kSliceAttackAnimName  = "1H_Melee_Attack_Slice_Diagonal";
 	const char* kStabAttackAnimName   = "1H_Melee_Attack_Stab";
-
-	// 4方向回避
-	const char* kLeftDodgeAnimName    = "Dodge_Left";     // 左回避
-	const char* kRightDodgeAnimName   = "Dodge_Right";    // 右回避
-	const char* kForwardDodgeAnimName = "Dodge_Forward";  // 前回避
-	const char* kBackDodgeAnimName    = "Dodge_Backward"; // 後ろ回避
+	// 回避
+	const char* kDodgeAnimName		  = "Dodge_Forward";
 
 	// HPの初期値
 	constexpr int kHp = 100;
@@ -45,11 +40,12 @@ Player::Player() :
 	m_isSlice(false),
 	m_isStab(false),
 	m_isRun(false),
+	m_isDodge(false),
 	m_frameCount(0.0f),
-	m_state(&Player::IdleInit),
-	m_blendRate(0.0f)
+	m_blendRate(0.0f),
+	m_state(&Player::IdleInit)
 {
-	m_model = MV1LoadModel("Data/Model/Player/Player1.mv1");
+	m_model = MV1LoadModel("Data/Model/Player/Player.mv1");
 	assert(m_model >= 0);
 	MV1SetScale(m_model, VGet(kPlayerModelScale, kPlayerModelScale, kPlayerModelScale));
 
@@ -95,25 +91,25 @@ void Player::IdleInit(Input& input)
 void Player::IdleUpdate(Input& input)
 {
 	// 左スティックの入力があれば走り状態に移行するためのフラグを立てる
-	if (input.IsPress(PAD_INPUT_LEFT))
+	if (input.IsPress("LEFT"))
 	{
 		m_isRun = true;
 	}
-	if (input.IsPress(PAD_INPUT_RIGHT))
+	if (input.IsPress("RIGHT"))
 	{
 		m_isRun = true;
 	}
-	if (input.IsPress(PAD_INPUT_UP))
+	if (input.IsPress("UP"))
 	{
 		m_isRun = true;
 	}
-	if (input.IsPress(PAD_INPUT_DOWN))
+	if (input.IsPress("DOWN"))
 	{
 		m_isRun = true;
 	}
 
-	// 1ボタンの入力があれば攻撃状態に移行するためのフラグを立てる
-	if (input.IsTrigger(PAD_INPUT_1))
+	// Aボタンの入力があれば攻撃状態に移行するためのフラグを立てる
+	if (input.IsTrigger("A"))
 	{
 		m_isChop = true;
 	}
@@ -126,7 +122,6 @@ void Player::IdleUpdate(Input& input)
 	// 攻撃状態に移行
 	if (m_isChop)
 	{
-		m_isChop = false;
 		m_state = &Player::ChopAttackInit;
 	}
 }
@@ -143,12 +138,12 @@ void Player::RunUpdate(Input& input)
 {
 	// 左スティックで移動
 	// 左入力
-	if (input.IsPress(PAD_INPUT_LEFT))
+	if (input.IsPress("LEFT"))
 	{
 		m_vec.x = -kSpeed;
 	}
 	// 右入力
-	else if (input.IsPress(PAD_INPUT_RIGHT))
+	else if (input.IsPress("RIGHT"))
 	{
 		m_vec.x = kSpeed;
 	}
@@ -158,12 +153,12 @@ void Player::RunUpdate(Input& input)
 		m_vec.x = 0.0f;
 	}
 	// 上入力
-	if (input.IsPress(PAD_INPUT_UP))
+	if (input.IsPress("UP"))
 	{
 		m_vec.z = kSpeed;
 	}
 	// 下入力
-	else if (input.IsPress(PAD_INPUT_DOWN))
+	else if (input.IsPress("DOWN"))
 	{
 		m_vec.z = -kSpeed;
 	}
@@ -187,10 +182,16 @@ void Player::RunUpdate(Input& input)
 		MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 	}
 
-	// 1ボタンの入力があれば攻撃状態に移行するためのフラグを立てる
-	if (input.IsTrigger(PAD_INPUT_1))
+	// Aボタンの入力があれば攻撃状態に移行するためのフラグを立てる
+	if (input.IsTrigger("A"))
 	{
 		m_isChop = true;
+	}
+
+	// Bボタンの入力があれば回避状態に移行するためのフラグを立てる
+	if (input.IsTrigger("B"))
+	{
+		m_isDodge = true;
 	}
 
 	// 左スティックの入力がない場合待機状態に移行
@@ -203,10 +204,16 @@ void Player::RunUpdate(Input& input)
 	// 攻撃状態に移行
 	if (m_isChop)
 	{
-		m_isChop = false;
 		m_state = &Player::ChopAttackInit;
+		m_isRun = false;
 	}
 
+	// 回避状態に移行
+	if (m_isDodge)
+	{
+		m_state = &Player::DodgeInit;
+		m_isRun = false;
+	}
 }
 
 void Player::ChopAttackInit(Input& input)
@@ -220,22 +227,24 @@ void Player::ChopAttackInit(Input& input)
 void Player::ChopAttackUpdate(Input& input)
 {
 	// 1ボタンの入力があれば攻撃状態に移行するためのフラグを立てる
-	if (input.IsTrigger(PAD_INPUT_1))
+	if (input.IsTrigger("A"))
 	{
 		m_isSlice = true;
-	}
-
-	// アニメーション終了時にフラグが立っていれば次の攻撃状態に移行
-	if (m_nextAnim.isEnd && m_isSlice)
-	{
-		m_isSlice = false;
-		m_state = &Player::SliceAttackInit;
 	}
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_nextAnim.isEnd)
 	{
-		m_state = &Player::IdleInit;
+		if (m_isSlice)
+		{
+			m_state = &Player::SliceAttackInit;
+			m_isChop = false;
+		}
+		else
+		{
+			m_state = &Player::IdleInit;
+			m_isChop = false;
+		}
 	}
 }
 
@@ -250,22 +259,24 @@ void Player::SliceAttackInit(Input& input)
 void Player::SliceAttackUpdate(Input& input)
 {
 	// 1ボタンの入力があれば攻撃状態に移行するためのフラグを立てる
-	if (input.IsTrigger(PAD_INPUT_1))
+	if (input.IsTrigger("A"))
 	{
 		m_isStab = true;
-	}
-
-	// アニメーション終了時にフラグが立っていれば次の攻撃状態に移行
-	if (m_nextAnim.isEnd && m_isStab)
-	{
-		m_isStab = false;
-		m_state = &Player::StabAttackInit;
 	}
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_nextAnim.isEnd)
 	{
-		m_state = &Player::IdleInit;
+		if (m_isStab)
+		{
+			m_state = &Player::StabAttackInit;
+			m_isSlice = false;
+		}
+		else
+		{
+			m_state = &Player::IdleInit;
+			m_isSlice = false;
+		}
 	}
 }
 
@@ -280,22 +291,42 @@ void Player::StabAttackInit(Input& input)
 void Player::StabAttackUpdate(Input& input)
 {
 	// 1ボタンの入力があれば攻撃状態に移行するためのフラグを立てる
-	if (input.IsTrigger(PAD_INPUT_1))
+	if (input.IsTrigger("A"))
 	{
 		m_isChop = true;
 	}
 
-	// アニメーション終了時にフラグが立っていれば次の攻撃状態に移行
-	if (m_next.isEnd && m_isChop)
-	{
-		m_isChop = false;
-		m_state = &Player::ChopAttackInit;
-	}
-
 	// アニメーションが終了したら待機状態に戻る
-	if (m_next.isEnd)
+	if (m_nextAnim.isEnd)
+	{
+		if (m_isChop)
+		{
+			m_state = &Player::ChopAttackInit;
+			m_isStab = false;
+		}
+		else
+		{
+			m_state = &Player::IdleInit;
+			m_isStab = false;
+		}
+	}
+}
+
+void Player::DodgeInit(Input& input)
+{
+	// 回避アニメーションに変更
+	ChangeAnim(kDodgeAnimName, false);
+	m_state = &Player::DodgeUpdate;
+	(this->*m_state)(input);
+}
+
+void Player::DodgeUpdate(Input& input)
+{
+	// アニメーションが終了したら待機状態に戻る
+	if (m_nextAnim.isEnd)
 	{
 		m_state = &Player::IdleInit;
+		m_isDodge = false;
 	}
 }
 
@@ -326,6 +357,8 @@ void Player::UpdateAnim(AnimData& data)
 
 	// 現在再生中のアニメーションの総時間を取得する
 	const float totalTime = MV1GetAttachAnimTotalTime(m_model, data.attachNo);
+
+	printf("frame %.0f\r", totalTime);
 
 	// アニメーションの設定によってループさせるか最後のフレームで止めるかを判定
 	if (data.isLoop)

@@ -42,7 +42,7 @@ void ResultScene::NormalUpdate(Input& input)
 {
 	++m_blinkFrame;
 
-	if (input.IsPress(CheckHitKeyAll()))
+	if (input.IsPress("DEBUG"))
 	{
 		m_update = &ResultScene::FadeOutUpdate;
 		m_draw = &ResultScene::FadeDraw;

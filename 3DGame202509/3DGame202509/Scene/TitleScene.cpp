@@ -38,7 +38,7 @@ void TitleScene::NormalUpdate(Input& input)
 {
 	++m_blinkFrame;
 
-	if (input.IsPress(CheckHitKeyAll()))
+	if (input.IsPress("DEBUG"))
 	{
 		m_update = &TitleScene::FadeOutUpdate;
 		m_draw = &TitleScene::FadeDraw;

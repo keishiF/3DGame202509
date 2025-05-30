@@ -57,7 +57,7 @@ void GameScene::NormalUpdate(Input& input)
 	m_player->Update(input);
 	m_camera->Update(m_player);
 
-	if (input.IsPress(PAD_INPUT_5))
+	if (input.IsPress("DEBUG"))
 	{
 		m_update = &GameScene::FadeOutUpdate;
 		m_draw = &GameScene::FadeDraw;
@@ -92,7 +92,7 @@ void GameScene::NormalDraw()
 	{
 		DrawString(0, 0, "Game Scene", 0xffffff);
 	}
-	printf("frame %d\r", m_frame);
+	//printf("frame %d\r", m_frame);
 
 	MV1DrawModel(m_skyModel);
 

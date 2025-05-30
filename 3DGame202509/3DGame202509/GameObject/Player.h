@@ -41,7 +41,10 @@ private:
 	void StabAttackInit(Input& input);
 	void StabAttackUpdate(Input& input);
 
-	// アニメーション関連
+	// 回避状態
+	void DodgeInit(Input& input);
+	void DodgeUpdate(Input& input);
+
 private:
 	struct AnimData
 	{
@@ -78,20 +81,16 @@ private:
 	bool m_isSlice;
 	bool m_isStab;
 	bool m_isRun;
+	bool m_isDodge;
 
 	// 経過フレームを測る
 	float m_frameCount;
 
+	// アニメーションを滑らかに変更するためのブレンド率
+	float m_blendRate;
+
 	// プレイヤーの状態を管理するための関数ポインタ
 	using PlayerState = void(Player::*)(Input&);
 	PlayerState m_state;
-
-	// アニメーション関連
-	AnimationData m_prev;
-	AnimationData m_next;
-	Animation m_anim;
-
-	// アニメーションを滑らかに変更するためのブレンド率
-	float m_blendRate;
 };
 
