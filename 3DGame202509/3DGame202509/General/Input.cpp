@@ -32,6 +32,9 @@ Input::Input()
 
 	m_inputActionMap["RB"]    = { {InputType::keyboard, KEY_INPUT_2},
 								  {InputType::pad,      PAD_INPUT_6} };
+
+	m_inputActionMap["LPush"] = { {InputType::keyboard, KEY_INPUT_LCONTROL},
+								  {InputType::pad,      PAD_INPUT_9} };
 }
 
 void Input::Update()

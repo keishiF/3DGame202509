@@ -3,7 +3,6 @@
 #include "Input.h"
 #include "Vec3.h"
 #include "Animation.h"
-#include "AnimationData.h"
 #include <memory>
 
 class Player
@@ -53,29 +52,13 @@ private:
 	void DodgeInit(Input& input);
 	void DodgeUpdate(Input& input);
 
+	// 被弾状態
+	void HitInit(Input& input);
+	void HitUpdate(Input& input);
+
 	// 死亡状態
 	void DeadInit(Input& input);
 	void DeadUpdate(Input& input);
-
-private:
-	struct AnimData
-	{
-		int attachNo = -1;
-		float frame = 0.0f;
-		bool isLoop = false;
-		bool isEnd = false;
-	};
-	// アニメーションのアタッチ
-	void AttachAnim(AnimData& data, const char* animName, bool isLoop);
-	// アニメーションの更新
-	void UpdateAnim(AnimData& data);
-	// アニメーションブレンド率の更新
-	void UpdateAnimBlend();
-	// アニメーションの変更
-	void ChangeAnim(const char* animName, bool isLoop);
-	// アニメーション
-	AnimData m_nextAnim;
-	AnimData m_prevAnim;
 
 private:
 	// プレイヤーのモデル
@@ -106,5 +89,8 @@ private:
 	// プレイヤーの状態を管理するための関数ポインタ
 	using PlayerState = void(Player::*)(Input&);
 	PlayerState m_state;
+
+	// プレイヤーのアニメーション
+	Animation m_anim;
 };
 

@@ -19,6 +19,8 @@ namespace
 	const char* kSpinAnimName         = "2H_Melee_Attack_Spin";
 	// 回避
 	const char* kDodgeAnimName		  = "Dodge_Forward";
+	// 被弾
+	const char* kHitAnimName		  = "Hit_B";
 	// 死亡
 	const char* kDeadAnimName         = "Death_B";
 
@@ -53,7 +55,8 @@ Player::Player() :
 	assert(m_model >= 0);
 	MV1SetScale(m_model, VGet(kPlayerModelScale, kPlayerModelScale, kPlayerModelScale));
 
-	AttachAnim(m_nextAnim, kIdleAnimName, true);
+	m_anim.Init(m_model);
+	m_anim.AttachAnim(m_anim.GetNextAnim(), kIdleAnimName, true);
 	m_blendRate = 1.0f;
 }
 
@@ -65,9 +68,9 @@ Player::~Player()
 void Player::Update(Input& input)
 {	
 	// アニメーションの更新
-	UpdateAnim(m_prevAnim);
-	UpdateAnim(m_nextAnim);
-	UpdateAnimBlend();
+	m_anim.UpdateAnim(m_anim.GetPrevAnim());
+	m_anim.UpdateAnim(m_anim.GetNextAnim());
+	m_anim.UpdateAnimBlend();
 	(this->*m_state)(input);
 }
 
@@ -88,7 +91,7 @@ void Player::OnDamage()
 void Player::IdleInit(Input& input)
 {
 	// 待機アニメーションに変更
-	ChangeAnim(kIdleAnimName, true);
+	m_anim.ChangeAnim(kIdleAnimName, true);
 	m_state = &Player::IdleUpdate;
 	(this->*m_state)(input);
 }
@@ -141,7 +144,7 @@ void Player::IdleUpdate(Input& input)
 void Player::WalkInit(Input& input)
 {
 	// 待機アニメーションに変更
-	ChangeAnim(kWalkAnimName, true);
+	m_anim.ChangeAnim(kWalkAnimName, true);
 	m_state = &Player::WalkUpdate;
 	m_walkFrameCount = 0.0f;
 }
@@ -196,7 +199,7 @@ void Player::WalkUpdate(Input& input)
 
 	// 一定フレーム経過したら走り状態に移行するためのフラグを立てる
 	++m_walkFrameCount;
-	if (m_walkFrameCount > 60.0f)
+	if (m_walkFrameCount > 60.0f || input.IsTrigger("LPush"))
 	{
 		m_isRun = true;
 	}
@@ -239,6 +242,7 @@ void Player::WalkUpdate(Input& input)
 	{
 		m_state  = &Player::ChopInit;
 		m_isWalk = false;
+		m_walkFrameCount = 0.0f;
 	}
 
 	// 強攻撃状態に移行
@@ -246,19 +250,21 @@ void Player::WalkUpdate(Input& input)
 	{
 		m_state  = &Player::SpinInit;
 		m_isWalk = false;
+		m_walkFrameCount = 0.0f;
 	}
 	// 回避状態に移行
 	if (m_isDodge)
 	{
 		m_state  = &Player::DodgeInit;
 		m_isWalk = false;
+		m_walkFrameCount = 0.0f;
 	}
 }
 
 void Player::RunInit(Input& input)
 {
 	// 走りアニメーションに変更
-	ChangeAnim(kRunAnimName, true);
+	m_anim.ChangeAnim(kRunAnimName, true);
 	m_state = &Player::RunUpdate;
 	(this->*m_state)(input);
 }
@@ -311,6 +317,11 @@ void Player::RunUpdate(Input& input)
 		MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 	}
 
+	if (input.IsTrigger("LPush"))
+	{
+		m_isWalk = true;
+	}
+
 	// Aボタンの入力があれば攻撃状態に移行するためのフラグを立てる
 	if (input.IsTrigger("A"))
 	{
@@ -333,6 +344,13 @@ void Player::RunUpdate(Input& input)
 	if (m_vec.x == 0.0f && m_vec.z == 0.0f)
 	{
 		m_state = &Player::IdleInit;
+		m_isRun = false;
+	}
+
+	// 歩き状態に移行
+	if (m_isWalk)
+	{
+		m_state = &Player::WalkInit;
 		m_isRun = false;
 	}
 
@@ -361,7 +379,7 @@ void Player::RunUpdate(Input& input)
 void Player::ChopInit(Input& input)
 {
 	// 攻撃アニメーションに変更
-	ChangeAnim(kChopAnimName, false);
+	m_anim.ChangeAnim(kChopAnimName, false);
 	m_state = &Player::ChopUpdate;
 	(this->*m_state)(input);
 }
@@ -375,7 +393,7 @@ void Player::ChopUpdate(Input& input)
 	}
 
 	// アニメーションが終了したら待機状態に戻る
-	if (m_nextAnim.isEnd)
+	if (m_anim.GetNextAnim().isEnd)
 	{
 		if (m_isSlice)
 		{
@@ -393,7 +411,7 @@ void Player::ChopUpdate(Input& input)
 void Player::SliceInit(Input& input)
 {
 	// 攻撃アニメーションに変更
-	ChangeAnim(kSliceAnimName, false);
+	m_anim.ChangeAnim(kSliceAnimName, false);
 	m_state = &Player::SliceUpdate;
 	(this->*m_state)(input);
 }
@@ -407,7 +425,7 @@ void Player::SliceUpdate(Input& input)
 	}
 
 	// アニメーションが終了したら待機状態に戻る
-	if (m_nextAnim.isEnd)
+	if (m_anim.GetNextAnim().isEnd)
 	{
 		if (m_isStab)
 		{
@@ -425,7 +443,7 @@ void Player::SliceUpdate(Input& input)
 void Player::StabInit(Input& input)
 {
 	// 攻撃アニメーションに変更
-	ChangeAnim(kStabAnimName, false);
+	m_anim.ChangeAnim(kStabAnimName, false);
 	m_state = &Player::StabUpdate;
 	(this->*m_state)(input);
 }
@@ -439,7 +457,7 @@ void Player::StabUpdate(Input& input)
 	}
 
 	// アニメーションが終了したら待機状態に戻る
-	if (m_nextAnim.isEnd)
+	if (m_anim.GetNextAnim().isEnd)
 	{
 		if (m_isChop)
 		{
@@ -457,13 +475,13 @@ void Player::StabUpdate(Input& input)
 void Player::SpinInit(Input& input)
 {
 	// 強攻撃アニメーションに変更
-	ChangeAnim(kSpinAnimName, false);
+	m_anim.ChangeAnim(kSpinAnimName, false);
 	m_state = &Player::SpinUpdate;
 }
 
 void Player::SpinUpdate(Input& input)
 {
-	if (m_nextAnim.isEnd)
+	if (m_anim.GetNextAnim().isEnd)
 	{
 		m_state = &Player::IdleInit;
 		m_isSpin = false;
@@ -473,7 +491,7 @@ void Player::SpinUpdate(Input& input)
 void Player::DodgeInit(Input& input)
 {
 	// 回避アニメーションに変更
-	ChangeAnim(kDodgeAnimName, false);
+	m_anim.ChangeAnim(kDodgeAnimName, false);
 	m_state = &Player::DodgeUpdate;
 	(this->*m_state)(input);
 }
@@ -481,17 +499,34 @@ void Player::DodgeInit(Input& input)
 void Player::DodgeUpdate(Input& input)
 {
 	// アニメーションが終了したら待機状態に戻る
-	if (m_nextAnim.isEnd)
+	if (m_anim.GetNextAnim().isEnd)
 	{
 		m_state = &Player::IdleInit;
 		m_isDodge = false;
 	}
 }
 
+void Player::HitInit(Input& input)
+{
+	// 回避アニメーションに変更
+	m_anim.ChangeAnim(kHitAnimName, false);
+	m_state = &Player::HitUpdate;
+	(this->*m_state)(input);
+}
+
+void Player::HitUpdate(Input& input)
+{
+	// アニメーションが終了したら待機状態に戻る
+	if (m_anim.GetNextAnim().isEnd)
+	{
+		m_state = &Player::IdleInit;
+	}
+}
+
 void Player::DeadInit(Input& input)
 {
 	// 回避アニメーションに変更
-	ChangeAnim(kDeadAnimName, false);
+	m_anim.ChangeAnim(kDeadAnimName, false);
 	m_state = &Player::DeadUpdate;
 	(this->*m_state)(input);
 }
@@ -499,95 +534,9 @@ void Player::DeadInit(Input& input)
 void Player::DeadUpdate(Input& input)
 {
 	// アニメーションが終了したら待機状態に戻る
-	if (m_nextAnim.isEnd)
+	if (m_anim.GetNextAnim().isEnd)
 	{
 		m_isDead = true;
 	}
-}
-
-void Player::AttachAnim(AnimData& data, const char* animName, bool isLoop)
-{
-	// アタッチしたいアニメの番号を取得
-	int index = MV1GetAnimIndex(m_model, animName);
-	// モデルにアニメーションをアタッチ
-	data.attachNo = MV1AttachAnim(m_model, index, -1, false);
-	// アニメカウンタ初期化
-	data.frame = 0.0f;
-	// アニメーションのループ設定
-	data.isLoop = isLoop;
-	// 非ループアニメの終了フラグを落としておく
-	data.isEnd = false;
-}
-
-void Player::UpdateAnim(AnimData& data)
-{
-	// アニメーションがアタッチされていない場合は何もしない
-	if (data.attachNo == -1)
-	{
-		return;
-	}
-
-	// アニメーションを進める
-	data.frame += 0.5f;
-
-	// 現在再生中のアニメーションの総時間を取得する
-	const float totalTime = MV1GetAttachAnimTotalTime(m_model, data.attachNo);
-
-	printf("frame %.0f\r", totalTime);
-
-	// アニメーションの設定によってループさせるか最後のフレームで止めるかを判定
-	if (data.isLoop)
-	{
-		// アニメーションをループさせる
-		while (data.frame > totalTime)
-		{
-			data.frame -= totalTime;
-		}
-	}
-	else
-	{
-		// 最後のフレームで停止させる
-		if (data.frame > totalTime)
-		{
-			data.frame = totalTime;
-			data.isEnd = true;
-		}
-	}
-
-	// 進行させたアニメーションをモデルに適用する
-	MV1SetAttachAnimTime(m_model, data.attachNo, data.frame);
-}
-
-void Player::UpdateAnimBlend()
-{
-	// 両方にアニメが設定されていない場合は変化させない
-	if (m_nextAnim.attachNo == -1) return;
-	if (m_prevAnim.attachNo == -1) return;
-
-	// m_blendRateを0.0f -> 1.0fに変化させる
-	m_blendRate += 1.0f / 8.0f;
-	if (m_blendRate > 1.0f) m_blendRate = 1.0f;
-
-	MV1SetAttachAnimBlendRate(m_model, m_prevAnim.attachNo, 1.0f - m_blendRate);
-	MV1SetAttachAnimBlendRate(m_model, m_nextAnim.attachNo, m_blendRate);
-}
-
-void Player::ChangeAnim(const char* animName, bool isLoop)
-{
-	// ひとつ前のデータは今後管理できなくなるのであらかじめデタッチしておく
-	MV1DetachAnim(m_model, m_prevAnim.attachNo);
-
-	// 現在再生中のアニメーションは一つ古いデータ扱いになる
-	m_prevAnim = m_nextAnim;
-
-	// 新たにショットのアニメーションをアタッチする
-	AttachAnim(m_nextAnim, animName, isLoop);
-
-	// アニメのブレンド率は0.0>1.0に変化するので0.0で初期化
-	m_blendRate = 0.0f;
-
-	// m_blendRateをアニメーションに適用する
-	MV1SetAttachAnimBlendRate(m_model, m_prevAnim.attachNo, 1.0f - m_blendRate);
-	MV1SetAttachAnimBlendRate(m_model, m_nextAnim.attachNo, m_blendRate);
 }
 
