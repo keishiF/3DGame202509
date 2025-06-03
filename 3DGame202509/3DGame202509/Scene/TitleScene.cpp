@@ -38,7 +38,7 @@ void TitleScene::NormalUpdate(Input& input)
 {
 	++m_blinkFrame;
 
-	if (input.IsPress("DEBUG"))
+	if (input.IsPress("LB"))
 	{
 		m_update = &TitleScene::FadeOutUpdate;
 		m_draw = &TitleScene::FadeDraw;
@@ -77,6 +77,8 @@ void TitleScene::NormalDraw()
 
 void TitleScene::FadeDraw()
 {
+	DrawString(0, 0, "Title Scene", 0xffffff);
+
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(255 * rate));
 	DrawBox(0, 0, 1280, 720, 0x000000, true);

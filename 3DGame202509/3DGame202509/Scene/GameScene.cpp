@@ -57,7 +57,7 @@ void GameScene::NormalUpdate(Input& input)
 	m_player->Update(input);
 	m_camera->Update(m_player);
 
-	if (input.IsPress("DEBUG"))
+	if (m_player->IsDead())
 	{
 		m_update = &GameScene::FadeOutUpdate;
 		m_draw = &GameScene::FadeDraw;
@@ -102,6 +102,11 @@ void GameScene::NormalDraw()
 
 void GameScene::FadeDraw()
 {
+	MV1DrawModel(m_skyModel);
+
+	DrawField();
+	m_player->Draw();
+
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(255 * rate));
 	DrawBox(0, 0, 1280, 720, 0x000000, true);

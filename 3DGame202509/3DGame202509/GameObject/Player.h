@@ -23,27 +23,39 @@ public:
 	// ダメージを受けた時の処理をまとめる関数
 	void OnDamage();
 
-	// プレイヤーのステート
+	bool IsDead() const { return m_isDead; }
+
+	// プレイヤーの状態
 private:
 	// 待機状態
 	void IdleInit(Input& input);
 	void IdleUpdate(Input& input);
 
-	// 移動状態
+	// 移動
+	// 歩き
+	void WalkInit(Input& input);
+	void WalkUpdate(Input& input);
+	// 走り
 	void RunInit(Input& input);
 	void RunUpdate(Input& input);
 
 	// 各攻撃状態
-	void ChopAttackInit(Input& input);
-	void ChopAttackUpdate(Input& input);
-	void SliceAttackInit(Input& input);
-	void SliceAttackUpdate(Input& input);
-	void StabAttackInit(Input& input);
-	void StabAttackUpdate(Input& input);
+	void ChopInit(Input& input);
+	void ChopUpdate(Input& input);
+	void SliceInit(Input& input);
+	void SliceUpdate(Input& input);
+	void StabInit(Input& input);
+	void StabUpdate(Input& input);
+	void SpinInit(Input& input);
+	void SpinUpdate(Input& input);
 
 	// 回避状態
 	void DodgeInit(Input& input);
 	void DodgeUpdate(Input& input);
+
+	// 死亡状態
+	void DeadInit(Input& input);
+	void DeadUpdate(Input& input);
 
 private:
 	struct AnimData
@@ -74,17 +86,19 @@ private:
 	Vec3 m_vec;
 	// プレイヤーのHP
 	int m_hp;
-	float m_jumpSpeed;
-	float m_gravity;
 	// プレイヤーの状態フラグ
+	bool m_isWalk;
+	bool m_isRun;
 	bool m_isChop;
 	bool m_isSlice;
 	bool m_isStab;
-	bool m_isRun;
+	bool m_isSpin;
 	bool m_isDodge;
+	bool m_isDead;
 
 	// 経過フレームを測る
 	float m_frameCount;
+	float m_walkFrameCount;
 
 	// アニメーションを滑らかに変更するためのブレンド率
 	float m_blendRate;

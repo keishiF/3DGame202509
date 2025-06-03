@@ -42,7 +42,7 @@ void ResultScene::NormalUpdate(Input& input)
 {
 	++m_blinkFrame;
 
-	if (input.IsPress("DEBUG"))
+	if (input.IsPress("LB"))
 	{
 		m_update = &ResultScene::FadeOutUpdate;
 		m_draw = &ResultScene::FadeDraw;
@@ -81,6 +81,8 @@ void ResultScene::NormalDraw()
 
 void ResultScene::FadeDraw()
 {
+	DrawString(0, 0, "Result Scene", 0xffffff);
+
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(255 * rate));
 	DrawBox(0, 0, 1280, 720, 0x000000, true);

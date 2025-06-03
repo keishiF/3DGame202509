@@ -8,23 +8,25 @@ namespace
 	// アニメーション名
 	// 待機
 	const char* kIdleAnimName         = "Idle";
+	// 歩き
+	const char* kWalkAnimName         = "Walking_B";
 	// 走り
 	const char* kRunAnimName          = "Running_A";
 	// 攻撃
-	const char* kChopAttackAnimName	  = "1H_Melee_Attack_Chop";
-	const char* kSliceAttackAnimName  = "1H_Melee_Attack_Slice_Diagonal";
-	const char* kStabAttackAnimName   = "1H_Melee_Attack_Stab";
+	const char* kChopAnimName	      = "1H_Melee_Attack_Chop";
+	const char* kSliceAnimName        = "1H_Melee_Attack_Slice_Diagonal";
+	const char* kStabAnimName         = "1H_Melee_Attack_Stab";
+	const char* kSpinAnimName         = "2H_Melee_Attack_Spin";
 	// 回避
 	const char* kDodgeAnimName		  = "Dodge_Forward";
+	// 死亡
+	const char* kDeadAnimName         = "Death_B";
 
 	// HPの初期値
 	constexpr int kHp = 100;
 	// 移動速度
-	constexpr float kSpeed = 3.5f;
-	// ジャンプ力
-	constexpr float kJumpSpeed = 20.0f;
-	// 重力
-	constexpr float kGravity = 0.75f;
+	constexpr float kWalkSpeed = 1.5f;
+	constexpr float kRunSpeed = 4.5f;
 	// プレイヤーのモデルの拡大値
 	constexpr float kPlayerModelScale = 45.0f;
 }
@@ -34,14 +36,16 @@ Player::Player() :
 	m_pos(0.0f, 0.0f, 0.0f),
 	m_vec(0.0f, 0.0f, 0.0f),
 	m_hp(kHp),
-	m_jumpSpeed(kJumpSpeed),
-	m_gravity(kGravity),
+	m_isWalk(false),
+	m_isRun(false),
 	m_isChop(false),
 	m_isSlice(false),
 	m_isStab(false),
-	m_isRun(false),
+	m_isSpin(false),
 	m_isDodge(false),
+	m_isDead(false),
 	m_frameCount(0.0f),
+	m_walkFrameCount(0.0f),
 	m_blendRate(0.0f),
 	m_state(&Player::IdleInit)
 {
@@ -86,24 +90,113 @@ void Player::IdleInit(Input& input)
 	// 待機アニメーションに変更
 	ChangeAnim(kIdleAnimName, true);
 	m_state = &Player::IdleUpdate;
+	(this->*m_state)(input);
 }
 
 void Player::IdleUpdate(Input& input)
 {
 	// 左スティックの入力があれば走り状態に移行するためのフラグを立てる
+	if (input.IsPress("LEFT") || input.IsPress("RIGHT") ||
+		input.IsPress("UP")   || input.IsPress("DOWN"))
+	{
+		m_isWalk = true;
+	}
+
+	// Aボタンの入力があれば攻撃状態に移行するためのフラグを立てる
+	if (input.IsTrigger("A"))
+	{
+		m_isChop = true;
+	}
+
+	// Xボタンの入力があれば強攻撃状態に移行するためのフラグを立てる
+	if (input.IsTrigger("X"))
+	{
+		m_isSpin = true;
+	}
+
+	// 走り状態に移行
+	if (m_isWalk)
+	{
+		m_state = &Player::WalkInit;
+	}
+	// 攻撃状態に移行
+	if (m_isChop)
+	{
+		m_state = &Player::ChopInit;
+	}
+	// 強攻撃状態に移行
+	if (m_isSpin)
+	{
+		m_state = &Player::SpinInit;
+	}
+#if _DEBUG
+	// 死亡状態に移行
+	if (input.IsTrigger("LB"))
+	{
+		m_state = &Player::DeadInit;
+	}
+#endif
+}
+
+void Player::WalkInit(Input& input)
+{
+	// 待機アニメーションに変更
+	ChangeAnim(kWalkAnimName, true);
+	m_state = &Player::WalkUpdate;
+	m_walkFrameCount = 0.0f;
+}
+
+void Player::WalkUpdate(Input& input)
+{
+	// 左スティックで移動
+	// 左入力
 	if (input.IsPress("LEFT"))
 	{
-		m_isRun = true;
+		m_vec.x = -kWalkSpeed;
 	}
-	if (input.IsPress("RIGHT"))
+	// 右入力
+	else if (input.IsPress("RIGHT"))
 	{
-		m_isRun = true;
+		m_vec.x = kWalkSpeed;
 	}
+	// 横方向の入力なし
+	else
+	{
+		m_vec.x = 0.0f;
+	}
+	// 上入力
 	if (input.IsPress("UP"))
 	{
-		m_isRun = true;
+		m_vec.z = kWalkSpeed;
 	}
-	if (input.IsPress("DOWN"))
+	// 下入力
+	else if (input.IsPress("DOWN"))
+	{
+		m_vec.z = -kWalkSpeed;
+	}
+	// 縦方向の入力なし
+	else
+	{
+		m_vec.z = 0.0f;
+	}
+
+	// ベクトルを正規化し移動速度をかけポジションに加算
+	m_vec.Normalize();
+	m_vec *= kWalkSpeed;
+	m_pos += m_vec;
+	MV1SetPosition(m_model, VGet(m_pos.x, m_pos.y, m_pos.z));
+
+	// 進行方向が0でなければ回転
+	if (m_vec.x != 0.0f || m_vec.z != 0.0f)
+	{
+		// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
+		float angleY = std::atan2(m_vec.x, -m_vec.z);
+		MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
+	}
+
+	// 一定フレーム経過したら走り状態に移行するためのフラグを立てる
+	++m_walkFrameCount;
+	if (m_walkFrameCount > 60.0f)
 	{
 		m_isRun = true;
 	}
@@ -114,15 +207,51 @@ void Player::IdleUpdate(Input& input)
 		m_isChop = true;
 	}
 
+	// Xボタンの入力があれば今日攻撃状態に移行するためのフラグを立てる
+	if (input.IsTrigger("X"))
+	{
+		m_isSpin = true;
+	}
+
+	// Bボタンの入力があれば回避状態に移行するためのフラグを立てる
+	if (input.IsTrigger("B"))
+	{
+		m_isDodge = true;
+	}
+
+	// 左スティックの入力がない場合待機状態に移行
+	if (m_vec.x == 0.0f && m_vec.z == 0.0f)
+	{
+		m_state  = &Player::IdleInit;
+		m_isWalk = false;
+	}
+
 	// 走り状態に移行
 	if (m_isRun)
 	{
-		m_state = &Player::RunInit;
+		m_state  = &Player::RunInit;
+		m_isWalk = false;
+		m_walkFrameCount = 0.0f;
 	}
+
 	// 攻撃状態に移行
 	if (m_isChop)
 	{
-		m_state = &Player::ChopAttackInit;
+		m_state  = &Player::ChopInit;
+		m_isWalk = false;
+	}
+
+	// 強攻撃状態に移行
+	if (m_isSpin)
+	{
+		m_state  = &Player::SpinInit;
+		m_isWalk = false;
+	}
+	// 回避状態に移行
+	if (m_isDodge)
+	{
+		m_state  = &Player::DodgeInit;
+		m_isWalk = false;
 	}
 }
 
@@ -140,12 +269,12 @@ void Player::RunUpdate(Input& input)
 	// 左入力
 	if (input.IsPress("LEFT"))
 	{
-		m_vec.x = -kSpeed;
+		m_vec.x = -kRunSpeed;
 	}
 	// 右入力
 	else if (input.IsPress("RIGHT"))
 	{
-		m_vec.x = kSpeed;
+		m_vec.x = kRunSpeed;
 	}
 	// 横方向の入力なし
 	else
@@ -155,12 +284,12 @@ void Player::RunUpdate(Input& input)
 	// 上入力
 	if (input.IsPress("UP"))
 	{
-		m_vec.z = kSpeed;
+		m_vec.z = kRunSpeed;
 	}
 	// 下入力
 	else if (input.IsPress("DOWN"))
 	{
-		m_vec.z = -kSpeed;
+		m_vec.z = -kRunSpeed;
 	}
 	// 縦方向の入力なし
 	else
@@ -170,7 +299,7 @@ void Player::RunUpdate(Input& input)
 
 	// ベクトルを正規化し移動速度をかけポジションに加算
 	m_vec.Normalize();
-	m_vec *= kSpeed;
+	m_vec *= kRunSpeed;
 	m_pos += m_vec;
 	MV1SetPosition(m_model, VGet(m_pos.x, m_pos.y, m_pos.z));
 
@@ -188,12 +317,18 @@ void Player::RunUpdate(Input& input)
 		m_isChop = true;
 	}
 
+	// Xボタンの入力があれば強攻撃状態に移行するためのフラグを立てる
+	if (input.IsTrigger("X"))
+	{
+		m_isSpin = true;
+	}
+
 	// Bボタンの入力があれば回避状態に移行するためのフラグを立てる
 	if (input.IsTrigger("B"))
 	{
 		m_isDodge = true;
 	}
-
+	
 	// 左スティックの入力がない場合待機状態に移行
 	if (m_vec.x == 0.0f && m_vec.z == 0.0f)
 	{
@@ -204,7 +339,14 @@ void Player::RunUpdate(Input& input)
 	// 攻撃状態に移行
 	if (m_isChop)
 	{
-		m_state = &Player::ChopAttackInit;
+		m_state = &Player::ChopInit;
+		m_isRun = false;
+	}
+
+	// 強攻撃状態に移行
+	if (m_isSpin)
+	{
+		m_state = &Player::SpinInit;
 		m_isRun = false;
 	}
 
@@ -216,15 +358,15 @@ void Player::RunUpdate(Input& input)
 	}
 }
 
-void Player::ChopAttackInit(Input& input)
+void Player::ChopInit(Input& input)
 {
 	// 攻撃アニメーションに変更
-	ChangeAnim(kChopAttackAnimName, false);
-	m_state = &Player::ChopAttackUpdate;
+	ChangeAnim(kChopAnimName, false);
+	m_state = &Player::ChopUpdate;
 	(this->*m_state)(input);
 }
 
-void Player::ChopAttackUpdate(Input& input)
+void Player::ChopUpdate(Input& input)
 {
 	// 1ボタンの入力があれば攻撃状態に移行するためのフラグを立てる
 	if (input.IsTrigger("A"))
@@ -237,7 +379,7 @@ void Player::ChopAttackUpdate(Input& input)
 	{
 		if (m_isSlice)
 		{
-			m_state = &Player::SliceAttackInit;
+			m_state = &Player::SliceInit;
 			m_isChop = false;
 		}
 		else
@@ -248,15 +390,15 @@ void Player::ChopAttackUpdate(Input& input)
 	}
 }
 
-void Player::SliceAttackInit(Input& input)
+void Player::SliceInit(Input& input)
 {
 	// 攻撃アニメーションに変更
-	ChangeAnim(kSliceAttackAnimName, false);
-	m_state = &Player::SliceAttackUpdate;
+	ChangeAnim(kSliceAnimName, false);
+	m_state = &Player::SliceUpdate;
 	(this->*m_state)(input);
 }
 
-void Player::SliceAttackUpdate(Input& input)
+void Player::SliceUpdate(Input& input)
 {
 	// 1ボタンの入力があれば攻撃状態に移行するためのフラグを立てる
 	if (input.IsTrigger("A"))
@@ -269,7 +411,7 @@ void Player::SliceAttackUpdate(Input& input)
 	{
 		if (m_isStab)
 		{
-			m_state = &Player::StabAttackInit;
+			m_state = &Player::StabInit;
 			m_isSlice = false;
 		}
 		else
@@ -280,15 +422,15 @@ void Player::SliceAttackUpdate(Input& input)
 	}
 }
 
-void Player::StabAttackInit(Input& input)
+void Player::StabInit(Input& input)
 {
 	// 攻撃アニメーションに変更
-	ChangeAnim(kStabAttackAnimName, false);
-	m_state = &Player::StabAttackUpdate;
+	ChangeAnim(kStabAnimName, false);
+	m_state = &Player::StabUpdate;
 	(this->*m_state)(input);
 }
 
-void Player::StabAttackUpdate(Input& input)
+void Player::StabUpdate(Input& input)
 {
 	// 1ボタンの入力があれば攻撃状態に移行するためのフラグを立てる
 	if (input.IsTrigger("A"))
@@ -301,7 +443,7 @@ void Player::StabAttackUpdate(Input& input)
 	{
 		if (m_isChop)
 		{
-			m_state = &Player::ChopAttackInit;
+			m_state = &Player::ChopInit;
 			m_isStab = false;
 		}
 		else
@@ -309,6 +451,22 @@ void Player::StabAttackUpdate(Input& input)
 			m_state = &Player::IdleInit;
 			m_isStab = false;
 		}
+	}
+}
+
+void Player::SpinInit(Input& input)
+{
+	// 強攻撃アニメーションに変更
+	ChangeAnim(kSpinAnimName, false);
+	m_state = &Player::SpinUpdate;
+}
+
+void Player::SpinUpdate(Input& input)
+{
+	if (m_nextAnim.isEnd)
+	{
+		m_state = &Player::IdleInit;
+		m_isSpin = false;
 	}
 }
 
@@ -327,6 +485,23 @@ void Player::DodgeUpdate(Input& input)
 	{
 		m_state = &Player::IdleInit;
 		m_isDodge = false;
+	}
+}
+
+void Player::DeadInit(Input& input)
+{
+	// 回避アニメーションに変更
+	ChangeAnim(kDeadAnimName, false);
+	m_state = &Player::DeadUpdate;
+	(this->*m_state)(input);
+}
+
+void Player::DeadUpdate(Input& input)
+{
+	// アニメーションが終了したら待機状態に戻る
+	if (m_nextAnim.isEnd)
+	{
+		m_isDead = true;
 	}
 }
 

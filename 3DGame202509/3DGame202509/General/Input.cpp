@@ -3,29 +3,35 @@
 
 Input::Input()
 {
-	m_inputActionMap["A"] =     { {InputType::keyboard, KEY_INPUT_SPACE},
+	m_inputActionMap["A"]     = { {InputType::keyboard, KEY_INPUT_8},
 							      {InputType::pad,      PAD_INPUT_2}};
 
-	m_inputActionMap["B"] =		{ {InputType::keyboard, KEY_INPUT_LSHIFT},
+	m_inputActionMap["B"]     =	{ {InputType::keyboard, KEY_INPUT_LSHIFT},
 								  {InputType::pad,      PAD_INPUT_1} };
 
-	m_inputActionMap["OK"] =    { {InputType::keyboard, KEY_INPUT_RETURN},
+	m_inputActionMap["X"]     = { {InputType::keyboard, KEY_INPUT_9},
+								  {InputType::pad,      PAD_INPUT_4} };
+
+	m_inputActionMap["OK"]    = { {InputType::keyboard, KEY_INPUT_RETURN},
 							      {InputType::pad,      PAD_INPUT_2} };
 
-	m_inputActionMap["UP"] =    { {InputType::keyboard, KEY_INPUT_W},
+	m_inputActionMap["UP"]    = { {InputType::keyboard, KEY_INPUT_W},
 							      {InputType::pad,      PAD_INPUT_UP} };
 
-	m_inputActionMap["DOWN"] =  { {InputType::keyboard, KEY_INPUT_S},
+	m_inputActionMap["DOWN"]  = { {InputType::keyboard, KEY_INPUT_S},
 							      {InputType::pad,      PAD_INPUT_DOWN} };
 
-	m_inputActionMap["LEFT"] =  { {InputType::keyboard, KEY_INPUT_A},
+	m_inputActionMap["LEFT"]  = { {InputType::keyboard, KEY_INPUT_A},
 							      {InputType::pad,      PAD_INPUT_LEFT} };
 
 	m_inputActionMap["RIGHT"] = { {InputType::keyboard, KEY_INPUT_D},
 							      {InputType::pad,      PAD_INPUT_RIGHT} };
 
-	m_inputActionMap["DEBUG"] = { {InputType::keyboard, KEY_INPUT_9},
+	m_inputActionMap["LB"]    = { {InputType::keyboard, KEY_INPUT_1},
 								  {InputType::pad,      PAD_INPUT_5} };
+
+	m_inputActionMap["RB"]    = { {InputType::keyboard, KEY_INPUT_2},
+								  {InputType::pad,      PAD_INPUT_6} };
 }
 
 void Input::Update()
