@@ -90,9 +90,6 @@
     <ClCompile Include="Animation.cpp">
       <Filter>ソース ファイル\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\APPDATA\LOCAL\TEMP\TMPA8F9.TMP.CPP">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">

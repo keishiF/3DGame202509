@@ -143,7 +143,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\APPDATA\LOCAL\TEMP\TMPA8F9.TMP.CPP" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameObject\Camera.cpp" />

@@ -46,6 +46,7 @@ private:
 
 private:
 	Vec3 m_pos;
+	int m_hp;
 	bool m_isDead;
 
 	using EnemyState = void(Enemy::*)();
