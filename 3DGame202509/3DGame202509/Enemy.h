@@ -2,7 +2,9 @@
 
 #include "Vec3.h"
 #include "Animation.h"
+#include <memory>
 
+class Player;
 class Enemy
 {
 public:
@@ -11,7 +13,7 @@ public:
 	virtual ~Enemy();
 
 	// 更新、描画
-	void Update();
+	void Update(std::shared_ptr<Player> player);
 	void Draw();
 
 	// プレイヤーの位置を取得
@@ -25,8 +27,8 @@ public:
 	// 状態
 private:
 	// 待機状態
-	void IdleInit();
-	void IdleUpdate();
+	void IdleInit(std::shared_ptr<Player> player);
+	void IdleUpdate(std::shared_ptr<Player> player);
 
 	// 発見状態
 	void FoundInit();
@@ -54,7 +56,7 @@ private:
 
 	bool m_isDead;
 
-	using EnemyState = void(Enemy::*)();
+	using EnemyState = void(Enemy::*)(std::shared_ptr<Player> player);
 	EnemyState m_state;
 
 	Animation m_anim;

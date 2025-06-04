@@ -65,6 +65,8 @@ private:
 	int m_model;
 	// プレイヤーの位置
 	Vec3 m_pos;
+	// プレイヤーの当たり判定
+	float m_radius;
 	// プレイヤーの移動量
 	Vec3 m_vec;
 	// プレイヤーのHP

@@ -57,7 +57,7 @@ void GameScene::NormalUpdate(Input& input)
 	++m_blinkFrame;
 
 	m_player->Update(input);
-	m_enemy->Update();
+	m_enemy->Update(m_player);
 	m_camera->Update(m_player);
 
 	if (m_player->IsDead())

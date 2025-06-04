@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "Player.h"
 #include "DxLib.h"
 
 #include <cassert>
@@ -48,20 +49,20 @@ Enemy::~Enemy()
 {
 }
 
-void Enemy::Update()
+void Enemy::Update(std::shared_ptr<Player> player)
 {
 	// アニメーションの更新
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
 	m_anim.UpdateAnimBlend();
-	(this->*m_state)();
+	(this->*m_state)(player);
 }
 
 void Enemy::Draw()
 {
 #if _DEBUG
 	DrawSphere3D(VGet(m_pos.x, m_pos.y, m_pos.z), 10.0f, 16, 0x0000ff, 0x0000ff, true);
-	DrawSphere3D(VGet(m_pos.x, m_pos.y, m_pos.z), m_findRadius, 16, 0xff00ff, 0xff00ff, false);
+	//DrawSphere3D(VGet(m_pos.x, m_pos.y, m_pos.z), m_findRadius, 16, 0xff00ff, 0xff00ff, false);
 #endif
 
 	MV1DrawModel(m_model);
@@ -72,14 +73,14 @@ void Enemy::OnDamage()
 	m_hp -= 1;
 }
 
-void Enemy::IdleInit()
+void Enemy::IdleInit(std::shared_ptr<Player> player)
 {
 	// 待機アニメーションに変更
 	m_anim.ChangeAnim(kIdleAnimName, true);
 	m_state = &Enemy::IdleUpdate;
-	(this->*m_state)();
+	(this->*m_state)(player);
 }
 
-void Enemy::IdleUpdate()
+void Enemy::IdleUpdate(std::shared_ptr<Player> player)
 {
 }

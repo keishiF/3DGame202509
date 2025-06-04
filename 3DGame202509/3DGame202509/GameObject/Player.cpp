@@ -24,6 +24,8 @@ namespace
 	// 死亡
 	const char* kDeadAnimName         = "Death_B";
 
+	// プレイヤーの当たり判定
+	constexpr float kRadius = 30.0f;
 	// HPの初期値
 	constexpr int kHp = 100;
 	// 移動速度
@@ -36,6 +38,7 @@ namespace
 Player::Player() :
 	m_model(-1),
 	m_pos(0.0f, 0.0f, 0.0f),
+	m_radius(kRadius),
 	m_vec(0.0f, 0.0f, 0.0f),
 	m_hp(kHp),
 	m_isWalk(false),
@@ -53,6 +56,7 @@ Player::Player() :
 	m_model = MV1LoadModel("Data/Player/Player.mv1");
 	assert(m_model >= 0);
 	MV1SetScale(m_model, VGet(kModelScale, kModelScale, kModelScale));
+	MV1SetPosition(m_model, VGet(m_pos.x, m_pos.y, m_pos.z));
 
 	m_anim.Init(m_model);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kIdleAnimName, true);
@@ -76,6 +80,7 @@ void Player::Draw()
 {
 #if _DEBUG
 	DrawSphere3D(VGet(m_pos.x, m_pos.y, m_pos.z), 10.0f, 16, 0x0000ff, 0x0000ff, true);
+	//DrawSphere3D(VGet(m_pos.x, m_pos.y, m_pos.z), m_radius, 16, 0xff00ff, 0xff00ff, false);
 #endif
 
 	MV1DrawModel(m_model);
