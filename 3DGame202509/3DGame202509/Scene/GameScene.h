@@ -5,6 +5,7 @@
 #include <memory>
 
 class Player;
+class Enemy;
 class Camera;
 class GameScene final:
 	public SceneBase
@@ -29,6 +30,7 @@ private:
 	DrawFunc_t m_draw;
 
 	std::shared_ptr<Player> m_player;
+	std::shared_ptr<Enemy>  m_enemy;
 	std::shared_ptr<Camera> m_camera;
 
 	// ’ÊíXVˆ—

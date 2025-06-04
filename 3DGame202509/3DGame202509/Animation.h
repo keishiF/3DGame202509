@@ -27,6 +27,8 @@ public:
 private:
 	AnimData m_nextAnim;
 	AnimData m_prevAnim;
+
+	// アニメーションを滑らかに変更するためのブレンド率
 	float m_blendRate;
 
 	int m_model;

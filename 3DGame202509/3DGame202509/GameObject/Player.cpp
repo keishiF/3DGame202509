@@ -30,7 +30,7 @@ namespace
 	constexpr float kWalkSpeed = 1.5f;
 	constexpr float kRunSpeed = 4.5f;
 	// プレイヤーのモデルの拡大値
-	constexpr float kPlayerModelScale = 45.0f;
+	constexpr float kModelScale = 45.0f;
 }
 
 Player::Player() :
@@ -48,16 +48,14 @@ Player::Player() :
 	m_isDead(false),
 	m_frameCount(0.0f),
 	m_walkFrameCount(0.0f),
-	m_blendRate(0.0f),
 	m_state(&Player::IdleInit)
 {
-	m_model = MV1LoadModel("Data/Model/Player/Player.mv1");
+	m_model = MV1LoadModel("Data/Player/Player.mv1");
 	assert(m_model >= 0);
-	MV1SetScale(m_model, VGet(kPlayerModelScale, kPlayerModelScale, kPlayerModelScale));
+	MV1SetScale(m_model, VGet(kModelScale, kModelScale, kModelScale));
 
 	m_anim.Init(m_model);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kIdleAnimName, true);
-	m_blendRate = 1.0f;
 }
 
 Player::~Player()

@@ -166,16 +166,12 @@
     <ClInclude Include="General\Application.h" />
     <ClInclude Include="General\Input.h" />
     <ClInclude Include="Quaternion.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\ResultScene.h" />
     <ClInclude Include="Scene\SceneBase.h" />
     <ClInclude Include="Scene\SceneController.h" />
     <ClInclude Include="Scene\TitleScene.h" />
     <ClInclude Include="Vec3.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="3DGame202509.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

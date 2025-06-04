@@ -83,9 +83,6 @@ private:
 	float m_frameCount;
 	float m_walkFrameCount;
 
-	// アニメーションを滑らかに変更するためのブレンド率
-	float m_blendRate;
-
 	// プレイヤーの状態を管理するための関数ポインタ
 	using PlayerState = void(Player::*)(Input&);
 	PlayerState m_state;

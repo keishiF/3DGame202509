@@ -45,8 +45,13 @@ private:
 	void DeadUpdate();
 
 private:
+	int m_model;
+
 	Vec3 m_pos;
+	float m_findRadius;
+
 	int m_hp;
+
 	bool m_isDead;
 
 	using EnemyState = void(Enemy::*)();

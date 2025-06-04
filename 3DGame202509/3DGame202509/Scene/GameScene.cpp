@@ -3,6 +3,7 @@
 #include "ResultScene.h"
 #include "SceneController.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "Camera.h"
 #include "game.h"
 #include "Input.h"
@@ -20,17 +21,18 @@ namespace
 GameScene::GameScene(SceneController& controller) :
 	SceneBase(controller),
 	m_frame(0),
-	m_fadeFrame(0),
+	m_fadeFrame(kFadeInterval),
 	m_blinkFrame(0),
-	m_skyModel(0),
+	m_skyModel(-1),
 	m_update(&GameScene::FadeInUpdate),
 	m_draw(&GameScene::FadeDraw)
 {
-	m_skyModel = MV1LoadModel("Data/Model/Sky/Sky_Daylight01.mv1");
+	m_skyModel = MV1LoadModel("Data/Sky/Sky_Daylight01.mv1");
 	assert(m_skyModel >= 0);
 	MV1SetScale(m_skyModel, VGet(kSkyModelScale, kSkyModelScale, kSkyModelScale));
 
 	m_player = std::make_shared<Player>();
+	m_enemy  = std::make_shared<Enemy>();
 	m_camera = std::make_shared<Camera>();
 	m_camera->SetCamera(m_player);
 }
@@ -55,6 +57,7 @@ void GameScene::NormalUpdate(Input& input)
 	++m_blinkFrame;
 
 	m_player->Update(input);
+	m_enemy->Update();
 	m_camera->Update(m_player);
 
 	if (m_player->IsDead())
@@ -67,7 +70,7 @@ void GameScene::NormalUpdate(Input& input)
 
 void GameScene::FadeInUpdate(Input&)
 {
-	if (m_fadeFrame-- <= 0)
+	if (--m_fadeFrame <= 0)
 	{
 		m_update = &GameScene::NormalUpdate;
 		m_draw = &GameScene::NormalDraw;
@@ -98,6 +101,7 @@ void GameScene::NormalDraw()
 
 	DrawField();
 	m_player->Draw();
+	m_enemy->Draw();
 }
 
 void GameScene::FadeDraw()
@@ -106,10 +110,11 @@ void GameScene::FadeDraw()
 
 	DrawField();
 	m_player->Draw();
+	m_enemy->Draw();
 
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(255 * rate));
-	DrawBox(0, 0, 1280, 720, 0x000000, true);
+	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));
+	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 

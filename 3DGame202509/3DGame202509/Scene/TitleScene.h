@@ -13,6 +13,8 @@ public:
 	virtual void Draw() override;
 
 private:
+	int m_skyModel;
+
 	int m_fadeFrame;
 	int m_blinkFrame;
 
