@@ -24,27 +24,34 @@ public:
 
 	bool IsDead() const { return m_isDead; }
 
-	// ó‘Ô
+	// “G‚Ìó‘Ô
 private:
+	enum class EnemyState
+	{
+		Idle,
+		Found,
+		Attack,
+		Hit,
+		Dead
+	};
+
+	EnemyState m_state;
+	void ChangeState(EnemyState newState);
+
 	// ‘Ò‹@ó‘Ô
-	void IdleInit(std::shared_ptr<Player> player);
 	void IdleUpdate(std::shared_ptr<Player> player);
 
 	// ”­Œ©ó‘Ô
-	void FoundInit();
-	void FoundUpdate();
+	void FoundUpdate(std::shared_ptr<Player> player);
 
 	// UŒ‚ó‘Ô
-	void AttackInit();
-	void AttackUpdate();
+	void AttackUpdate(std::shared_ptr<Player> player);
 
 	// ”í’eó‘Ô
-	void HitInit();
-	void HitUpdate();
+	void HitUpdate(std::shared_ptr<Player> player);
 
 	// €–Só‘Ô
-	void DeadInit();
-	void DeadUpdate();
+	void DeadUpdate(std::shared_ptr<Player> player);
 
 private:
 	int m_model;
@@ -55,9 +62,6 @@ private:
 	int m_hp;
 
 	bool m_isDead;
-
-	using EnemyState = void(Enemy::*)(std::shared_ptr<Player> player);
-	EnemyState m_state;
 
 	Animation m_anim;
 };

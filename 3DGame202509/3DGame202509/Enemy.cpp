@@ -34,7 +34,7 @@ Enemy::Enemy() :
 	m_findRadius(kFindRadius),
 	m_hp(kHp),
 	m_isDead(false),
-	m_state(&Enemy::IdleInit)
+	m_state(EnemyState::Idle)
 {
 	m_model = MV1LoadModel("Data/Enemy/Enemy.mv1");
 	assert(m_model >= 0);
@@ -55,7 +55,25 @@ void Enemy::Update(std::shared_ptr<Player> player)
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
 	m_anim.UpdateAnimBlend();
-	(this->*m_state)(player);
+
+	switch (m_state)
+	{
+	case EnemyState::Idle:
+		IdleUpdate(player);
+		break;
+	case EnemyState::Found:
+		FoundUpdate(player);
+		break;
+	case EnemyState::Attack:
+		AttackUpdate(player);
+		break;
+	case EnemyState::Hit:
+		HitUpdate(player);
+		break;
+	case EnemyState::Dead:
+		DeadUpdate(player);
+		break;
+	}
 }
 
 void Enemy::Draw()
@@ -73,14 +91,49 @@ void Enemy::OnDamage()
 	m_hp -= 1;
 }
 
-void Enemy::IdleInit(std::shared_ptr<Player> player)
+void Enemy::ChangeState(EnemyState newState)
 {
-	// 待機アニメーションに変更
-	m_anim.ChangeAnim(kIdleAnimName, true);
-	m_state = &Enemy::IdleUpdate;
-	(this->*m_state)(player);
+	// 現在の状態と次の状態が同じ場合return
+	if (m_state == newState) return;
+
+	m_state = newState;
+
+	switch (m_state)
+	{
+	case EnemyState::Idle:
+		m_anim.ChangeAnim(kIdleAnimName, true);
+		break;
+	case EnemyState::Found:
+		m_anim.ChangeAnim(kFoundAnimName, false);
+		break;
+	case EnemyState::Attack:
+		m_anim.ChangeAnim(kAttackAnimName, false);
+		break;
+	case EnemyState::Hit:
+		m_anim.ChangeAnim(kHitAnimName, false);
+		break;
+	case EnemyState::Dead:
+		m_anim.ChangeAnim(kDeadAnimName, false);
+		break;
+	}
 }
 
 void Enemy::IdleUpdate(std::shared_ptr<Player> player)
+{
+}
+
+void Enemy::FoundUpdate(std::shared_ptr<Player> player)
+{
+}
+
+void Enemy::AttackUpdate(std::shared_ptr<Player> player)
+{
+}
+
+void Enemy::HitUpdate(std::shared_ptr<Player> player)
+{
+}
+
+void Enemy::DeadUpdate(std::shared_ptr<Player> player)
 {
 }

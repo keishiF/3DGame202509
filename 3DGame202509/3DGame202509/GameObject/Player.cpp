@@ -17,6 +17,7 @@ namespace
 	const char* kSliceAnimName        = "1H_Melee_Attack_Slice_Diagonal";
 	const char* kStabAnimName         = "1H_Melee_Attack_Stab";
 	const char* kSpinAnimName         = "2H_Melee_Attack_Spin";
+	const char* kUltimateAnimName      = "";
 	// ‰ñ”ð
 	const char* kDodgeAnimName		  = "Dodge_Forward";
 	// ”í’e
@@ -90,6 +91,9 @@ void Player::Update(Input& input)
 	case PlayerState::Spin:
 		SpinUpdate(input);
 		break;
+	case PlayerState::Ultimate:
+		UltimateUpdate(input);
+		break;
 	case PlayerState::Dodge:
 		DodgeUpdate(input);
 		break;
@@ -146,6 +150,9 @@ void Player::ChangeState(PlayerState newState)
 		break;
 	case PlayerState::Spin:
 		m_anim.ChangeAnim(kSpinAnimName, false);
+		break;
+	case PlayerState::Ultimate:
+		m_anim.ChangeAnim(kUltimateAnimName, false);
 		break;
 	case PlayerState::Dodge:
 		m_anim.ChangeAnim(kDodgeAnimName, false);
@@ -420,6 +427,14 @@ void Player::StabUpdate(Input& input)
 }
 
 void Player::SpinUpdate(Input& input)
+{
+	if (m_anim.GetNextAnim().isEnd)
+	{
+		ChangeState(PlayerState::Idle);
+	}
+}
+
+void Player::UltimateUpdate(Input& input)
 {
 	if (m_anim.GetNextAnim().isEnd)
 	{

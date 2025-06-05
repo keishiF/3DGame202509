@@ -28,16 +28,17 @@ public:
 private:
 	enum class PlayerState
 	{
-		Idle,
-		Walk,
-		Run,
-		Chop,
-		Slice,
-		Stab,
-		Spin,
-		Dodge, 
-		Hit,
-		Dead
+		Idle,     // ‘Ò‹@
+		Walk,     // •à‚«
+		Run,      // ‘–‚è
+		Chop,     // UŒ‚1’i–Ú
+		Slice,    // UŒ‚2’i–Ú
+		Stab,     // UŒ‚3’i–Ú
+		Spin,     // ‹­UŒ‚
+		Ultimate, // •KE‹Z
+		Dodge,    // ‰ñ”ğ
+		Hit,      // ”í’e
+		Dead      // €–S
 	};
 
 	PlayerState m_state;
@@ -57,6 +58,7 @@ private:
 	void SliceUpdate(Input& input);
 	void StabUpdate(Input& input);
 	void SpinUpdate(Input& input);
+	void UltimateUpdate(Input& input);
 
 	// ‰ñ”ğó‘Ô
 	void DodgeUpdate(Input& input);
