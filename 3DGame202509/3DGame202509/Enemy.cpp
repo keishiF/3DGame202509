@@ -36,7 +36,7 @@ Enemy::Enemy() :
 	m_isDead(false),
 	m_state(EnemyState::Idle)
 {
-	m_model = MV1LoadModel("Data/Enemy/Enemy.mv1");
+	m_model = MV1LoadModel("Data/Enemy/Skeleton.mv1");
 	assert(m_model >= 0);
 	MV1SetScale(m_model, VGet(kModelScale, kModelScale, kModelScale));
 	MV1SetPosition(m_model, VGet(m_pos.x, m_pos.y, m_pos.z));
