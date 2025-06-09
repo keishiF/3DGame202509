@@ -34,7 +34,8 @@ Input::Input()
 								  {InputType::pad,      PAD_INPUT_6} };
 
 	m_inputActionMap["LPush"] = { {InputType::keyboard, KEY_INPUT_LCONTROL},
-								  {InputType::pad,      PAD_INPUT_9} };
+								  {InputType::pad,      PAD_INPUT_9}, 
+								  {InputType::pad,      PAD_INPUT_11} };
 }
 
 void Input::Update()
