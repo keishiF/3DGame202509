@@ -28,8 +28,8 @@ public:
 private:
 	enum class EnemyState
 	{
-		Idle,
-		Found,
+		Find,
+		Chase,
 		Attack,
 		Hit,
 		Dead
@@ -39,10 +39,10 @@ private:
 	void ChangeState(EnemyState newState);
 
 	// ‘Ò‹@ó‘Ô
-	void IdleUpdate(std::shared_ptr<Player> player);
+	void FindUpdate(std::shared_ptr<Player> player);
 
 	// ”­Œ©ó‘Ô
-	void FoundUpdate(std::shared_ptr<Player> player);
+	void ChaseUpdate(std::shared_ptr<Player> player);
 
 	// UŒ‚ó‘Ô
 	void AttackUpdate(std::shared_ptr<Player> player);
@@ -54,14 +54,19 @@ private:
 	void DeadUpdate(std::shared_ptr<Player> player);
 
 private:
-	int m_model;
+	int m_minionModel;
+	int m_bladeModel;
 
 	Vec3 m_pos;
+	float m_radius;
 	float m_findRadius;
+	float m_attackRadius;
 
 	int m_hp;
 
 	bool m_isDead;
+	bool m_isFind;
+	bool m_isAttack;
 
 	Animation m_anim;
 };

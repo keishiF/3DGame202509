@@ -18,6 +18,7 @@ public:
 
 	// プレイヤーの位置を取得
 	Vec3 GetPos() const { return m_pos; }
+	float GetRadius() const { return m_radius; }
 
 	// ダメージを受けた時の処理をまとめる関数
 	void OnDamage();

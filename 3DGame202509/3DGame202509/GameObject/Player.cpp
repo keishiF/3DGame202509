@@ -7,7 +7,7 @@ namespace
 {
 	// アニメーション名
 	// 待機
-	const char* kIdleAnimName         = "Idle";
+	const char* kFindAnimName         = "Idle";
 	// 歩き
 	const char* kWalkAnimName         = "Walking_B";
 	// 走り
@@ -26,7 +26,7 @@ namespace
 	const char* kDeadAnimName         = "Death_B";
 
 	// プレイヤーの当たり判定
-	constexpr float kRadius = 30.0f;
+	constexpr float kRadius = 15.0f;
 	// HPの初期値
 	constexpr int kHp = 100;
 	// 移動速度
@@ -53,7 +53,7 @@ Player::Player() :
 	MV1SetPosition(m_model, VGet(m_pos.x, m_pos.y, m_pos.z));
 
 	m_anim.Init(m_model);
-	m_anim.AttachAnim(m_anim.GetNextAnim(), kIdleAnimName, true);
+	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, true);
 }
 
 Player::~Player()
@@ -111,6 +111,8 @@ void Player::Draw()
 #if _DEBUG
 	DrawSphere3D(VGet(m_pos.x, m_pos.y, m_pos.z), 10.0f, 16, 0x0000ff, 0x0000ff, true);
 	//DrawSphere3D(VGet(m_pos.x, m_pos.y, m_pos.z), m_radius, 16, 0xff00ff, 0xff00ff, false);
+	DrawCapsule3D(VGet(m_pos.x, m_pos.y + 10.0f, m_pos.z), VGet(m_pos.x, m_pos.y + 90.0f, m_pos.z),
+		m_radius, 16, 0xff00ff, 0xff00ff, false);
 #endif
 
 	MV1DrawModel(m_model);
@@ -131,7 +133,7 @@ void Player::ChangeState(PlayerState newState)
 	switch (m_state)
 	{
 	case PlayerState::Idle:
-		m_anim.ChangeAnim(kIdleAnimName, true);
+		m_anim.ChangeAnim(kFindAnimName, true);
 		break;
 	case PlayerState::Walk:
 		m_anim.ChangeAnim(kWalkAnimName, true);
