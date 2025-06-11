@@ -17,7 +17,7 @@ namespace
 	const char* kSliceAnimName        = "1H_Melee_Attack_Slice_Diagonal";
 	const char* kStabAnimName         = "1H_Melee_Attack_Stab";
 	const char* kSpinAnimName         = "2H_Melee_Attack_Spin";
-	const char* kUltimateAnimName      = "";
+	const char* kUltimateAnimName     = "";
 	// ‰ñ”ð
 	const char* kDodgeAnimName		  = "Dodge_Forward";
 	// ”í’e
