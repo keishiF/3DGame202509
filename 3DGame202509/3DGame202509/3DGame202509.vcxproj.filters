@@ -45,6 +45,12 @@
     <Filter Include="ヘッダー ファイル\GameObject\Enemy">
       <UniqueIdentifier>{738318ab-b392-427b-9151-52e519aaadda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\MyLib">
+      <UniqueIdentifier>{dbc68201-194e-4ec9-912c-e8551072103c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\MyLib">
+      <UniqueIdentifier>{a7c5dee3-a162-4943-a2d3-ce3cf18fb5ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -59,9 +65,6 @@
     <ClCompile Include="Scene\SceneController.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="General\Input.cpp">
-      <Filter>ソース ファイル\General</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\GameScene.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
@@ -74,17 +77,23 @@
     <ClCompile Include="Scene\ResultScene.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Quaternion.cpp">
-      <Filter>ソース ファイル\General</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject\Player.cpp">
       <Filter>ソース ファイル\GameObject\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>ソース ファイル\GameObject\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Animation.cpp">
       <Filter>ソース ファイル\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Input.cpp">
+      <Filter>ソース ファイル\MyLib</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Quaternion.cpp">
+      <Filter>ソース ファイル\MyLib</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Enemy.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Collidable.cpp">
+      <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -100,9 +109,6 @@
     <ClInclude Include="Scene\SceneController.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="General\Input.h">
-      <Filter>ヘッダー ファイル\General</Filter>
-    </ClInclude>
     <ClInclude Include="Scene\GameScene.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
@@ -115,20 +121,26 @@
     <ClInclude Include="Scene\ResultScene.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Vec3.h">
-      <Filter>ヘッダー ファイル\General</Filter>
-    </ClInclude>
-    <ClInclude Include="Quaternion.h">
-      <Filter>ヘッダー ファイル\General</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject\Player.h">
       <Filter>ヘッダー ファイル\GameObject\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>ヘッダー ファイル\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Vec3.h">
+      <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Input.h">
+      <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Quaternion.h">
+      <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Collidable.h">
+      <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

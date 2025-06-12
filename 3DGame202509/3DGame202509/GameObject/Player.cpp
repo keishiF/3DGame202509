@@ -1,5 +1,7 @@
 #include "Player.h"
 
+#include "Animation.h"
+
 #include "DxLib.h"
 #include <cassert>
 
@@ -37,6 +39,7 @@ namespace
 }
 
 Player::Player() :
+	Collidable(Tag::Player, Priority::High),
 	m_model(-1),
 	m_pos(0.0f, 0.0f, 0.0f),
 	m_radius(kRadius),
@@ -52,8 +55,8 @@ Player::Player() :
 	MV1SetScale(m_model, VGet(kModelScale, kModelScale, kModelScale));
 	MV1SetPosition(m_model, VGet(m_pos.x, m_pos.y, m_pos.z));
 
-	m_anim.Init(m_model);
-	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, true);
+	m_anim->Init(m_model);
+	m_anim->AttachAnim(m_anim->GetNextAnim(), kFindAnimName, true);
 }
 
 Player::~Player()
@@ -64,9 +67,9 @@ Player::~Player()
 void Player::Update(Input& input)
 {	
 	// アニメーションの更新
-	m_anim.UpdateAnim(m_anim.GetPrevAnim());
-	m_anim.UpdateAnim(m_anim.GetNextAnim());
-	m_anim.UpdateAnimBlend();
+	m_anim->UpdateAnim(m_anim->GetPrevAnim());
+	m_anim->UpdateAnim(m_anim->GetNextAnim());
+	m_anim->UpdateAnimBlend();
 
 	switch (m_state)
 	{
@@ -118,6 +121,11 @@ void Player::Draw()
 	MV1DrawModel(m_model);
 }
 
+void Player::OnCollide(const Collidable& collider)
+{
+	OnDamage();
+}
+
 void Player::OnDamage()
 {
 	m_hp--;
@@ -133,37 +141,37 @@ void Player::ChangeState(PlayerState newState)
 	switch (m_state)
 	{
 	case PlayerState::Idle:
-		m_anim.ChangeAnim(kFindAnimName, true);
+		m_anim->ChangeAnim(kFindAnimName, true);
 		break;
 	case PlayerState::Walk:
-		m_anim.ChangeAnim(kWalkAnimName, true);
+		m_anim->ChangeAnim(kWalkAnimName, true);
 		break;
 	case PlayerState::Run:
-		m_anim.ChangeAnim(kRunAnimName, true);
+		m_anim->ChangeAnim(kRunAnimName, true);
 		break;
 	case PlayerState::Chop:
-		m_anim.ChangeAnim(kChopAnimName, false);
+		m_anim->ChangeAnim(kChopAnimName, false);
 		break;
 	case PlayerState::Slice:
-		m_anim.ChangeAnim(kSliceAnimName, false);
+		m_anim->ChangeAnim(kSliceAnimName, false);
 		break;
 	case PlayerState::Stab:
-		m_anim.ChangeAnim(kStabAnimName, false);
+		m_anim->ChangeAnim(kStabAnimName, false);
 		break;
 	case PlayerState::Spin:
-		m_anim.ChangeAnim(kSpinAnimName, false);
+		m_anim->ChangeAnim(kSpinAnimName, false);
 		break;
 	case PlayerState::Ultimate:
-		m_anim.ChangeAnim(kUltimateAnimName, false);
+		m_anim->ChangeAnim(kUltimateAnimName, false);
 		break;
 	case PlayerState::Dodge:
-		m_anim.ChangeAnim(kDodgeAnimName, false);
+		m_anim->ChangeAnim(kDodgeAnimName, false);
 		break;
 	case PlayerState::Hit:
-		m_anim.ChangeAnim(kHitAnimName, false);
+		m_anim->ChangeAnim(kHitAnimName, false);
 		break;
 	case PlayerState::Dead:
-		m_anim.ChangeAnim(kDeadAnimName, false);
+		m_anim->ChangeAnim(kDeadAnimName, false);
 		break;
 	}
 }
@@ -364,7 +372,7 @@ void Player::ChopUpdate(Input& input)
 	}
 
 	// アニメーションが終了時
-	if (m_anim.GetNextAnim().isEnd)
+	if (m_anim->GetNextAnim().isEnd)
 	{
 		// 1ボタンの入力があれば攻撃状態に移行する
 		if (m_isCombo)
@@ -389,7 +397,7 @@ void Player::SliceUpdate(Input& input)
 	}
 
 	// アニメーションが終了したら待機状態に戻る
-	if (m_anim.GetNextAnim().isEnd)
+	if (m_anim->GetNextAnim().isEnd)
 	{
 		// 1ボタンの入力があれば攻撃状態に移行する
 		if (m_isCombo)
@@ -413,7 +421,7 @@ void Player::StabUpdate(Input& input)
 	}
 
 	// アニメーションが終了したら待機状態に戻る
-	if (m_anim.GetNextAnim().isEnd)
+	if (m_anim->GetNextAnim().isEnd)
 	{
 		// 1ボタンの入力があれば攻撃状態に移行する
 		if (m_isCombo)
@@ -430,7 +438,7 @@ void Player::StabUpdate(Input& input)
 
 void Player::SpinUpdate(Input& input)
 {
-	if (m_anim.GetNextAnim().isEnd)
+	if (m_anim->GetNextAnim().isEnd)
 	{
 		ChangeState(PlayerState::Idle);
 	}
@@ -438,7 +446,7 @@ void Player::SpinUpdate(Input& input)
 
 void Player::UltimateUpdate(Input& input)
 {
-	if (m_anim.GetNextAnim().isEnd)
+	if (m_anim->GetNextAnim().isEnd)
 	{
 		ChangeState(PlayerState::Idle);
 	}
@@ -447,7 +455,7 @@ void Player::UltimateUpdate(Input& input)
 void Player::DodgeUpdate(Input& input)
 {
 	// アニメーションが終了したら待機状態に戻る
-	if (m_anim.GetNextAnim().isEnd)
+	if (m_anim->GetNextAnim().isEnd)
 	{
 		ChangeState(PlayerState::Idle);
 	}
@@ -456,7 +464,7 @@ void Player::DodgeUpdate(Input& input)
 void Player::HitUpdate(Input& input)
 {
 	// アニメーションが終了したら待機状態に戻る
-	if (m_anim.GetNextAnim().isEnd)
+	if (m_anim->GetNextAnim().isEnd)
 	{
 		ChangeState(PlayerState::Idle);
 	}
@@ -465,7 +473,7 @@ void Player::HitUpdate(Input& input)
 void Player::DeadUpdate(Input& input)
 {
 	// アニメーションが終了したら待機状態に戻る
-	if (m_anim.GetNextAnim().isEnd)
+	if (m_anim->GetNextAnim().isEnd)
 	{
 		m_isDead = true;
 	}

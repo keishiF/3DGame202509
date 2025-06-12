@@ -144,13 +144,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
-    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameObject\Camera.cpp" />
+    <ClCompile Include="GameObject\Enemy.cpp" />
     <ClCompile Include="GameObject\Player.cpp" />
     <ClCompile Include="General\Application.cpp" />
-    <ClCompile Include="General\Input.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Quaternion.cpp" />
+    <ClCompile Include="MyLib\Collidable.cpp" />
+    <ClCompile Include="MyLib\Input.cpp" />
+    <ClCompile Include="MyLib\Quaternion.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\ResultScene.cpp" />
     <ClCompile Include="Scene\SceneBase.cpp" />
@@ -159,19 +160,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
-    <ClInclude Include="Enemy.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="GameObject\Camera.h" />
+    <ClInclude Include="GameObject\Enemy.h" />
     <ClInclude Include="GameObject\Player.h" />
     <ClInclude Include="General\Application.h" />
-    <ClInclude Include="General\Input.h" />
-    <ClInclude Include="Quaternion.h" />
+    <ClInclude Include="MyLib\Collidable.h" />
+    <ClInclude Include="MyLib\Input.h" />
+    <ClInclude Include="MyLib\Quaternion.h" />
+    <ClInclude Include="MyLib\Vec3.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\ResultScene.h" />
     <ClInclude Include="Scene\SceneBase.h" />
     <ClInclude Include="Scene\SceneController.h" />
     <ClInclude Include="Scene\TitleScene.h" />
-    <ClInclude Include="Vec3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
