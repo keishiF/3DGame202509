@@ -31,10 +31,10 @@ namespace
 
 	// モデルの拡大率
 	constexpr float kModelScale = 45.0f;
+	constexpr float kBladeModelScale = 0.01f;
 }
 
 Enemy::Enemy() :
-	Collidable(Tag::Enemy, Priority::Low),
 	m_minionModel(-1),
 	m_bladeModel(-1),
 	m_pos(300.0f, 0.0f, 300.0f),
@@ -47,23 +47,16 @@ Enemy::Enemy() :
 	m_isAttack(false),
 	m_state(EnemyState::Find)
 {
-	m_minionModel = MV1LoadModel("Data/Enemy/Enemy2.mv1");
+	m_minionModel = MV1LoadModel("Data/Enemy/Enemy.mv1");
 	assert(m_minionModel >= 0);
 	m_bladeModel = MV1LoadModel("Data/Enemy/Blade.mv1");
 	assert(m_bladeModel >= 0);
 	MV1SetScale(m_minionModel, VGet(kModelScale, kModelScale, kModelScale));
 
-	/*MV1SetMatrix(m_minionModel, MGetIdent());
-	VECTOR position = MV1GetFramePosition(m_minionModel, 14);
-	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
-	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(m_bladeModel, 0);
-	MATRIX mixMat   = MMult(transMat, frameMat);
-	MV1SetMatrix(m_minionModel, mixMat);*/
-
 	MV1SetPosition(m_minionModel, VGet(m_pos.x, m_pos.y, m_pos.z));
 
-	m_anim->Init(m_minionModel);
-	m_anim->AttachAnim(m_anim->GetNextAnim(), kFindAnimName, true);
+	m_anim.Init(m_minionModel);
+	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, true);
 }
 
 Enemy::~Enemy()
@@ -73,9 +66,30 @@ Enemy::~Enemy()
 void Enemy::Update(std::shared_ptr<Player> player)
 {
 	// アニメーションの更新
-	m_anim->UpdateAnim(m_anim->GetPrevAnim());
-	m_anim->UpdateAnim(m_anim->GetNextAnim());
-	m_anim->UpdateAnimBlend();
+	m_anim.UpdateAnim(m_anim.GetPrevAnim());
+	m_anim.UpdateAnim(m_anim.GetNextAnim());
+	m_anim.UpdateAnimBlend();
+
+	// アタッチするモデルのMV1SetMatrixの設定を無効化する
+	MV1SetMatrix(m_bladeModel, MGetIdent());
+	// アタッチするモデルのフレームの座標を取得する
+	VECTOR position = MV1GetFramePosition(m_bladeModel, 0);
+	// アタッチするモデルを,フレームの座標を原点にするための平行移動行列を作成
+	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
+	// アタッチされるモデルのフレームの行列を取得
+	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(m_minionModel, 14);
+	// アタッチするモデルの拡大行列を取得
+	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
+	// アタッチするモデルの回転行列を取得
+	MATRIX yMat     = MGetRotY(DX_PI_F);
+	// 各行列を合成
+	MATRIX mixMat = MGetIdent();
+	mixMat = MMult(transMat, mixMat);
+	mixMat = MMult(frameMat, mixMat);
+	mixMat = MMult(scaleMat, mixMat);
+	mixMat = MMult(yMat, mixMat);
+	// 合成した行列をモデルにセット
+	MV1SetMatrix(m_bladeModel, mixMat);
 
 	switch (m_state)
 	{
@@ -108,11 +122,7 @@ void Enemy::Draw()
 #endif
 
 	MV1DrawModel(m_minionModel);
-}
-
-void Enemy::OnCollide(const Collidable& collider)
-{
-	OnDamage();
+	MV1DrawModel(m_bladeModel);
 }
 
 void Enemy::OnDamage()
@@ -130,19 +140,19 @@ void Enemy::ChangeState(EnemyState newState)
 	switch (m_state)
 	{
 	case EnemyState::Find:
-		m_anim->ChangeAnim(kFindAnimName, true);
+		m_anim.ChangeAnim(kFindAnimName, true);
 		break;
 	case EnemyState::Chase:
-		m_anim->ChangeAnim(kChaseAnimName, true);
+		m_anim.ChangeAnim(kChaseAnimName, true);
 		break;
 	case EnemyState::Attack:
-		m_anim->ChangeAnim(kAttackAnimName, false);
+		m_anim.ChangeAnim(kAttackAnimName, false);
 		break;
 	case EnemyState::Hit:
-		m_anim->ChangeAnim(kHitAnimName, false);
+		m_anim.ChangeAnim(kHitAnimName, false);
 		break;
 	case EnemyState::Dead:
-		m_anim->ChangeAnim(kDeadAnimName, false);
+		m_anim.ChangeAnim(kDeadAnimName, false);
 		break;
 	}
 }
@@ -172,7 +182,7 @@ void Enemy::ChaseUpdate(std::shared_ptr<Player> player)
 
 void Enemy::AttackUpdate(std::shared_ptr<Player> player)
 {
-	if (m_anim->GetNextAnim().isEnd)
+	if (m_anim.GetNextAnim().isEnd)
 	{
 		float distance = (m_pos - player->GetPos()).Length();
 		if (distance >= (m_findRadius + player->GetRadius()))

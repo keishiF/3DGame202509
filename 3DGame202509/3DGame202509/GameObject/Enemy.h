@@ -1,12 +1,11 @@
 #pragma once
 
 #include "Vec3.h"
-#include "Collidable.h"
+#include "Animation.h"
 #include <memory>
 
-class Animation;
 class Player;
-class Enemy : public Collidable
+class Enemy
 {
 public:
 	// コンストラクタとデストラクタ
@@ -20,7 +19,6 @@ public:
 	// プレイヤーの位置を取得
 	Vec3 GetPos() const { return m_pos; }
 
-	void OnCollide(const Collidable& collider) override;
 	// ダメージを受けた時の処理をまとめる関数
 	void OnDamage();
 
@@ -70,6 +68,6 @@ private:
 	bool m_isFind;
 	bool m_isAttack;
 
-	Animation *m_anim;
+	Animation m_anim;
 };
 

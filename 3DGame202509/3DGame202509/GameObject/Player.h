@@ -2,11 +2,10 @@
 
 #include "Input.h"
 #include "Vec3.h"
-#include "Collidable.h"
+#include "Animation.h"
 #include <memory>
 
-class Animation;
-class Player : public Collidable
+class Player
 {
 public:
 	// コンストラクタとデストラクタ
@@ -21,7 +20,6 @@ public:
 	Vec3 GetPos() const { return m_pos; }
 	float GetRadius() const { return m_radius; }
 
-	void OnCollide(const Collidable& collider) abstract;
 	// ダメージを受けた時の処理をまとめる関数
 	void OnDamage();
 
@@ -91,6 +89,6 @@ private:
 	float m_frameCount;
 
 	// プレイヤーのアニメーション
-	Animation *m_anim;
+	Animation m_anim;
 };
 
