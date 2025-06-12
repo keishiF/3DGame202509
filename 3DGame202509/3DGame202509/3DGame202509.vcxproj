@@ -76,14 +76,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -94,7 +94,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -103,7 +103,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -112,14 +112,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -130,7 +130,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -139,7 +139,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
