@@ -1,10 +1,11 @@
-#include "Minion.h"
+#include "EnemyMinion.h"
 #include "Player/Player.h"
 
 #include "Animation.h"
 
 #include "DxLib.h"
 #include <cassert>
+#include "EnemyBase.h"
 
 namespace
 {
@@ -34,7 +35,7 @@ namespace
 	constexpr float kBladeModelScale = 0.01f;
 }
 
-Minion::Minion() :
+EnemyMinion::EnemyMinion() :
 	m_minionModel(-1),
 	m_bladeModel(-1),
 	m_pos(300.0f, 0.0f, 300.0f),
@@ -59,11 +60,11 @@ Minion::Minion() :
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, true);
 }
 
-Minion::~Minion()
+EnemyMinion::~EnemyMinion()
 {
 }
 
-void Minion::Update(std::shared_ptr<Player> player)
+void EnemyMinion::Update(std::shared_ptr<Player> player)
 {
 	// アニメーションの更新
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
@@ -111,7 +112,7 @@ void Minion::Update(std::shared_ptr<Player> player)
 	}
 }
 
-void Minion::Draw()
+void EnemyMinion::Draw()
 {
 #if _DEBUG
 	DrawSphere3D(VGet(m_pos.x, m_pos.y, m_pos.z), 10.0f, 16, 0x0000ff, 0x0000ff, true);
@@ -125,12 +126,7 @@ void Minion::Draw()
 	MV1DrawModel(m_bladeModel);
 }
 
-void Minion::OnDamage()
-{
-	m_hp -= 1;
-}
-
-void Minion::ChangeState(MinionState newState)
+void EnemyMinion::ChangeState(MinionState newState)
 {
 	// 現在の状態と次の状態が同じ場合return
 	if (m_state == newState) return;
@@ -157,7 +153,7 @@ void Minion::ChangeState(MinionState newState)
 	}
 }
 
-void Minion::FindUpdate(std::shared_ptr<Player> player)
+void EnemyMinion::FindUpdate(std::shared_ptr<Player> player)
 {
 	float distance = (m_pos - player->GetPos()).Length();
 	if (distance <= (m_findRadius + player->GetRadius()))
@@ -166,7 +162,7 @@ void Minion::FindUpdate(std::shared_ptr<Player> player)
 	}
 }
 
-void Minion::ChaseUpdate(std::shared_ptr<Player> player)
+void EnemyMinion::ChaseUpdate(std::shared_ptr<Player> player)
 {
 	float distance = (m_pos - player->GetPos()).Length();
 	if (distance >= (m_findRadius + player->GetRadius()))
@@ -180,7 +176,7 @@ void Minion::ChaseUpdate(std::shared_ptr<Player> player)
 	}
 }
 
-void Minion::AttackUpdate(std::shared_ptr<Player> player)
+void EnemyMinion::AttackUpdate(std::shared_ptr<Player> player)
 {
 	if (m_anim.GetNextAnim().isEnd)
 	{
@@ -196,10 +192,10 @@ void Minion::AttackUpdate(std::shared_ptr<Player> player)
 	}
 }
 
-void Minion::HitUpdate(std::shared_ptr<Player> player)
+void EnemyMinion::HitUpdate(std::shared_ptr<Player> player)
 {
 }
 
-void Minion::DeadUpdate(std::shared_ptr<Player> player)
+void EnemyMinion::DeadUpdate(std::shared_ptr<Player> player)
 {
 }

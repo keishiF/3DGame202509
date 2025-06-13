@@ -3,7 +3,7 @@
 #include "ResultScene.h"
 #include "SceneController.h"
 #include "Player/Player.h"
-#include "Enemy/Minion.h"
+#include "Enemy/EnemyMinion.h"
 #include "Camera.h"
 #include "game.h"
 #include "Input.h"
@@ -32,7 +32,7 @@ GameScene::GameScene(SceneController& controller) :
 	MV1SetScale(m_skyModel, VGet(kSkyModelScale, kSkyModelScale, kSkyModelScale));
 
 	m_player = std::make_shared<Player>();
-	m_minion  = std::make_shared<Minion>();
+	m_minion  = std::make_shared<EnemyMinion>();
 	m_camera = std::make_shared<Camera>();
 	m_camera->SetCamera(m_player);
 }

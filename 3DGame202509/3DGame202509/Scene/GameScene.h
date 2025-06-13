@@ -5,7 +5,7 @@
 #include <memory>
 
 class Player;
-class Minion;
+class EnemyMinion;
 class Camera;
 class GameScene final:
 	public SceneBase
@@ -30,7 +30,7 @@ private:
 	DrawFunc_t m_draw;
 
 	std::shared_ptr<Player> m_player;
-	std::shared_ptr<Minion>  m_minion;
+	std::shared_ptr<EnemyMinion>  m_minion;
 	std::shared_ptr<Camera> m_camera;
 
 	// ’ÊíXVˆ—

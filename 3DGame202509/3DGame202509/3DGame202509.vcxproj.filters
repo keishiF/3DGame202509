@@ -89,14 +89,14 @@
     <ClCompile Include="MyLib\Collidable.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\Enemy\Minion.cpp">
-      <Filter>ソース ファイル\GameObject\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\Enemy\Mage.cpp">
+    <ClCompile Include="GameObject\Enemy\EnemyMinion.cpp">
       <Filter>ソース ファイル\GameObject\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="GameObject\Player\Player.cpp">
       <Filter>ソース ファイル\GameObject\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Enemy\EnemyBase.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -139,14 +139,14 @@
     <ClInclude Include="MyLib\Collidable.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\Enemy\Minion.h">
+    <ClInclude Include="GameObject\Enemy\EnemyMinion.h">
       <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\Player\Player.h">
       <Filter>ヘッダー ファイル\GameObject\Player</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\Enemy\Mage.h">
-      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    <ClInclude Include="GameObject\Enemy\EnemyBase.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
