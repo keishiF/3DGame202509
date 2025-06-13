@@ -13,7 +13,7 @@ public:
 private:
 	int m_skyModel;
 
-	int m_fadeFrame;
+	float m_fadeFrame;
 	int m_blinkFrame;
 
 	using UpdateFunc_t = void(ResultScene::*)(Input&);

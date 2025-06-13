@@ -5,12 +5,12 @@
 #include <memory>
 
 class Player;
-class Enemy
+class Minion
 {
 public:
 	// コンストラクタとデストラクタ
-	Enemy();
-	virtual ~Enemy();
+	Minion();
+	virtual ~Minion();
 
 	// 更新、描画
 	void Update(std::shared_ptr<Player> player);
@@ -26,7 +26,7 @@ public:
 
 	// 敵の状態
 private:
-	enum class EnemyState
+	enum class MinionState
 	{
 		Find,
 		Chase,
@@ -35,8 +35,8 @@ private:
 		Dead
 	};
 
-	EnemyState m_state;
-	void ChangeState(EnemyState newState);
+	MinionState m_state;
+	void ChangeState(MinionState newState);
 
 	// 待機状態
 	void FindUpdate(std::shared_ptr<Player> player);

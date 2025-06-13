@@ -77,9 +77,6 @@
     <ClCompile Include="Scene\ResultScene.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\Player.cpp">
-      <Filter>ソース ファイル\GameObject\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Animation.cpp">
       <Filter>ソース ファイル\Animation</Filter>
     </ClCompile>
@@ -89,11 +86,17 @@
     <ClCompile Include="MyLib\Quaternion.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\Enemy.cpp">
-      <Filter>ソース ファイル\GameObject\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="MyLib\Collidable.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Enemy\Minion.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Enemy\Mage.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Player\Player.cpp">
+      <Filter>ソース ファイル\GameObject\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -121,9 +124,6 @@
     <ClInclude Include="Scene\ResultScene.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\Player.h">
-      <Filter>ヘッダー ファイル\GameObject\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>ヘッダー ファイル\Animation</Filter>
     </ClInclude>
@@ -136,11 +136,17 @@
     <ClInclude Include="MyLib\Quaternion.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\Enemy.h">
-      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="MyLib\Collidable.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy\Minion.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Player\Player.h">
+      <Filter>ヘッダー ファイル\GameObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy\Mage.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

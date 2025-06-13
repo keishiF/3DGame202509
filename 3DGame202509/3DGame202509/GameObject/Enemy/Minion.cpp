@@ -1,5 +1,5 @@
-#include "Enemy.h"
-#include "Player.h"
+#include "Minion.h"
+#include "Player/Player.h"
 
 #include "Animation.h"
 
@@ -16,9 +16,9 @@ namespace
 	// 攻撃
 	const char* kAttackAnimName = "1H_Melee_Attack_Slice_Diagonal";
 	// 被弾
-	const char* kHitAnimName    = "";
+	const char* kHitAnimName    = "Hit_B";
 	// 死亡
-	const char* kDeadAnimName   = "";
+	const char* kDeadAnimName   = "Death_B";
 
 	// エネミーがプレイヤーを発見できる範囲
 	constexpr float kFindRadius   = 300.0f;
@@ -34,7 +34,7 @@ namespace
 	constexpr float kBladeModelScale = 0.01f;
 }
 
-Enemy::Enemy() :
+Minion::Minion() :
 	m_minionModel(-1),
 	m_bladeModel(-1),
 	m_pos(300.0f, 0.0f, 300.0f),
@@ -45,11 +45,11 @@ Enemy::Enemy() :
 	m_isDead(false),
 	m_isFind(false),
 	m_isAttack(false),
-	m_state(EnemyState::Find)
+	m_state(MinionState::Find)
 {
-	m_minionModel = MV1LoadModel("Data/Enemy/Enemy.mv1");
+	m_minionModel = MV1LoadModel("Data/Enemy/Minion/Minion.mv1");
 	assert(m_minionModel >= 0);
-	m_bladeModel = MV1LoadModel("Data/Enemy/Blade.mv1");
+	m_bladeModel = MV1LoadModel("Data/Enemy/Minion/Blade.mv1");
 	assert(m_bladeModel >= 0);
 	MV1SetScale(m_minionModel, VGet(kModelScale, kModelScale, kModelScale));
 
@@ -59,11 +59,11 @@ Enemy::Enemy() :
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, true);
 }
 
-Enemy::~Enemy()
+Minion::~Minion()
 {
 }
 
-void Enemy::Update(std::shared_ptr<Player> player)
+void Minion::Update(std::shared_ptr<Player> player)
 {
 	// アニメーションの更新
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
@@ -93,25 +93,25 @@ void Enemy::Update(std::shared_ptr<Player> player)
 
 	switch (m_state)
 	{
-	case EnemyState::Find:
+	case MinionState::Find:
 		FindUpdate(player);
 		break;
-	case EnemyState::Chase:
+	case MinionState::Chase:
 		ChaseUpdate(player);
 		break;
-	case EnemyState::Attack:
+	case MinionState::Attack:
 		AttackUpdate(player);
 		break;
-	case EnemyState::Hit:
+	case MinionState::Hit:
 		HitUpdate(player);
 		break;
-	case EnemyState::Dead:
+	case MinionState::Dead:
 		DeadUpdate(player);
 		break;
 	}
 }
 
-void Enemy::Draw()
+void Minion::Draw()
 {
 #if _DEBUG
 	DrawSphere3D(VGet(m_pos.x, m_pos.y, m_pos.z), 10.0f, 16, 0x0000ff, 0x0000ff, true);
@@ -125,12 +125,12 @@ void Enemy::Draw()
 	MV1DrawModel(m_bladeModel);
 }
 
-void Enemy::OnDamage()
+void Minion::OnDamage()
 {
 	m_hp -= 1;
 }
 
-void Enemy::ChangeState(EnemyState newState)
+void Minion::ChangeState(MinionState newState)
 {
 	// 現在の状態と次の状態が同じ場合return
 	if (m_state == newState) return;
@@ -139,67 +139,67 @@ void Enemy::ChangeState(EnemyState newState)
 
 	switch (m_state)
 	{
-	case EnemyState::Find:
+	case MinionState::Find:
 		m_anim.ChangeAnim(kFindAnimName, true);
 		break;
-	case EnemyState::Chase:
+	case MinionState::Chase:
 		m_anim.ChangeAnim(kChaseAnimName, true);
 		break;
-	case EnemyState::Attack:
+	case MinionState::Attack:
 		m_anim.ChangeAnim(kAttackAnimName, false);
 		break;
-	case EnemyState::Hit:
+	case MinionState::Hit:
 		m_anim.ChangeAnim(kHitAnimName, false);
 		break;
-	case EnemyState::Dead:
+	case MinionState::Dead:
 		m_anim.ChangeAnim(kDeadAnimName, false);
 		break;
 	}
 }
 
-void Enemy::FindUpdate(std::shared_ptr<Player> player)
+void Minion::FindUpdate(std::shared_ptr<Player> player)
 {
 	float distance = (m_pos - player->GetPos()).Length();
 	if (distance <= (m_findRadius + player->GetRadius()))
 	{
-		ChangeState(EnemyState::Chase);
+		ChangeState(MinionState::Chase);
 	}
 }
 
-void Enemy::ChaseUpdate(std::shared_ptr<Player> player)
+void Minion::ChaseUpdate(std::shared_ptr<Player> player)
 {
 	float distance = (m_pos - player->GetPos()).Length();
 	if (distance >= (m_findRadius + player->GetRadius()))
 	{
-		ChangeState(EnemyState::Find);
+		ChangeState(MinionState::Find);
 	}
 
 	if (distance <= (m_attackRadius + player->GetRadius()))
 	{
-		ChangeState(EnemyState::Attack);
+		ChangeState(MinionState::Attack);
 	}
 }
 
-void Enemy::AttackUpdate(std::shared_ptr<Player> player)
+void Minion::AttackUpdate(std::shared_ptr<Player> player)
 {
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		float distance = (m_pos - player->GetPos()).Length();
 		if (distance >= (m_findRadius + player->GetRadius()))
 		{
-			ChangeState(EnemyState::Find);
+			ChangeState(MinionState::Find);
 		}
 		else
 		{
-			ChangeState(EnemyState::Chase);
+			ChangeState(MinionState::Chase);
 		}
 	}
 }
 
-void Enemy::HitUpdate(std::shared_ptr<Player> player)
+void Minion::HitUpdate(std::shared_ptr<Player> player)
 {
 }
 
-void Enemy::DeadUpdate(std::shared_ptr<Player> player)
+void Minion::DeadUpdate(std::shared_ptr<Player> player)
 {
 }

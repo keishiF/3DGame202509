@@ -2,8 +2,8 @@
 #include "TitleScene.h"
 #include "ResultScene.h"
 #include "SceneController.h"
-#include "Player.h"
-#include "Enemy.h"
+#include "Player/Player.h"
+#include "Enemy/Minion.h"
 #include "Camera.h"
 #include "game.h"
 #include "Input.h"
@@ -32,7 +32,7 @@ GameScene::GameScene(SceneController& controller) :
 	MV1SetScale(m_skyModel, VGet(kSkyModelScale, kSkyModelScale, kSkyModelScale));
 
 	m_player = std::make_shared<Player>();
-	m_enemy  = std::make_shared<Enemy>();
+	m_minion  = std::make_shared<Minion>();
 	m_camera = std::make_shared<Camera>();
 	m_camera->SetCamera(m_player);
 }
@@ -57,7 +57,7 @@ void GameScene::NormalUpdate(Input& input)
 	++m_blinkFrame;
 
 	m_player->Update(input);
-	m_enemy->Update(m_player);
+	m_minion->Update(m_player);
 	m_camera->Update(m_player);
 
 	if (m_player->IsDead())
@@ -101,7 +101,7 @@ void GameScene::NormalDraw()
 
 	DrawField();
 	m_player->Draw();
-	m_enemy->Draw();
+	m_minion->Draw();
 }
 
 void GameScene::FadeDraw()
@@ -110,7 +110,7 @@ void GameScene::FadeDraw()
 
 	DrawField();
 	m_player->Draw();
-	m_enemy->Draw();
+	m_minion->Draw();
 
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));

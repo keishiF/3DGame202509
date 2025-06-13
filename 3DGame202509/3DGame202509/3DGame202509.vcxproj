@@ -145,8 +145,9 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="GameObject\Camera.cpp" />
-    <ClCompile Include="GameObject\Enemy.cpp" />
-    <ClCompile Include="GameObject\Player.cpp" />
+    <ClCompile Include="GameObject\Enemy\Mage.cpp" />
+    <ClCompile Include="GameObject\Enemy\Minion.cpp" />
+    <ClCompile Include="GameObject\Player\Player.cpp" />
     <ClCompile Include="General\Application.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyLib\Collidable.cpp" />
@@ -162,8 +163,9 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="GameObject\Camera.h" />
-    <ClInclude Include="GameObject\Enemy.h" />
-    <ClInclude Include="GameObject\Player.h" />
+    <ClInclude Include="GameObject\Enemy\Mage.h" />
+    <ClInclude Include="GameObject\Enemy\Minion.h" />
+    <ClInclude Include="GameObject\Player\Player.h" />
     <ClInclude Include="General\Application.h" />
     <ClInclude Include="MyLib\Collidable.h" />
     <ClInclude Include="MyLib\Input.h" />
