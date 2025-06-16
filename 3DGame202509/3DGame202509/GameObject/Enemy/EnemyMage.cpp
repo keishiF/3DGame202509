@@ -1,4 +1,4 @@
-#include "EnemyMinion.h"
+#include "EnemyMage.h"
 #include "Player/Player.h"
 
 #include "Animation.h"
@@ -10,11 +10,11 @@ namespace
 {
 	// アニメーション名
 	// 待機
-	const char* kFindAnimName   = "2H_Melee_Idle";
+	const char* kFindAnimName   = "Idle_B";
 	// 発見
-	const char* kChaseAnimName  = "Running_C";
+	const char* kChaseAnimName  = "Running_B";
 	// 攻撃
-	const char* kAttackAnimName = "1H_Melee_Attack_Slice_Diagonal";
+	const char* kAttackAnimName = "1H_Melee_Attack_Stab";
 	// 被弾
 	const char* kHitAnimName    = "Hit_B";
 	// 死亡
@@ -30,23 +30,23 @@ namespace
 	constexpr float kColRadius = 25.0f;
 
 	// モデルの拡大率
-	constexpr float kModelScale = 45.0f;
+	constexpr float kModelScale      = 45.0f;
 	constexpr float kBladeModelScale = 0.01f;
 }
 
-EnemyMinion::EnemyMinion()
+EnemyMage::EnemyMage()
 {
 	colRadius = kColRadius;
 
-	m_pos = { 300.0f, 0.0f, 300.0f };
+	m_pos = { -300.0f, 0.0f, -300.0f };
 	m_findRadius = kFindRadius;
 	m_attackRadius = kAttackRadius;
 	m_hp = kHp;
 	m_isDead = false;
 
-	m_charModel = MV1LoadModel("Data/Enemy/Minion/Minion.mv1");
+	m_charModel = MV1LoadModel("Data/Enemy/Mage/Mage.mv1");
 	assert(m_charModel >= 0);
-	m_weaponModel = MV1LoadModel("Data/Enemy/Minion/Blade.mv1");
+	m_weaponModel = MV1LoadModel("Data/Enemy/Mage/Staff.mv1");
 	assert(m_weaponModel >= 0);
 	MV1SetScale(m_charModel, VGet(kModelScale, kModelScale, kModelScale));
 
@@ -56,11 +56,11 @@ EnemyMinion::EnemyMinion()
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, true);
 }
 
-EnemyMinion::~EnemyMinion()
+EnemyMage::~EnemyMage()
 {
 }
 
-void EnemyMinion::Update(std::shared_ptr<Player> player)
+void EnemyMage::Update(std::shared_ptr<Player> player)
 {
 	// アニメーションの更新
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
@@ -78,7 +78,7 @@ void EnemyMinion::Update(std::shared_ptr<Player> player)
 	// アタッチするモデルの拡大行列を取得
 	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
 	// アタッチするモデルの回転行列を取得
-	MATRIX yMat     = MGetRotY(DX_PI_F);
+	MATRIX yMat = MGetRotY(DX_PI_F);
 	// 各行列を合成
 	MATRIX mixMat = MGetIdent();
 	mixMat = MMult(transMat, mixMat);
@@ -108,7 +108,7 @@ void EnemyMinion::Update(std::shared_ptr<Player> player)
 	}
 }
 
-void EnemyMinion::Draw()
+void EnemyMage::Draw()
 {
 #if _DEBUG
 	DrawSphere3D(VGet(m_pos.x, m_pos.y, m_pos.z), 10.0f, 16, 0x0000ff, 0x0000ff, true);
@@ -122,24 +122,24 @@ void EnemyMinion::Draw()
 	MV1DrawModel(m_weaponModel);
 }
 
-const char* EnemyMinion::GetAnimName(EnemyState state) const
+const char* EnemyMage::GetAnimName(EnemyState state) const
 {
 	switch (state)
 	{
-	case EnemyState::Find:   
+	case EnemyState::Find:
 		return kFindAnimName;
-	case EnemyState::Chase:  
+	case EnemyState::Chase:
 		return kChaseAnimName;
-	case EnemyState::Attack: 
+	case EnemyState::Attack:
 		return kAttackAnimName;
-	case EnemyState::Hit:    
+	case EnemyState::Hit:
 		return kHitAnimName;
-	case EnemyState::Dead:   
+	case EnemyState::Dead:
 		return kDeadAnimName;
 	}
 }
 
-bool EnemyMinion::IsLoopAnim(EnemyState state) const
+bool EnemyMage::IsLoopAnim(EnemyState state) const
 {
 	switch (state)
 	{
@@ -156,7 +156,7 @@ bool EnemyMinion::IsLoopAnim(EnemyState state) const
 	}
 }
 
-void EnemyMinion::FindUpdate(std::shared_ptr<Player> player)
+void EnemyMage::FindUpdate(std::shared_ptr<Player> player)
 {
 	float distance = (m_pos - player->GetPos()).Length();
 	if (distance <= (m_findRadius + player->GetRadius()))
@@ -165,7 +165,7 @@ void EnemyMinion::FindUpdate(std::shared_ptr<Player> player)
 	}
 }
 
-void EnemyMinion::ChaseUpdate(std::shared_ptr<Player> player)
+void EnemyMage::ChaseUpdate(std::shared_ptr<Player> player)
 {
 	float distance = (m_pos - player->GetPos()).Length();
 	if (distance >= (m_findRadius + player->GetRadius()))
@@ -179,7 +179,7 @@ void EnemyMinion::ChaseUpdate(std::shared_ptr<Player> player)
 	}
 }
 
-void EnemyMinion::AttackUpdate(std::shared_ptr<Player> player)
+void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 {
 	if (m_anim.GetNextAnim().isEnd)
 	{
@@ -195,10 +195,10 @@ void EnemyMinion::AttackUpdate(std::shared_ptr<Player> player)
 	}
 }
 
-void EnemyMinion::HitUpdate(std::shared_ptr<Player> player)
+void EnemyMage::HitUpdate(std::shared_ptr<Player> player)
 {
 }
 
-void EnemyMinion::DeadUpdate(std::shared_ptr<Player> player)
+void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)
 {
 }

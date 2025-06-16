@@ -47,7 +47,8 @@ Player::Player() :
 	m_isCombo(false),
 	m_isDead(false),
 	m_frameCount(0.0f),
-	m_state(PlayerState::Idle)
+	m_state(PlayerState::Idle),
+	Collidable(Collidable::Tag::Player, Collidable::Priority::High)
 {
 	m_model = MV1LoadModel("Data/Player/Player.mv1");
 	assert(m_model >= 0);

@@ -5,11 +5,11 @@ EnemyBase::EnemyBase() :
     m_charModel(-1),
     m_weaponModel(-1),
     m_pos(),
-    m_colRadius(0.0f),
     m_findRadius(0.0f),
     m_attackRadius(0.0f),
     m_hp(0),
-    m_isDead(false)
+    m_isDead(false),
+    Collidable(Tag::Enemy, Priority::Low)
 {
 }
 

@@ -1,19 +1,15 @@
 #pragma once
 
 #include "EnemyBase.h"
-
-class EnemyMinion : public EnemyBase
+class EnemyMage : public EnemyBase
 {
 public:
-	// コンストラクタとデストラクタ
-	EnemyMinion();
-	virtual ~EnemyMinion();
+	EnemyMage();
+	virtual ~EnemyMage();
 
-	// 更新、描画
 	void Update(std::shared_ptr<Player> player) override;
 	void Draw() override;
 
-	// 敵の状態
 private:
 	const char* GetAnimName(EnemyState state) const override;
 	bool IsLoopAnim(EnemyState state) const override;

@@ -4,6 +4,7 @@
 #include "SceneController.h"
 #include "Player/Player.h"
 #include "Enemy/EnemyMinion.h"
+#include "Enemy/EnemyMage.h"
 #include "Camera.h"
 #include "game.h"
 #include "Input.h"
@@ -33,6 +34,7 @@ GameScene::GameScene(SceneController& controller) :
 
 	m_player = std::make_shared<Player>();
 	m_minion  = std::make_shared<EnemyMinion>();
+	m_mage  = std::make_shared<EnemyMage>();
 	m_camera = std::make_shared<Camera>();
 	m_camera->SetCamera(m_player);
 }
@@ -58,6 +60,7 @@ void GameScene::NormalUpdate(Input& input)
 
 	m_player->Update(input);
 	m_minion->Update(m_player);
+	m_mage->Update(m_player);
 	m_camera->Update(m_player);
 
 	if (m_player->IsDead())
@@ -102,6 +105,7 @@ void GameScene::NormalDraw()
 	DrawField();
 	m_player->Draw();
 	m_minion->Draw();
+	m_mage->Draw();
 }
 
 void GameScene::FadeDraw()
@@ -111,6 +115,7 @@ void GameScene::FadeDraw()
 	DrawField();
 	m_player->Draw();
 	m_minion->Draw();
+	m_mage->Draw();
 
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));

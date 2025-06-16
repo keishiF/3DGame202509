@@ -2,10 +2,11 @@
 
 #include "Input.h"
 #include "Vec3.h"
+#include "Collidable.h"
 #include "Animation.h"
 #include <memory>
 
-class Player
+class Player : public Collidable
 {
 public:
 	// コンストラクタとデストラクタ

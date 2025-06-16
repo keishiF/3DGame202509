@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Vec3.h"
+#include "Collidable.h"
 #include "Animation.h"
 #include <memory>
 
 class Player;
 
-class EnemyBase
+class EnemyBase : public Collidable
 {
 public:
 	EnemyBase();
@@ -46,7 +47,6 @@ protected:
 
 
 	Vec3 m_pos;
-	float m_colRadius;
 	float m_findRadius;
 	float m_attackRadius;
 

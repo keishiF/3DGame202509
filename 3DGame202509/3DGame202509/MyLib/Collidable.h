@@ -1,6 +1,6 @@
 #pragma once
 
-class Collidable
+class Collidable abstract
 {
 public:
 	enum class Tag
@@ -19,7 +19,12 @@ public:
 	};
 
 	Collidable(Tag tag, Priority priority);
-	virtual void OnCollide(const Collidable& collider) abstract;
+
+	Tag		 GetTag()	   const { return tag; }
+	Priority GetPriority() const { return priority; }
+
+protected:
+	float colRadius;
 
 private:
 	Tag		 tag;
