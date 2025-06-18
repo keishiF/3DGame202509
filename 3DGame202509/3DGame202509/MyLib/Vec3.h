@@ -1,4 +1,5 @@
 #pragma once
+#include "DxLib.h"
 #include <cmath>
 
 // 3次元ベクトルクラス
@@ -88,6 +89,17 @@ public:
 	{
 		return sqrtf(x * x + y * y + z * z);
 	}
+	float SqrLength() const
+	{
+		float sqrLen;
+
+		float X = x * x;
+		float Y = y * y;
+		float Z = z * z;
+
+		sqrLen = X + Y + Z;
+		return sqrLen;
+	}
 
 	// 自身の長さを1にする(正規化)
 	void Normalize()
@@ -122,5 +134,20 @@ public:
 		temp.y = std::lerp(start.y, end.y, t);
 		temp.z = std::lerp(start.z, end.z, t);
 		return temp;
+	}
+
+	/// <summary>
+	/// DxライブラリのVECTORにキャストする
+	/// </summary>
+	/// <returns></returns>
+	VECTOR ToDxVECTOR()
+	{
+		VECTOR dxVec;
+
+		dxVec.x = x;
+		dxVec.y = y;
+		dxVec.z = z;
+
+		return dxVec;
 	}
 };

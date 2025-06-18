@@ -1,6 +1,10 @@
 #pragma once
 
 #include "EnemyBase.h"
+#include <vector>
+#include <memory>
+
+class EnemyMageBullet;
 class EnemyMage : public EnemyBase
 {
 public:
@@ -28,5 +32,7 @@ private:
 
 	// €–Só‘Ô
 	void DeadUpdate(std::shared_ptr<Player> player) override;
+
+	std::vector<std::unique_ptr<EnemyMageBullet>> m_bullets;
 };
 

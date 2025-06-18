@@ -1,5 +1,6 @@
 #include "Player.h"
 
+#include "CapsuleColliderData.h"
 #include "Animation.h"
 
 #include "DxLib.h"
@@ -40,7 +41,7 @@ namespace
 
 Player::Player() :
 	m_model(-1),
-	m_pos(0.0f, 0.0f, 0.0f),
+	m_pos(0.0f, 0.0f, -500.0f),
 	m_radius(kRadius),
 	m_vec(0.0f, 0.0f, 0.0f),
 	m_hp(kHp),
@@ -48,7 +49,7 @@ Player::Player() :
 	m_isDead(false),
 	m_frameCount(0.0f),
 	m_state(PlayerState::Idle),
-	Collidable(Collidable::Tag::Player, Collidable::Priority::High)
+	Collidable(GameObjectTag::Player, ColliderData::Kind::Capsule)
 {
 	m_model = MV1LoadModel("Data/Player/Player.mv1");
 	assert(m_model >= 0);
@@ -64,7 +65,7 @@ Player::~Player()
 	MV1DeleteModel(m_model);
 }
 
-void Player::Update(Input& input)
+void Player::Update()
 {	
 	// アニメーションの更新
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
@@ -74,37 +75,37 @@ void Player::Update(Input& input)
 	switch (m_state)
 	{
 	case PlayerState::Idle:
-		IdleUpdate(input);
+		IdleUpdate();
 		break;
 	case PlayerState::Walk:
-		WalkUpdate(input);
+		WalkUpdate();
 		break;
 	case PlayerState::Run:
-		RunUpdate(input);
+		RunUpdate();
 		break;
 	case PlayerState::Chop:
-		ChopUpdate(input);
+		ChopUpdate();
 		break;
 	case PlayerState::Slice:
-		SliceUpdate(input);
+		SliceUpdate();
 		break;
 	case PlayerState::Stab:
-		StabUpdate(input);
+		StabUpdate();
 		break;
 	case PlayerState::Spin:
-		SpinUpdate(input);
+		SpinUpdate();
 		break;
 	case PlayerState::Ultimate:
-		UltimateUpdate(input);
+		UltimateUpdate();
 		break;
 	case PlayerState::Dodge:
-		DodgeUpdate(input);
+		DodgeUpdate();
 		break;
 	case PlayerState::Hit:
-		HitUpdate(input);
+		HitUpdate();
 		break;
 	case PlayerState::Dead:
-		DeadUpdate(input);
+		DeadUpdate();
 		break;
 	}
 }
@@ -112,10 +113,9 @@ void Player::Update(Input& input)
 void Player::Draw()
 {
 #if _DEBUG
-	DrawSphere3D(VGet(m_pos.x, m_pos.y, m_pos.z), 10.0f, 16, 0x0000ff, 0x0000ff, true);
-	//DrawSphere3D(VGet(m_pos.x, m_pos.y, m_pos.z), m_radius, 16, 0xff00ff, 0xff00ff, false);
-	DrawCapsule3D(VGet(m_pos.x, m_pos.y + 10.0f, m_pos.z), VGet(m_pos.x, m_pos.y + 90.0f, m_pos.z),
-		m_radius, 16, 0xff00ff, 0xff00ff, false);
+	DrawSphere3D(VGet(m_pos.x, m_pos.y, m_pos.z), m_radius, 16, 0x00ff00, 0x00ff00, false);
+	/*DrawCapsule3D(VGet(m_pos.x, m_pos.y + 10.0f, m_pos.z), VGet(m_pos.x, m_pos.y + 90.0f, m_pos.z),
+		m_radius, 16, 0xff00ff, 0xff00ff, false);*/
 #endif
 
 	MV1DrawModel(m_model);
@@ -123,7 +123,13 @@ void Player::Draw()
 
 void Player::OnDamage()
 {
+	ChangeState(PlayerState::Hit);
 	m_hp--;
+}
+
+void Player::OnCollide(std::shared_ptr<Collidable> collider)
+{
+	OnDamage();
 }
 
 void Player::ChangeState(PlayerState newState)
@@ -171,45 +177,45 @@ void Player::ChangeState(PlayerState newState)
 	}
 }
 
-void Player::IdleUpdate(Input& input)
+void Player::IdleUpdate()
 {
 	// 左スティックの入力があれば歩き状態に移行する
-	if (input.IsPress("LEFT") || input.IsPress("RIGHT") ||
-		input.IsPress("UP")   || input.IsPress("DOWN"))
+	if (Input::Instance().IsPress("LEFT") || Input::Instance().IsPress("RIGHT") ||
+		Input::Instance().IsPress("UP")   || Input::Instance().IsPress("DOWN"))
 	{
 		ChangeState(PlayerState::Walk);
 	}
 
 	// Aボタンの入力があれば攻撃状態に移行する
-	if (input.IsTrigger("A"))
+	if (Input::Instance().IsTrigger("A"))
 	{
 		ChangeState(PlayerState::Chop);
 	}
 
 	// Xボタンの入力があれば強攻撃状態に移行するためのフラグを立てる
-	if (input.IsTrigger("X"))
+	if (Input::Instance().IsTrigger("X"))
 	{
 		ChangeState(PlayerState::Spin);
 	}
 #if _DEBUG
 	// 死亡状態に移行
-	if (input.IsTrigger("LB"))
+	if (Input::Instance().IsTrigger("LB"))
 	{
 		ChangeState(PlayerState::Dead);
 	}
 #endif
 }
 
-void Player::WalkUpdate(Input& input)
+void Player::WalkUpdate()
 {
 	// 左スティックで移動
 	// 左入力
-	if (input.IsPress("LEFT"))
+	if (Input::Instance().IsPress("LEFT"))
 	{
 		m_vec.x = -kWalkSpeed;
 	}
 	// 右入力
-	else if (input.IsPress("RIGHT"))
+	else if (Input::Instance().IsPress("RIGHT"))
 	{
 		m_vec.x = kWalkSpeed;
 	}
@@ -219,12 +225,12 @@ void Player::WalkUpdate(Input& input)
 		m_vec.x = 0.0f;
 	}
 	// 上入力
-	if (input.IsPress("UP"))
+	if (Input::Instance().IsPress("UP"))
 	{
 		m_vec.z = kWalkSpeed;
 	}
 	// 下入力
-	else if (input.IsPress("DOWN"))
+	else if (Input::Instance().IsPress("DOWN"))
 	{
 		m_vec.z = -kWalkSpeed;
 	}
@@ -255,40 +261,40 @@ void Player::WalkUpdate(Input& input)
 	}
 
 	// Lスティック押し込みの入力があればダッシュ状態に移行する
-	if (input.IsTrigger("LPush"))
+	if (Input::Instance().IsTrigger("LPush"))
 	{
 		ChangeState(PlayerState::Run);
 	}
 
 	// Aボタンの入力があれば攻撃状態に移行する
-	if (input.IsTrigger("A"))
+	if (Input::Instance().IsTrigger("A"))
 	{
 		ChangeState(PlayerState::Chop);
 	}
 
 	// Xボタンの入力があれば今日攻撃状態に移行する
-	if (input.IsTrigger("X"))
+	if (Input::Instance().IsTrigger("X"))
 	{
 		ChangeState(PlayerState::Spin);
 	}
 
 	// Bボタンの入力があれば回避状態に移行する
-	if (input.IsTrigger("B"))
+	if (Input::Instance().IsTrigger("B"))
 	{
 		ChangeState(PlayerState::Dodge);
 	}
 }
 
-void Player::RunUpdate(Input& input)
+void Player::RunUpdate()
 {
 	// 左スティックで移動
 	// 左入力
-	if (input.IsPress("LEFT"))
+	if (Input::Instance().IsPress("LEFT"))
 	{
 		m_vec.x = -kRunSpeed;
 	}
 	// 右入力
-	else if (input.IsPress("RIGHT"))
+	else if (Input::Instance().IsPress("RIGHT"))
 	{
 		m_vec.x = kRunSpeed;
 	}
@@ -298,12 +304,12 @@ void Player::RunUpdate(Input& input)
 		m_vec.x = 0.0f;
 	}
 	// 上入力
-	if (input.IsPress("UP"))
+	if (Input::Instance().IsPress("UP"))
 	{
 		m_vec.z = kRunSpeed;
 	}
 	// 下入力
-	else if (input.IsPress("DOWN"))
+	else if (Input::Instance().IsPress("DOWN"))
 	{
 		m_vec.z = -kRunSpeed;
 	}
@@ -334,34 +340,34 @@ void Player::RunUpdate(Input& input)
 	}
 
 	// 左スティック押し込みの入力があれば歩き状態に移行する
-	if (input.IsTrigger("LPush"))
+	if (Input::Instance().IsTrigger("LPush"))
 	{
 		ChangeState(PlayerState::Walk);
 	}
 
 	// Aボタンの入力があれば攻撃状態に移行する
-	if (input.IsTrigger("A"))
+	if (Input::Instance().IsTrigger("A"))
 	{
 		ChangeState(PlayerState::Chop);
 	}
 
 	// Xボタンの入力があれば強攻撃状態に移行する
-	if (input.IsTrigger("X"))
+	if (Input::Instance().IsTrigger("X"))
 	{
 		ChangeState(PlayerState::Spin);
 	}
 
 	// Bボタンの入力があれば回避状態に移行する
-	if (input.IsTrigger("B"))
+	if (Input::Instance().IsTrigger("B"))
 	{
 		ChangeState(PlayerState::Dodge);
 	}
 }
 
-void Player::ChopUpdate(Input& input)
+void Player::ChopUpdate()
 {
 	// 1ボタンの入力があれば攻撃状態に移行する
-	if (input.IsTrigger("A"))
+	if (Input::Instance().IsTrigger("A"))
 	{
 		m_isCombo = true;
 	}
@@ -383,10 +389,10 @@ void Player::ChopUpdate(Input& input)
 	}
 }
 
-void Player::SliceUpdate(Input& input)
+void Player::SliceUpdate()
 {
 	// 1ボタンの入力があれば攻撃状態に移行する
-	if (input.IsTrigger("A"))
+	if (Input::Instance().IsTrigger("A"))
 	{
 		m_isCombo = true;
 	}
@@ -407,10 +413,10 @@ void Player::SliceUpdate(Input& input)
 	}
 }
 
-void Player::StabUpdate(Input& input)
+void Player::StabUpdate()
 {
 	// 1ボタンの入力があれば攻撃状態に移行する
-	if (input.IsTrigger("A"))
+	if (Input::Instance().IsTrigger("A"))
 	{
 		m_isCombo = true;
 	}
@@ -431,7 +437,7 @@ void Player::StabUpdate(Input& input)
 	}
 }
 
-void Player::SpinUpdate(Input& input)
+void Player::SpinUpdate()
 {
 	if (m_anim.GetNextAnim().isEnd)
 	{
@@ -439,7 +445,7 @@ void Player::SpinUpdate(Input& input)
 	}
 }
 
-void Player::UltimateUpdate(Input& input)
+void Player::UltimateUpdate()
 {
 	if (m_anim.GetNextAnim().isEnd)
 	{
@@ -447,16 +453,7 @@ void Player::UltimateUpdate(Input& input)
 	}
 }
 
-void Player::DodgeUpdate(Input& input)
-{
-	// アニメーションが終了したら待機状態に戻る
-	if (m_anim.GetNextAnim().isEnd)
-	{
-		ChangeState(PlayerState::Idle);
-	}
-}
-
-void Player::HitUpdate(Input& input)
+void Player::DodgeUpdate()
 {
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
@@ -465,7 +462,16 @@ void Player::HitUpdate(Input& input)
 	}
 }
 
-void Player::DeadUpdate(Input& input)
+void Player::HitUpdate()
+{
+	// アニメーションが終了したら待機状態に戻る
+	if (m_anim.GetNextAnim().isEnd)
+	{
+		ChangeState(PlayerState::Idle);
+	}
+}
+
+void Player::DeadUpdate()
 {
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)

@@ -42,7 +42,6 @@ void Application::Run()
 
 	// メモリの確保
 	SceneController sceneController;
-	Input input;
 
 	// ゲームループ
 	while (ProcessMessage() == 0)	// Windowsが行う処理を待つ必要がある
@@ -55,9 +54,9 @@ void Application::Run()
 
 		// ここにゲームの処理を書く
 		// パッドの入力更新処理
-		input.Update();
+		Input::Instance().Update();
 
-		sceneController.Update(input);
+		sceneController.Update();
 		sceneController.Draw();
 
 		// 画面の切り替わりを待つ必要がある

@@ -10,9 +10,9 @@ SceneController::SceneController()
 #endif
 }
 
-void SceneController::Update(Input& input)
+void SceneController::Update()
 {
-	m_scenes.back()->Update(input);
+	m_scenes.back()->Update();
 }
 
 void SceneController::Draw()

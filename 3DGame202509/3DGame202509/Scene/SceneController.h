@@ -3,14 +3,13 @@
 #include <list>
 
 class SceneBase;
-class Input;
 
 class SceneController
 {
 public:
 	SceneController();
 
-	void Update(Input& input);
+	void Update();
 	void Draw();
 
 	void ChangeScene(std::shared_ptr<SceneBase> scene);

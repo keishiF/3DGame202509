@@ -35,9 +35,9 @@ ResultScene::~ResultScene()
 {
 }
 
-void ResultScene::Update(Input& input)
+void ResultScene::Update()
 {
-	(this->*m_update)(input);
+	(this->*m_update)();
 }
 
 void ResultScene::Draw()
@@ -45,11 +45,11 @@ void ResultScene::Draw()
 	(this->*m_draw)();
 }
 
-void ResultScene::NormalUpdate(Input& input)
+void ResultScene::NormalUpdate()
 {
 	++m_blinkFrame;
 
-	if (input.IsPress("LB"))
+	if (Input::Instance().IsPress("LB"))
 	{
 		m_update = &ResultScene::FadeOutUpdate;
 		m_draw = &ResultScene::FadeDraw;
@@ -57,7 +57,7 @@ void ResultScene::NormalUpdate(Input& input)
 	}
 }
 
-void ResultScene::FadeInUpdate(Input&)
+void ResultScene::FadeInUpdate()
 {
 	if (--m_fadeFrame <= 0)
 	{
@@ -66,7 +66,7 @@ void ResultScene::FadeInUpdate(Input&)
 	}
 }
 
-void ResultScene::FadeOutUpdate(Input&)
+void ResultScene::FadeOutUpdate()
 {
 	if (m_fadeFrame++ >= kFadeInterval)
 	{

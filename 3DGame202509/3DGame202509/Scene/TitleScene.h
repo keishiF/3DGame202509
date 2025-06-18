@@ -9,7 +9,7 @@ public:
 	TitleScene(SceneController& controller);
 	~TitleScene();
 
-	virtual void Update(Input& input) override;
+	virtual void Update() override;
 	virtual void Draw() override;
 
 private:
@@ -18,18 +18,18 @@ private:
 	int m_fadeFrame;
 	int m_blinkFrame;
 
-	using UpdateFunc_t = void(TitleScene::*)(Input&);
+	using UpdateFunc_t = void(TitleScene::*)();
 	using DrawFunc_t = void(TitleScene::*)();
 
 	UpdateFunc_t m_update;
 	DrawFunc_t m_draw;
 
 	// 通常時更新処理
-	void NormalUpdate(Input& input);
+	void NormalUpdate();
 	// フェードイン
-	void FadeInUpdate(Input&);
+	void FadeInUpdate();
 	// フェードアウト
-	void FadeOutUpdate(Input&);
+	void FadeOutUpdate();
 
 	// 通常時描画
 	void NormalDraw();

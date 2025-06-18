@@ -1,33 +1,34 @@
 #pragma once
+#include "ColliderData.h"
+#include "Rigidbody.h"
+#include "GameObjectTag.h"
+#include <memory>
 
-class Collidable abstract
+class Physics;
+class Collidable abstract : public std::enable_shared_from_this<Collidable>
 {
 public:
-	enum class Tag
-	{
-		Player,
-		Boss,
-		Enemy
-	};
+	Collidable(GameObjectTag tag, ColliderData::Kind colliderKind);
+	virtual ~Collidable();
+	virtual void Init(std::shared_ptr<Physics> physics);
+	virtual void Final(std::shared_ptr<Physics> physics);
 
-	enum class Priority : int
-	{
-		Low,
-		Middle,
-		High,
-		Static
-	};
+	GameObjectTag GetTag() const { return m_tag; }
 
-	Collidable(Tag tag, Priority priority);
-
-	Tag		 GetTag()	   const { return tag; }
-	Priority GetPriority() const { return priority; }
+	virtual void OnCollide(std::shared_ptr<Collidable> collider) abstract;
 
 protected:
-	float colRadius;
+	Rigidbody m_rigidbody;
+	float m_colRadius;
 
+	std::shared_ptr<ColliderData> m_colliderData;
 private:
-	Tag		 tag;
-	Priority priority;
+	std::shared_ptr<ColliderData> CreateColliderData(ColliderData::Kind kind);
+
+	GameObjectTag m_tag;
+
+	Vec3 m_nextPos;
+
+	friend Physics;
 };
 

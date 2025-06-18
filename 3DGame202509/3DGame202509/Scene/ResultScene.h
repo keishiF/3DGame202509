@@ -7,7 +7,7 @@ public:
     ResultScene(SceneController& controller);
     ~ResultScene();
 
-    virtual void Update(Input& input) override;
+    virtual void Update() override;
     virtual void Draw() override;
 
 private:
@@ -16,18 +16,18 @@ private:
 	float m_fadeFrame;
 	int m_blinkFrame;
 
-	using UpdateFunc_t = void(ResultScene::*)(Input&);
+	using UpdateFunc_t = void(ResultScene::*)();
 	using DrawFunc_t = void(ResultScene::*)();
 
 	UpdateFunc_t m_update;
 	DrawFunc_t m_draw;
 
 	// 通常時更新処理
-	void NormalUpdate(Input& input);
+	void NormalUpdate();
 	// フェードイン
-	void FadeInUpdate(Input&);
+	void FadeInUpdate();
 	// フェードアウト
-	void FadeOutUpdate(Input&);
+	void FadeOutUpdate();
 
 	// 通常時描画
 	void NormalDraw();

@@ -43,9 +43,9 @@ GameScene::~GameScene()
 {
 }
 
-void GameScene::Update(Input& input)
+void GameScene::Update()
 {
-	(this->*m_update)(input);
+	(this->*m_update)();
 }
 
 void GameScene::Draw()
@@ -53,12 +53,12 @@ void GameScene::Draw()
 	(this->*m_draw)();
 }
 
-void GameScene::NormalUpdate(Input& input)
+void GameScene::NormalUpdate()
 {
 	++m_frame;
 	++m_blinkFrame;
 
-	m_player->Update(input);
+	m_player->Update();
 	m_minion->Update(m_player);
 	m_mage->Update(m_player);
 	m_camera->Update(m_player);
@@ -71,7 +71,7 @@ void GameScene::NormalUpdate(Input& input)
 	}
 }
 
-void GameScene::FadeInUpdate(Input&)
+void GameScene::FadeInUpdate()
 {
 	if (--m_fadeFrame <= 0)
 	{
@@ -80,7 +80,7 @@ void GameScene::FadeInUpdate(Input&)
 	}
 }
 
-void GameScene::FadeOutUpdate(Input&)
+void GameScene::FadeOutUpdate()
 {
 	if (m_fadeFrame++ >= kFadeInterval)
 	{
@@ -102,6 +102,9 @@ void GameScene::NormalDraw()
 
 	MV1DrawModel(m_skyModel);
 
+#ifdef _DEBUG
+#endif
+
 	DrawField();
 	m_player->Draw();
 	m_minion->Draw();
@@ -114,8 +117,6 @@ void GameScene::FadeDraw()
 
 	DrawField();
 	m_player->Draw();
-	m_minion->Draw();
-	m_mage->Draw();
 
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));

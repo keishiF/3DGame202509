@@ -31,9 +31,9 @@ TitleScene::~TitleScene()
 {
 }
 
-void TitleScene::Update(Input& input)
+void TitleScene::Update()
 {
-	(this->*m_update)(input);
+	(this->*m_update)();
 }
 
 void TitleScene::Draw()
@@ -41,11 +41,11 @@ void TitleScene::Draw()
 	(this->*m_draw)();
 }
 
-void TitleScene::NormalUpdate(Input& input)
+void TitleScene::NormalUpdate()
 {
 	++m_blinkFrame;
 
-	if (input.IsPress("LB"))
+	if (Input::Instance().IsPress("LB"))
 	{
 		m_update = &TitleScene::FadeOutUpdate;
 		m_draw = &TitleScene::FadeDraw;
@@ -53,7 +53,7 @@ void TitleScene::NormalUpdate(Input& input)
 	}
 }
 
-void TitleScene::FadeInUpdate(Input&)
+void TitleScene::FadeInUpdate()
 {
 	if (--m_fadeFrame <= 0)
 	{
@@ -62,7 +62,7 @@ void TitleScene::FadeInUpdate(Input&)
 	}
 }
 
-void TitleScene::FadeOutUpdate(Input&)
+void TitleScene::FadeOutUpdate()
 {
 	if (m_fadeFrame++ >= kFadeInterval)
 	{

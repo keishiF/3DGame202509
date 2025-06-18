@@ -15,7 +15,7 @@ public:
 	GameScene(SceneController& controller);
 	~GameScene();
 
-	virtual void Update(Input& input) override;
+	virtual void Update() override;
 	virtual void Draw() override;
 
 private:
@@ -25,7 +25,7 @@ private:
 
 	int m_skyModel;
 
-	using UpdateFunc_t = void(GameScene::*)(Input&);
+	using UpdateFunc_t = void(GameScene::*)();
 	using DrawFunc_t = void(GameScene::*)();
 	UpdateFunc_t m_update;
 	DrawFunc_t m_draw;
@@ -36,11 +36,11 @@ private:
 	std::shared_ptr<Camera> m_camera;
 
 	// 通常時更新処理
-	void NormalUpdate(Input& input);
+	void NormalUpdate();
 	// フェードイン
-	void FadeInUpdate(Input&);
+	void FadeInUpdate();
 	// フェードアウト
-	void FadeOutUpdate(Input&);
+	void FadeOutUpdate();
 
 	// 通常時描画
 	void NormalDraw();

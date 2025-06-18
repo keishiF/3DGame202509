@@ -14,7 +14,7 @@ public:
 	virtual ~Player();
 
 	// 更新、描画
-	void Update(Input& input);
+	void Update();
 	void Draw();
 
 	// プレイヤーの位置を取得
@@ -25,6 +25,8 @@ public:
 	void OnDamage();
 
 	bool IsDead() const { return m_isDead; }
+
+	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 
 	// プレイヤーの状態
 private:
@@ -47,29 +49,29 @@ private:
 	void ChangeState(PlayerState newState);
 
 	// 待機状態
-	void IdleUpdate(Input& input);
+	void IdleUpdate();
 
 	// 移動
 	// 歩き
-	void WalkUpdate(Input& input);
+	void WalkUpdate();
 	// 走り
-	void RunUpdate(Input& input);
+	void RunUpdate();
 
 	// 各攻撃状態
-	void ChopUpdate(Input& input);
-	void SliceUpdate(Input& input);
-	void StabUpdate(Input& input);
-	void SpinUpdate(Input& input);
-	void UltimateUpdate(Input& input);
+	void ChopUpdate();
+	void SliceUpdate();
+	void StabUpdate();
+	void SpinUpdate();
+	void UltimateUpdate();
 
 	// 回避状態
-	void DodgeUpdate(Input& input);
+	void DodgeUpdate();
 
 	// 被弾状態
-	void HitUpdate(Input& input);
+	void HitUpdate();
 
 	// 死亡状態
-	void DeadUpdate(Input& input);
+	void DeadUpdate();
 
 private:
 	// プレイヤーのモデル
@@ -78,7 +80,7 @@ private:
 	Vec3 m_pos;
 	// プレイヤーの当たり判定
 	float m_radius;
-	// プレイヤーの移動量
+	// プレイヤーの向き
 	Vec3 m_vec;
 	// プレイヤーのHP
 	int m_hp;

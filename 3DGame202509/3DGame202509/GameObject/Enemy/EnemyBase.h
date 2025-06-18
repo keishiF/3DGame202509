@@ -6,7 +6,6 @@
 #include <memory>
 
 class Player;
-
 class EnemyBase : public Collidable
 {
 public:
@@ -16,9 +15,11 @@ public:
 	virtual void Update(std::shared_ptr<Player> player) abstract;
 	virtual void Draw() abstract;
 
-	Vec3 GetPos() const { return m_pos; }
+	//Vec3 GetPos() const { return m_pos; }
 	void OnDamage();
 	bool IsDead() const { return m_isDead; }
+
+	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 
 protected:
 	enum class EnemyState
@@ -42,18 +43,27 @@ protected:
 	virtual void DeadUpdate(std::shared_ptr<Player> player) abstract;
 
 protected:
+	// キャラと武器のモデル
 	int m_charModel;
 	int m_weaponModel;
 
-
+	// 位置
 	Vec3 m_pos;
+	// 向き
+	Vec3 m_vec;
+	// 速度
+	float m_speed;
+	// プレイヤーを探知する範囲
 	float m_findRadius;
+	// 攻撃状態に移行できる範囲
 	float m_attackRadius;
-
+	// HP
 	int m_hp;
-
+	// 死んでいるかどうか
 	bool m_isDead;
-
+	// 攻撃フレーム
+	float m_attackFrame;
+	// アニメーション管理
 	Animation m_anim;
 };
 
