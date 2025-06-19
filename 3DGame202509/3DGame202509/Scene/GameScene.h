@@ -8,6 +8,7 @@ class Player;
 class EnemyMinion;
 class EnemyMage;
 class Camera;
+class Physics;
 class GameScene final:
 	public SceneBase
 {
@@ -34,6 +35,7 @@ private:
 	std::shared_ptr<EnemyMinion>  m_minion;
 	std::shared_ptr<EnemyMage>  m_mage;
 	std::shared_ptr<Camera> m_camera;
+	std::shared_ptr<Physics> m_physics;
 
 	// ’ÊíXVˆ—
 	void NormalUpdate();
