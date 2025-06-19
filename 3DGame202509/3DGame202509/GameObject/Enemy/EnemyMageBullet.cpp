@@ -4,10 +4,12 @@
 namespace
 {
 	constexpr float kSpeed = 5.0f;
+	constexpr float kLifeFrame = 180.0f;
 }
 
 EnemyMageBullet::EnemyMageBullet(Vec3 pos, Vec3 vec) :
-	Collidable(GameObjectTag::Bullet, ColliderData::Kind::Sphere)
+	Collidable(GameObjectTag::Bullet, ColliderData::Kind::Sphere),
+	m_frame(0)
 {
 	m_pos = pos;
 	m_vec = vec;
@@ -20,7 +22,12 @@ EnemyMageBullet::~EnemyMageBullet()
 
 void EnemyMageBullet::Update()
 {
+	++m_frame;
 	m_pos += m_vec * kSpeed;
+	if (m_frame >= kLifeFrame)
+	{
+		delete(this);
+	}
 }
 
 void EnemyMageBullet::Draw()
