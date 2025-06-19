@@ -39,7 +39,7 @@ namespace
 	constexpr float kModelScale = 45.0f;
 }
 
-Player::Player() :
+Player::Player(std::shared_ptr<Physics> physics) :
 	m_model(-1),
 	m_pos(0.0f, 0.0f, -500.0f),
 	m_radius(kRadius),

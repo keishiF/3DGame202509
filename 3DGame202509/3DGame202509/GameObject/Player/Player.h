@@ -6,11 +6,12 @@
 #include "Animation.h"
 #include <memory>
 
+class Physics;
 class Player : public Collidable
 {
 public:
 	// コンストラクタとデストラクタ
-	Player();
+	Player(std::shared_ptr<Physics> physics);
 	virtual ~Player();
 
 	// 更新、描画
