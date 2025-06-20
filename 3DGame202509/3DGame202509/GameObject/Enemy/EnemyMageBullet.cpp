@@ -8,7 +8,7 @@ namespace
 }
 
 EnemyMageBullet::EnemyMageBullet(Vec3 pos, Vec3 vec) :
-	Collidable(ObjectTag::Bullet, ObjectPriority::Low, ColliderData::Kind::Sphere),
+	Collidable(ObjectTag::Weapon, ObjectPriority::Low, ColliderData::Kind::Sphere),
 	m_frame(0),
 	m_isDead(false)
 {

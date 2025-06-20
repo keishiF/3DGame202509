@@ -55,6 +55,7 @@ Player::Player(std::shared_ptr<Physics> physics) :
 	Vec3 pos = { 0.0f, 0.0f, -500.0f };
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
+
 	//“–‚½‚è”»’è
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	colData->m_startPos = pos;

@@ -5,6 +5,6 @@ enum class ObjectTag
 	Player,
 	Enemy,
 	Boss,
-	Bullet,
+	Weapon,
 	Stage,
 };
