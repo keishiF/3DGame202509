@@ -1,6 +1,7 @@
 #include "Player.h"
 
 #include "CapsuleColliderData.h"
+#include "Physics.h"
 #include "Animation.h"
 
 #include "DxLib.h"
@@ -30,6 +31,7 @@ namespace
 
 	// プレイヤーの当たり判定
 	constexpr float kRadius = 15.0f;
+	constexpr float kColScale = 90.0f;
 	// HPの初期値
 	constexpr int kHp = 100;
 	// 移動速度
@@ -41,20 +43,27 @@ namespace
 
 Player::Player(std::shared_ptr<Physics> physics) :
 	m_model(-1),
-	m_pos(0.0f, 0.0f, -500.0f),
 	m_radius(kRadius),
-	m_vec(0.0f, 0.0f, 0.0f),
 	m_hp(kHp),
 	m_isCombo(false),
 	m_isDead(false),
 	m_frameCount(0.0f),
 	m_state(PlayerState::Idle),
-	Collidable(GameObjectTag::Player, ColliderData::Kind::Capsule)
+	Collidable(ObjectTag::Player, ObjectPriority::High, ColliderData::Kind::Capsule)
 {
+	Collidable::Init(physics);
+	Vec3 pos = { 0.0f, 0.0f, -500.0f };
+	m_rigidbody.Init();
+	m_rigidbody.SetPos(pos);
+	//当たり判定
+	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
+	colData->m_startPos = pos;
+	colData->m_radius = kRadius;
+
 	m_model = MV1LoadModel("Data/Player/Player.mv1");
 	assert(m_model >= 0);
 	MV1SetScale(m_model, VGet(kModelScale, kModelScale, kModelScale));
-	MV1SetPosition(m_model, VGet(m_pos.x, m_pos.y, m_pos.z));
+	MV1SetPosition(m_model, pos.ToDxVECTOR());
 
 	m_anim.Init(m_model);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, true);
@@ -108,14 +117,18 @@ void Player::Update()
 		DeadUpdate();
 		break;
 	}
+
+	//当たり判定
+	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
+	Vec3 colPos = m_rigidbody.GetPos();
+	colPos.y += kColScale;
+	colData->m_startPos = colPos;
 }
 
 void Player::Draw()
 {
 #if _DEBUG
-	DrawSphere3D(VGet(m_pos.x, m_pos.y, m_pos.z), m_radius, 16, 0x00ff00, 0x00ff00, false);
-	/*DrawCapsule3D(VGet(m_pos.x, m_pos.y + 10.0f, m_pos.z), VGet(m_pos.x, m_pos.y + 90.0f, m_pos.z),
-		m_radius, 16, 0xff00ff, 0xff00ff, false);*/
+	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_radius, 16, 0x00ff00, 0x00ff00, false);
 #endif
 
 	MV1DrawModel(m_model);
@@ -127,7 +140,7 @@ void Player::OnDamage()
 	m_hp--;
 }
 
-void Player::OnCollide(std::shared_ptr<Collidable> collider)
+void Player::OnCollide(Collidable* collider)
 {
 	OnDamage();
 }
@@ -208,54 +221,54 @@ void Player::IdleUpdate()
 
 void Player::WalkUpdate()
 {
+	Vec3 dir = { 0.0f, 0.0f,0.0f };
 	// 左スティックで移動
 	// 左入力
 	if (Input::Instance().IsPress("LEFT"))
 	{
-		m_vec.x = -kWalkSpeed;
+		dir.x = -kWalkSpeed;
 	}
 	// 右入力
 	else if (Input::Instance().IsPress("RIGHT"))
 	{
-		m_vec.x = kWalkSpeed;
+		dir.x = kWalkSpeed;
 	}
 	// 横方向の入力なし
 	else
 	{
-		m_vec.x = 0.0f;
+		dir.x = 0.0f;
 	}
 	// 上入力
 	if (Input::Instance().IsPress("UP"))
 	{
-		m_vec.z = kWalkSpeed;
+		dir.z = kWalkSpeed;
 	}
 	// 下入力
 	else if (Input::Instance().IsPress("DOWN"))
 	{
-		m_vec.z = -kWalkSpeed;
+		dir.z = -kWalkSpeed;
 	}
 	// 縦方向の入力なし
 	else
 	{
-		m_vec.z = 0.0f;
+		dir.z = 0.0f;
 	}
 
 	// ベクトルを正規化し移動速度をかけポジションに加算
-	m_vec.Normalize();
-	m_vec *= kWalkSpeed;
-	m_pos += m_vec;
-	MV1SetPosition(m_model, VGet(m_pos.x, m_pos.y, m_pos.z));
+	dir.Normalize();
+	m_rigidbody.SetVelo(dir * kWalkSpeed);
+	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 
 	// 進行方向が0でなければ回転
-	if (m_vec.x != 0.0f || m_vec.z != 0.0f)
+	if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
 	{
 		// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
-		float angleY = std::atan2(m_vec.x, -m_vec.z);
+		float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
 		MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 	}
 
 	// 左スティックの入力がない場合待機状態に移行
-	if (m_vec.x == 0.0f && m_vec.z == 0.0f)
+	if (m_rigidbody.GetVelo().x == 0.0f && m_rigidbody.GetVelo().z == 0.0f)
 	{
 		ChangeState(PlayerState::Idle);
 	}
@@ -264,77 +277,85 @@ void Player::WalkUpdate()
 	if (Input::Instance().IsTrigger("LPush"))
 	{
 		ChangeState(PlayerState::Run);
+		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 
 	// Aボタンの入力があれば攻撃状態に移行する
 	if (Input::Instance().IsTrigger("A"))
 	{
 		ChangeState(PlayerState::Chop);
+		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 
-	// Xボタンの入力があれば今日攻撃状態に移行する
+	// Xボタンの入力があれば強攻撃状態に移行する
 	if (Input::Instance().IsTrigger("X"))
 	{
 		ChangeState(PlayerState::Spin);
+		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 
 	// Bボタンの入力があれば回避状態に移行する
 	if (Input::Instance().IsTrigger("B"))
 	{
 		ChangeState(PlayerState::Dodge);
+		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 }
 
 void Player::RunUpdate()
 {
+	Vec3 dir = { 0.0f, 0.0f, 0.0f };
 	// 左スティックで移動
 	// 左入力
 	if (Input::Instance().IsPress("LEFT"))
 	{
-		m_vec.x = -kRunSpeed;
+		dir.x = -kRunSpeed;
 	}
 	// 右入力
 	else if (Input::Instance().IsPress("RIGHT"))
 	{
-		m_vec.x = kRunSpeed;
+		dir.x = kRunSpeed;
 	}
 	// 横方向の入力なし
 	else
 	{
-		m_vec.x = 0.0f;
+		dir.x = 0.0f;
 	}
 	// 上入力
 	if (Input::Instance().IsPress("UP"))
 	{
-		m_vec.z = kRunSpeed;
+		dir.z = kRunSpeed;
 	}
 	// 下入力
 	else if (Input::Instance().IsPress("DOWN"))
 	{
-		m_vec.z = -kRunSpeed;
+		dir.z = -kRunSpeed;
 	}
 	// 縦方向の入力なし
 	else
 	{
-		m_vec.z = 0.0f;
+		dir.z = 0.0f;
 	}
 
 	// ベクトルを正規化し移動速度をかけポジションに加算
-	m_vec.Normalize();
+	dir.Normalize();
+	m_rigidbody.SetVelo(dir * kRunSpeed);
+	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
+	/*m_vec.Normalize();
 	m_vec *= kRunSpeed;
 	m_pos += m_vec;
-	MV1SetPosition(m_model, VGet(m_pos.x, m_pos.y, m_pos.z));
+	MV1SetPosition(m_model, VGet(m_pos.x, m_pos.y, m_pos.z));*/
 
 	// 進行方向が0でなければ回転
-	if (m_vec.x != 0.0f || m_vec.z != 0.0f)
+	if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
 	{
 		// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
-		float angleY = std::atan2(m_vec.x, -m_vec.z);
+		float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
 		MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 	}
 
 	// 左スティックの入力がない場合待機状態に移行する
-	if (m_vec.x == 0.0f && m_vec.z == 0.0f)
+	if (m_rigidbody.GetVelo().x == 0.0f && m_rigidbody.GetVelo().z == 0.0f)
 	{
 		ChangeState(PlayerState::Idle);
 	}
@@ -343,24 +364,28 @@ void Player::RunUpdate()
 	if (Input::Instance().IsTrigger("LPush"))
 	{
 		ChangeState(PlayerState::Walk);
+		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 
 	// Aボタンの入力があれば攻撃状態に移行する
 	if (Input::Instance().IsTrigger("A"))
 	{
 		ChangeState(PlayerState::Chop);
+		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 
 	// Xボタンの入力があれば強攻撃状態に移行する
 	if (Input::Instance().IsTrigger("X"))
 	{
 		ChangeState(PlayerState::Spin);
+		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 
 	// Bボタンの入力があれば回避状態に移行する
 	if (Input::Instance().IsTrigger("B"))
 	{
 		ChangeState(PlayerState::Dodge);
+		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 }
 
@@ -464,10 +489,12 @@ void Player::DodgeUpdate()
 
 void Player::HitUpdate()
 {
+	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		ChangeState(PlayerState::Idle);
+		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 }
 

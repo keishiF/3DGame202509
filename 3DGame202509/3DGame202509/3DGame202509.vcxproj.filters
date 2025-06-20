@@ -184,10 +184,13 @@
     <ClInclude Include="MyLib\SphereColliderData.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
-    <ClInclude Include="MyLib\GameObjectTag.h">
+    <ClInclude Include="MyLib\ObjectTag.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\CapsuleColliderData.h">
+      <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectPriority.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
   </ItemGroup>

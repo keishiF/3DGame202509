@@ -1,6 +1,6 @@
 #pragma once
 
-enum class GameObjectTag
+enum class ObjectTag
 {
 	Player,
 	Enemy,

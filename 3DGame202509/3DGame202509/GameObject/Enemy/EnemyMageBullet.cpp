@@ -8,8 +8,9 @@ namespace
 }
 
 EnemyMageBullet::EnemyMageBullet(Vec3 pos, Vec3 vec) :
-	Collidable(GameObjectTag::Bullet, ColliderData::Kind::Sphere),
-	m_frame(0)
+	Collidable(ObjectTag::Bullet, ObjectPriority::Low, ColliderData::Kind::Sphere),
+	m_frame(0),
+	m_isDead(false)
 {
 	m_pos = pos;
 	m_vec = vec;
@@ -26,7 +27,7 @@ void EnemyMageBullet::Update()
 	m_pos += m_vec * kSpeed;
 	if (m_frame >= kLifeFrame)
 	{
-		delete(this);
+		m_isDead = true;
 	}
 }
 
@@ -35,6 +36,6 @@ void EnemyMageBullet::Draw()
 	DrawSphere3D(VGet(m_pos.x, m_pos.y, m_pos.z), 20.0f, 16, 0xff0000, 0xff0000, true);
 }
 
-void EnemyMageBullet::OnCollide(std::shared_ptr<Collidable> collider)
+void EnemyMageBullet::OnCollide(Collidable* collider)
 {
 }

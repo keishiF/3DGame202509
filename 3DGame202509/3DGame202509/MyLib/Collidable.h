@@ -1,21 +1,23 @@
 #pragma once
 #include "ColliderData.h"
 #include "Rigidbody.h"
-#include "GameObjectTag.h"
+#include "ObjectTag.h"
+#include "ObjectPriority.h"
 #include <memory>
 
 class Physics;
-class Collidable abstract : public std::enable_shared_from_this<Collidable>
+class Collidable abstract : public std::shared_ptr<Collidable>
 {
 public:
-	Collidable(GameObjectTag tag, ColliderData::Kind colliderKind);
+	Collidable(ObjectTag tag, ObjectPriority priority, ColliderData::Kind colliderKind);
 	virtual ~Collidable();
 	virtual void Init(std::shared_ptr<Physics> physics);
 	virtual void Final(std::shared_ptr<Physics> physics);
 
-	GameObjectTag GetTag() const { return m_tag; }
+	ObjectTag GetTag() const { return m_tag; }
+	ObjectPriority GetPriority() const { return m_priority; }
 
-	virtual void OnCollide(std::shared_ptr<Collidable> collider) abstract;
+	virtual void OnCollide(Collidable* collider) abstract;
 
 protected:
 	Rigidbody m_rigidbody;
@@ -25,7 +27,8 @@ protected:
 private:
 	std::shared_ptr<ColliderData> CreateColliderData(ColliderData::Kind kind);
 
-	GameObjectTag m_tag;
+	ObjectTag m_tag;
+	ObjectPriority m_priority;
 
 	Vec3 m_nextPos;
 

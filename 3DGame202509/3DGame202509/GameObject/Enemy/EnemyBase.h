@@ -2,6 +2,7 @@
 
 #include "Vec3.h"
 #include "Collidable.h"
+#include "Physics.h"
 #include "Animation.h"
 #include <memory>
 
@@ -12,6 +13,7 @@ public:
 	EnemyBase();
 	virtual ~EnemyBase();
 
+	virtual void Init(std::shared_ptr<Physics> physics) abstract;
 	virtual void Update(std::shared_ptr<Player> player) abstract;
 	virtual void Draw() abstract;
 
@@ -19,7 +21,7 @@ public:
 	void OnDamage();
 	bool IsDead() const { return m_isDead; }
 
-	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
+	virtual void OnCollide(Collidable* collider) override;
 
 protected:
 	enum class EnemyState
@@ -47,12 +49,6 @@ protected:
 	int m_charModel;
 	int m_weaponModel;
 
-	// 位置
-	Vec3 m_pos;
-	// 向き
-	Vec3 m_vec;
-	// 速度
-	float m_speed;
 	// プレイヤーを探知する範囲
 	float m_findRadius;
 	// 攻撃状態に移行できる範囲

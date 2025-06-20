@@ -115,6 +115,17 @@ public:
 		z /= len;
 	}
 
+	// 内積
+	float Dot(const Vec3& vec) const
+	{
+		return x * vec.x + y * vec.y + z * vec.z;
+	}
+	// 外積
+	float Cross(const Vec3& vec) const
+	{
+		return x * vec.x - y * vec.y - z * vec.z;
+	}
+
 	// 自身の長さを1にしたベクトルの取得
 	// (この関数を読んでも自身の長さは変化しない)
 	Vec3 GetNormalize() const

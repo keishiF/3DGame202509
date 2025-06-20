@@ -5,3 +5,7 @@ CapsuleColliderData::CapsuleColliderData() :
 	m_isStartPos(true)
 {
 }
+
+CapsuleColliderData::~CapsuleColliderData()
+{
+}

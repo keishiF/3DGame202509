@@ -32,6 +32,7 @@ namespace
 	// エネミーの速度
 	constexpr float kSpeed = 3.0f;
 
+	constexpr float kColScale  = 70.0f;
 	constexpr float kColRadius = 25.0f;
 
 	// モデルの拡大率
@@ -43,30 +44,41 @@ namespace
 
 EnemyMage::EnemyMage()
 {
-	m_pos = { -500.0f, 0.0f, 500.0f };
-	m_vec = {    0.0f, 0.0f,   0.0f };
-	m_colRadius = kColRadius;
-	// スピードの初期化
-	m_speed = kSpeed;
+	
+}
+
+EnemyMage::~EnemyMage()
+{
+}
+
+void EnemyMage::Init(std::shared_ptr<Physics> physics)
+{
+	Collidable::Init(physics);
+	Vec3 pos = { -500.0f, 0.0f, 500.0f };
+	m_rigidbody.Init();
+	m_rigidbody.SetPos(pos);
+
+	//当たり判定
+	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
+	colData->m_startPos = pos;
+	colData->m_radius = kColRadius;
+
 	m_findRadius = kFindRadius;
 	m_attackRadius = kAttackRadius;
 	m_hp = kHp;
 	m_isDead = false;
 	m_attackFrame = 0.0f;
+
 	m_charModel = MV1LoadModel("Data/Enemy/Mage/Mage.mv1");
 	assert(m_charModel >= 0);
 	m_weaponModel = MV1LoadModel("Data/Enemy/Mage/Staff.mv1");
 	assert(m_weaponModel >= 0);
 	MV1SetScale(m_charModel, VGet(kModelScale, kModelScale, kModelScale));
 
-	MV1SetPosition(m_charModel, m_pos.ToDxVECTOR());
+	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
 
 	m_anim.Init(m_charModel);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, true);
-}
-
-EnemyMage::~EnemyMage()
-{
 }
 
 void EnemyMage::Update(std::shared_ptr<Player> player)
@@ -116,20 +128,35 @@ void EnemyMage::Update(std::shared_ptr<Player> player)
 		break;
 	}
 
-	for (auto& bullets : m_bullets)
+	for (auto item = m_bullets.begin(); item != m_bullets.end();)
 	{
-		bullets->Update();
+		(*item)->Update();
+
+		if ((*item)->IsDead())
+		{
+			item = m_bullets.erase(item);
+		}
+		else
+		{
+			++item;
+		}
 	}
+
+	//当たり判定
+	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
+	Vec3 colPos = m_rigidbody.GetPos();
+	colPos.y += kColScale;
+	colData->m_startPos = colPos;
+
+	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 }
 
 void EnemyMage::Draw()
 {
 #if _DEBUG
-	DrawSphere3D(m_pos.ToDxVECTOR(), 10.0f, 16, 0x0000ff, 0x0000ff, true);
-	DrawSphere3D(m_pos.ToDxVECTOR(), m_findRadius, 16, 0xff00ff, 0xff00ff, false);
-	DrawSphere3D(m_pos.ToDxVECTOR(), m_attackRadius, 16, 0xff00ff, 0xff00ff, false);
-	DrawCapsule3D(VGet(m_pos.x, m_pos.y + 20.0f, m_pos.z), VGet(m_pos.x, m_pos.y + 70.0f, m_pos.z),
-		m_colRadius, 16, 0xff00ff, 0xff00ff, false);
+	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), 10.0f, 16, 0x0000ff, 0x0000ff, true);
+	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_findRadius, 16, 0xff00ff, 0xff00ff, false);
+	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_attackRadius, 16, 0xff00ff, 0xff00ff, false);
 #endif
 
 	MV1DrawModel(m_charModel);
@@ -156,7 +183,8 @@ const char* EnemyMage::GetAnimName(EnemyState state) const
 	case EnemyState::Dead:
 		return kDeadAnimName;
 	default:
-		return "無名";
+		return "";
+		assert(0 && "存在しないアニメーションだぜ");
 	}
 }
 
@@ -175,13 +203,14 @@ bool EnemyMage::IsLoopAnim(EnemyState state) const
 	case EnemyState::Dead:
 		return false;
 	default:
-		return false;
+		return "";
+		assert(0 && "存在しないステートだぜ");
 	}
 }
 
 void EnemyMage::FindUpdate(std::shared_ptr<Player> player)
 {
-	float distance = (m_pos - player->GetPos()).Length();
+	float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
 	if (distance <= (m_findRadius + player->GetRadius()))
 	{
 		ChangeState(EnemyState::Chase);
@@ -191,33 +220,37 @@ void EnemyMage::FindUpdate(std::shared_ptr<Player> player)
 void EnemyMage::ChaseUpdate(std::shared_ptr<Player> player)
 {
 	// プレイヤーへの方向ベクトル
-	m_vec = player->GetPos() - m_pos;
-	m_vec.y = 0.0f; // Y軸方向の移動を無効化（XZ平面のみ移動する場合）
+	Vec3 myPos = m_rigidbody.GetPos();
+	Vec3 toPlayerDir = player->GetPos() - myPos;
+	toPlayerDir.y = 0.0f;
 
 	// 距離が十分にある場合のみ移動
-	if (m_vec.Length() > 1.0f) {
-		m_vec.Normalize();
-		m_pos += m_vec * m_speed;
-		MV1SetPosition(m_charModel, VGet(m_pos.x, m_pos.y, m_pos.z));
+	if (toPlayerDir.Length() > 1.0f) 
+	{
+		toPlayerDir.Normalize();
+		m_rigidbody.SetVelo(toPlayerDir * kSpeed);
+		MV1SetPosition(m_charModel, myPos.ToDxVECTOR());
 
 		// 進行方向が0でなければ回転
-		if (m_vec.x != 0.0f || m_vec.z != 0.0f)
+		if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
 		{
 			// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
-			float angleY = std::atan2(m_vec.x, -m_vec.z);
+			float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
 			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 		}
 	}
 
-	float distance = (m_pos - player->GetPos()).Length();
+	float distance = (myPos - player->GetPos()).Length();
 	if (distance >= (m_findRadius + player->GetRadius()))
 	{
 		ChangeState(EnemyState::Find);
+		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 
 	if (distance <= (m_attackRadius + player->GetRadius()))
 	{
 		ChangeState(EnemyState::Attack);
+		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 }
 
@@ -227,12 +260,13 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 	{
 		++m_attackFrame;
 		// プレイヤーへの方向ベクトル
-		m_vec = player->GetPos() - m_pos;
-		m_vec.y = 0.0f; // Y軸方向の移動を無効化（XZ平面のみ移動する場合）
-		if (m_vec.x != 0.0f || m_vec.z != 0.0f)
+		Vec3 myPos = m_rigidbody.GetPos();
+		Vec3 toPlayerDir = player->GetPos() - myPos;
+		toPlayerDir.y = 0.0f;
+		if (toPlayerDir.x != 0.0f || toPlayerDir.z != 0.0f)
 		{
 			// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
-			float angleY = std::atan2(m_vec.x, -m_vec.z);
+			float angleY = std::atan2(toPlayerDir.x, -toPlayerDir.z);
 			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 		}
 	}
@@ -241,15 +275,17 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 	{
 		// 弾を生成
 		// プレイヤーへの方向ベクトル
-		m_vec = player->GetPos() - m_pos;
-		m_vec.Normalize();
-		auto bullet = std::make_unique<EnemyMageBullet>(m_pos, m_vec);
+		Vec3 myPos = m_rigidbody.GetPos();
+		Vec3 toPlayerDir = player->GetPos() - myPos;
+		toPlayerDir.y = 0.0f;
+		toPlayerDir.Normalize();
+		auto bullet = std::make_unique<EnemyMageBullet>(myPos, toPlayerDir);
 		m_bullets.push_back(std::move(bullet));
 	}
 
 	if (m_anim.GetNextAnim().isEnd)
 	{
-		float distance = (m_pos - player->GetPos()).Length();
+		float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
 		if (distance >= (m_findRadius + player->GetRadius()))
 		{
 			ChangeState(EnemyState::Find);

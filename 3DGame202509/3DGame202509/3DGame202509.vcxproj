@@ -178,13 +178,14 @@
     <ClInclude Include="MyLib\CapsuleColliderData.h" />
     <ClInclude Include="MyLib\Collidable.h" />
     <ClInclude Include="MyLib\ColliderData.h" />
-    <ClInclude Include="MyLib\GameObjectTag.h" />
+    <ClInclude Include="MyLib\ObjectTag.h" />
     <ClInclude Include="MyLib\Input.h" />
     <ClInclude Include="MyLib\Physics.h" />
     <ClInclude Include="MyLib\Quaternion.h" />
     <ClInclude Include="MyLib\Rigidbody.h" />
     <ClInclude Include="MyLib\SphereColliderData.h" />
     <ClInclude Include="MyLib\Vec3.h" />
+    <ClInclude Include="ObjectPriority.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\ResultScene.h" />
     <ClInclude Include="Scene\SceneBase.h" />

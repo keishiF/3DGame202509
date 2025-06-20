@@ -4,8 +4,9 @@
 #include "Physics.h"
 #include <cassert>
 
-Collidable::Collidable(GameObjectTag tag, ColliderData::Kind colliderKind):
+Collidable::Collidable(ObjectTag tag, ObjectPriority priority, ColliderData::Kind colliderKind):
 	m_tag(tag),
+	m_priority(priority),
 	m_colliderData(nullptr)
 {
 	m_colliderData = CreateColliderData(colliderKind);
@@ -17,12 +18,12 @@ Collidable::~Collidable()
 
 void Collidable::Init(std::shared_ptr<Physics> physics)
 {
-	physics->Entry(shared_from_this());
+	physics->Entry(this);
 }
 
 void Collidable::Final(std::shared_ptr<Physics> physics)
 {
-	physics->Exit(shared_from_this());
+	physics->Exit(this);
 }
 
 std::shared_ptr<ColliderData> Collidable::CreateColliderData(ColliderData::Kind kind)

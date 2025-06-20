@@ -6,7 +6,6 @@
 #include "Animation.h"
 #include <memory>
 
-class Physics;
 class Player : public Collidable
 {
 public:
@@ -19,7 +18,7 @@ public:
 	void Draw();
 
 	// プレイヤーの位置を取得
-	Vec3 GetPos() const { return m_pos; }
+	Vec3 GetPos() const { return m_rigidbody.GetPos(); }
 	float GetRadius() const { return m_radius; }
 
 	// ダメージを受けた時の処理をまとめる関数
@@ -27,7 +26,7 @@ public:
 
 	bool IsDead() const { return m_isDead; }
 
-	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
+	virtual void OnCollide(Collidable* collider) override;
 
 	// プレイヤーの状態
 private:
@@ -77,12 +76,8 @@ private:
 private:
 	// プレイヤーのモデル
 	int m_model;
-	// プレイヤーの位置
-	Vec3 m_pos;
 	// プレイヤーの当たり判定
 	float m_radius;
-	// プレイヤーの向き
-	Vec3 m_vec;
 	// プレイヤーのHP
 	int m_hp;
 	// プレイヤーのフラグ

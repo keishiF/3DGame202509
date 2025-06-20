@@ -6,6 +6,7 @@
 #include "Enemy/EnemyMinion.h"
 #include "Enemy/EnemyMage.h"
 #include "Camera.h"
+#include "Physics.h"
 #include "game.h"
 #include "Input.h"
 #include <cassert>
@@ -32,9 +33,12 @@ GameScene::GameScene(SceneController& controller) :
 	assert(m_skyModel >= 0);
 	MV1SetScale(m_skyModel, VGet(kSkyModelScale, kSkyModelScale, kSkyModelScale));
 
-	m_player = std::make_shared<Player>();
+	m_physics = std::make_shared<Physics>();
+	m_player = std::make_shared<Player>(m_physics);
 	m_minion  = std::make_shared<EnemyMinion>();
+	m_minion->Init(m_physics);
 	m_mage  = std::make_shared<EnemyMage>();
+	m_mage->Init(m_physics);
 	m_camera = std::make_shared<Camera>();
 	m_camera->SetCamera(m_player);
 }
@@ -58,6 +62,7 @@ void GameScene::NormalUpdate()
 	++m_frame;
 	++m_blinkFrame;
 
+	m_physics->Update();
 	m_player->Update();
 	m_minion->Update(m_player);
 	m_mage->Update(m_player);
@@ -65,6 +70,7 @@ void GameScene::NormalUpdate()
 
 	if (m_player->IsDead())
 	{
+		m_player->Final(m_physics);
 		m_update = &GameScene::FadeOutUpdate;
 		m_draw = &GameScene::FadeDraw;
 		m_fadeFrame = 0;
@@ -98,11 +104,12 @@ void GameScene::NormalDraw()
 	{
 		DrawString(0, 0, "Game Scene", 0xffffff);
 	}
-	//printf("frame %d\r", m_frame);
+	printf("frame %d\r", m_frame);
 
 	MV1DrawModel(m_skyModel);
 
 #ifdef _DEBUG
+	m_physics->DebugDraw();
 #endif
 
 	DrawField();

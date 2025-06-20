@@ -7,14 +7,15 @@
 #include "Enemy/EnemyMinion.h"
 #include "DxLib.h"
 #include <cassert>
+#include <algorithm>
 
-void Physics::Entry(std::shared_ptr<Collidable> col)
+void Physics::Entry(Collidable* collider)
 {
 	// 登録
-	bool found = (std::find(m_collidables.begin(), m_collidables.end(), col) != m_collidables.end());
+	bool found = (std::find(m_collidables.begin(), m_collidables.end(), collider) != m_collidables.end());
 	if (!found)
 	{
-		m_collidables.emplace_back(col);
+		m_collidables.emplace_back(collider);
 	}
 	// 既に登録されてたらエラー
 	else
@@ -23,13 +24,13 @@ void Physics::Entry(std::shared_ptr<Collidable> col)
 	}
 }
 
-void Physics::Exit(std::shared_ptr<Collidable> col)
+void Physics::Exit(Collidable* collider)
 {
 	// 登録解除
-	bool found = (std::find(m_collidables.begin(), m_collidables.end(), col) != m_collidables.end());
+	bool found = (std::find(m_collidables.begin(), m_collidables.end(), collider) != m_collidables.end());
 	if (found)
 	{
-		m_collidables.remove(col);
+		m_collidables.remove(collider);
 	}
 	// 登録されてなかったらエラー
 	else
@@ -43,65 +44,19 @@ void Physics::Update()
 	//仮処理
 	for (auto& item : m_collidables)
 	{
+		auto pos = item->m_rigidbody.GetPos();
+		auto nextPos = pos + item->m_rigidbody.GetVelo();
 		item->m_nextPos = (item->m_rigidbody.GetPos() + item->m_rigidbody.GetVelo());
+
+		item->m_nextPos = nextPos;
 	}
-	//当たっているものを入れる配列
-	std::vector<OnCollideInfo> pushData;
-	for (auto& first : m_collidables)
+	std::vector<OnCollideInfo> onCollideInfo = CheckCollide();
+	FixPosition();
+	for (auto& item : onCollideInfo)
 	{
-		for (auto& second : m_collidables)
-		{
-			//当たり判定チェック
-			if (CheckCollide(first, second))
-			{
-				//一度入れたものを二度入れないようにチェック
-				bool hasFirstColData = false;
-				bool hasSecondColData = false;
-				for (auto& item : pushData)
-				{
-					//すでに入れていたら弾く
-					if (item.owner == first)
-					{
-						hasFirstColData = true;
-					}
-					if (item.owner == second)
-					{
-						hasSecondColData = true;
-					}
-				}
-				//弾かれなかった場合当たったものリストに入れる
-				if (!hasFirstColData)
-				{
-					pushData.push_back({ first,second });
-					//if (first->GetTag() == ObjectTag::kPlayer)
-					//{
-					//	printfDx("プレイヤーとぶつかった");
-					//}
-					//if (first->GetTag() == ObjectTag::kEnemy)
-					//{
-					//	printfDx("エネミーとぶつかった");
-					//}
-				}
-				if (!hasSecondColData)
-				{
-					pushData.push_back({ second,first });
-					//if (first->GetTag() == ObjectTag::kPlayer)
-					//{
-					//	printfDx("プレイヤーとぶつかった");
-					//}
-					//if (first->GetTag() == ObjectTag::kEnemy)
-					//{
-					//	printfDx("エネミーとぶつかった");
-					//}
-				}
-			}
-		}
+		item.owner->OnCollide(item.colider);
 	}
-	//当たった当たり判定の当たった時の処理を呼ぶ
-	for (auto& hitCol : pushData)
-	{
-		hitCol.OnCollide();
-	}
+
 	//位置修正
 	FixPosition();
 }
@@ -128,6 +83,71 @@ void Physics::DebugDraw()
 	}
 }
 
+void Physics::FixNextPosition(Collidable* primary, Collidable* secondary) const
+{
+	auto primaryKind   = primary->m_colliderData->GetKind();
+	auto secondaryKind = primary->m_colliderData->GetKind();
+
+	// 球同士の位置補正
+	if (primaryKind == ColliderData::Kind::Sphere && secondaryKind == ColliderData::Kind::Sphere)
+	{
+		Vec3 primaryToSecondary = secondary->m_nextPos - primary->m_nextPos;
+		primaryToSecondary.Normalize();
+
+		auto primaryColliderData = dynamic_pointer_cast<SphereColliderData>(primary->m_colliderData);
+		auto secondaryColliderData = dynamic_pointer_cast<SphereColliderData>(secondary->m_colliderData);
+		float awayDist = primaryColliderData->m_radius + secondaryColliderData->m_radius;
+		Vec3 primaryToNewSecondaryPos = primaryToSecondary * awayDist;
+		Vec3 fixedPos = primary->m_nextPos + primaryToNewSecondaryPos;
+		secondary->m_nextPos = fixedPos;
+	}
+	// 球とカプセルの位置補正
+	else if (primaryKind == ColliderData::Kind::Sphere && secondaryKind == ColliderData::Kind::Capsule)
+	{
+
+	}
+	// カプセルとカプセルの位置補正
+	else if (primaryKind == ColliderData::Kind::Capsule && secondaryKind == ColliderData::Kind::Capsule)
+	{
+		auto primaryColliderData = dynamic_pointer_cast<CapsuleColliderData>(primary->m_colliderData);
+		auto secondaryColliderData = dynamic_pointer_cast<CapsuleColliderData>(secondary->m_colliderData);
+
+		// カプセルの線分の始点と終点
+		Vec3 primaryStart   = primary->m_nextPos;
+		Vec3 primaryEnd     = primaryColliderData->m_startPos;
+
+		Vec3 secondaryStart = secondary->m_nextPos;
+		Vec3 secondaryEnd   = secondaryColliderData->m_startPos;
+
+		// 線分同士の最近接点を求める
+		Vec3 closestPointA, closestPointB;
+		SegmentClosestPoint(primaryStart, primaryEnd, secondaryStart, secondaryEnd, &closestPointA, &closestPointB);
+
+		// 最近接点間の距離と方向
+		Vec3 closestDir = closestPointB - closestPointA;
+		float dist = closestDir.Length();
+
+		float awayDist = primaryColliderData->m_radius + secondaryColliderData->m_radius;
+
+		if (dist == 0.0f)
+		{
+			closestDir = {1.0f, 0.0f, 0.0f};
+			dist = 0.000001f;
+		}
+		else
+		{
+			closestDir.Normalize();
+		}
+
+		if (dist < awayDist)
+		{
+			Vec3 fixedPos = closestDir * (awayDist - dist);
+			fixedPos.y = 0.0f;
+			secondary->m_nextPos += fixedPos;
+		}
+	}
+}
+
 void Physics::FixPosition()
 {
 	for (auto& item : m_collidables)
@@ -136,36 +156,7 @@ void Physics::FixPosition()
 		Vec3 toFixedPos = item->m_nextPos - item->m_rigidbody.GetPos();
 		Vec3 nextPos = item->m_rigidbody.GetPos() + toFixedPos;
 
-		Vec3 centerPos(0, 0, 0);
-
-		////TODO:ステージの当たり判定を作成する
-		////移動制限を付ける(仮処理)
-		//const float stageScale = 500.0f;
-		//const float groundHeight = -50.0f;
-
-		//if ((nextPos - centerPos).Length() > stageScale)
-		//{
-		//	//ぶつかった場所を保存する
-		//	OnCollideInfo hitCollides;
-		//	//ステージとぶつかったして
-		//	std::shared_ptr<EnemyMinion> enemyMinion = std::make_shared<EnemyMinion>(GameObjectTag::Bullet);
-		//	//ぶつかった場所を補正前の座標に設定
-		//	enemyMinion->m_rigidbody.SetPos(nextPos);
-		//	hitCollides.owner = enemyMinion;
-		//	hitCollides.colider = item;
-		//	//ぶつかった時の処理を呼ぶ
-		//	hitCollides.OnCollide();
-		//	//座標を補正
-		//	nextPos = (nextPos - centerPos).GetNormalize() * stageScale;
-		//}
-		//if (nextPos.y < groundHeight)
-		//{
-		//	nextPos.y = groundHeight;
-		//}
-
 		item->m_rigidbody.SetVelo(toFixedPos);
-
-
 		// 位置確定
 		item->m_rigidbody.SetPos(nextPos);
 
@@ -183,7 +174,75 @@ void Physics::FixPosition()
 	}
 }
 
-bool Physics::CheckCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Collidable> second)
+std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
+{
+	//当たっているものを入れる配列
+	std::vector<OnCollideInfo> onCollideInfo;
+	for (auto& first : m_collidables)
+	{
+		for (auto& second : m_collidables)
+		{
+			//当たり判定チェック
+			if (IsCollide(first, second))
+			{
+				auto priority1 = first->GetPriority();
+				auto priority2 = second->GetPriority();
+				Collidable* primary = first;
+				Collidable* secondary = second;
+				if (priority1 < priority2)
+				{
+					primary = second;
+					secondary = first;
+				}
+				FixNextPosition(primary, secondary);
+
+				//一度入れたものを二度入れないようにチェック
+				bool hasFirstColData = false;
+				bool hasSecondColData = false;
+				for (auto& item : onCollideInfo)
+				{
+					//すでに入れていたら弾く
+					if (item.owner == primary)
+					{
+						hasFirstColData = true;
+					}
+					if (item.owner == secondary)
+					{
+						hasSecondColData = true;
+					}
+				}
+				//弾かれなかった場合当たったものリストに入れる
+				if (!hasFirstColData)
+				{
+					onCollideInfo.push_back({ first,second });
+					/*if (first->GetTag() == ObjectTag::Player)
+					{
+						printfDx("プレイヤーとぶつかった\n");
+					}
+					if (first->GetTag() == ObjectTag::Enemy)
+					{
+						printfDx("エネミーとぶつかった\n");
+					}*/
+				}
+				if (!hasSecondColData)
+				{
+					onCollideInfo.push_back({ second,first });
+					/*if (first->GetTag() == ObjectTag::Player)
+					{
+						printfDx("プレイヤーとぶつかった\n");
+					}
+					if (first->GetTag() == ObjectTag::Enemy)
+					{
+						printfDx("エネミーとぶつかった\n");
+					}*/
+				}
+			}
+		}
+	}
+	return std::vector<OnCollideInfo>();
+}
+
+bool Physics::IsCollide(Collidable* first, Collidable* second) const
 {
 	//第一の当たり判定と第二の当たり判定がおなじものでなければ
 	if (first != second)
@@ -286,4 +345,95 @@ bool Physics::CheckCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Co
 		}
 	}
 	return false;
+}
+
+void Physics::SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,
+	Vec3& segBStart, Vec3& segBEnd,
+	Vec3* closestPtA, Vec3* closestPtB) const
+{
+	// 線分Aの方向ベクトル
+	Vec3 segADir = segAEnd - segAStart;
+	// 線分Bの方向ベクトル
+	Vec3 segBDir = segBEnd - segBStart;
+	// 線分Aの始点から線分Bの始点
+	Vec3 startDiff = segAStart -segBStart;
+
+	// 線分Aの長さ2乗
+	float segASqLen = segADir.Dot(segADir);
+	// 線分Bの長さ2乗
+	float segBSqLen = segBDir.Dot(segBDir);
+	// B始点→A始点ベクトルが、線分Bにどれだけ沿っているか
+	float segBDotDiff = segBDir.Dot(startDiff);
+
+	float paramA, paramB;
+
+	// 両方の線分が点の場合
+	if (segASqLen <= 0.000001f && segBSqLen <= 0.000001f)
+	{
+		// 双方の始点を最近接点にする
+		*closestPtA = segAStart;
+		*closestPtB = segBStart;
+		return;
+	}
+
+	// 線分Aが点の場合
+	if (segASqLen <= 0.000001f)
+	{
+		paramA = 0.0f;
+		// 線分B上の最近接点の計算をし、0~1に制限
+		paramB = segBDotDiff / segBSqLen;
+		paramB = std::clamp(paramB, 0.0f, 1.0f);
+	}
+	else
+	{
+		// Aに向かうベクトルとA始点、B始点の内積
+		float segADotDiff = segADir.Dot(startDiff);
+
+		// 線分Bが点の場合
+		if (segBSqLen <= 0.000001f)
+		{
+			paramB = 0.0f;
+			// 線分A上の最近接点の計算をし、0~1に制限
+			paramA = -segADotDiff / segASqLen;
+			paramA = std::clamp(paramA, 0.0f, 1.0f);
+		}
+		else
+		{
+			// Aに向かうベクトルとBに向かうベクトルの内積
+			float segABDot = segADir.Dot(segBDir);
+			// 二つの線分がどれだけ平行じゃないか(0に近いほど平行)
+			float segmentParallel = segASqLen * segBSqLen - segABDot * segABDot;
+
+			// 平行じゃない場合
+			if (segmentParallel != 0.0f)
+			{
+				paramA = (segABDot * segBDotDiff - segADotDiff * segBSqLen) / segmentParallel;
+				paramA = std::clamp(paramA, 0.0f, 1.0f);
+			}
+			else
+			{
+				// 平行の場合はA始点を仮の最近接点とする
+				paramA = 0.0f;
+			}
+
+			// 線分B上の最近接点の計算
+			paramB = (segABDot * paramA + segBDotDiff) / segBSqLen;
+
+			// 線分Bの外にいる場合、補正してA側を調整
+			if (paramB < 0.0f)
+			{
+				paramB = 0.0f;
+				paramA = std::clamp(-segADotDiff / segASqLen, 0.0f, 1.0f);
+			}
+			else if (paramB > 1.0f)
+			{
+				paramB = 1.0f;
+				paramA = std::clamp((segABDot - segADotDiff) / segASqLen, 0.0f, 1.0f);
+			}
+		}
+	}
+
+	// 線分上の最近接点座標を代入
+	*closestPtA = segAStart + (segADir * paramA);
+	*closestPtB = segBStart + (segBDir * paramB);
 }
