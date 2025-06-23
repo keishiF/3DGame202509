@@ -30,7 +30,7 @@ namespace
 	constexpr int kHp = 10;
 
 	// エネミーの速度
-	constexpr float kSpeed = 3.0f;
+	constexpr float kSpeed = 1.0f;
 
 	constexpr float kColScale  = 70.0f;
 	constexpr float kColRadius = 25.0f;
