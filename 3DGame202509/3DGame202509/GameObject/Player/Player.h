@@ -13,7 +13,8 @@ public:
 	Player(std::shared_ptr<Physics> physics);
 	virtual ~Player();
 
-	// 更新、描画
+	// 初期化、更新、描画
+	void Init(std::shared_ptr<Physics> physics);
 	void Update();
 	void Draw();
 
@@ -26,7 +27,7 @@ public:
 
 	bool IsDead() const { return m_isDead; }
 
-	virtual void OnCollide(Collidable* collider) override;
+	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 
 	// プレイヤーの状態
 private:
@@ -73,9 +74,12 @@ private:
 	// 死亡状態
 	void DeadUpdate();
 
+	MATRIX GetFrameWorldMatrix(int modelHandle, int frameIndex);
+
 private:
 	// プレイヤーのモデル
-	int m_model;
+	int m_charModel;
+	int m_weaponModel;
 	// プレイヤーの当たり判定
 	float m_radius;
 	// プレイヤーのHP

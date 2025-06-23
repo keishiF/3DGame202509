@@ -9,7 +9,7 @@
 #include <cassert>
 #include <algorithm>
 
-void Physics::Entry(Collidable* collider)
+void Physics::Entry(std::shared_ptr<Collidable> collider)
 {
 	// 登録
 	bool found = (std::find(m_collidables.begin(), m_collidables.end(), collider) != m_collidables.end());
@@ -24,7 +24,7 @@ void Physics::Entry(Collidable* collider)
 	}
 }
 
-void Physics::Exit(Collidable* collider)
+void Physics::Exit(std::shared_ptr<Collidable> collider)
 {
 	// 登録解除
 	bool found = (std::find(m_collidables.begin(), m_collidables.end(), collider) != m_collidables.end());
@@ -54,7 +54,7 @@ void Physics::Update()
 	FixPosition();
 	for (auto& item : onCollideInfo)
 	{
-		item.owner->OnCollide(item.colider);
+		item.owner->OnCollide(item.collider);
 	}
 
 	//位置修正
@@ -83,10 +83,10 @@ void Physics::DebugDraw()
 	}
 }
 
-void Physics::FixNextPosition(Collidable* primary, Collidable* secondary) const
+void Physics::FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const
 {
 	auto primaryKind   = primary->m_colliderData->GetKind();
-	auto secondaryKind = primary->m_colliderData->GetKind();
+	auto secondaryKind = secondary->m_colliderData->GetKind();
 
 	// 球同士の位置補正
 	if (primaryKind == ColliderData::Kind::Sphere && secondaryKind == ColliderData::Kind::Sphere)
@@ -104,7 +104,6 @@ void Physics::FixNextPosition(Collidable* primary, Collidable* secondary) const
 	// 球とカプセルの位置補正
 	else if (primaryKind == ColliderData::Kind::Sphere && secondaryKind == ColliderData::Kind::Capsule)
 	{
-
 	}
 	// カプセルとカプセルの位置補正
 	else if (primaryKind == ColliderData::Kind::Capsule && secondaryKind == ColliderData::Kind::Capsule)
@@ -187,8 +186,8 @@ std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
 			{
 				auto priority1 = first->GetPriority();
 				auto priority2 = second->GetPriority();
-				Collidable* primary = first;
-				Collidable* secondary = second;
+				std::shared_ptr<Collidable> primary   = first;
+				std::shared_ptr<Collidable> secondary = second;
 				if (priority1 < priority2)
 				{
 					primary = second;
@@ -242,7 +241,7 @@ std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
 	return std::vector<OnCollideInfo>();
 }
 
-bool Physics::IsCollide(Collidable* first, Collidable* second) const
+bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Collidable> second) const
 {
 	//第一の当たり判定と第二の当たり判定がおなじものでなければ
 	if (first != second)

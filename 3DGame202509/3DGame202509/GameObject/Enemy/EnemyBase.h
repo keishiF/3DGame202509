@@ -21,7 +21,7 @@ public:
 	void OnDamage();
 	bool IsDead() const { return m_isDead; }
 
-	virtual void OnCollide(Collidable* collider) override;
+	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 
 protected:
 	enum class EnemyState

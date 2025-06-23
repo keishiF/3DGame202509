@@ -6,7 +6,7 @@
 #include <memory>
 
 class Physics;
-class Collidable abstract : public std::shared_ptr<Collidable>
+class Collidable abstract : public std::enable_shared_from_this<Collidable>
 {
 public:
 	Collidable(ObjectTag tag, ObjectPriority priority, ColliderData::Kind colliderKind);
@@ -17,7 +17,7 @@ public:
 	ObjectTag GetTag() const { return m_tag; }
 	ObjectPriority GetPriority() const { return m_priority; }
 
-	virtual void OnCollide(Collidable* collider) abstract;
+	virtual void OnCollide(std::shared_ptr<Collidable> collider) abstract;
 
 protected:
 	Rigidbody m_rigidbody;

@@ -18,12 +18,12 @@ Collidable::~Collidable()
 
 void Collidable::Init(std::shared_ptr<Physics> physics)
 {
-	physics->Entry(this);
+	physics->Entry(shared_from_this());
 }
 
 void Collidable::Final(std::shared_ptr<Physics> physics)
 {
-	physics->Exit(this);
+	physics->Exit(shared_from_this());
 }
 
 std::shared_ptr<ColliderData> Collidable::CreateColliderData(ColliderData::Kind kind)
@@ -42,7 +42,7 @@ std::shared_ptr<ColliderData> Collidable::CreateColliderData(ColliderData::Kind 
 	else if (kind == ColliderData::Kind::Sphere)
 	{
 		//スフィアコライダーの情報を入れる
-		return std::make_shared<CapsuleColliderData>();
+		return std::make_shared<SphereColliderData>();
 	}
 	else
 	{

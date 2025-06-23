@@ -4,6 +4,7 @@
 
 #include "CapsuleColliderData.h"
 #include "Animation.h"
+#include "Physics.h"
 
 #include "DxLib.h"
 #include <cassert>
@@ -44,7 +45,6 @@ namespace
 
 EnemyMage::EnemyMage()
 {
-	
 }
 
 EnemyMage::~EnemyMage()
@@ -57,6 +57,8 @@ void EnemyMage::Init(std::shared_ptr<Physics> physics)
 	Vec3 pos = { -500.0f, 0.0f, 500.0f };
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
+
+	m_physics = physics;
 
 	//当たり判定
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
@@ -128,17 +130,17 @@ void EnemyMage::Update(std::shared_ptr<Player> player)
 		break;
 	}
 
-	for (auto item = m_bullets.begin(); item != m_bullets.end();)
+	for (auto it = m_bullets.begin(); it != m_bullets.end(); )
 	{
-		(*item)->Update();
-
-		if ((*item)->IsDead())
+		(*it)->Update();
+		if ((*it)->IsDead())
 		{
-			item = m_bullets.erase(item);
+			m_physics->Exit(*it);
+			it = m_bullets.erase(it);
 		}
 		else
 		{
-			++item;
+			++it;
 		}
 	}
 
@@ -162,9 +164,9 @@ void EnemyMage::Draw()
 	MV1DrawModel(m_charModel);
 	MV1DrawModel(m_weaponModel);
 
-	for (auto& bullets : m_bullets)
+	for (auto& bullet : m_bullets)
 	{
-		bullets->Draw();
+		bullet->Draw();
 	}
 }
 
@@ -274,13 +276,12 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 	if (m_attackFrame == kAttackFrame)
 	{
 		// 弾を生成
-		// プレイヤーへの方向ベクトル
 		Vec3 myPos = m_rigidbody.GetPos();
 		Vec3 toPlayerDir = player->GetPos() - myPos;
 		toPlayerDir.y = 0.0f;
 		toPlayerDir.Normalize();
-		auto bullet = std::make_unique<EnemyMageBullet>(myPos, toPlayerDir);
-		m_bullets.push_back(std::move(bullet));
+
+		m_bullets.emplace_back(std::make_shared<EnemyMageBullet>(myPos, toPlayerDir, m_physics));
 	}
 
 	if (m_anim.GetNextAnim().isEnd)

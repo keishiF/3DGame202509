@@ -5,6 +5,7 @@
 #include <memory>
 
 class EnemyMageBullet;
+class Physics;
 class EnemyMage : public EnemyBase
 {
 public:
@@ -34,6 +35,8 @@ private:
 	// €–Só‘Ô
 	void DeadUpdate(std::shared_ptr<Player> player) override;
 
-	std::vector<std::unique_ptr<EnemyMageBullet>> m_bullets;
+	std::vector<std::shared_ptr<EnemyMageBullet>> m_bullets;
+
+	std::shared_ptr<Physics> m_physics;
 };
 

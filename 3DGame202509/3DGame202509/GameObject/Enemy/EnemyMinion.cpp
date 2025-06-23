@@ -71,7 +71,7 @@ void EnemyMinion::Init(std::shared_ptr<Physics> physics)
 	// キャラと武器のモデルのロード
 	m_charModel = MV1LoadModel("Data/Enemy/Minion/Minion.mv1");
 	assert(m_charModel >= 0);
-	m_weaponModel = MV1LoadModel("Data/Enemy/Minion/Blade.mv1");
+	m_weaponModel = MV1LoadModel("Data/Enemy/Minion/BladeBlender.mv1");
 	assert(m_weaponModel >= 0);
 	// モデルの拡大
 	MV1SetScale(m_charModel, VGet(kModelScale, kModelScale, kModelScale));
@@ -144,6 +144,10 @@ void EnemyMinion::Draw()
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), 10.0f, 16, 0x0000ff, 0x0000ff, true);
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_findRadius, 16, 0xff00ff, 0xff00ff, false);
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_attackRadius, 16, 0xff00ff, 0xff00ff, false);
+
+	VECTOR bladeStart = MV1GetFramePosition(m_weaponModel, 1);
+	VECTOR bladeEnd = MV1GetFramePosition(m_weaponModel, 2);
+	DrawCapsule3D(bladeStart, bladeEnd, 7.5f, 16, 0xff00ff, 0xff00ff, false);
 #endif
 
 	MV1DrawModel(m_charModel);

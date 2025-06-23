@@ -35,6 +35,7 @@ GameScene::GameScene(SceneController& controller) :
 
 	m_physics = std::make_shared<Physics>();
 	m_player = std::make_shared<Player>(m_physics);
+	m_player->Init(m_physics);
 	m_minion  = std::make_shared<EnemyMinion>();
 	m_minion->Init(m_physics);
 	m_mage  = std::make_shared<EnemyMage>();

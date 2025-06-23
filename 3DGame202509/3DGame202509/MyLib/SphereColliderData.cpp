@@ -4,3 +4,7 @@ SphereColliderData::SphereColliderData() :
 	ColliderData(ColliderData::Kind::Sphere)
 {
 }
+
+SphereColliderData::~SphereColliderData()
+{
+}

@@ -39,10 +39,13 @@ namespace
 	constexpr float kRunSpeed = 4.5f;
 	// プレイヤーのモデルの拡大値
 	constexpr float kModelScale = 45.0f;
+
+	constexpr float kBladeModelScale = 0.01f;
 }
 
 Player::Player(std::shared_ptr<Physics> physics) :
-	m_model(-1),
+	m_charModel(-1),
+	m_weaponModel(-1),
 	m_radius(kRadius),
 	m_hp(kHp),
 	m_isCombo(false),
@@ -50,6 +53,15 @@ Player::Player(std::shared_ptr<Physics> physics) :
 	m_frameCount(0.0f),
 	m_state(PlayerState::Idle),
 	Collidable(ObjectTag::Player, ObjectPriority::High, ColliderData::Kind::Capsule)
+{
+}
+
+Player::~Player()
+{
+	MV1DeleteModel(m_charModel);
+}
+
+void Player::Init(std::shared_ptr<Physics> physics)
 {
 	Collidable::Init(physics);
 	Vec3 pos = { 0.0f, 0.0f, -500.0f };
@@ -61,18 +73,15 @@ Player::Player(std::shared_ptr<Physics> physics) :
 	colData->m_startPos = pos;
 	colData->m_radius = kRadius;
 
-	m_model = MV1LoadModel("Data/Player/Player.mv1");
-	assert(m_model >= 0);
-	MV1SetScale(m_model, VGet(kModelScale, kModelScale, kModelScale));
-	MV1SetPosition(m_model, pos.ToDxVECTOR());
+	m_charModel = MV1LoadModel("Data/Player/PlayerNoSword.mv1");
+	assert(m_charModel >= 0);
+	m_weaponModel = MV1LoadModel("Data/Player/SwordBlender.mv1");
+	assert(m_weaponModel >= 0);
+	MV1SetScale(m_charModel, VGet(kModelScale, kModelScale, kModelScale));
+	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
 
-	m_anim.Init(m_model);
+	m_anim.Init(m_charModel);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, true);
-}
-
-Player::~Player()
-{
-	MV1DeleteModel(m_model);
 }
 
 void Player::Update()
@@ -119,6 +128,27 @@ void Player::Update()
 		break;
 	}
 
+	// アタッチするモデルのMV1SetMatrixの設定を無効化する
+	MV1SetMatrix(m_weaponModel, MGetIdent());
+	// アタッチするモデルのフレームの座標を取得する
+	VECTOR position = MV1GetFramePosition(m_weaponModel, 0);
+	// アタッチするモデルを,フレームの座標を原点にするための平行移動行列を作成
+	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
+	// アタッチされるモデルのフレームの行列を取得
+	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(m_charModel, 26);
+	// アタッチするモデルの拡大行列を取得
+	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
+	// アタッチするモデルの回転行列を取得
+	MATRIX yMat = MGetRotY(DX_PI_F);
+	// 各行列を合成
+	MATRIX mixMat = MGetIdent();
+	mixMat = MMult(transMat, mixMat);
+	mixMat = MMult(frameMat, mixMat);
+	mixMat = MMult(scaleMat, mixMat);
+	mixMat = MMult(yMat, mixMat);
+	// 合成した行列をモデルにセット
+	MV1SetMatrix(m_weaponModel, mixMat);
+
 	//当たり判定
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	Vec3 colPos = m_rigidbody.GetPos();
@@ -130,9 +160,13 @@ void Player::Draw()
 {
 #if _DEBUG
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_radius, 16, 0x00ff00, 0x00ff00, false);
-#endif
 
-	MV1DrawModel(m_model);
+	VECTOR weaponStart = MV1GetFramePosition(m_weaponModel, 1);
+	VECTOR weaponEnd = MV1GetFramePosition(m_weaponModel, 2);
+	DrawCapsule3D(weaponStart, weaponEnd, 7.5f, 16, 0xff00ff, 0xff00ff, false);
+#endif
+	MV1DrawModel(m_charModel);
+	MV1DrawModel(m_weaponModel);
 }
 
 void Player::OnDamage()
@@ -141,7 +175,7 @@ void Player::OnDamage()
 	m_hp--;
 }
 
-void Player::OnCollide(Collidable* collider)
+void Player::OnCollide(std::shared_ptr<Collidable> collider)
 {
 	OnDamage();
 }
@@ -258,14 +292,14 @@ void Player::WalkUpdate()
 	// ベクトルを正規化し移動速度をかけポジションに加算
 	dir.Normalize();
 	m_rigidbody.SetVelo(dir * kWalkSpeed);
-	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
+	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 
 	// 進行方向が0でなければ回転
 	if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
 	{
 		// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
 		float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
-		MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
+		MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 	}
 
 	// 左スティックの入力がない場合待機状態に移行
@@ -341,18 +375,14 @@ void Player::RunUpdate()
 	// ベクトルを正規化し移動速度をかけポジションに加算
 	dir.Normalize();
 	m_rigidbody.SetVelo(dir * kRunSpeed);
-	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
-	/*m_vec.Normalize();
-	m_vec *= kRunSpeed;
-	m_pos += m_vec;
-	MV1SetPosition(m_model, VGet(m_pos.x, m_pos.y, m_pos.z));*/
+	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 
 	// 進行方向が0でなければ回転
 	if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
 	{
 		// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
 		float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
-		MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
+		MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 	}
 
 	// 左スティックの入力がない場合待機状態に移行する
@@ -490,7 +520,7 @@ void Player::DodgeUpdate()
 
 void Player::HitUpdate()
 {
-	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
+	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
@@ -505,6 +535,23 @@ void Player::DeadUpdate()
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		m_isDead = true;
+	}
+}
+
+MATRIX Player::GetFrameWorldMatrix(int modelHandle, int frameIndex)
+{
+	int parentIndex = MV1GetFrameParent(modelHandle, frameIndex);
+
+	MATRIX localMat = MV1GetFrameLocalMatrix(modelHandle, frameIndex);
+
+	if (parentIndex == -1) // 親なし → ルートフレーム
+	{
+		return localMat;
+	}
+	else
+	{
+		MATRIX parentWorldMat = GetFrameWorldMatrix(modelHandle, parentIndex);
+		return MMult(localMat, parentWorldMat); // 行列の掛け算
 	}
 }
 

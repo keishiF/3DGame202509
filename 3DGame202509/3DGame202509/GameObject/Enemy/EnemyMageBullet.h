@@ -6,19 +6,17 @@
 class EnemyMageBullet : public Collidable
 {
 public:
-	EnemyMageBullet(Vec3 pos, Vec3 vec);
+	EnemyMageBullet(Vec3 pos, Vec3 vec, std::shared_ptr<Physics> physics);
 	~EnemyMageBullet();
 
 	void Update();
 	void Draw();
 
-	virtual void OnCollide(Collidable* collider) override;
+	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 
 	bool IsDead() const { return m_isDead; }
 
 private:
-	Vec3 m_pos;
-	Vec3 m_vec;
 	float m_frame;
 	bool m_isDead;
 };

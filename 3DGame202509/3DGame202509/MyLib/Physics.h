@@ -7,26 +7,26 @@
 class Physics final
 {
 public:
-	void Entry(Collidable* collider);
-	void Exit(Collidable* collider);
+	void Entry(std::shared_ptr<Collidable> collider);
+	void Exit(std::shared_ptr<Collidable> collider);
 	void Update();
 	void DebugDraw();
 
 private:
-	std::list<Collidable*> m_collidables;
+	std::list<std::shared_ptr<Collidable>> m_collidables;
 
 	// OnCollideの衝突通知のためのデータ
 	struct OnCollideInfo
 	{
-		Collidable* owner;
-		Collidable* colider;
-		void OnCollide() { owner->OnCollide(colider); }
+		std::shared_ptr<Collidable> owner;
+		std::shared_ptr<Collidable> collider;
+		void OnCollide() { owner->OnCollide(collider); }
 	};
 
-	void FixNextPosition(Collidable* primary, Collidable* secondary) const;
+	void FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const;
 	void FixPosition();
 	std::vector<OnCollideInfo> CheckCollide() const;
-	bool IsCollide(Collidable* first, Collidable* second) const;
+	bool IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Collidable> second) const;
 
 	void SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,
 		Vec3& segBStart, Vec3& segBEnd, 
