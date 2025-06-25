@@ -1,6 +1,6 @@
 #include "EnemyMage.h"
-#include "EnemyMageBullet.h"
 #include "Player/Player.h"
+#include "EnemyMageBullet.h"
 
 #include "CapsuleColliderData.h"
 #include "Animation.h"
@@ -130,20 +130,6 @@ void EnemyMage::Update(std::shared_ptr<Player> player)
 		break;
 	}
 
-	for (auto it = m_bullets.begin(); it != m_bullets.end(); )
-	{
-		(*it)->Update();
-		if ((*it)->IsDead())
-		{
-			m_physics->Exit(*it);
-			it = m_bullets.erase(it);
-		}
-		else
-		{
-			++it;
-		}
-	}
-
 	//当たり判定
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	Vec3 colPos = m_rigidbody.GetPos();
@@ -151,6 +137,22 @@ void EnemyMage::Update(std::shared_ptr<Player> player)
 	colData->m_startPos = colPos;
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+
+	for (auto& bullet : m_bullets)
+	{
+		bullet->Update();
+	}
+	m_bullets.erase(std::remove_if(m_bullets.begin(), m_bullets.end(), [this](const std::shared_ptr<EnemyMageBullet>& b)
+	{
+		if (b->IsDead())
+		{
+			b->Final(m_physics);
+			return true;
+		}
+		return false;
+	}),
+	m_bullets.end()
+	);
 }
 
 void EnemyMage::Draw()
@@ -168,6 +170,12 @@ void EnemyMage::Draw()
 	{
 		bullet->Draw();
 	}
+}
+
+void EnemyMage::OnDamage()
+{
+	ChangeState(EnemyState::Hit);
+	m_hp--;
 }
 
 const char* EnemyMage::GetAnimName(EnemyState state) const
@@ -277,11 +285,11 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 	{
 		// 弾を生成
 		Vec3 myPos = m_rigidbody.GetPos();
-		Vec3 toPlayerDir = player->GetPos() - myPos;
-		toPlayerDir.y = 0.0f;
-		toPlayerDir.Normalize();
+		Vec3 playerPos = player->GetPos();
 
-		m_bullets.emplace_back(std::make_shared<EnemyMageBullet>(myPos, toPlayerDir, m_physics));
+		auto bullet = std::make_shared<EnemyMageBullet>();
+		bullet->Init(myPos, playerPos, m_physics);
+		m_bullets.push_back(bullet);
 	}
 
 	if (m_anim.GetNextAnim().isEnd)
@@ -302,6 +310,13 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 
 void EnemyMage::HitUpdate(std::shared_ptr<Player> player)
 {
+	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+	// アニメーションが終了したら待機状態に戻る
+	if (m_anim.GetNextAnim().isEnd)
+	{
+		ChangeState(EnemyState::Find);
+		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
+	}
 }
 
 void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)

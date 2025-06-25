@@ -14,6 +14,8 @@ public:
 	void Update(std::shared_ptr<Player> player) override;
 	void Draw() override;
 
+	virtual void OnDamage() override;
+
 	// “G‚Ìó‘Ô
 private:
 	const char* GetAnimName(EnemyState state) const override;

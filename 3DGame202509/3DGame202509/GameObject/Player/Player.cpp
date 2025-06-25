@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "PlayerWeapon.h"
 
 #include "CapsuleColliderData.h"
 #include "Physics.h"
@@ -45,7 +46,6 @@ namespace
 
 Player::Player(std::shared_ptr<Physics> physics) :
 	m_charModel(-1),
-	m_weaponModel(-1),
 	m_radius(kRadius),
 	m_hp(kHp),
 	m_isCombo(false),
@@ -75,13 +75,14 @@ void Player::Init(std::shared_ptr<Physics> physics)
 
 	m_charModel = MV1LoadModel("Data/Player/PlayerNoSword.mv1");
 	assert(m_charModel >= 0);
-	m_weaponModel = MV1LoadModel("Data/Player/SwordBlender.mv1");
-	assert(m_weaponModel >= 0);
 	MV1SetScale(m_charModel, VGet(kModelScale, kModelScale, kModelScale));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
 
 	m_anim.Init(m_charModel);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, true);
+
+	m_weapon = std::make_shared<PlayerWeapon>();
+	m_weapon->Init(physics);
 }
 
 void Player::Update()
@@ -128,45 +129,22 @@ void Player::Update()
 		break;
 	}
 
-	// アタッチするモデルのMV1SetMatrixの設定を無効化する
-	MV1SetMatrix(m_weaponModel, MGetIdent());
-	// アタッチするモデルのフレームの座標を取得する
-	VECTOR position = MV1GetFramePosition(m_weaponModel, 0);
-	// アタッチするモデルを,フレームの座標を原点にするための平行移動行列を作成
-	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
-	// アタッチされるモデルのフレームの行列を取得
-	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(m_charModel, 26);
-	// アタッチするモデルの拡大行列を取得
-	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
-	// アタッチするモデルの回転行列を取得
-	MATRIX yMat = MGetRotY(DX_PI_F);
-	// 各行列を合成
-	MATRIX mixMat = MGetIdent();
-	mixMat = MMult(transMat, mixMat);
-	mixMat = MMult(frameMat, mixMat);
-	mixMat = MMult(scaleMat, mixMat);
-	mixMat = MMult(yMat, mixMat);
-	// 合成した行列をモデルにセット
-	MV1SetMatrix(m_weaponModel, mixMat);
-
 	//当たり判定
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	Vec3 colPos = m_rigidbody.GetPos();
 	colPos.y += kColScale;
 	colData->m_startPos = colPos;
+
+	m_weapon->IdleUpdate(m_charModel);
 }
 
 void Player::Draw()
 {
 #if _DEBUG
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_radius, 16, 0x00ff00, 0x00ff00, false);
-
-	VECTOR weaponStart = MV1GetFramePosition(m_weaponModel, 1);
-	VECTOR weaponEnd = MV1GetFramePosition(m_weaponModel, 2);
-	DrawCapsule3D(weaponStart, weaponEnd, 7.5f, 16, 0xff00ff, 0xff00ff, false);
 #endif
 	MV1DrawModel(m_charModel);
-	MV1DrawModel(m_weaponModel);
+	m_weapon->Draw();
 }
 
 void Player::OnDamage()
@@ -422,6 +400,8 @@ void Player::RunUpdate()
 
 void Player::ChopUpdate()
 {
+	m_weapon->AttackUpdate(m_charModel);
+
 	// 1ボタンの入力があれば攻撃状態に移行する
 	if (Input::Instance().IsTrigger("A"))
 	{
@@ -447,6 +427,8 @@ void Player::ChopUpdate()
 
 void Player::SliceUpdate()
 {
+	m_weapon->AttackUpdate(m_charModel);
+
 	// 1ボタンの入力があれば攻撃状態に移行する
 	if (Input::Instance().IsTrigger("A"))
 	{
@@ -471,6 +453,8 @@ void Player::SliceUpdate()
 
 void Player::StabUpdate()
 {
+	m_weapon->AttackUpdate(m_charModel);
+
 	// 1ボタンの入力があれば攻撃状態に移行する
 	if (Input::Instance().IsTrigger("A"))
 	{
@@ -495,6 +479,8 @@ void Player::StabUpdate()
 
 void Player::SpinUpdate()
 {
+	m_weapon->AttackUpdate(m_charModel);
+
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		ChangeState(PlayerState::Idle);
@@ -503,6 +489,8 @@ void Player::SpinUpdate()
 
 void Player::UltimateUpdate()
 {
+	m_weapon->AttackUpdate(m_charModel);
+
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		ChangeState(PlayerState::Idle);
@@ -535,23 +523,6 @@ void Player::DeadUpdate()
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		m_isDead = true;
-	}
-}
-
-MATRIX Player::GetFrameWorldMatrix(int modelHandle, int frameIndex)
-{
-	int parentIndex = MV1GetFrameParent(modelHandle, frameIndex);
-
-	MATRIX localMat = MV1GetFrameLocalMatrix(modelHandle, frameIndex);
-
-	if (parentIndex == -1) // 親なし → ルートフレーム
-	{
-		return localMat;
-	}
-	else
-	{
-		MATRIX parentWorldMat = GetFrameWorldMatrix(modelHandle, parentIndex);
-		return MMult(localMat, parentWorldMat); // 行列の掛け算
 	}
 }
 

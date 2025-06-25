@@ -102,7 +102,8 @@ void Physics::FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_p
 		secondary->m_nextPos = fixedPos;
 	}
 	// 球とカプセルの位置補正
-	else if (primaryKind == ColliderData::Kind::Sphere && secondaryKind == ColliderData::Kind::Capsule)
+	else if (primaryKind == ColliderData::Kind::Sphere  && secondaryKind == ColliderData::Kind::Capsule ||
+		     primaryKind == ColliderData::Kind::Capsule && secondaryKind == ColliderData::Kind::Sphere)
 	{
 	}
 	// カプセルとカプセルの位置補正
@@ -193,7 +194,11 @@ std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
 					primary = second;
 					secondary = first;
 				}
-				FixNextPosition(primary, secondary);
+
+				if (!ShouldSkipFixPos(primary, secondary))
+				{
+					FixNextPosition(primary, secondary);
+				}
 
 				//一度入れたものを二度入れないようにチェック
 				bool hasFirstColData = false;
@@ -238,11 +243,17 @@ std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
 			}
 		}
 	}
-	return std::vector<OnCollideInfo>();
+	//return std::vector<OnCollideInfo>();
+	return onCollideInfo;
 }
 
 bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Collidable> second) const
 {
+	if (ShouldSkipCheckCollide(first, second))
+	{
+		return false;
+	}
+
 	//第一の当たり判定と第二の当たり判定がおなじものでなければ
 	if (first != second)
 	{
@@ -342,6 +353,31 @@ bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Colli
 			assert(false);
 			return false;
 		}
+	}
+	return false;
+}
+
+bool Physics::ShouldSkipCheckCollide(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const
+{
+	if ((primary->GetTag() == ObjectTag::Player && secondary->GetTag() == ObjectTag::Weapon)  ||
+		(primary->GetTag() == ObjectTag::Weapon && secondary->GetTag() == ObjectTag::Player))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool Physics::ShouldSkipFixPos(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const
+{
+	if (primary->GetTag() == ObjectTag::Player && secondary->GetTag() == ObjectTag::Bullet ||
+		primary->GetTag() == ObjectTag::Enemy  && secondary->GetTag() == ObjectTag::Bullet ||
+		primary->GetTag() == ObjectTag::Boss   && secondary->GetTag() == ObjectTag::Bullet ||
+		primary->GetTag() == ObjectTag::Enemy  && secondary->GetTag() == ObjectTag::Weapon ||
+		primary->GetTag() == ObjectTag::Boss   && secondary->GetTag() == ObjectTag::Weapon ||
+		primary->GetTag() == ObjectTag::Weapon && secondary->GetTag() == ObjectTag::Enemy  ||
+		primary->GetTag() == ObjectTag::Weapon && secondary->GetTag() == ObjectTag::Boss)
+	{
+		return true;
 	}
 	return false;
 }

@@ -18,7 +18,7 @@ public:
 	virtual void Draw() abstract;
 
 	//Vec3 GetPos() const { return m_pos; }
-	void OnDamage();
+	virtual void OnDamage() abstract;
 	bool IsDead() const { return m_isDead; }
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;

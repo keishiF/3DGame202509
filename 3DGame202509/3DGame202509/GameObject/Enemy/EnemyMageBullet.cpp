@@ -10,23 +10,29 @@ namespace
 	constexpr float kColRadius = 20.0f;
 }
 
-EnemyMageBullet::EnemyMageBullet(Vec3 pos, Vec3 vec, std::shared_ptr<Physics> physics) :
-	Collidable(ObjectTag::Weapon, ObjectPriority::Low, ColliderData::Kind::Sphere),
+EnemyMageBullet::EnemyMageBullet() :
+	Collidable(ObjectTag::Bullet, ObjectPriority::Low, ColliderData::Kind::Sphere),
+	m_dir(0.0f, 0.0f, 0.0f),
 	m_frame(0),
 	m_isDead(false)
 {
-	Collidable::Init(physics);
-	m_rigidbody.SetPos(pos);
-
-	m_rigidbody.SetVelo(vec);
-
-	auto colData = std::dynamic_pointer_cast<SphereColliderData>(m_colliderData);
-	colData->m_radius = kColRadius;
 }
 
 EnemyMageBullet::~EnemyMageBullet()
 {
+}
 
+void EnemyMageBullet::Init(Vec3 myPos, Vec3 playerPos, std::shared_ptr<Physics> physics)
+{
+	Collidable::Init(physics);
+	m_rigidbody.Init();
+	m_rigidbody.SetPos(myPos);
+
+	m_dir = playerPos - myPos;
+	m_dir.y = 0.0f;
+
+	auto colData = std::dynamic_pointer_cast<SphereColliderData>(m_colliderData);
+	colData->m_radius = kColRadius;
 }
 
 void EnemyMageBullet::Update()
@@ -34,7 +40,8 @@ void EnemyMageBullet::Update()
 	++m_frame;
 
 	// ˆÚ“®ˆ—
-	m_rigidbody.SetVelo(m_rigidbody.GetVelo() * kSpeed);
+	m_dir.Normalize();
+	m_rigidbody.SetVelo(m_dir * kSpeed);
 
 	if (m_frame >= kLifeFrame)
 	{

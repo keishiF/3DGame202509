@@ -6,6 +6,7 @@
 #include "Animation.h"
 #include <memory>
 
+class PlayerWeapon;
 class Player : public Collidable
 {
 public:
@@ -74,12 +75,9 @@ private:
 	// 死亡状態
 	void DeadUpdate();
 
-	MATRIX GetFrameWorldMatrix(int modelHandle, int frameIndex);
-
 private:
 	// プレイヤーのモデル
 	int m_charModel;
-	int m_weaponModel;
 	// プレイヤーの当たり判定
 	float m_radius;
 	// プレイヤーのHP
@@ -93,5 +91,7 @@ private:
 
 	// プレイヤーのアニメーション
 	Animation m_anim;
+
+	std::shared_ptr<PlayerWeapon> m_weapon;
 };
 

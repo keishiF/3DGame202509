@@ -150,6 +150,7 @@
     <ClCompile Include="GameObject\Enemy\EnemyMageBullet.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyMinion.cpp" />
     <ClCompile Include="GameObject\Player\Player.cpp" />
+    <ClCompile Include="GameObject\Player\PlayerWeapon.cpp" />
     <ClCompile Include="General\Application.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyLib\CapsuleColliderData.cpp" />
@@ -174,6 +175,7 @@
     <ClInclude Include="GameObject\Enemy\EnemyMageBullet.h" />
     <ClInclude Include="GameObject\Enemy\EnemyMinion.h" />
     <ClInclude Include="GameObject\Player\Player.h" />
+    <ClInclude Include="GameObject\Player\PlayerWeapon.h" />
     <ClInclude Include="General\Application.h" />
     <ClInclude Include="MyLib\CapsuleColliderData.h" />
     <ClInclude Include="MyLib\Collidable.h" />

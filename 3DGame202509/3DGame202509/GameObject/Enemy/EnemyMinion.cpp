@@ -154,6 +154,12 @@ void EnemyMinion::Draw()
 	MV1DrawModel(m_weaponModel);
 }
 
+void EnemyMinion::OnDamage()
+{
+	ChangeState(EnemyState::Hit);
+	m_hp--;
+}
+
 const char* EnemyMinion::GetAnimName(EnemyState state) const
 {
 	switch (state)
@@ -274,6 +280,13 @@ void EnemyMinion::AttackUpdate(std::shared_ptr<Player> player)
 
 void EnemyMinion::HitUpdate(std::shared_ptr<Player> player)
 {
+	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+	// アニメーションが終了したら待機状態に戻る
+	if (m_anim.GetNextAnim().isEnd)
+	{
+		ChangeState(EnemyState::Find);
+		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
+	}
 }
 
 void EnemyMinion::DeadUpdate(std::shared_ptr<Player> player)

@@ -18,11 +18,6 @@ EnemyBase::~EnemyBase()
 
 }
 
-void EnemyBase::OnDamage()
-{
-    m_hp -= 1;
-}
-
 void EnemyBase::OnCollide(std::shared_ptr<Collidable> collider)
 {
     OnDamage();

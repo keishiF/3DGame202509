@@ -116,6 +116,9 @@
     <ClCompile Include="MyLib\CapsuleColliderData.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject\Player\PlayerWeapon.cpp">
+      <Filter>ソース ファイル\GameObject\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -192,6 +195,9 @@
     </ClInclude>
     <ClInclude Include="ObjectPriority.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Player\PlayerWeapon.h">
+      <Filter>ヘッダー ファイル\GameObject\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
