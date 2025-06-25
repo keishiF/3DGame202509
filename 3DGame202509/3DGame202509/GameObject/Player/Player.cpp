@@ -134,8 +134,6 @@ void Player::Update()
 	Vec3 colPos = m_rigidbody.GetPos();
 	colPos.y += kColScale;
 	colData->m_startPos = colPos;
-
-	m_weapon->IdleUpdate(m_charModel);
 }
 
 void Player::Draw()
@@ -205,6 +203,8 @@ void Player::ChangeState(PlayerState newState)
 
 void Player::IdleUpdate()
 {
+	m_weapon->IdleUpdate(m_charModel);
+
 	// 左スティックの入力があれば歩き状態に移行する
 	if (Input::Instance().IsPress("LEFT") || Input::Instance().IsPress("RIGHT") ||
 		Input::Instance().IsPress("UP")   || Input::Instance().IsPress("DOWN"))
@@ -234,6 +234,8 @@ void Player::IdleUpdate()
 
 void Player::WalkUpdate()
 {
+	m_weapon->IdleUpdate(m_charModel);
+
 	Vec3 dir = { 0.0f, 0.0f,0.0f };
 	// 左スティックで移動
 	// 左入力
@@ -317,6 +319,8 @@ void Player::WalkUpdate()
 
 void Player::RunUpdate()
 {
+	m_weapon->IdleUpdate(m_charModel);
+
 	Vec3 dir = { 0.0f, 0.0f, 0.0f };
 	// 左スティックで移動
 	// 左入力
@@ -499,6 +503,8 @@ void Player::UltimateUpdate()
 
 void Player::DodgeUpdate()
 {
+	m_weapon->IdleUpdate(m_charModel);
+
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
@@ -508,6 +514,8 @@ void Player::DodgeUpdate()
 
 void Player::HitUpdate()
 {
+	m_weapon->IdleUpdate(m_charModel);
+
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
@@ -519,6 +527,8 @@ void Player::HitUpdate()
 
 void Player::DeadUpdate()
 {
+	m_weapon->IdleUpdate(m_charModel);
+
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{

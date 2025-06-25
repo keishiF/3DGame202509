@@ -1,4 +1,4 @@
-#include "PlayerWeapon.h"
+#include "EnemyMinionBlade.h"
 
 #include "CapsuleColliderData.h"
 
@@ -11,26 +11,26 @@ namespace
 	constexpr float kBladeModelScale = 0.01f;
 }
 
-PlayerWeapon::PlayerWeapon() :
+EnemyMinionBlade::EnemyMinionBlade() :
 	m_model(-1),
-	Collidable(ObjectTag::PlayerWeapon, ObjectPriority::Low, ColliderData::Kind::Capsule)
+	Collidable(ObjectTag::EnemyWeapon, ObjectPriority::Low, ColliderData::Kind::Capsule)
 {
 }
 
-PlayerWeapon::~PlayerWeapon()
+EnemyMinionBlade::~EnemyMinionBlade()
 {
 }
 
-void PlayerWeapon::Init(std::shared_ptr<Physics> physics)
+void EnemyMinionBlade::Init(std::shared_ptr<Physics> physics)
 {
 	Collidable::Init(physics);
 	m_rigidbody.Init();
 
-	m_model = MV1LoadModel("Data/Player/SwordBlender.mv1");
+	m_model = MV1LoadModel("Data/Enemy/Minion/BladeBlender.mv1");
 	assert(m_model >= 0);
 }
 
-void PlayerWeapon::IdleUpdate(int model)
+void EnemyMinionBlade::IdleUpdate(int model)
 {
 	SetActive(false);
 
@@ -41,7 +41,7 @@ void PlayerWeapon::IdleUpdate(int model)
 	// アタッチするモデルを,フレームの座標を原点にするための平行移動行列を作成
 	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
 	// アタッチされるモデルのフレームの行列を取得
-	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 26);
+	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 14);
 	// アタッチするモデルの拡大行列を取得
 	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
 	// アタッチするモデルの回転行列を取得
@@ -56,7 +56,7 @@ void PlayerWeapon::IdleUpdate(int model)
 	MV1SetMatrix(m_model, mixMat);
 }
 
-void PlayerWeapon::AttackUpdate(int model)
+void EnemyMinionBlade::AttackUpdate(int model)
 {
 	SetActive(true);
 
@@ -67,7 +67,7 @@ void PlayerWeapon::AttackUpdate(int model)
 	// アタッチするモデルを,フレームの座標を原点にするための平行移動行列を作成
 	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
 	// アタッチされるモデルのフレームの行列を取得
-	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 26);
+	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 14);
 	// アタッチするモデルの拡大行列を取得
 	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
 	// アタッチするモデルの回転行列を取得
@@ -92,11 +92,11 @@ void PlayerWeapon::AttackUpdate(int model)
 	colData->m_startPos = startPos;
 }
 
-void PlayerWeapon::Draw()
+void EnemyMinionBlade::Draw()
 {
 	MV1DrawModel(m_model);
 }
 
-void PlayerWeapon::OnCollide(std::shared_ptr<Collidable> collider)
+void EnemyMinionBlade::OnCollide(std::shared_ptr<Collidable> collider)
 {
 }

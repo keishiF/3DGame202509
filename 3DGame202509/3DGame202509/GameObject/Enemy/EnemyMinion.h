@@ -2,6 +2,7 @@
 
 #include "EnemyBase.h"
 
+class EnemyMinionBlade;
 class EnemyMinion : public EnemyBase
 {
 public:
@@ -35,5 +36,7 @@ private:
 
 	// €–Só‘Ô
 	void DeadUpdate(std::shared_ptr<Player> player) override;
+
+	std::shared_ptr<EnemyMinionBlade> m_weapon;
 };
 

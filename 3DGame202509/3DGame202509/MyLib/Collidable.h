@@ -19,11 +19,15 @@ public:
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) abstract;
 
+	void SetActive(bool active) { m_isActive = active; }
+	bool IsActive() const { return m_isActive; }
+
 protected:
 	Rigidbody m_rigidbody;
 	float m_colRadius;
 
 	std::shared_ptr<ColliderData> m_colliderData;
+
 private:
 	std::shared_ptr<ColliderData> CreateColliderData(ColliderData::Kind kind);
 
@@ -31,6 +35,8 @@ private:
 	ObjectPriority m_priority;
 
 	Vec3 m_nextPos;
+
+	bool m_isActive = true;
 
 	friend Physics;
 };

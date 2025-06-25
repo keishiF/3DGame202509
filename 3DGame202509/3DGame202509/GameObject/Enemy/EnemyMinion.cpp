@@ -1,4 +1,5 @@
 #include "EnemyMinion.h"
+#include "EnemyMinionBlade.h"
 #include "Player/Player.h"
 
 #include "CapsuleColliderData.h"
@@ -71,8 +72,6 @@ void EnemyMinion::Init(std::shared_ptr<Physics> physics)
 	// キャラと武器のモデルのロード
 	m_charModel = MV1LoadModel("Data/Enemy/Minion/Minion.mv1");
 	assert(m_charModel >= 0);
-	m_weaponModel = MV1LoadModel("Data/Enemy/Minion/BladeBlender.mv1");
-	assert(m_weaponModel >= 0);
 	// モデルの拡大
 	MV1SetScale(m_charModel, VGet(kModelScale, kModelScale, kModelScale));
 	// モデルの位置を自分の位置と合わせる
@@ -80,6 +79,9 @@ void EnemyMinion::Init(std::shared_ptr<Physics> physics)
 	// アニメーション管理
 	m_anim.Init(m_charModel);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, true);
+
+	m_weapon = std::make_shared<EnemyMinionBlade>();
+	m_weapon->Init(physics);
 }
 
 void EnemyMinion::Update(std::shared_ptr<Player> player)
@@ -88,27 +90,6 @@ void EnemyMinion::Update(std::shared_ptr<Player> player)
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
 	m_anim.UpdateAnimBlend();
-
-	// アタッチするモデルのMV1SetMatrixの設定を無効化する
-	MV1SetMatrix(m_weaponModel, MGetIdent());
-	// アタッチするモデルのフレームの座標を取得する
-	VECTOR position = MV1GetFramePosition(m_weaponModel, 0);
-	// アタッチするモデルを,フレームの座標を原点にするための平行移動行列を作成
-	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
-	// アタッチされるモデルのフレームの行列を取得
-	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(m_charModel, 14);
-	// アタッチするモデルの拡大行列を取得
-	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
-	// アタッチするモデルの回転行列を取得
-	MATRIX yMat     = MGetRotY(DX_PI_F);
-	// 各行列を合成
-	MATRIX mixMat = MGetIdent();
-	mixMat = MMult(transMat, mixMat);
-	mixMat = MMult(frameMat, mixMat);
-	mixMat = MMult(scaleMat, mixMat);
-	mixMat = MMult(yMat, mixMat);
-	// 合成した行列をモデルにセット
-	MV1SetMatrix(m_weaponModel, mixMat);
 
 	switch (m_state)
 	{
@@ -144,14 +125,10 @@ void EnemyMinion::Draw()
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), 10.0f, 16, 0x0000ff, 0x0000ff, true);
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_findRadius, 16, 0xff00ff, 0xff00ff, false);
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_attackRadius, 16, 0xff00ff, 0xff00ff, false);
-
-	VECTOR bladeStart = MV1GetFramePosition(m_weaponModel, 1);
-	VECTOR bladeEnd = MV1GetFramePosition(m_weaponModel, 2);
-	DrawCapsule3D(bladeStart, bladeEnd, 7.5f, 16, 0xff00ff, 0xff00ff, false);
 #endif
 
 	MV1DrawModel(m_charModel);
-	MV1DrawModel(m_weaponModel);
+	m_weapon->Draw();
 }
 
 void EnemyMinion::OnDamage()
@@ -202,6 +179,8 @@ bool EnemyMinion::IsLoopAnim(EnemyState state) const
 
 void EnemyMinion::FindUpdate(std::shared_ptr<Player> player)
 {
+	m_weapon->IdleUpdate(m_charModel);
+
 	float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
 	if (distance <= (m_findRadius + player->GetRadius()))
 	{
@@ -211,6 +190,8 @@ void EnemyMinion::FindUpdate(std::shared_ptr<Player> player)
 
 void EnemyMinion::ChaseUpdate(std::shared_ptr<Player> player)
 {
+	m_weapon->IdleUpdate(m_charModel);
+
 	// プレイヤーへの方向ベクトル
 	Vec3 myPos = m_rigidbody.GetPos();
 	Vec3 toPlayerDir = player->GetPos() - myPos;
@@ -248,6 +229,8 @@ void EnemyMinion::ChaseUpdate(std::shared_ptr<Player> player)
 
 void EnemyMinion::AttackUpdate(std::shared_ptr<Player> player)
 {
+	m_weapon->AttackUpdate(m_charModel);
+
 	// プレイヤーへの方向ベクトル
 	Vec3 myPos = m_rigidbody.GetPos();
 	Vec3 dir = player->GetPos() - myPos;
@@ -280,6 +263,8 @@ void EnemyMinion::AttackUpdate(std::shared_ptr<Player> player)
 
 void EnemyMinion::HitUpdate(std::shared_ptr<Player> player)
 {
+	m_weapon->IdleUpdate(m_charModel);
+
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
@@ -291,4 +276,5 @@ void EnemyMinion::HitUpdate(std::shared_ptr<Player> player)
 
 void EnemyMinion::DeadUpdate(std::shared_ptr<Player> player)
 {
+	m_weapon->IdleUpdate(m_charModel);
 }

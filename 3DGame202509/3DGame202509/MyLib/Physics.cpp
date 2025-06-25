@@ -66,6 +66,9 @@ void Physics::DebugDraw()
 	//当たり判定の描画を行う
 	for (auto& item : m_collidables)
 	{
+		// 当たり判定がオフになっているものは無視する
+		if (!item->IsActive()) continue;
+
 		if (item->m_colliderData->GetKind() == ColliderData::Kind::Capsule)
 		{
 			auto capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(item->m_colliderData);
@@ -83,8 +86,37 @@ void Physics::DebugDraw()
 	}
 }
 
+void Physics::FixPosition()
+{
+	for (auto& item : m_collidables)
+	{
+		// Posを更新するので、velocityもそこに移動するvelocityに修正
+		Vec3 toFixedPos = item->m_nextPos - item->m_rigidbody.GetPos();
+		Vec3 nextPos = item->m_rigidbody.GetPos() + toFixedPos;
+
+		item->m_rigidbody.SetVelo(toFixedPos);
+		// 位置確定
+		item->m_rigidbody.SetPos(nextPos);
+
+		//当たり判定がカプセルだったら
+		if (item->m_colliderData->GetKind() == ColliderData::Kind::Capsule)
+		{
+			auto capsuleCol = std::dynamic_pointer_cast<CapsuleColliderData>(item->m_colliderData);
+			//伸びるカプセルかどうか取得する
+			if (!capsuleCol->m_isStartPos)
+			{
+				//伸びないカプセルだったら初期位置を一緒に動かす
+				capsuleCol->m_startPos = item->m_nextPos;
+			}
+		}
+	}
+}
+
 void Physics::FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const
 {
+	// 当たり判定がオフになっているものは無視する
+	if (!primary->IsActive() || !secondary->IsActive()) return;
+
 	auto primaryKind   = primary->m_colliderData->GetKind();
 	auto secondaryKind = secondary->m_colliderData->GetKind();
 
@@ -144,32 +176,6 @@ void Physics::FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_p
 			Vec3 fixedPos = closestDir * (awayDist - dist);
 			fixedPos.y = 0.0f;
 			secondary->m_nextPos += fixedPos;
-		}
-	}
-}
-
-void Physics::FixPosition()
-{
-	for (auto& item : m_collidables)
-	{
-		// Posを更新するので、velocityもそこに移動するvelocityに修正
-		Vec3 toFixedPos = item->m_nextPos - item->m_rigidbody.GetPos();
-		Vec3 nextPos = item->m_rigidbody.GetPos() + toFixedPos;
-
-		item->m_rigidbody.SetVelo(toFixedPos);
-		// 位置確定
-		item->m_rigidbody.SetPos(nextPos);
-
-		//当たり判定がカプセルだったら
-		if (item->m_colliderData->GetKind() == ColliderData::Kind::Capsule)
-		{
-			auto capsuleCol = std::dynamic_pointer_cast<CapsuleColliderData>(item->m_colliderData);
-			//伸びるカプセルかどうか取得する
-			if (!capsuleCol->m_isStartPos)
-			{
-				//伸びないカプセルだったら初期位置を一緒に動かす
-				capsuleCol->m_startPos = item->m_nextPos;
-			}
 		}
 	}
 }
@@ -249,6 +255,10 @@ std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
 
 bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Collidable> second) const
 {
+	// 当たり判定がオフになっているものは無視する
+	if (!first->IsActive() || !second->IsActive()) return false;
+
+	// 特定のタグ同士では当たり判定を取らずにスキップ
 	if (ShouldSkipCheckCollide(first, second))
 	{
 		return false;
@@ -359,8 +369,13 @@ bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Colli
 
 bool Physics::ShouldSkipCheckCollide(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const
 {
-	if ((primary->GetTag() == ObjectTag::Player && secondary->GetTag() == ObjectTag::Weapon)  ||
-		(primary->GetTag() == ObjectTag::Weapon && secondary->GetTag() == ObjectTag::Player))
+	if ((primary->GetTag() == ObjectTag::Player       && secondary->GetTag() == ObjectTag::PlayerWeapon) ||
+		(primary->GetTag() == ObjectTag::PlayerWeapon && secondary->GetTag() == ObjectTag::Player)       ||
+		(primary->GetTag() == ObjectTag::Enemy        && secondary->GetTag() == ObjectTag::EnemyWeapon)  ||
+		(primary->GetTag() == ObjectTag::EnemyWeapon  && secondary->GetTag() == ObjectTag::Enemy)        ||
+		(primary->GetTag() == ObjectTag::Enemy        && secondary->GetTag() == ObjectTag::Bullet)       ||
+		(primary->GetTag() == ObjectTag::Bullet       && secondary->GetTag() == ObjectTag::Enemy)        ||
+		(primary->GetTag() == ObjectTag::Enemy        && secondary->GetTag() == ObjectTag::Enemy))
 	{
 		return true;
 	}
@@ -369,13 +384,15 @@ bool Physics::ShouldSkipCheckCollide(std::shared_ptr<Collidable> primary, std::s
 
 bool Physics::ShouldSkipFixPos(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const
 {
-	if (primary->GetTag() == ObjectTag::Player && secondary->GetTag() == ObjectTag::Bullet ||
-		primary->GetTag() == ObjectTag::Enemy  && secondary->GetTag() == ObjectTag::Bullet ||
-		primary->GetTag() == ObjectTag::Boss   && secondary->GetTag() == ObjectTag::Bullet ||
-		primary->GetTag() == ObjectTag::Enemy  && secondary->GetTag() == ObjectTag::Weapon ||
-		primary->GetTag() == ObjectTag::Boss   && secondary->GetTag() == ObjectTag::Weapon ||
-		primary->GetTag() == ObjectTag::Weapon && secondary->GetTag() == ObjectTag::Enemy  ||
-		primary->GetTag() == ObjectTag::Weapon && secondary->GetTag() == ObjectTag::Boss)
+	if (primary->GetTag() == ObjectTag::Player       && secondary->GetTag() == ObjectTag::Bullet       ||
+		primary->GetTag() == ObjectTag::Enemy        && secondary->GetTag() == ObjectTag::Bullet       ||
+		primary->GetTag() == ObjectTag::Boss         && secondary->GetTag() == ObjectTag::Bullet       ||
+		primary->GetTag() == ObjectTag::Enemy        && secondary->GetTag() == ObjectTag::PlayerWeapon ||
+		primary->GetTag() == ObjectTag::Boss         && secondary->GetTag() == ObjectTag::PlayerWeapon ||
+		primary->GetTag() == ObjectTag::PlayerWeapon && secondary->GetTag() == ObjectTag::Enemy        ||
+		primary->GetTag() == ObjectTag::PlayerWeapon && secondary->GetTag() == ObjectTag::Boss         ||
+		primary->GetTag() == ObjectTag::Player       && secondary->GetTag() == ObjectTag::EnemyWeapon  ||
+		primary->GetTag() == ObjectTag::EnemyWeapon  && secondary->GetTag() == ObjectTag::Player)
 	{
 		return true;
 	}
