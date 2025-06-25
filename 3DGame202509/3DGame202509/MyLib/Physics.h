@@ -28,8 +28,8 @@ private:
 	std::vector<OnCollideInfo> CheckCollide() const;
 	bool IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Collidable> second) const;
 
-	bool ShouldSkipCheckCollide(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const;
-	bool ShouldSkipFixPos(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const;
+	bool SkipCheckCollide(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const;
+	bool SkipFixPos(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const;
 
 	void SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,
 		Vec3& segBStart, Vec3& segBEnd, 

@@ -201,7 +201,7 @@ std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
 					secondary = first;
 				}
 
-				if (!ShouldSkipFixPos(primary, secondary))
+				if (!SkipFixPos(primary, secondary))
 				{
 					FixNextPosition(primary, secondary);
 				}
@@ -259,7 +259,7 @@ bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Colli
 	if (!first->IsActive() || !second->IsActive()) return false;
 
 	// 特定のタグ同士では当たり判定を取らずにスキップ
-	if (ShouldSkipCheckCollide(first, second))
+	if (SkipCheckCollide(first, second))
 	{
 		return false;
 	}
@@ -367,7 +367,7 @@ bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Colli
 	return false;
 }
 
-bool Physics::ShouldSkipCheckCollide(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const
+bool Physics::SkipCheckCollide(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const
 {
 	if ((primary->GetTag() == ObjectTag::Player       && secondary->GetTag() == ObjectTag::PlayerWeapon) ||
 		(primary->GetTag() == ObjectTag::PlayerWeapon && secondary->GetTag() == ObjectTag::Player)       ||
@@ -382,7 +382,7 @@ bool Physics::ShouldSkipCheckCollide(std::shared_ptr<Collidable> primary, std::s
 	return false;
 }
 
-bool Physics::ShouldSkipFixPos(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const
+bool Physics::SkipFixPos(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const
 {
 	if (primary->GetTag() == ObjectTag::Player       && secondary->GetTag() == ObjectTag::Bullet       ||
 		primary->GetTag() == ObjectTag::Enemy        && secondary->GetTag() == ObjectTag::Bullet       ||

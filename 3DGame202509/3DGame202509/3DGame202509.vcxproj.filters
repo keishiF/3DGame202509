@@ -77,9 +77,6 @@
     <ClCompile Include="Scene\ResultScene.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>ソース ファイル\Animation</Filter>
-    </ClCompile>
     <ClCompile Include="MyLib\Input.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
@@ -121,6 +118,9 @@
     </ClCompile>
     <ClCompile Include="GameObject\Enemy\EnemyMinionBlade.cpp">
       <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>ソース ファイル\Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -35,7 +35,7 @@ void Animation::UpdateAnim(AnimData& data)
 	}
 
 	// アニメーションを進める
-	data.frame += 0.5f;
+	data.frame += 0.5f *2;
 
 	// 現在再生中のアニメーションの総時間を取得する
 	const float totalTime = MV1GetAttachAnimTotalTime(m_model, data.attachNo);
