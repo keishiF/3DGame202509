@@ -44,7 +44,7 @@ namespace
 	constexpr float kBladeModelScale = 0.01f;
 }
 
-Player::Player(std::shared_ptr<Physics> physics) :
+Player::Player() :
 	m_charModel(-1),
 	m_radius(kRadius),
 	m_hp(kHp),

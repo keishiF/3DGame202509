@@ -32,6 +32,7 @@ void PlayerWeapon::Init(std::shared_ptr<Physics> physics)
 
 void PlayerWeapon::IdleUpdate(int model)
 {
+	// 当たり判定を無効化する
 	SetActive(false);
 
 	// アタッチするモデルのMV1SetMatrixの設定を無効化する
@@ -58,6 +59,7 @@ void PlayerWeapon::IdleUpdate(int model)
 
 void PlayerWeapon::AttackUpdate(int model)
 {
+	// 当たり判定を有効化する
 	SetActive(true);
 
 	// アタッチするモデルのMV1SetMatrixの設定を無効化する

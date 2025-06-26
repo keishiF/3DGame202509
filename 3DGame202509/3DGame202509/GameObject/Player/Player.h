@@ -11,7 +11,7 @@ class Player : public Collidable
 {
 public:
 	// コンストラクタとデストラクタ
-	Player(std::shared_ptr<Physics> physics);
+	Player();
 	virtual ~Player();
 
 	// 初期化、更新、描画
