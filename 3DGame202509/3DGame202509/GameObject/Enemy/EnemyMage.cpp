@@ -3,7 +3,7 @@
 #include "EnemyMageBullet.h"
 
 #include "CapsuleColliderData.h"
-#include "Animation.h"
+#include "Animator.h"
 #include "Physics.h"
 
 #include "DxLib.h"

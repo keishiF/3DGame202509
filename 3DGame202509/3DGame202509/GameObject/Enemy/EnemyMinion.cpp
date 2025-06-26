@@ -3,7 +3,7 @@
 #include "Player/Player.h"
 
 #include "CapsuleColliderData.h"
-#include "Animation.h"
+#include "Animator.h"
 
 #include "DxLib.h"
 #include <cassert>

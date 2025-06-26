@@ -3,7 +3,7 @@
 #include "Vec3.h"
 #include "Collidable.h"
 #include "Physics.h"
-#include "Animation.h"
+#include "Animator.h"
 #include <memory>
 
 class Player;
@@ -60,6 +60,6 @@ protected:
 	// 攻撃フレーム
 	float m_attackFrame;
 	// アニメーション管理
-	Animation m_anim;
+	Animator m_anim;
 };
 

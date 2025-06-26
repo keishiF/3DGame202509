@@ -2,7 +2,7 @@
 
 #include <string>
 
-class Animation
+class Animator
 {
 public:
 	struct AnimData
@@ -13,7 +13,7 @@ public:
 		bool  isEnd    = false;
 	};
 
-	Animation();
+	Animator();
 
 	void Init(int model);
 	void AttachAnim(AnimData& data, const char* animName, bool isLoop);

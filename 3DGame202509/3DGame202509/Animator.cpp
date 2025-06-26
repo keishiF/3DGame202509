@@ -1,18 +1,18 @@
-#include "Animation.h"
+#include "Animator.h"
 #include "DxLib.h"
 
-Animation::Animation() :
+Animator::Animator() :
 	m_model(-1),
 	m_blendRate(0.0f)
 {
 }
 
-void Animation::Init(int model)
+void Animator::Init(int model)
 {
 	m_model = model;
 }
 
-void Animation::AttachAnim(AnimData& data, const char* animName, bool isLoop)
+void Animator::AttachAnim(AnimData& data, const char* animName, bool isLoop)
 {
 	// アタッチしたいアニメの番号を取得
 	int index = MV1GetAnimIndex(m_model, animName);
@@ -26,7 +26,7 @@ void Animation::AttachAnim(AnimData& data, const char* animName, bool isLoop)
 	data.isEnd = false;
 }
 
-void Animation::UpdateAnim(AnimData& data)
+void Animator::UpdateAnim(AnimData& data)
 {
 	// アニメーションがアタッチされていない場合は何もしない
 	if (data.attachNo == -1)
@@ -35,10 +35,12 @@ void Animation::UpdateAnim(AnimData& data)
 	}
 
 	// アニメーションを進める
-	data.frame += 0.5f *2;
+	data.frame += 0.5f;
 
 	// 現在再生中のアニメーションの総時間を取得する
 	const float totalTime = MV1GetAttachAnimTotalTime(m_model, data.attachNo);
+
+	printf("AnimFrame%.0f\n", totalTime);
 
 	// アニメーションの設定によってループさせるか最後のフレームで止めるかを判定
 	if (data.isLoop)
@@ -63,7 +65,7 @@ void Animation::UpdateAnim(AnimData& data)
 	MV1SetAttachAnimTime(m_model, data.attachNo, data.frame);
 }
 
-void Animation::UpdateAnimBlend()
+void Animator::UpdateAnimBlend()
 {
 	// 両方にアニメが設定されていない場合は変化させない
 	if (m_nextAnim.attachNo == -1) return;
@@ -77,7 +79,7 @@ void Animation::UpdateAnimBlend()
 	MV1SetAttachAnimBlendRate(m_model, m_nextAnim.attachNo, m_blendRate);
 }
 
-void Animation::ChangeAnim(const char* animName, bool isLoop)
+void Animator::ChangeAnim(const char* animName, bool isLoop)
 {
 	// ひとつ前のデータは今後管理できなくなるのであらかじめデタッチしておく
 	MV1DetachAnim(m_model, m_prevAnim.attachNo);

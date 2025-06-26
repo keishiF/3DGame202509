@@ -3,7 +3,7 @@
 
 #include "CapsuleColliderData.h"
 #include "Physics.h"
-#include "Animation.h"
+#include "Animator.h"
 
 #include "DxLib.h"
 #include <cassert>
@@ -73,7 +73,7 @@ void Player::Init(std::shared_ptr<Physics> physics)
 	colData->m_startPos = pos;
 	colData->m_radius = kRadius;
 
-	m_charModel = MV1LoadModel("Data/Player/PlayerNoSword.mv1");
+	m_charModel = MV1LoadModel("Data/Player/Player.mv1");
 	assert(m_charModel >= 0);
 	MV1SetScale(m_charModel, VGet(kModelScale, kModelScale, kModelScale));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());

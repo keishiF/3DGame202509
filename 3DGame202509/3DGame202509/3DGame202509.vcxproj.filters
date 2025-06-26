@@ -119,7 +119,7 @@
     <ClCompile Include="GameObject\Enemy\EnemyMinionBlade.cpp">
       <Filter>ソース ファイル\GameObject\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp">
+    <ClCompile Include="Animator.cpp">
       <Filter>ソース ファイル\Animation</Filter>
     </ClCompile>
   </ItemGroup>
@@ -148,7 +148,7 @@
     <ClInclude Include="Scene\ResultScene.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Animation.h">
+    <ClInclude Include="Animator.h">
       <Filter>ヘッダー ファイル\Animation</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Vec3.h">

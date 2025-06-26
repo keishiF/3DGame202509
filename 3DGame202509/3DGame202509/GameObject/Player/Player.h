@@ -3,7 +3,7 @@
 #include "Input.h"
 #include "Vec3.h"
 #include "Collidable.h"
-#include "Animation.h"
+#include "Animator.h"
 #include <memory>
 
 class PlayerWeapon;
@@ -90,7 +90,7 @@ private:
 	float m_frameCount;
 
 	// プレイヤーのアニメーション
-	Animation m_anim;
+	Animator m_anim;
 
 	std::shared_ptr<PlayerWeapon> m_weapon;
 };
