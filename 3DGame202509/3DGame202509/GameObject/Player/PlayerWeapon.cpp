@@ -6,7 +6,7 @@
 
 namespace
 {
-	constexpr float kRadius = 7.5f;
+	constexpr float kRadius = 20.0f;
 
 	constexpr float kBladeModelScale = 0.01f;
 }
@@ -28,6 +28,18 @@ void PlayerWeapon::Init(std::shared_ptr<Physics> physics)
 
 	m_model = MV1LoadModel("Data/Player/SwordBlender.mv1");
 	assert(m_model >= 0);
+}
+
+void PlayerWeapon::Update(int model, float currentFrame, const AttackTiming& timing)
+{
+	if (currentFrame >= timing.start && currentFrame < timing.end)
+	{
+		AttackUpdate(model); // 攻撃判定ON
+	}
+	else
+	{
+		IdleUpdate(model);   // 攻撃判定OFF（モデルはアタッチされたまま）
+	}
 }
 
 void PlayerWeapon::IdleUpdate(int model)

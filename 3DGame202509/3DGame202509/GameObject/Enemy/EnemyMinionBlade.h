@@ -2,6 +2,12 @@
 #include "Collidable.h"
 #include "DxLib.h"
 
+struct AttackTiming
+{
+	float start;
+	float end;
+};
+
 class EnemyMinionBlade : public Collidable
 {
 public:
@@ -9,6 +15,7 @@ public:
 	~EnemyMinionBlade();
 
 	void Init(std::shared_ptr<Physics> physics);
+	void Update(int model, float currentFrame, const AttackTiming& timing);
 	// ‘Ò‹@ó‘Ô
 	void IdleUpdate(int model);
 	// ŠeUŒ‚ó‘Ô

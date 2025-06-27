@@ -105,7 +105,7 @@ void GameScene::NormalDraw()
 	{
 		DrawString(0, 0, "Game Scene", 0xffffff);
 	}
-	printf("frame %d\r", m_frame);
+	printf("frame %d", m_frame);
 
 	MV1DrawModel(m_skyModel);
 

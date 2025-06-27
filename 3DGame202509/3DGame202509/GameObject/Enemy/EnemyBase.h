@@ -36,7 +36,7 @@ protected:
 	EnemyState m_state;
 	virtual const char* GetAnimName(EnemyState state) const abstract;
 	virtual bool IsLoopAnim(EnemyState state) const abstract;
-	void ChangeState(EnemyState newState);
+	void ChangeState(EnemyState newState, float playSpeed);
 
 	virtual void FindUpdate(std::shared_ptr<Player> player) abstract;
 	virtual void ChaseUpdate(std::shared_ptr<Player> player) abstract;

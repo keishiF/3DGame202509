@@ -23,9 +23,11 @@ void EnemyBase::OnCollide(std::shared_ptr<Collidable> collider)
     OnDamage();
 }
 
-void EnemyBase::ChangeState(EnemyState newState)
+void EnemyBase::ChangeState(EnemyState newState, float playSpeed)
 {
-    if (m_state == newState) return;
+    // Œ»İ‚Ìó‘Ô‚ÆŸ‚Ìó‘Ô‚ª“¯‚¶ê‡return
+    // Hit‚¾‚¯—áŠOˆ—
+    if (m_state == newState && m_state != EnemyState::Hit) return;
 
     m_state = newState;
 
@@ -33,6 +35,6 @@ void EnemyBase::ChangeState(EnemyState newState)
     bool loop = IsLoopAnim(newState);
     if (animName)
     {
-        m_anim.ChangeAnim(animName, loop);
+        m_anim.ChangeAnim(animName, playSpeed, loop);
     }
 }

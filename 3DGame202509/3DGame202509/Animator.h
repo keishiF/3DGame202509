@@ -7,19 +7,20 @@ class Animator
 public:
 	struct AnimData
 	{
-		int   attachNo =   -1;
-		float frame    = 0.0f;
-		bool  isLoop   = false;
-		bool  isEnd    = false;
+		int   attachNo  =   -1;
+		float frame     = 0.0f;
+		float playSpeed = 1.0f;
+		bool  isLoop    = false;
+		bool  isEnd     = false;
 	};
 
 	Animator();
 
 	void Init(int model);
-	void AttachAnim(AnimData& data, const char* animName, bool isLoop);
+	void AttachAnim(AnimData& data, const char* animName, float playSpped, bool isLoop);
 	void UpdateAnim(AnimData& data);
 	void UpdateAnimBlend();
-	void ChangeAnim(const char* animName, bool isLoop);
+	void ChangeAnim(const char* animName, float playSpeed, bool isLoop);
 
 	AnimData& GetNextAnim() { return m_nextAnim; }
 	AnimData& GetPrevAnim() { return m_prevAnim; }

@@ -12,7 +12,7 @@ void Animator::Init(int model)
 	m_model = model;
 }
 
-void Animator::AttachAnim(AnimData& data, const char* animName, bool isLoop)
+void Animator::AttachAnim(AnimData& data, const char* animName, float playSpeed, bool isLoop)
 {
 	// アタッチしたいアニメの番号を取得
 	int index = MV1GetAnimIndex(m_model, animName);
@@ -20,6 +20,8 @@ void Animator::AttachAnim(AnimData& data, const char* animName, bool isLoop)
 	data.attachNo = MV1AttachAnim(m_model, index, -1, false);
 	// アニメカウンタ初期化
 	data.frame = 0.0f;
+	// アニメーションの再生速度を設定
+	data.playSpeed = playSpeed;
 	// アニメーションのループ設定
 	data.isLoop = isLoop;
 	// 非ループアニメの終了フラグを落としておく
@@ -35,12 +37,10 @@ void Animator::UpdateAnim(AnimData& data)
 	}
 
 	// アニメーションを進める
-	data.frame += 0.5f;
+	data.frame += data.playSpeed;
 
 	// 現在再生中のアニメーションの総時間を取得する
 	const float totalTime = MV1GetAttachAnimTotalTime(m_model, data.attachNo);
-
-	printf("AnimFrame%.0f\n", totalTime);
 
 	// アニメーションの設定によってループさせるか最後のフレームで止めるかを判定
 	if (data.isLoop)
@@ -79,7 +79,7 @@ void Animator::UpdateAnimBlend()
 	MV1SetAttachAnimBlendRate(m_model, m_nextAnim.attachNo, m_blendRate);
 }
 
-void Animator::ChangeAnim(const char* animName, bool isLoop)
+void Animator::ChangeAnim(const char* animName, float playSpeed, bool isLoop)
 {
 	// ひとつ前のデータは今後管理できなくなるのであらかじめデタッチしておく
 	MV1DetachAnim(m_model, m_prevAnim.attachNo);
@@ -88,7 +88,7 @@ void Animator::ChangeAnim(const char* animName, bool isLoop)
 	m_prevAnim = m_nextAnim;
 
 	// 新たにショットのアニメーションをアタッチする
-	AttachAnim(m_nextAnim, animName, isLoop);
+	AttachAnim(m_nextAnim, animName, playSpeed, isLoop);
 
 	// アニメのブレンド率は0.0>1.0に変化するので0.0で初期化
 	m_blendRate = 0.0f;

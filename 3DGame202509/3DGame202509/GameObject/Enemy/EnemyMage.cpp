@@ -23,6 +23,9 @@ namespace
 	// 死亡
 	const char* kDeadAnimName   = "Death_B";
 
+	// アニメーションの再生速度
+	constexpr float kAnimSpeed = 1.0f;
+
 	// エネミーがプレイヤーを発見できる範囲
 	constexpr float kFindRadius   = 500.0f;
 	constexpr float kAttackRadius = 300.0f;
@@ -31,7 +34,7 @@ namespace
 	constexpr int kHp = 10;
 
 	// エネミーの速度
-	constexpr float kSpeed = 1.0f;
+	constexpr float kSpeed = 0.5f;
 
 	constexpr float kColScale  = 70.0f;
 	constexpr float kColRadius = 25.0f;
@@ -80,7 +83,7 @@ void EnemyMage::Init(std::shared_ptr<Physics> physics)
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
 
 	m_anim.Init(m_charModel);
-	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, true);
+	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, kAnimSpeed, true);
 }
 
 void EnemyMage::Update(std::shared_ptr<Player> player)
@@ -161,6 +164,7 @@ void EnemyMage::Draw()
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), 10.0f, 16, 0x0000ff, 0x0000ff, true);
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_findRadius, 16, 0xff00ff, 0xff00ff, false);
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_attackRadius, 16, 0xff00ff, 0xff00ff, false);
+
 #endif
 
 	MV1DrawModel(m_charModel);
@@ -174,7 +178,7 @@ void EnemyMage::Draw()
 
 void EnemyMage::OnDamage()
 {
-	ChangeState(EnemyState::Hit);
+	ChangeState(EnemyState::Hit, kAnimSpeed);
 	m_hp--;
 }
 
@@ -223,7 +227,7 @@ void EnemyMage::FindUpdate(std::shared_ptr<Player> player)
 	float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
 	if (distance <= (m_findRadius + player->GetRadius()))
 	{
-		ChangeState(EnemyState::Chase);
+		ChangeState(EnemyState::Chase, kAnimSpeed);
 	}
 }
 
@@ -253,13 +257,13 @@ void EnemyMage::ChaseUpdate(std::shared_ptr<Player> player)
 	float distance = (myPos - player->GetPos()).Length();
 	if (distance >= (m_findRadius + player->GetRadius()))
 	{
-		ChangeState(EnemyState::Find);
+		ChangeState(EnemyState::Find, kAnimSpeed);
 		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 
 	if (distance <= (m_attackRadius + player->GetRadius()))
 	{
-		ChangeState(EnemyState::Attack);
+		ChangeState(EnemyState::Attack, kAnimSpeed);
 		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 }
@@ -297,12 +301,12 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 		float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
 		if (distance >= (m_findRadius + player->GetRadius()))
 		{
-			ChangeState(EnemyState::Find);
+			ChangeState(EnemyState::Find, kAnimSpeed);
 			m_attackFrame = 0;
 		}
 		else
 		{
-			ChangeState(EnemyState::Chase);
+			ChangeState(EnemyState::Chase, kAnimSpeed);
 			m_attackFrame = 0;
 		}
 	}
@@ -314,7 +318,7 @@ void EnemyMage::HitUpdate(std::shared_ptr<Player> player)
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
-		ChangeState(EnemyState::Find);
+		ChangeState(EnemyState::Find, kAnimSpeed);
 		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 }

@@ -30,6 +30,18 @@ void EnemyMinionBlade::Init(std::shared_ptr<Physics> physics)
 	assert(m_model >= 0);
 }
 
+void EnemyMinionBlade::Update(int model, float currentFrame, const AttackTiming& timing)
+{
+	if (currentFrame >= timing.start && currentFrame < timing.end)
+	{
+		AttackUpdate(model); // 攻撃判定ON
+	}
+	else
+	{
+		IdleUpdate(model);   // 攻撃判定OFF（モデルはアタッチされたまま）
+	}
+}
+
 void EnemyMinionBlade::IdleUpdate(int model)
 {
 	// 当たり判定を無効化する

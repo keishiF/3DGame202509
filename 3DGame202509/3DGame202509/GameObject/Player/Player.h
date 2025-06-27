@@ -6,6 +6,21 @@
 #include "Animator.h"
 #include <memory>
 
+enum class PlayerState
+{
+	Idle,     // 待機
+	Walk,     // 歩き
+	Run,      // 走り
+	Chop,     // 攻撃1段目
+	Slice,    // 攻撃2段目
+	Stab,     // 攻撃3段目
+	Spin,     // 強攻撃
+	Ultimate, // 必殺技
+	Dodge,    // 回避
+	Hit,      // 被弾
+	Dead      // 死亡
+};
+
 class PlayerWeapon;
 class Player : public Collidable
 {
@@ -32,21 +47,6 @@ public:
 
 	// プレイヤーの状態
 private:
-	enum class PlayerState
-	{
-		Idle,     // 待機
-		Walk,     // 歩き
-		Run,      // 走り
-		Chop,     // 攻撃1段目
-		Slice,    // 攻撃2段目
-		Stab,     // 攻撃3段目
-		Spin,     // 強攻撃
-		Ultimate, // 必殺技
-		Dodge,    // 回避
-		Hit,      // 被弾
-		Dead      // 死亡
-	};
-
 	PlayerState m_state;
 	void ChangeState(PlayerState newState);
 
@@ -87,7 +87,7 @@ private:
 	bool m_isDead;
 
 	// 経過フレームを測る
-	float m_frameCount;
+	float m_attackFrame;
 
 	// プレイヤーのアニメーション
 	Animator m_anim;
