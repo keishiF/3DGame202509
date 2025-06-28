@@ -6,6 +6,15 @@
 #include "Animator.h"
 #include <memory>
 
+enum class EnemyState
+{
+	Find,
+	Chase,
+	Attack,
+	Hit,
+	Dead
+};
+
 class Player;
 class EnemyBase : public Collidable
 {
@@ -24,15 +33,6 @@ public:
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 
 protected:
-	enum class EnemyState
-	{
-		Find,
-		Chase,
-		Attack,
-		Hit,
-		Dead
-	};
-
 	EnemyState m_state;
 	virtual const char* GetAnimName(EnemyState state) const abstract;
 	virtual bool IsLoopAnim(EnemyState state) const abstract;

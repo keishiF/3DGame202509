@@ -7,6 +7,7 @@
 
 #include "DxLib.h"
 #include <cassert>
+#include <unordered_map>
 
 namespace
 {
@@ -43,6 +44,15 @@ namespace
 
 	// ƒ‚ƒfƒ‹‚ÌŠg‘å—¦
 	constexpr float kModelScale = 45.0f;
+
+	const std::unordered_map<EnemyState, AttackTiming> kColTimingTable =
+	{
+		{EnemyState::Find,	 { 0,  0}},
+		{EnemyState::Chase,	 { 0,  0}},
+		{EnemyState::Attack, {16, 30}},
+		{EnemyState::Hit,	 { 0,  0}},
+		{EnemyState::Dead,	 { 0,  0}}
+	};
 }
 
 EnemyMinion::EnemyMinion()

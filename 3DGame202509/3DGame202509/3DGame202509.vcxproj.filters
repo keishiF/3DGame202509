@@ -27,12 +27,6 @@
     <Filter Include="ヘッダー ファイル\General">
       <UniqueIdentifier>{0267dabf-cdb9-4f6a-a2aa-d8955cac2454}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Animation">
-      <UniqueIdentifier>{db3e7de8-ada1-43e1-b9ae-84b8ec17bfc1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Animation">
-      <UniqueIdentifier>{a272665e-4e14-46bd-9c4f-6fcde3ca0ec1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\GameObject\Player">
       <UniqueIdentifier>{5167a5ad-bc7c-4309-8b60-7e455534d093}</UniqueIdentifier>
     </Filter>
@@ -50,6 +44,12 @@
     </Filter>
     <Filter Include="ヘッダー ファイル\MyLib">
       <UniqueIdentifier>{a7c5dee3-a162-4943-a2d3-ce3cf18fb5ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Animator">
+      <UniqueIdentifier>{db3e7de8-ada1-43e1-b9ae-84b8ec17bfc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Animator">
+      <UniqueIdentifier>{a272665e-4e14-46bd-9c4f-6fcde3ca0ec1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -120,7 +120,7 @@
       <Filter>ソース ファイル\GameObject\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Animator.cpp">
-      <Filter>ソース ファイル\Animation</Filter>
+      <Filter>ソース ファイル\Animator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -149,7 +149,7 @@
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Animator.h">
-      <Filter>ヘッダー ファイル\Animation</Filter>
+      <Filter>ヘッダー ファイル\Animator</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Vec3.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>

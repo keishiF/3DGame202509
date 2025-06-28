@@ -56,4 +56,5 @@ void EnemyMageBullet::Draw()
 
 void EnemyMageBullet::OnCollide(std::shared_ptr<Collidable> collider)
 {
+	m_isDead = true;
 }

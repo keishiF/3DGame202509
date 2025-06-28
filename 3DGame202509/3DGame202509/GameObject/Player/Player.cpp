@@ -6,6 +6,7 @@
 #include "Physics.h"
 
 #include "DxLib.h"
+#include <algorithm>
 #include <cassert>
 #include <unordered_map>
 
@@ -49,12 +50,19 @@ namespace
 	constexpr float kWalkAnimSpeed = 0.75f;
 	constexpr float kChopAnimSpeed = 1.0f;
 
-	const std::unordered_map<PlayerState, AttackTiming> kAttackTimings =
+	const std::unordered_map<PlayerState, AttackTiming> kColTimingTable =
 	{
-		{PlayerState::Chop,  {16, 30}},
-		{PlayerState::Slice, {16, 30}},
-		{PlayerState::Stab,  {16, 30}},
-		{PlayerState::Spin,  {16, 40}}
+		{PlayerState::Idle,		 { 0,  0}},
+		{PlayerState::Walk,		 { 0,  0}},
+		{PlayerState::Run,		 { 0,  0}},
+		{PlayerState::Chop,		 {16, 30}},
+		{PlayerState::Slice,	 {16, 30}},
+		{PlayerState::Stab,		 {16, 30}},
+		{PlayerState::Spin,      {16, 40}},
+		{PlayerState::Ultimate,  {16, 40}},
+		{PlayerState::Dodge,	 { 0,  0}},
+		{PlayerState::Hit,		 { 0,  0}},
+		{PlayerState::Dead,		 { 0,  0}}
 	};
 }
 
@@ -155,17 +163,32 @@ void Player::Draw()
 #if _DEBUG
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_radius, 16, 0x00ff00, 0x00ff00, false);
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kAttackOffsetRadius, 16, 0xff0000, 0xff0000, false);
-
-	printf("Player X:%.0f, Y%.0f, Z:%.0f HP:%d\n", m_rigidbody.GetPos().x, m_rigidbody.GetPos().y, m_rigidbody.GetPos().z, m_hp);
 #endif
 	MV1DrawModel(m_charModel);
 	m_weapon->Draw();
+
+	const int x = 50;
+	const int y = 50;
+	const int width = 200;
+	const int height = 20;
+
+	float hpRate = static_cast<float>(m_hp) / kHp;
+	hpRate = std::clamp(hpRate, 0.0f, 1.0f);  // 負の値を防ぐ
+
+	int currentWidth = static_cast<int>(width * hpRate);
+
+	// 背景（灰色）
+	DrawBox(x, y, x + width, y + height, GetColor(100, 100, 100), TRUE);
+	// 現在のHP（緑）
+	DrawBox(x, y, x + currentWidth, y + height, GetColor(0, 255, 0), TRUE);
+	// 枠線（黒）
+	DrawBox(x, y, x + width, y + height, GetColor(0, 0, 0), FALSE);
 }
 
 void Player::OnDamage()
 {
 	ChangeState(PlayerState::Hit);
-	m_hp--;
+	m_hp -= 10;
 }
 
 void Player::OnCollide(std::shared_ptr<Collidable> collider)
@@ -225,7 +248,7 @@ void Player::ChangeState(PlayerState newState)
 
 void Player::IdleUpdate()
 {
-	m_weapon->Update(m_charModel, m_attackFrame, kAttackTimings.at(PlayerState::Idle));
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Idle));
 
 	// 左スティックの入力があれば歩き状態に移行する
 	if (Input::Instance().IsPress("LEFT") || Input::Instance().IsPress("RIGHT") ||
@@ -256,7 +279,7 @@ void Player::IdleUpdate()
 
 void Player::WalkUpdate()
 {
-	m_weapon->Update(m_charModel, m_attackFrame, kAttackTimings.at(PlayerState::Walk));
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Walk));
 
 	Vec3 dir = { 0.0f, 0.0f,0.0f };
 	// 左スティックで移動
@@ -337,7 +360,7 @@ void Player::WalkUpdate()
 
 void Player::RunUpdate()
 {
-	m_weapon->Update(m_charModel, m_attackFrame, kAttackTimings.at(PlayerState::Run));
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Run));
 
 	Vec3 dir = { 0.0f, 0.0f, 0.0f };
 	// 左スティックで移動
@@ -419,7 +442,7 @@ void Player::RunUpdate()
 void Player::ChopUpdate()
 {
 	++m_attackFrame;
-	m_weapon->Update(m_charModel, m_attackFrame, kAttackTimings.at(PlayerState::Chop));
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Chop));
 
 	// 1ボタンの入力があれば攻撃状態に移行する
 	if (Input::Instance().IsTrigger("A"))
@@ -446,7 +469,7 @@ void Player::ChopUpdate()
 void Player::SliceUpdate()
 {
 	++m_attackFrame;
-	m_weapon->Update(m_charModel, m_attackFrame, kAttackTimings.at(PlayerState::Slice));
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Slice));
 
 	// 1ボタンの入力があれば攻撃状態に移行する
 	if (Input::Instance().IsTrigger("A"))
@@ -472,7 +495,7 @@ void Player::SliceUpdate()
 void Player::StabUpdate()
 {
 	++m_attackFrame;
-	m_weapon->Update(m_charModel, m_attackFrame, kAttackTimings.at(PlayerState::Stab));
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Stab));
 
 	// 1ボタンの入力があれば攻撃状態に移行する
 	if (Input::Instance().IsTrigger("A"))
@@ -498,7 +521,7 @@ void Player::StabUpdate()
 void Player::SpinUpdate()
 {
 	++m_attackFrame;
-	m_weapon->Update(m_charModel, m_attackFrame, kAttackTimings.at(PlayerState::Spin));
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Spin));
 
 	if (m_anim.GetNextAnim().isEnd)
 	{
@@ -518,7 +541,7 @@ void Player::UltimateUpdate()
 
 void Player::DodgeUpdate()
 {
-	m_weapon->Update(m_charModel, m_attackFrame, kAttackTimings.at(PlayerState::Dodge));
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Dodge));
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
@@ -529,7 +552,7 @@ void Player::DodgeUpdate()
 
 void Player::HitUpdate()
 {
-	m_weapon->Update(m_charModel, m_attackFrame, kAttackTimings.at(PlayerState::Hit));
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Hit));
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
@@ -541,7 +564,7 @@ void Player::HitUpdate()
 
 void Player::DeadUpdate()
 {
-	m_weapon->Update(m_charModel, m_attackFrame, kAttackTimings.at(PlayerState::Dead));
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Dead));
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
