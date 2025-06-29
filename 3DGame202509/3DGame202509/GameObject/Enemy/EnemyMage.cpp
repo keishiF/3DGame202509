@@ -7,6 +7,7 @@
 #include "Physics.h"
 
 #include "DxLib.h"
+#include <algorithm>
 #include <cassert>
 
 namespace
@@ -31,7 +32,7 @@ namespace
 	constexpr float kAttackRadius = 300.0f;
 
 	// 初期HP
-	constexpr int kHp = 10;
+	constexpr int kHp = 3;
 
 	// エネミーの速度
 	constexpr float kSpeed = 0.5f;
@@ -88,6 +89,11 @@ void EnemyMage::Init(std::shared_ptr<Physics> physics)
 
 void EnemyMage::Update(std::shared_ptr<Player> player)
 {
+	if (m_isDead && m_charModel < 0)
+	{
+		return;
+	}
+
 	// アニメーションの更新
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
@@ -160,6 +166,11 @@ void EnemyMage::Update(std::shared_ptr<Player> player)
 
 void EnemyMage::Draw()
 {
+	if (m_isDead && m_charModel < 0)
+	{
+		return;
+	}
+
 #if _DEBUG
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), 10.0f, 16, 0x0000ff, 0x0000ff, true);
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_findRadius, 16, 0xff00ff, 0xff00ff, false);
@@ -174,12 +185,68 @@ void EnemyMage::Draw()
 	{
 		bullet->Draw();
 	}
+
+	Vec3 worldPos = m_rigidbody.GetPos();
+	worldPos.y += 120.0f; // 頭上の高さ調整
+
+	VECTOR worldVec = worldPos.ToDxVECTOR();
+
+	// 3D→2D座標変換（戻り値がスクリーン座標）
+	VECTOR screenVec = ConvWorldPosToScreenPos(worldVec);
+
+	const int gaugeWidth = 100;
+	const int gaugeHeight = 10;
+
+	int gaugeX = static_cast<int>(screenVec.x - gaugeWidth / 2);
+	int gaugeY = static_cast<int>(screenVec.y - gaugeHeight / 2);
+
+	float hpRate = static_cast<float>(m_hp) / kHp;
+	hpRate = std::clamp(hpRate, 0.0f, 1.0f);
+
+	int color;
+	if (hpRate > 0.5f)
+	{
+		color = 0x00ff00;
+	}
+	else if (hpRate > 0.25f)
+	{
+		color = 0xffff00;
+	}
+	else
+	{
+		color = 0xff0000;
+	}
+
+	DrawBox(gaugeX, gaugeY,
+		gaugeX + gaugeWidth,
+		gaugeY + gaugeHeight,
+		GetColor(100, 100, 100), TRUE);
+
+	int hpBarWidth = static_cast<int>(gaugeWidth * hpRate);
+	DrawBox(gaugeX, gaugeY,
+		gaugeX + hpBarWidth,
+		gaugeY + gaugeHeight,
+		color, TRUE);
+
+	DrawBox(gaugeX, gaugeY,
+		gaugeX + gaugeWidth,
+		gaugeY + gaugeHeight,
+		GetColor(255, 255, 255), FALSE);
 }
 
 void EnemyMage::OnDamage()
 {
-	ChangeState(EnemyState::Hit, kAnimSpeed);
-	m_hp--;
+	m_hp -= 1;
+
+	if (m_hp <= 0 && !m_isDead)
+	{
+		m_isDead = true;
+		ChangeState(EnemyState::Dead, kAnimSpeed);
+	}
+	else
+	{
+		ChangeState(EnemyState::Hit, kAnimSpeed);
+	}
 }
 
 const char* EnemyMage::GetAnimName(EnemyState state) const
@@ -224,6 +291,8 @@ bool EnemyMage::IsLoopAnim(EnemyState state) const
 
 void EnemyMage::FindUpdate(std::shared_ptr<Player> player)
 {
+	SetActive(true);
+
 	float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
 	if (distance <= (m_findRadius + player->GetRadius()))
 	{
@@ -233,6 +302,8 @@ void EnemyMage::FindUpdate(std::shared_ptr<Player> player)
 
 void EnemyMage::ChaseUpdate(std::shared_ptr<Player> player)
 {
+	SetActive(true);
+
 	// プレイヤーへの方向ベクトル
 	Vec3 myPos = m_rigidbody.GetPos();
 	Vec3 toPlayerDir = player->GetPos() - myPos;
@@ -270,6 +341,8 @@ void EnemyMage::ChaseUpdate(std::shared_ptr<Player> player)
 
 void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 {
+	SetActive(true);
+
 	if (m_attackFrame <= kAttackFrame)
 	{
 		++m_attackFrame;
@@ -314,6 +387,8 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 
 void EnemyMage::HitUpdate(std::shared_ptr<Player> player)
 {
+	SetActive(false);
+
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
@@ -325,4 +400,19 @@ void EnemyMage::HitUpdate(std::shared_ptr<Player> player)
 
 void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)
 {
+	SetActive(false);
+
+	if (m_charModel >= 0)
+	{
+		MV1DeleteModel(m_charModel);
+		m_charModel = -1;
+	}
+
+	for (auto& bullet : m_bullets)
+	{
+		bullet->Final(m_physics);
+	}
+	m_bullets.clear();
+
+	m_isDead = true;
 }

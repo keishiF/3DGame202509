@@ -6,6 +6,7 @@
 #include "Animator.h"
 
 #include "DxLib.h"
+#include <algorithm>
 #include <cassert>
 #include <unordered_map>
 
@@ -31,7 +32,7 @@ namespace
 	constexpr float kAttackRadius = 100.0f;
 
 	// 初期HP
-	constexpr int kHp = 10;
+	constexpr int kHp = 5;
 
 	// エネミーの速度
 	constexpr float kSpeed = 1.0f;
@@ -49,7 +50,7 @@ namespace
 	{
 		{EnemyState::Find,	 { 0,  0}},
 		{EnemyState::Chase,	 { 0,  0}},
-		{EnemyState::Attack, {16, 30}},
+		{EnemyState::Attack, {24, 48}},
 		{EnemyState::Hit,	 { 0,  0}},
 		{EnemyState::Dead,	 { 0,  0}}
 	};
@@ -98,6 +99,11 @@ void EnemyMinion::Init(std::shared_ptr<Physics> physics)
 
 void EnemyMinion::Update(std::shared_ptr<Player> player)
 {
+	if (m_isDead && m_charModel < 0)
+	{
+		return;
+	}
+
 	// アニメーションの更新
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
@@ -133,21 +139,81 @@ void EnemyMinion::Update(std::shared_ptr<Player> player)
 
 void EnemyMinion::Draw()
 {
+	if (m_isDead && m_charModel < 0)
+	{
+		return;
+	}
+
 #if _DEBUG
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), 10.0f, 16, 0x0000ff, 0x0000ff, true);
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_findRadius, 16, 0xff00ff, 0xff00ff, false);
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_attackRadius, 16, 0xff00ff, 0xff00ff, false);
 
 #endif
-
 	MV1DrawModel(m_charModel);
 	m_weapon->Draw();
+	
+	Vec3 worldPos = m_rigidbody.GetPos();
+	worldPos.y += 120.0f; // 頭上の高さ調整
+
+	VECTOR worldVec = worldPos.ToDxVECTOR();
+
+	// 3D→2D座標変換（戻り値がスクリーン座標）
+	VECTOR screenVec = ConvWorldPosToScreenPos(worldVec);
+
+	const int gaugeWidth = 100;
+	const int gaugeHeight = 10;
+
+	int gaugeX = static_cast<int>(screenVec.x - gaugeWidth / 2);
+	int gaugeY = static_cast<int>(screenVec.y - gaugeHeight / 2);
+
+	float hpRate = static_cast<float>(m_hp) / kHp;
+	hpRate = std::clamp(hpRate, 0.0f, 1.0f);
+
+	int color;
+	if (hpRate > 0.5f) 
+	{
+		color = 0x00ff00;
+	}
+	else if (hpRate > 0.25f) 
+	{
+		color = 0xffff00;
+	}
+	else 
+	{
+		color = 0xff0000;
+	}
+
+	DrawBox(gaugeX, gaugeY,
+		gaugeX + gaugeWidth,
+		gaugeY + gaugeHeight,
+		GetColor(100, 100, 100), TRUE);
+
+	int hpBarWidth = static_cast<int>(gaugeWidth * hpRate);
+	DrawBox(gaugeX, gaugeY,
+		gaugeX + hpBarWidth,
+		gaugeY + gaugeHeight,
+		color, TRUE);
+
+	DrawBox(gaugeX, gaugeY,
+		gaugeX + gaugeWidth,
+		gaugeY + gaugeHeight,
+		GetColor(255, 255, 255), FALSE);
 }
 
 void EnemyMinion::OnDamage()
 {
-	ChangeState(EnemyState::Hit, kAnimSpeed);
-	m_hp--;
+	m_hp -= 1;
+
+	if (m_hp <= 0 && !m_isDead)
+	{
+		m_isDead = true;
+		ChangeState(EnemyState::Dead, kAnimSpeed);
+	}
+	else
+	{
+		ChangeState(EnemyState::Hit, kAnimSpeed);
+	}
 }
 
 const char* EnemyMinion::GetAnimName(EnemyState state) const
@@ -192,7 +258,8 @@ bool EnemyMinion::IsLoopAnim(EnemyState state) const
 
 void EnemyMinion::FindUpdate(std::shared_ptr<Player> player)
 {
-	m_weapon->IdleUpdate(m_charModel);
+	SetActive(true);
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Find));
 
 	float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
 	if (distance <= (m_findRadius + player->GetRadius()))
@@ -203,7 +270,8 @@ void EnemyMinion::FindUpdate(std::shared_ptr<Player> player)
 
 void EnemyMinion::ChaseUpdate(std::shared_ptr<Player> player)
 {
-	m_weapon->IdleUpdate(m_charModel);
+	SetActive(true);
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Chase));
 
 	// プレイヤーへの方向ベクトル
 	Vec3 myPos = m_rigidbody.GetPos();
@@ -230,19 +298,19 @@ void EnemyMinion::ChaseUpdate(std::shared_ptr<Player> player)
 	if (distance >= (m_findRadius + player->GetRadius()))
 	{
 		ChangeState(EnemyState::Find, kAnimSpeed);
-		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 
 	if (distance <= (m_attackRadius + player->GetRadius()))
 	{
 		ChangeState(EnemyState::Attack, kAnimSpeed);
-		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 }
 
 void EnemyMinion::AttackUpdate(std::shared_ptr<Player> player)
 {
-	m_weapon->AttackUpdate(m_charModel);
+	SetActive(true);
+	++m_attackFrame;
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Attack));
 
 	// プレイヤーへの方向ベクトル
 	Vec3 myPos = m_rigidbody.GetPos();
@@ -276,18 +344,27 @@ void EnemyMinion::AttackUpdate(std::shared_ptr<Player> player)
 
 void EnemyMinion::HitUpdate(std::shared_ptr<Player> player)
 {
-	m_weapon->IdleUpdate(m_charModel);
+	SetActive(false);
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Hit));
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		ChangeState(EnemyState::Find, kAnimSpeed);
-		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 }
 
 void EnemyMinion::DeadUpdate(std::shared_ptr<Player> player)
 {
-	m_weapon->IdleUpdate(m_charModel);
+	SetActive(false);
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Dead));
+
+	if (m_charModel >= 0)
+	{
+		MV1DeleteModel(m_charModel);
+		m_charModel = -1;
+	}
+
+	m_isDead = true;
 }

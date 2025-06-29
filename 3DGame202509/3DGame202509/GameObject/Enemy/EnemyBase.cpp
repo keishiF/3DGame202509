@@ -21,6 +21,7 @@ EnemyBase::~EnemyBase()
 void EnemyBase::OnCollide(std::shared_ptr<Collidable> collider)
 {
     OnDamage();
+    SetActive(false);
 }
 
 void EnemyBase::ChangeState(EnemyState newState, float playSpeed)
@@ -30,6 +31,8 @@ void EnemyBase::ChangeState(EnemyState newState, float playSpeed)
     if (m_state == newState && m_state != EnemyState::Hit) return;
 
     m_state = newState;
+    m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
+    m_attackFrame = 0.0f;
 
     const char* animName = GetAnimName(newState);
     bool loop = IsLoopAnim(newState);

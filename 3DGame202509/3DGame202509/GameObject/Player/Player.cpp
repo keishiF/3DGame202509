@@ -55,11 +55,11 @@ namespace
 		{PlayerState::Idle,		 { 0,  0}},
 		{PlayerState::Walk,		 { 0,  0}},
 		{PlayerState::Run,		 { 0,  0}},
-		{PlayerState::Chop,		 {16, 30}},
-		{PlayerState::Slice,	 {16, 30}},
-		{PlayerState::Stab,		 {16, 30}},
-		{PlayerState::Spin,      {16, 40}},
-		{PlayerState::Ultimate,  {16, 40}},
+		{PlayerState::Chop,		 {16, 28}},
+		{PlayerState::Slice,	 {16, 28}},
+		{PlayerState::Stab,		 {16, 28}},
+		{PlayerState::Spin,      {16, 36}},
+		{PlayerState::Ultimate,  {16, 36}},
 		{PlayerState::Dodge,	 { 0,  0}},
 		{PlayerState::Hit,		 { 0,  0}},
 		{PlayerState::Dead,		 { 0,  0}}
@@ -167,22 +167,50 @@ void Player::Draw()
 	MV1DrawModel(m_charModel);
 	m_weapon->Draw();
 
-	const int x = 50;
-	const int y = 50;
-	const int width = 200;
-	const int height = 20;
+	printf("Hp = %d\n", m_hp);
 
+	const int gaugeWidth = 200;
+	const int gaugeHeight = 20;
+	const int gaugeX = 50;
+	const int gaugeY = 50;
+
+	// HPの割合
 	float hpRate = static_cast<float>(m_hp) / kHp;
-	hpRate = std::clamp(hpRate, 0.0f, 1.0f);  // 負の値を防ぐ
+	hpRate = std::clamp(hpRate, 0.0f, 1.0f);
 
-	int currentWidth = static_cast<int>(width * hpRate);
+	// ゲージ色の決定
+	int color;
+	if (hpRate > 0.5f) 
+	{
+		color = 0x00ff00;
+	}
+	else if (hpRate > 0.25f) 
+	{
+		color = 0xffff00;
+	}
+	else 
+	{
+		color = 0xff0000;
+	}
 
-	// 背景（灰色）
-	DrawBox(x, y, x + width, y + height, GetColor(100, 100, 100), TRUE);
-	// 現在のHP（緑）
-	DrawBox(x, y, x + currentWidth, y + height, GetColor(0, 255, 0), TRUE);
+	// ゲージ背景（灰色）
+	DrawBox(gaugeX, gaugeY,
+		gaugeX + gaugeWidth,
+		gaugeY + gaugeHeight,
+		GetColor(100, 100, 100), TRUE);
+
+	// 現在のHP分の長さのゲージ
+	int hpBarWidth = static_cast<int>(gaugeWidth * hpRate);
+	DrawBox(gaugeX, gaugeY,
+		gaugeX + hpBarWidth,
+		gaugeY + gaugeHeight,
+		color, TRUE);
+
 	// 枠線（黒）
-	DrawBox(x, y, x + width, y + height, GetColor(0, 0, 0), FALSE);
+	DrawBox(gaugeX, gaugeY,
+		gaugeX + gaugeWidth,
+		gaugeY + gaugeHeight,
+		GetColor(0, 0, 0), FALSE);
 }
 
 void Player::OnDamage()
@@ -248,6 +276,7 @@ void Player::ChangeState(PlayerState newState)
 
 void Player::IdleUpdate()
 {
+	SetActive(true);
 	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Idle));
 
 	// 左スティックの入力があれば歩き状態に移行する
@@ -279,6 +308,7 @@ void Player::IdleUpdate()
 
 void Player::WalkUpdate()
 {
+	SetActive(true);
 	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Walk));
 
 	Vec3 dir = { 0.0f, 0.0f,0.0f };
@@ -360,6 +390,7 @@ void Player::WalkUpdate()
 
 void Player::RunUpdate()
 {
+	SetActive(true);
 	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Run));
 
 	Vec3 dir = { 0.0f, 0.0f, 0.0f };
@@ -441,6 +472,7 @@ void Player::RunUpdate()
 
 void Player::ChopUpdate()
 {
+	SetActive(true);
 	++m_attackFrame;
 	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Chop));
 
@@ -468,6 +500,7 @@ void Player::ChopUpdate()
 
 void Player::SliceUpdate()
 {
+	SetActive(true);
 	++m_attackFrame;
 	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Slice));
 
@@ -494,6 +527,7 @@ void Player::SliceUpdate()
 
 void Player::StabUpdate()
 {
+	SetActive(true);
 	++m_attackFrame;
 	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Stab));
 
@@ -520,6 +554,7 @@ void Player::StabUpdate()
 
 void Player::SpinUpdate()
 {
+	SetActive(true);
 	++m_attackFrame;
 	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Spin));
 
@@ -531,6 +566,7 @@ void Player::SpinUpdate()
 
 void Player::UltimateUpdate()
 {
+	SetActive(true);
 	m_weapon->AttackUpdate(m_charModel);
 
 	if (m_anim.GetNextAnim().isEnd)
@@ -541,6 +577,7 @@ void Player::UltimateUpdate()
 
 void Player::DodgeUpdate()
 {
+	SetActive(false);
 	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Dodge));
 
 	// アニメーションが終了したら待機状態に戻る
@@ -552,6 +589,7 @@ void Player::DodgeUpdate()
 
 void Player::HitUpdate()
 {
+	SetActive(false);
 	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Hit));
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
@@ -564,6 +602,7 @@ void Player::HitUpdate()
 
 void Player::DeadUpdate()
 {
+	SetActive(false);
 	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Dead));
 
 	// アニメーションが終了したら待機状態に戻る
