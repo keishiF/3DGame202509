@@ -10,7 +10,7 @@
 *.userosscache
 *.sln.docstates
 *.pdb
-*.3DGame202509\3DGame202509\Log.txt
+*.txt
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
