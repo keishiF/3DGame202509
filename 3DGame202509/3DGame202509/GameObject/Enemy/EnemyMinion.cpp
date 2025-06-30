@@ -170,19 +170,7 @@ void EnemyMinion::Draw()
 	float hpRate = static_cast<float>(m_hp) / kHp;
 	hpRate = std::clamp(hpRate, 0.0f, 1.0f);
 
-	int color;
-	if (hpRate > 0.5f) 
-	{
-		color = 0x00ff00;
-	}
-	else if (hpRate > 0.25f) 
-	{
-		color = 0xffff00;
-	}
-	else 
-	{
-		color = 0xff0000;
-	}
+	int color = 0xff0000;
 
 	DrawBox(gaugeX, gaugeY,
 		gaugeX + gaugeWidth,
