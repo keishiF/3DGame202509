@@ -51,6 +51,12 @@
     <Filter Include="ヘッダー ファイル\Animator">
       <UniqueIdentifier>{a272665e-4e14-46bd-9c4f-6fcde3ca0ec1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\GameObject\Stage">
+      <UniqueIdentifier>{f32e20b9-d2dd-49a1-898a-c4e6b06549cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameObject\Stage">
+      <UniqueIdentifier>{d025fa2c-db8c-40dd-b142-f14cde4c9ec4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -121,6 +127,9 @@
     </ClCompile>
     <ClCompile Include="Animator.cpp">
       <Filter>ソース ファイル\Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\programF\UnityEditer\TransformDataLoader.cpp">
+      <Filter>ソース ファイル\General</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -204,6 +213,9 @@
     </ClInclude>
     <ClInclude Include="GameObject\Enemy\EnemyMinionBlade.h">
       <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\programF\UnityEditer\TransformDataLoader.h">
+      <Filter>ヘッダー ファイル\General</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

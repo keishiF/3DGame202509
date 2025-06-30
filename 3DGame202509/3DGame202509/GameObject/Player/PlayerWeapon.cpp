@@ -1,5 +1,6 @@
 #include "PlayerWeapon.h"
 
+#include "SphereColliderData.h"
 #include "CapsuleColliderData.h"
 
 #include <cassert>

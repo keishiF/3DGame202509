@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\programF\UnityEditer\TransformDataLoader.cpp" />
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="GameObject\Camera.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyBase.cpp" />
@@ -168,6 +169,7 @@
     <ClCompile Include="Scene\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\programF\UnityEditer\TransformDataLoader.h" />
     <ClInclude Include="Animator.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="GameObject\Camera.h" />
