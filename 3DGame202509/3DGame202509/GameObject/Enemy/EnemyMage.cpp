@@ -203,35 +203,21 @@ void EnemyMage::Draw()
 	float hpRate = static_cast<float>(m_hp) / kHp;
 	hpRate = std::clamp(hpRate, 0.0f, 1.0f);
 
-	int color;
-	if (hpRate > 0.5f)
-	{
-		color = 0x00ff00;
-	}
-	else if (hpRate > 0.25f)
-	{
-		color = 0xffff00;
-	}
-	else
-	{
-		color = 0xff0000;
-	}
-
 	DrawBox(gaugeX, gaugeY,
 		gaugeX + gaugeWidth,
 		gaugeY + gaugeHeight,
-		GetColor(100, 100, 100), TRUE);
+		0x808080, true);
 
 	int hpBarWidth = static_cast<int>(gaugeWidth * hpRate);
 	DrawBox(gaugeX, gaugeY,
 		gaugeX + hpBarWidth,
 		gaugeY + gaugeHeight,
-		color, TRUE);
+		0xff0000, true);
 
 	DrawBox(gaugeX, gaugeY,
 		gaugeX + gaugeWidth,
 		gaugeY + gaugeHeight,
-		GetColor(255, 255, 255), FALSE);
+		0x000000, false);
 }
 
 void EnemyMage::OnDamage()
@@ -240,7 +226,6 @@ void EnemyMage::OnDamage()
 
 	if (m_hp <= 0 && !m_isDead)
 	{
-		m_isDead = true;
 		ChangeState(EnemyState::Dead, kAnimSpeed);
 	}
 	else
@@ -265,7 +250,7 @@ const char* EnemyMage::GetAnimName(EnemyState state) const
 		return kDeadAnimName;
 	default:
 		return "";
-		assert(0 && "存在しないアニメーションだぜ");
+		assert(0 && "存在しないアニメーション");
 	}
 }
 
@@ -285,7 +270,7 @@ bool EnemyMage::IsLoopAnim(EnemyState state) const
 		return false;
 	default:
 		return "";
-		assert(0 && "存在しないステートだぜ");
+		assert(0 && "存在しないステート");
 	}
 }
 
@@ -402,10 +387,15 @@ void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
 
-	if (m_charModel >= 0)
+	// アニメーションが終了したら待機状態に戻る
+	if (m_anim.GetNextAnim().isEnd)
 	{
-		MV1DeleteModel(m_charModel);
-		m_charModel = -1;
+		if (m_charModel >= 0)
+		{
+			MV1DeleteModel(m_charModel);
+			m_charModel = -1;
+		}
+		m_isDead = true;
 	}
 
 	for (auto& bullet : m_bullets)
@@ -413,6 +403,4 @@ void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)
 		bullet->Final(m_physics);
 	}
 	m_bullets.clear();
-
-	m_isDead = true;
 }

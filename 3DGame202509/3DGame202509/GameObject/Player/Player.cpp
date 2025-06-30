@@ -109,6 +109,11 @@ void Player::Init(std::shared_ptr<Physics> physics)
 
 void Player::Update()
 {	
+	if (m_isDead && m_charModel < 0)
+	{
+		return;
+	}
+
 	// アニメーションの更新
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
@@ -160,14 +165,17 @@ void Player::Update()
 
 void Player::Draw()
 {
+	if (m_isDead && m_charModel < 0)
+	{
+		return;
+	}
+
 #if _DEBUG
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_radius, 16, 0x00ff00, 0x00ff00, false);
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kAttackOffsetRadius, 16, 0xff0000, 0xff0000, false);
 #endif
 	MV1DrawModel(m_charModel);
 	m_weapon->Draw();
-
-	printf("Hp = %d\n", m_hp);
 
 	const int gaugeWidth = 200;
 	const int gaugeHeight = 20;
@@ -197,26 +205,34 @@ void Player::Draw()
 	DrawBox(gaugeX, gaugeY,
 		gaugeX + gaugeWidth,
 		gaugeY + gaugeHeight,
-		GetColor(100, 100, 100), TRUE);
+		0x808080, true);
 
 	// 現在のHP分の長さのゲージ
 	int hpBarWidth = static_cast<int>(gaugeWidth * hpRate);
 	DrawBox(gaugeX, gaugeY,
 		gaugeX + hpBarWidth,
 		gaugeY + gaugeHeight,
-		color, TRUE);
+		color, true);
 
 	// 枠線（黒）
 	DrawBox(gaugeX, gaugeY,
 		gaugeX + gaugeWidth,
 		gaugeY + gaugeHeight,
-		GetColor(0, 0, 0), FALSE);
+		0x000000, false);
 }
 
 void Player::OnDamage()
 {
-	ChangeState(PlayerState::Hit);
 	m_hp -= 10;
+
+	if (m_hp <= 0 && !m_isDead)
+	{
+		ChangeState(PlayerState::Dead);
+	}
+	else
+	{
+		ChangeState(PlayerState::Hit);
+	}
 }
 
 void Player::OnCollide(std::shared_ptr<Collidable> collider)
@@ -608,6 +624,11 @@ void Player::DeadUpdate()
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
+		if (m_charModel >= 0)
+		{
+			MV1DeleteModel(m_charModel);
+			m_charModel = -1;
+		}
 		m_isDead = true;
 	}
 }
