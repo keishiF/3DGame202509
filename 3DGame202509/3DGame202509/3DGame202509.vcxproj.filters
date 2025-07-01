@@ -131,11 +131,11 @@
     <ClCompile Include="..\..\..\programF\UnityEditer\TransformDataLoader.cpp">
       <Filter>ソース ファイル\General</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\StageSet\StageSet.cpp">
-      <Filter>ソース ファイル\GameObject\Stage</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject\GameObjectManager.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Stage\Stage.cpp">
+      <Filter>ソース ファイル\GameObject\Stage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -223,11 +223,11 @@
     <ClInclude Include="..\..\..\programF\UnityEditer\TransformDataLoader.h">
       <Filter>ヘッダー ファイル\General</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\StageSet\StageSet.h">
-      <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject\GameObjectManager.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Stage\Stage.h">
+      <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -31,21 +31,23 @@ void GameObjectManager::Init()
 			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			m_player->Init(m_physics, pos, rot, scale);
 		}
-		else if (data.name == "m_minion")
+		else if (data.name == "Minion")
 		{
-			m_minion   = std::make_shared<EnemyMinion>();
-			Vec3 pos   = { data.pos.x, data.pos.y , data.pos.z };
-			Vec3 rot   = { data.rot.x, data.rot.y , data.rot.z };
+			auto minion = std::make_shared<EnemyMinion>();
+			Vec3 pos = { data.pos.x, data.pos.y , data.pos.z };
+			Vec3 rot = { data.rot.x, data.rot.y , data.rot.z };
 			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
-			m_minion->Init(m_physics, pos, rot, scale);
+			minion->Init(m_physics, pos, rot, scale);
+			m_minions.emplace_back(minion);
 		}
-		else if (data.name == "m_mage")
+		else if (data.name == "Mage")
 		{
-			m_mage     = std::make_shared<EnemyMage>();
-			Vec3 pos   = { data.pos.x, data.pos.y , data.pos.z };
-			Vec3 rot   = { data.rot.x, data.rot.y , data.rot.z };
+			auto mage = std::make_shared<EnemyMage>();
+			Vec3 pos = { data.pos.x, data.pos.y , data.pos.z };
+			Vec3 rot = { data.rot.x, data.rot.y , data.rot.z };
 			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
-			m_mage->Init(m_physics, pos, rot, scale);
+			mage->Init(m_physics, pos, rot, scale);
+			m_mages.emplace_back(mage);
 		}
 	}
 
@@ -66,8 +68,16 @@ void GameObjectManager::Update()
 	m_physics->Update();
 	m_player->Update();
 
-	if (m_minion) m_minion->Update(m_player);
-	if (m_mage)   m_mage->Update(m_player);
+	for (auto& minion : m_minions)
+	{
+		minion->Update(m_player);
+	}
+
+	for (auto& mage : m_mages)
+	{
+		mage->Update(m_player);
+	}
+
 	if (m_camera) m_camera->Update(m_player);
 }
 
@@ -78,6 +88,14 @@ void GameObjectManager::Draw()
 #endif
 
 	if (m_player) m_player->Draw();
-	if (m_minion) m_minion->Draw();
-	if (m_mage)   m_mage->Draw();
+
+	for (auto& minion : m_minions)
+	{
+		minion->Draw();
+	}
+
+	for (auto& mage : m_mages)
+	{
+		mage->Draw();
+	}
 }

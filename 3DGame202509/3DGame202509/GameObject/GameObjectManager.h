@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 class Physics;
 class Player;
@@ -20,8 +21,8 @@ public:
 private:
 	std::shared_ptr<Physics> m_physics;
 	std::shared_ptr<Player> m_player;
-	std::shared_ptr<EnemyMinion>  m_minion;
-	std::shared_ptr<EnemyMage>  m_mage;
+	std::vector<std::shared_ptr<EnemyMinion>>  m_minions;
+	std::vector<std::shared_ptr<EnemyMage>>  m_mages;
 	std::shared_ptr<Camera> m_camera;
 };
 
