@@ -4,7 +4,7 @@
 #include "Enemy/EnemyMinion.h"
 #include "Enemy/EnemyMage.h"
 #include "Camera.h"
-#include "TransformDataLoader.h"
+#include "TransformDataLoad.h"
 
 GameObjectManager::GameObjectManager()
 {
@@ -18,7 +18,7 @@ void GameObjectManager::Init()
 {
 	m_physics = std::make_shared<Physics>();
 
-	TransformDataLoader loader;
+	TransformDataLoad loader;
 	auto transformDataList = loader.LoadDataCSV("Data/CSV/CharacterTransformData.csv");
 
 	for (const auto& data : transformDataList)

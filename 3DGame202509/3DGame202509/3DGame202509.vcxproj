@@ -156,6 +156,7 @@
     <ClCompile Include="GameObject\Player\PlayerWeapon.cpp" />
     <ClCompile Include="GameObject\Stage\Stage.cpp" />
     <ClCompile Include="General\Application.cpp" />
+    <ClCompile Include="General\TransformDataLoad.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyLib\CapsuleColliderData.cpp" />
     <ClCompile Include="MyLib\Collidable.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="GameObject\Player\PlayerWeapon.h" />
     <ClInclude Include="GameObject\Stage\Stage.h" />
     <ClInclude Include="General\Application.h" />
+    <ClInclude Include="General\TransformDataLoad.h" />
     <ClInclude Include="MyLib\CapsuleColliderData.h" />
     <ClInclude Include="MyLib\Collidable.h" />
     <ClInclude Include="MyLib\ColliderData.h" />

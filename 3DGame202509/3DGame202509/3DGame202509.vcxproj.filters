@@ -137,6 +137,9 @@
     <ClCompile Include="GameObject\Stage\Stage.cpp">
       <Filter>ソース ファイル\GameObject\Stage</Filter>
     </ClCompile>
+    <ClCompile Include="General\TransformDataLoad.cpp">
+      <Filter>ソース ファイル\General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -228,6 +231,9 @@
     </ClInclude>
     <ClInclude Include="GameObject\Stage\Stage.h">
       <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="General\TransformDataLoad.h">
+      <Filter>ヘッダー ファイル\General</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
