@@ -128,17 +128,17 @@
     <ClCompile Include="Animator.cpp">
       <Filter>ソース ファイル\Animator</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\programF\UnityEditer\TransformDataLoader.cpp">
-      <Filter>ソース ファイル\General</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject\GameObjectManager.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="GameObject\Stage\Stage.cpp">
       <Filter>ソース ファイル\GameObject\Stage</Filter>
     </ClCompile>
-    <ClCompile Include="General\TransformDataLoad.cpp">
+    <ClCompile Include="General\TransformDataLoader.cpp">
       <Filter>ソース ファイル\General</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Stage\StageObject.cpp">
+      <Filter>ソース ファイル\GameObject\Stage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -223,17 +223,17 @@
     <ClInclude Include="GameObject\Enemy\EnemyMinionBlade.h">
       <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\programF\UnityEditer\TransformDataLoader.h">
-      <Filter>ヘッダー ファイル\General</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject\GameObjectManager.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\Stage\Stage.h">
       <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
     </ClInclude>
-    <ClInclude Include="General\TransformDataLoad.h">
+    <ClInclude Include="General\TransformDataLoader.h">
       <Filter>ヘッダー ファイル\General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Stage\StageObject.h">
+      <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

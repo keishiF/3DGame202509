@@ -4,7 +4,8 @@
 #include "Enemy/EnemyMinion.h"
 #include "Enemy/EnemyMage.h"
 #include "Camera.h"
-#include "TransformDataLoad.h"
+#include "Stage/Stage.h"
+#include "TransformDataLoader.h"
 
 GameObjectManager::GameObjectManager()
 {
@@ -18,7 +19,7 @@ void GameObjectManager::Init()
 {
 	m_physics = std::make_shared<Physics>();
 
-	TransformDataLoad loader;
+	TransformDataLoader loader;
 	auto transformDataList = loader.LoadDataCSV("Data/CSV/CharacterTransformData.csv");
 
 	for (const auto& data : transformDataList)
@@ -59,6 +60,9 @@ void GameObjectManager::Init()
 
 	m_camera = std::make_shared<Camera>();
 	m_camera->SetCamera(m_player);
+
+	m_stage = std::make_shared<Stage>();
+	m_stage->Init();
 }
 
 void GameObjectManager::Update()
@@ -98,4 +102,6 @@ void GameObjectManager::Draw()
 	{
 		mage->Draw();
 	}
+
+	m_stage->Draw();
 }

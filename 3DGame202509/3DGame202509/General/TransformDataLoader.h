@@ -11,11 +11,11 @@ struct ObjectData
 	VECTOR scale;	  // 拡大量
 };
 
-class TransformDataLoad
+class TransformDataLoader
 {
 public:
-    TransformDataLoad();
-    virtual ~TransformDataLoad();
+    TransformDataLoader();
+    virtual ~TransformDataLoader();
 
     /// <summary>
     /// CSVファイルからオブジェクトのTranceform情報を取得

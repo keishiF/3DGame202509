@@ -1,4 +1,4 @@
-#include "TransformDataLoad.h"
+#include "TransformDataLoader.h"
 #include <fstream>
 #include <sstream>
 
@@ -10,15 +10,17 @@ namespace
 	constexpr float kUnityToDXPosition = 100.0f;
 }
 
-TransformDataLoad::TransformDataLoad()
+TransformDataLoader::TransformDataLoader()
 {
+
 }
 
-TransformDataLoad::~TransformDataLoad()
+TransformDataLoader::~TransformDataLoader()
 {
+
 }
 
-std::vector<ObjectData> TransformDataLoad::LoadDataCSV(const char* fileName)
+std::vector<ObjectData> TransformDataLoader::LoadDataCSV(const char* fileName)
 {
 	//データを格納する配列
 	std::vector<ObjectData> objects;

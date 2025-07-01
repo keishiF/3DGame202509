@@ -1,5 +1,9 @@
 #pragma once
 
+#include "StageObject.h"
+#include <vector>
+#include <memory>
+
 enum class StageType : int
 {
 	Tutorial,
@@ -8,6 +12,11 @@ enum class StageType : int
 
 class Stage
 {
+public:
+	void Init();
+	void Draw();
 
+private:
+	std::vector<StageObject> m_objects;
 };
 

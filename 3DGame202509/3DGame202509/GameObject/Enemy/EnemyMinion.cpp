@@ -44,7 +44,7 @@ namespace
 	const char* kDeadAnimName = "Death_B";
 
 	// アニメーションの再生速度
-	constexpr float kAnimSpeed = 0.5f;
+	constexpr float kAnimSpeed = 1.0f;
 
 	const std::unordered_map<EnemyState, AttackTiming> kColTimingTable =
 	{
