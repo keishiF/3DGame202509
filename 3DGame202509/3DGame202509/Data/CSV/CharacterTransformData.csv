@@ -1,5 +1,5 @@
 Name,PosX,PosY,PosZ,RotX,RotY,RotZ,ScaleX,ScaleY,ScaleZ
 Player,0,0,0,0,0,0,0.5,0.5,0.5
-Mage,-5,0,10,0,180,0,1,1,1
-Minion,5,0,10,0,180,0,1,1,1
-Minion,-5,0,20,0,0,0,1,1,1
+Mage,3.4,0,2.4,0,0,0,1,1,1
+Minion,5,0,10,0,0,0,1,1,1
+Minion,-5,0,-20,0,0,0,1,1,1
