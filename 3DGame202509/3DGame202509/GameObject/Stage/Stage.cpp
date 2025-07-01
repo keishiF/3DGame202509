@@ -14,8 +14,8 @@ void Stage::Init()
 		// オブジェクト名に応じてモデルファイルを決める
 		if (data.name == "Path")
 			modelPath = "Data/Model/Stage/Path/Path.mv1";
-		else if (data.name == "House")
-			modelPath = "Data/Model/Stage/House.mv1";
+		else if (data.name == "Floor")
+			modelPath = "Data/Model/Stage/Floor/Floor.mv1";
 		else if (data.name == "Road")
 			modelPath = "Data/Model/Stage/Road.mv1";
 		else

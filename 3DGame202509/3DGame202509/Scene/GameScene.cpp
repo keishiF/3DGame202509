@@ -36,6 +36,8 @@ GameScene::GameScene(SceneController& controller) :
 
 	m_gameObjectManager = std::make_shared<GameObjectManager>();
 	m_gameObjectManager->Init();
+
+	//int dirLight = CreateDirLightHandle(VGet(0.0f, -1.0f, 0.0f));
 }
 
 GameScene::~GameScene()
