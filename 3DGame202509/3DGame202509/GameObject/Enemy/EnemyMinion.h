@@ -11,7 +11,7 @@ public:
 	virtual ~EnemyMinion();
 
 	// XVA•`‰æ
-	void Init(std::shared_ptr<Physics> physics) override;
+	void Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale) override;
 	void Update(std::shared_ptr<Player> player) override;
 	void Draw() override;
 

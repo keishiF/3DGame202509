@@ -95,9 +95,33 @@ void Player::Init(std::shared_ptr<Physics> physics)
 	colData->m_startPos = pos;
 	colData->m_radius = kRadius;
 
-	m_charModel = MV1LoadModel("Data/Player/Player.mv1");
+	m_charModel = MV1LoadModel("Data/Model/Player/Player.mv1");
 	assert(m_charModel >= 0);
 	MV1SetScale(m_charModel, VGet(kModelScale, kModelScale, kModelScale));
+	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
+
+	m_anim.Init(m_charModel);
+	m_anim.AttachAnim(m_anim.GetNextAnim(), kIdleAnimName, kIdleAnimSpeed, true);
+
+	m_weapon = std::make_shared<PlayerWeapon>();
+	m_weapon->Init(physics);
+}
+
+void Player::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale)
+{
+	Collidable::Init(physics);
+
+	m_rigidbody.Init();
+	m_rigidbody.SetPos(pos);
+
+	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
+	colData->m_startPos = pos;
+	colData->m_radius = kRadius;
+
+	m_charModel = MV1LoadModel("Data/Model/Player/Player.mv1");
+	assert(m_charModel >= 0);
+
+	MV1SetScale(m_charModel, VGet(scale.x * 100.0f, scale.y * 100.0f, scale.z * 100.0f));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
 
 	m_anim.Init(m_charModel);

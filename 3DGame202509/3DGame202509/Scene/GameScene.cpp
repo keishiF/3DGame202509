@@ -7,6 +7,7 @@
 #include "Enemy/EnemyMage.h"
 #include "Camera.h"
 #include "Physics.h"
+#include "GameObjectManager.h"
 #include "game.h"
 #include "Input.h"
 #include <cassert>
@@ -29,19 +30,12 @@ GameScene::GameScene(SceneController& controller) :
 	m_update(&GameScene::FadeInUpdate),
 	m_draw(&GameScene::FadeDraw)
 {
-	m_skyModel = MV1LoadModel("Data/Sky/Sky_Daylight01.mv1");
+	m_skyModel = MV1LoadModel("Data/Model/Sky/Sky_Daylight01.mv1");
 	assert(m_skyModel >= 0);
 	MV1SetScale(m_skyModel, VGet(kSkyModelScale, kSkyModelScale, kSkyModelScale));
 
-	m_physics = std::make_shared<Physics>();
-	m_player = std::make_shared<Player>();
-	m_player->Init(m_physics);
-	m_minion  = std::make_shared<EnemyMinion>();
-	m_minion->Init(m_physics);
-	m_mage  = std::make_shared<EnemyMage>();
-	m_mage->Init(m_physics);
-	m_camera = std::make_shared<Camera>();
-	m_camera->SetCamera(m_player);
+	m_gameObjectManager = std::make_shared<GameObjectManager>();
+	m_gameObjectManager->Init();
 }
 
 GameScene::~GameScene()
@@ -63,19 +57,7 @@ void GameScene::NormalUpdate()
 	++m_frame;
 	++m_blinkFrame;
 
-	m_physics->Update();
-	m_player->Update();
-	m_minion->Update(m_player);
-	m_mage->Update(m_player);
-	m_camera->Update(m_player);
-
-	if (m_player->IsDead())
-	{
-		m_player->Final(m_physics);
-		m_update = &GameScene::FadeOutUpdate;
-		m_draw = &GameScene::FadeDraw;
-		m_fadeFrame = 0;
-	}
+	m_gameObjectManager->Update();
 }
 
 void GameScene::FadeInUpdate()
@@ -105,18 +87,13 @@ void GameScene::NormalDraw()
 	{
 		DrawString(0, 0, "Game Scene", 0xffffff);
 	}
-	//printf("frame %d\n", m_frame);
+	printf("frame %d\n", m_frame);
 
 	MV1DrawModel(m_skyModel);
 
-#ifdef _DEBUG
-	m_physics->DebugDraw();
-#endif
-
 	DrawField();
-	m_player->Draw();
-	m_minion->Draw();
-	m_mage->Draw();
+
+	m_gameObjectManager->Draw();
 }
 
 void GameScene::FadeDraw()
@@ -124,7 +101,8 @@ void GameScene::FadeDraw()
 	MV1DrawModel(m_skyModel);
 
 	DrawField();
-	m_player->Draw();
+
+	m_gameObjectManager->Draw();
 
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));

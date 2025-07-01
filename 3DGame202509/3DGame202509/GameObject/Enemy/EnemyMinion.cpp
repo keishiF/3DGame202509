@@ -12,21 +12,6 @@
 
 namespace
 {
-	// アニメーション名
-	// 待機
-	const char* kFindAnimName   = "2H_Melee_Idle";
-	// 発見
-	const char* kChaseAnimName  = "Running_C";
-	// 攻撃
-	const char* kAttackAnimName = "1H_Melee_Attack_Slice_Diagonal";
-	// 被弾
-	const char* kHitAnimName    = "Hit_B";
-	// 死亡
-	const char* kDeadAnimName   = "Death_B";
-
-	// アニメーションの再生速度
-	constexpr float kAnimSpeed = 0.5f;
-
 	// エネミーがプレイヤーを発見できる範囲
 	constexpr float kFindRadius   = 500.0f;
 	constexpr float kAttackRadius = 100.0f;
@@ -46,6 +31,21 @@ namespace
 	// モデルの拡大率
 	constexpr float kModelScale = 45.0f;
 
+	// アニメーション名
+	// 待機
+	const char* kFindAnimName = "2H_Melee_Idle";
+	// 発見
+	const char* kChaseAnimName = "Running_C";
+	// 攻撃
+	const char* kAttackAnimName = "1H_Melee_Attack_Slice_Diagonal";
+	// 被弾
+	const char* kHitAnimName = "Hit_B";
+	// 死亡
+	const char* kDeadAnimName = "Death_B";
+
+	// アニメーションの再生速度
+	constexpr float kAnimSpeed = 0.5f;
+
 	const std::unordered_map<EnemyState, AttackTiming> kColTimingTable =
 	{
 		{EnemyState::Find,	 { 0,  0}},
@@ -64,13 +64,13 @@ EnemyMinion::~EnemyMinion()
 {
 }
 
-void EnemyMinion::Init(std::shared_ptr<Physics> physics)
+void EnemyMinion::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale)
 {
 	Collidable::Init(physics);
-	Vec3 pos = { 500.0f, 0.0f, 500.0f };
+
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
-	//当たり判定
+
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	colData->m_startPos = pos;
 	colData->m_radius = kColRadius;
@@ -82,14 +82,12 @@ void EnemyMinion::Init(std::shared_ptr<Physics> physics)
 	m_isDead = false;
 	m_attackFrame = 0.0f;
 
-	// キャラと武器のモデルのロード
-	m_charModel = MV1LoadModel("Data/Enemy/Minion/Minion.mv1");
+	m_charModel = MV1LoadModel("Data/Model/Enemy/Minion/Minion.mv1");
 	assert(m_charModel >= 0);
-	// モデルの拡大
-	MV1SetScale(m_charModel, VGet(kModelScale, kModelScale, kModelScale));
-	// モデルの位置を自分の位置と合わせる
+
+	MV1SetScale(m_charModel, VGet(scale.x * 50.0f, scale.y * 50.0f, scale.z * 50.0f));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
-	// アニメーション管理
+
 	m_anim.Init(m_charModel);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, kAnimSpeed, true);
 

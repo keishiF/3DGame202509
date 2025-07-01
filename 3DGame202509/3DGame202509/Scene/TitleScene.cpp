@@ -22,7 +22,7 @@ TitleScene::TitleScene(SceneController& controller) :
 	m_update(&TitleScene::FadeInUpdate),
 	m_draw(&TitleScene::FadeDraw)
 {
-	m_skyModel = MV1LoadModel("Data/Sky/Sky_Daylight01.mv1");
+	m_skyModel = MV1LoadModel("Data/Model/Sky/Sky_Daylight01.mv1");
 	assert(m_skyModel >= 0);
 	MV1SetScale(m_skyModel, VGet(kSkyModelScale, kSkyModelScale, kSkyModelScale));
 }

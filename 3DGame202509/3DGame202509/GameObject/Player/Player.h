@@ -31,12 +31,14 @@ public:
 
 	// 初期化、更新、描画
 	void Init(std::shared_ptr<Physics> physics);
+	void Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale);
 	void Update();
 	void Draw();
 
 	// プレイヤーの位置を取得
 	Vec3 GetPos() const { return m_rigidbody.GetPos(); }
 	float GetRadius() const { return m_radius; }
+	int GetModel() const { return m_charModel; }
 
 	// ダメージを受けた時の処理をまとめる関数
 	void OnDamage();

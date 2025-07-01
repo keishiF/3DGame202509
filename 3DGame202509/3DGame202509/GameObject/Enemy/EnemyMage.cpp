@@ -55,32 +55,32 @@ EnemyMage::~EnemyMage()
 {
 }
 
-void EnemyMage::Init(std::shared_ptr<Physics> physics)
+void EnemyMage::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale)
 {
 	Collidable::Init(physics);
-	Vec3 pos = { -500.0f, 0.0f, 500.0f };
+
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
 
 	m_physics = physics;
 
-	//当たり判定
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	colData->m_startPos = pos;
 	colData->m_radius = kColRadius;
 
+	// スピードの初期化
 	m_findRadius = kFindRadius;
 	m_attackRadius = kAttackRadius;
 	m_hp = kHp;
 	m_isDead = false;
 	m_attackFrame = 0.0f;
 
-	m_charModel = MV1LoadModel("Data/Enemy/Mage/Mage.mv1");
+	m_charModel = MV1LoadModel("Data/Model/Enemy/Mage/Mage.mv1");
 	assert(m_charModel >= 0);
-	m_weaponModel = MV1LoadModel("Data/Enemy/Mage/Staff.mv1");
+	m_weaponModel = MV1LoadModel("Data/Model/Enemy/Mage/Staff.mv1");
 	assert(m_weaponModel >= 0);
-	MV1SetScale(m_charModel, VGet(kModelScale, kModelScale, kModelScale));
 
+	MV1SetScale(m_charModel, VGet(scale.x * 50.0f, scale.y * 50.0f, scale.z * 50.0f));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
 
 	m_anim.Init(m_charModel);

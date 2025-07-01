@@ -26,7 +26,7 @@ void EnemyMinionBlade::Init(std::shared_ptr<Physics> physics)
 	Collidable::Init(physics);
 	m_rigidbody.Init();
 
-	m_model = MV1LoadModel("Data/Enemy/Minion/BladeBlender.mv1");
+	m_model = MV1LoadModel("Data/Model/Enemy/Minion/BladeBlender.mv1");
 	assert(m_model >= 0);
 }
 

@@ -8,8 +8,8 @@ namespace
 	constexpr float kLerpRate = 0.05f;
 
 	constexpr float kCameraPosX = 0.0f;
-	constexpr float kCameraPosY = 300.0f;
-	constexpr float kCameraPosZ = -300.0f;
+	constexpr float kCameraPosY = 400.0f;
+	constexpr float kCameraPosZ = -400.0f;
 }
 
 Camera::Camera() :
