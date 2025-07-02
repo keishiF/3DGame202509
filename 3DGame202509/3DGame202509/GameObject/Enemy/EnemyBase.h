@@ -1,9 +1,8 @@
 #pragma once
-
-#include "Vec3.h"
+#include "Animator.h"
 #include "Collidable.h"
 #include "Physics.h"
-#include "Animator.h"
+#include "Vec3.h"
 #include <memory>
 
 enum class EnemyState

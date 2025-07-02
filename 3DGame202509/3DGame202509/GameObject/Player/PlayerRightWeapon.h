@@ -2,20 +2,20 @@
 #include "Collidable.h"
 #include "DxLib.h"
 
-struct AttackTiming
+struct RightAttackTiming
 {
 	float start;
 	float end;
 };
 
-class PlayerWeapon : public Collidable
+class PlayerRightWeapon : public Collidable
 {
 public:
-	PlayerWeapon();
-	~PlayerWeapon();
+	PlayerRightWeapon();
+	~PlayerRightWeapon();
 
 	void Init(std::shared_ptr<Physics> physics);
-	void Update(int model, float currentFrame, const AttackTiming& timing);
+	void Update(int model, float currentFrame, const RightAttackTiming& timing);
 	// ë“ã@èÛë‘
 	void IdleUpdate(int model);
 	// äeçUåÇèÛë‘

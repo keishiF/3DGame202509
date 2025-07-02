@@ -3,7 +3,6 @@
 #include <list>
 
 class SceneBase;
-
 class SceneController
 {
 public:

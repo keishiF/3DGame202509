@@ -1,10 +1,9 @@
-#include "Player.h"
-#include "PlayerWeapon.h"
-
 #include "Animator.h"
 #include "CapsuleColliderData.h"
 #include "Physics.h"
-
+#include "Player.h"
+#include "PlayerRightWeapon.h"
+#include "PlayerLeftWeapon.h"
 #include "DxLib.h"
 #include <algorithm>
 #include <cassert>
@@ -37,7 +36,9 @@ namespace
 	const char* kSliceAnimName        = "1H_Melee_Attack_Slice_Diagonal";
 	const char* kStabAnimName         = "1H_Melee_Attack_Stab";
 	const char* kSpinAnimName         = "2H_Melee_Attack_Spin";
-	const char* kUltimateAnimName     = "";
+	const char* kUltimateAnimName1    = "Dualwield_Melee_Attack_Chop";
+	const char* kUltimateAnimName2    = "Dualwield_Melee_Attack_Slice";
+	const char* kUltimateAnimName3    = "Dualwield_Melee_Attack_Stab";
 	// 回避
 	const char* kDodgeAnimName		  = "Dodge_Forward";
 	// 被弾
@@ -49,8 +50,9 @@ namespace
 	constexpr float kIdleAnimSpeed = 0.5f;
 	constexpr float kWalkAnimSpeed = 0.75f;
 	constexpr float kChopAnimSpeed = 1.0f;
+	constexpr float kDualAnimSpeed = 1.25f;
 
-	const std::unordered_map<PlayerState, AttackTiming> kColTimingTable =
+	const std::unordered_map<PlayerState, RightAttackTiming> kRightColTimingTable =
 	{
 		{PlayerState::Idle,		 { 0,  0}},
 		{PlayerState::Walk,		 { 0,  0}},
@@ -59,7 +61,28 @@ namespace
 		{PlayerState::Slice,	 {16, 28}},
 		{PlayerState::Stab,		 {16, 28}},
 		{PlayerState::Spin,      {16, 36}},
-		{PlayerState::Ultimate,  {16, 36}},
+		{PlayerState::Special,   {16, 36}},
+		{PlayerState::DualChop,  {16, 36}},
+		{PlayerState::DualSlice, {16, 36}},
+		{PlayerState::DualStab,  {16, 36}},
+		{PlayerState::Dodge,	 { 0,  0}},
+		{PlayerState::Hit,		 { 0,  0}},
+		{PlayerState::Dead,		 { 0,  0}}
+	};
+
+	const std::unordered_map<PlayerState,LeftAttackTiming> kLeftColTimingTable =
+	{
+		{PlayerState::Idle,		 { 0,  0}},
+		{PlayerState::Walk,		 { 0,  0}},
+		{PlayerState::Run,		 { 0,  0}},
+		{PlayerState::Chop,		 {16, 28}},
+		{PlayerState::Slice,	 {16, 28}},
+		{PlayerState::Stab,		 {16, 28}},
+		{PlayerState::Spin,      {16, 36}},
+		{PlayerState::Special,   {16, 36}},
+		{PlayerState::DualChop,  {16, 36}},
+		{PlayerState::DualSlice, {16, 36}},
+		{PlayerState::DualStab,  {16, 36}},
 		{PlayerState::Dodge,	 { 0,  0}},
 		{PlayerState::Hit,		 { 0,  0}},
 		{PlayerState::Dead,		 { 0,  0}}
@@ -103,8 +126,8 @@ void Player::Init(std::shared_ptr<Physics> physics)
 	m_anim.Init(m_charModel);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kIdleAnimName, kIdleAnimSpeed, true);
 
-	m_weapon = std::make_shared<PlayerWeapon>();
-	m_weapon->Init(physics);
+	m_rightWeapon = std::make_shared<PlayerRightWeapon>();
+	m_rightWeapon->Init(physics);
 }
 
 void Player::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale)
@@ -127,8 +150,11 @@ void Player::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, 
 	m_anim.Init(m_charModel);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kIdleAnimName, kIdleAnimSpeed, true);
 
-	m_weapon = std::make_shared<PlayerWeapon>();
-	m_weapon->Init(physics);
+	m_rightWeapon = std::make_shared<PlayerRightWeapon>();
+	m_rightWeapon->Init(physics);
+
+	m_leftWeapon = std::make_shared<PlayerLeftWeapon>();
+	m_leftWeapon->Init(physics);
 }
 
 void Player::Update()
@@ -166,8 +192,8 @@ void Player::Update()
 	case PlayerState::Spin:
 		SpinUpdate();
 		break;
-	case PlayerState::Ultimate:
-		UltimateUpdate();
+	case PlayerState::Special:
+		SpecialUpdate();
 		break;
 	case PlayerState::Dodge:
 		DodgeUpdate();
@@ -199,7 +225,12 @@ void Player::Draw()
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kAttackOffsetRadius, 16, 0xff0000, 0xff0000, false);
 #endif
 	MV1DrawModel(m_charModel);
-	m_weapon->Draw();
+	m_rightWeapon->Draw();
+
+	if (m_state == PlayerState::Special)
+	{
+		m_leftWeapon->Draw();
+	}
 
 	const int gaugeWidth = 200;
 	const int gaugeHeight = 20;
@@ -299,8 +330,21 @@ void Player::ChangeState(PlayerState newState)
 	case PlayerState::Spin:
 		m_anim.ChangeAnim(kSpinAnimName, kAnimSpeed, false);
 		break;
-	case PlayerState::Ultimate:
-		m_anim.ChangeAnim(kUltimateAnimName, kAnimSpeed, false);
+	case PlayerState::Special:
+		// アニメーション順を登録
+		while (!m_ultimateAnimQueue.empty()) m_ultimateAnimQueue.pop(); // 念のためクリア
+		m_ultimateAnimQueue.push(kUltimateAnimName1);
+		m_ultimateAnimQueue.push(kUltimateAnimName2);
+		m_ultimateAnimQueue.push(kUltimateAnimName1);
+		m_ultimateAnimQueue.push(kUltimateAnimName2);
+		m_ultimateAnimQueue.push(kUltimateAnimName3);
+		// 最初のアニメーションを設定
+		if (!m_ultimateAnimQueue.empty()) 
+		{
+			m_currentSpecialAnim = m_ultimateAnimQueue.front();
+			m_ultimateAnimQueue.pop();
+			m_anim.ChangeAnim(m_currentSpecialAnim.c_str(), kDualAnimSpeed, false);
+		}
 		break;
 	case PlayerState::Dodge:
 		m_anim.ChangeAnim(kDodgeAnimName, kAnimSpeed, false);
@@ -317,7 +361,8 @@ void Player::ChangeState(PlayerState newState)
 void Player::IdleUpdate()
 {
 	SetActive(true);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Idle));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Idle));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Idle));
 
 	// 左スティックの入力があれば歩き状態に移行する
 	if (Input::Instance().IsPress("LEFT") || Input::Instance().IsPress("RIGHT") ||
@@ -337,6 +382,13 @@ void Player::IdleUpdate()
 	{
 		ChangeState(PlayerState::Spin);
 	}
+
+	// RBボタンの入力があれば必殺技状態に移行する
+	if (Input::Instance().IsTrigger("RB"))
+	{
+		ChangeState(PlayerState::Special);
+	}
+
 #if _DEBUG
 	// 死亡状態に移行
 	if (Input::Instance().IsTrigger("LB"))
@@ -349,7 +401,8 @@ void Player::IdleUpdate()
 void Player::WalkUpdate()
 {
 	SetActive(true);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Walk));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Walk));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Walk));
 
 	Vec3 dir = { 0.0f, 0.0f,0.0f };
 	// 左スティックで移動
@@ -431,7 +484,8 @@ void Player::WalkUpdate()
 void Player::RunUpdate()
 {
 	SetActive(true);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Run));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Run));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Run));
 
 	Vec3 dir = { 0.0f, 0.0f, 0.0f };
 	// 左スティックで移動
@@ -514,7 +568,7 @@ void Player::ChopUpdate()
 {
 	SetActive(true);
 	++m_attackFrame;
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Chop));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Chop));
 
 	// 1ボタンの入力があれば攻撃状態に移行する
 	if (Input::Instance().IsTrigger("A"))
@@ -542,7 +596,7 @@ void Player::SliceUpdate()
 {
 	SetActive(true);
 	++m_attackFrame;
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Slice));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Slice));
 
 	// 1ボタンの入力があれば攻撃状態に移行する
 	if (Input::Instance().IsTrigger("A"))
@@ -569,7 +623,7 @@ void Player::StabUpdate()
 {
 	SetActive(true);
 	++m_attackFrame;
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Stab));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Stab));
 
 	// 1ボタンの入力があれば攻撃状態に移行する
 	if (Input::Instance().IsTrigger("A"))
@@ -596,7 +650,7 @@ void Player::SpinUpdate()
 {
 	SetActive(true);
 	++m_attackFrame;
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Spin));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Spin));
 
 	if (m_anim.GetNextAnim().isEnd)
 	{
@@ -604,21 +658,49 @@ void Player::SpinUpdate()
 	}
 }
 
-void Player::UltimateUpdate()
+void Player::SpecialUpdate()
 {
-	SetActive(true);
-	m_weapon->AttackUpdate(m_charModel);
+	SetActive(false);
+	++m_attackFrame;
 
+	if (m_currentSpecialAnim == kUltimateAnimName1)
+	{
+		m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::DualChop));
+		m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::DualChop));
+	}
+	else if (m_currentSpecialAnim == kUltimateAnimName2)
+	{
+		m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::DualSlice));
+		m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::DualSlice));
+	}
+	else if (m_currentSpecialAnim == kUltimateAnimName3)
+	{
+		m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::DualStab));
+		m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::DualStab));
+	}
+
+	// アニメーションが終了したら次のアニメーションを再生
 	if (m_anim.GetNextAnim().isEnd)
 	{
-		ChangeState(PlayerState::Idle);
+		if (!m_ultimateAnimQueue.empty())
+		{
+			m_currentSpecialAnim = m_ultimateAnimQueue.front();
+			m_ultimateAnimQueue.pop();
+			m_anim.ChangeAnim(m_currentSpecialAnim.c_str(), kDualAnimSpeed, false);
+			m_attackFrame = 0.0f;
+		}
+		else
+		{
+			ChangeState(PlayerState::Idle);
+		}
 	}
 }
 
 void Player::DodgeUpdate()
 {
 	SetActive(false);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Dodge));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Dodge));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Dodge));
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
@@ -630,7 +712,8 @@ void Player::DodgeUpdate()
 void Player::HitUpdate()
 {
 	SetActive(false);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Hit));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Hit));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Hit));
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
@@ -643,7 +726,8 @@ void Player::HitUpdate()
 void Player::DeadUpdate()
 {
 	SetActive(false);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(PlayerState::Dead));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Dead));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Dead));
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)

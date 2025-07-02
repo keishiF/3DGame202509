@@ -2,8 +2,7 @@
 #include "SceneBase.h"
 #include "Vec3.h"
 
-class TitleScene final:
-	public SceneBase
+class TitleScene final : public SceneBase
 {
 public:
 	TitleScene(SceneController& controller);

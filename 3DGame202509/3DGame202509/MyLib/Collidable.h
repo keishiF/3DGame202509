@@ -1,8 +1,8 @@
 #pragma once
 #include "ColliderData.h"
-#include "Rigidbody.h"
-#include "ObjectTag.h"
 #include "ObjectPriority.h"
+#include "ObjectTag.h"
+#include "Rigidbody.h"
 #include <memory>
 
 class Physics;

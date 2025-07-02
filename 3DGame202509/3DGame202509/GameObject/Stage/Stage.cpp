@@ -19,7 +19,7 @@ void Stage::Init()
 		else if (data.name == "Road")
 			modelPath = "Data/Model/Stage/Road.mv1";
 		else
-			continue; // •s–¾‚È–¼‘O‚Í–³Ž‹
+			continue;
 
 		StageObject obj;
 		Vec3 pos   = { data.pos.x, data.pos.y, data.pos.z };

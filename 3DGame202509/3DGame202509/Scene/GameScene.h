@@ -1,6 +1,6 @@
 #pragma once
-#include "SceneBase.h"
 #include "DxLib.h"
+#include "SceneBase.h"
 #include "Vec3.h"
 #include <memory>
 

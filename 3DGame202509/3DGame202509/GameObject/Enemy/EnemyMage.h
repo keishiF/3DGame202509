@@ -1,8 +1,7 @@
 #pragma once
-
 #include "EnemyBase.h"
-#include <vector>
 #include <memory>
+#include <vector>
 
 class EnemyMageBullet;
 class Physics;

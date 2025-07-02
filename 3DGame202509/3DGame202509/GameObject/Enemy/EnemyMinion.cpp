@@ -46,7 +46,7 @@ namespace
 	// アニメーションの再生速度
 	constexpr float kAnimSpeed = 1.0f;
 
-	const std::unordered_map<EnemyState, AttackTiming> kColTimingTable =
+	const std::unordered_map<EnemyState, AttackTiming> kRightColTimingTable =
 	{
 		{EnemyState::Find,	 { 0,  0}},
 		{EnemyState::Chase,	 { 0,  0}},
@@ -242,7 +242,7 @@ bool EnemyMinion::IsLoopAnim(EnemyState state) const
 void EnemyMinion::FindUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Find));
+	m_weapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Find));
 
 	float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
 	if (distance <= (m_findRadius + player->GetRadius()))
@@ -254,7 +254,7 @@ void EnemyMinion::FindUpdate(std::shared_ptr<Player> player)
 void EnemyMinion::ChaseUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Chase));
+	m_weapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Chase));
 
 	// プレイヤーへの方向ベクトル
 	Vec3 myPos = m_rigidbody.GetPos();
@@ -293,7 +293,7 @@ void EnemyMinion::AttackUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
 	++m_attackFrame;
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Attack));
+	m_weapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Attack));
 
 	// プレイヤーへの方向ベクトル
 	Vec3 myPos = m_rigidbody.GetPos();
@@ -328,7 +328,7 @@ void EnemyMinion::AttackUpdate(std::shared_ptr<Player> player)
 void EnemyMinion::HitUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Hit));
+	m_weapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Hit));
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
@@ -341,7 +341,7 @@ void EnemyMinion::HitUpdate(std::shared_ptr<Player> player)
 void EnemyMinion::DeadUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Dead));
+	m_weapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Dead));
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)

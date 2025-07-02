@@ -1,27 +1,32 @@
 #pragma once
-
+#include "Animator.h"
+#include "Collidable.h"
 #include "Input.h"
 #include "Vec3.h"
-#include "Collidable.h"
-#include "Animator.h"
 #include <memory>
+#include <queue>
+#include <string>
 
 enum class PlayerState
 {
-	Idle,     // ‘Ò‹@
-	Walk,     // •à‚«
-	Run,      // ‘–‚è
-	Chop,     // UŒ‚1’i–Ú
-	Slice,    // UŒ‚2’i–Ú
-	Stab,     // UŒ‚3’i–Ú
-	Spin,     // ‹­UŒ‚
-	Ultimate, // •KE‹Z
-	Dodge,    // ‰ñ”ğ
-	Hit,      // ”í’e
-	Dead      // €–S
+	Idle,       // ‘Ò‹@
+	Walk,       // •à‚«
+	Run,        // ‘–‚è
+	Chop,       // UŒ‚1’i–Ú
+	Slice,      // UŒ‚2’i–Ú
+	Stab,       // UŒ‚3’i–Ú
+	Spin,       // ‹­UŒ‚
+	Special,    // •KE‹Z
+	DualChop,   // •KE‹Z
+	DualSlice,  // •KE‹Z
+	DualStab,   // •KE‹Z
+	Dodge,      // ‰ñ”ğ
+	Hit,        // ”í’e
+	Dead        // €–S
 };
 
-class PlayerWeapon;
+class PlayerRightWeapon;
+class PlayerLeftWeapon;
 class Player : public Collidable
 {
 public:
@@ -66,7 +71,7 @@ private:
 	void SliceUpdate();
 	void StabUpdate();
 	void SpinUpdate();
-	void UltimateUpdate();
+	void SpecialUpdate();
 
 	// ‰ñ”ğó‘Ô
 	void DodgeUpdate();
@@ -76,6 +81,9 @@ private:
 
 	// €–Só‘Ô
 	void DeadUpdate();
+
+	std::queue<const char*> m_ultimateAnimQueue;
+	std::string m_currentSpecialAnim;
 
 private:
 	// ƒvƒŒƒCƒ„[‚Ìƒ‚ƒfƒ‹
@@ -94,6 +102,7 @@ private:
 	// ƒvƒŒƒCƒ„[‚ÌƒAƒjƒ[ƒVƒ‡ƒ“
 	Animator m_anim;
 
-	std::shared_ptr<PlayerWeapon> m_weapon;
+	std::shared_ptr<PlayerRightWeapon> m_rightWeapon;
+	std::shared_ptr<PlayerLeftWeapon> m_leftWeapon;
 };
 

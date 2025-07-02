@@ -1,8 +1,8 @@
 #pragma once
-#include <list>
-#include <vector>
-#include <memory>
 #include "Collidable.h"
+#include <list>
+#include <memory>
+#include <vector>
 
 class Physics final
 {

@@ -1,36 +1,35 @@
-#include "EnemyMinionBlade.h"
-
+#include "PlayerRightWeapon.h"
+#include "SphereColliderData.h"
 #include "CapsuleColliderData.h"
-
 #include <cassert>
 
 namespace
 {
-	constexpr float kRadius = 7.5f;
+	constexpr float kRadius = 20.0f;
 
 	constexpr float kBladeModelScale = 0.01f;
 }
 
-EnemyMinionBlade::EnemyMinionBlade() :
+PlayerRightWeapon::PlayerRightWeapon() :
 	m_model(-1),
-	Collidable(ObjectTag::EnemyWeapon, ObjectPriority::Low, ColliderData::Kind::Capsule)
+	Collidable(ObjectTag::PlayerWeapon, ObjectPriority::Low, ColliderData::Kind::Capsule)
 {
 }
 
-EnemyMinionBlade::~EnemyMinionBlade()
+PlayerRightWeapon::~PlayerRightWeapon()
 {
 }
 
-void EnemyMinionBlade::Init(std::shared_ptr<Physics> physics)
+void PlayerRightWeapon::Init(std::shared_ptr<Physics> physics)
 {
 	Collidable::Init(physics);
 	m_rigidbody.Init();
 
-	m_model = MV1LoadModel("Data/Model/Enemy/Minion/BladeBlender.mv1");
+	m_model = MV1LoadModel("Data/Model/Player/SwordBlender.mv1");
 	assert(m_model >= 0);
 }
 
-void EnemyMinionBlade::Update(int model, float currentFrame, const AttackTiming& timing)
+void PlayerRightWeapon::Update(int model, float currentFrame, const RightAttackTiming& timing)
 {
 	if (currentFrame >= timing.start && currentFrame < timing.end)
 	{
@@ -42,7 +41,7 @@ void EnemyMinionBlade::Update(int model, float currentFrame, const AttackTiming&
 	}
 }
 
-void EnemyMinionBlade::IdleUpdate(int model)
+void PlayerRightWeapon::IdleUpdate(int model)
 {
 	// 当たり判定を無効化する
 	SetActive(false);
@@ -54,7 +53,7 @@ void EnemyMinionBlade::IdleUpdate(int model)
 	// アタッチするモデルを,フレームの座標を原点にするための平行移動行列を作成
 	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
 	// アタッチされるモデルのフレームの行列を取得
-	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 14);
+	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 26);
 	// アタッチするモデルの拡大行列を取得
 	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
 	// アタッチするモデルの回転行列を取得
@@ -69,7 +68,7 @@ void EnemyMinionBlade::IdleUpdate(int model)
 	MV1SetMatrix(m_model, mixMat);
 }
 
-void EnemyMinionBlade::AttackUpdate(int model)
+void PlayerRightWeapon::AttackUpdate(int model)
 {
 	// 当たり判定を有効化する
 	SetActive(true);
@@ -81,7 +80,7 @@ void EnemyMinionBlade::AttackUpdate(int model)
 	// アタッチするモデルを,フレームの座標を原点にするための平行移動行列を作成
 	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
 	// アタッチされるモデルのフレームの行列を取得
-	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 14);
+	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 26);
 	// アタッチするモデルの拡大行列を取得
 	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
 	// アタッチするモデルの回転行列を取得
@@ -106,11 +105,11 @@ void EnemyMinionBlade::AttackUpdate(int model)
 	colData->m_startPos = startPos;
 }
 
-void EnemyMinionBlade::Draw()
+void PlayerRightWeapon::Draw()
 {
 	MV1DrawModel(m_model);
 }
 
-void EnemyMinionBlade::OnCollide(std::shared_ptr<Collidable> collider)
+void PlayerRightWeapon::OnCollide(std::shared_ptr<Collidable> collider)
 {
 }

@@ -1,10 +1,9 @@
-#include "EnemyMage.h"
-#include "Player/Player.h"
-#include "EnemyMageBullet.h"
-
-#include "CapsuleColliderData.h"
 #include "Animator.h"
+#include "CapsuleColliderData.h"
+#include "EnemyMage.h"
+#include "EnemyMageBullet.h"
 #include "Physics.h"
+#include "Player/Player.h"
 
 #include "DxLib.h"
 #include <algorithm>
