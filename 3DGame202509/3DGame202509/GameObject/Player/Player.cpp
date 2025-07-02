@@ -121,7 +121,7 @@ void Player::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, 
 	m_charModel = MV1LoadModel("Data/Model/Player/Player.mv1");
 	assert(m_charModel >= 0);
 
-	MV1SetScale(m_charModel, VGet(scale.x * 100.0f, scale.y * 100.0f, scale.z * 100.0f));
+	MV1SetScale(m_charModel, VGet(scale.x * 50.0f, scale.y * 50.0f, scale.z * 50.0f));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
 
 	m_anim.Init(m_charModel);

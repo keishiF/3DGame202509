@@ -24,7 +24,7 @@ void GameObjectManager::Init()
 
 	for (const auto& data : transformDataList)
 	{
-		if (data.name == "Player")
+		if (data.name == "Knight")
 		{
 			m_player   = std::make_shared<Player>();
 			Vec3 pos   = { data.pos.x, data.pos.y , data.pos.z };
@@ -32,7 +32,7 @@ void GameObjectManager::Init()
 			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			m_player->Init(m_physics, pos, rot, scale);
 		}
-		else if (data.name == "Minion")
+		else if (data.name == "Skeleton_Minion")
 		{
 			auto minion = std::make_shared<EnemyMinion>();
 			Vec3 pos = { data.pos.x, data.pos.y , data.pos.z };
@@ -41,7 +41,7 @@ void GameObjectManager::Init()
 			minion->Init(m_physics, pos, rot, scale);
 			m_minions.emplace_back(minion);
 		}
-		else if (data.name == "Mage")
+		else if (data.name == "Skeleton_Mage")
 		{
 			auto mage = std::make_shared<EnemyMage>();
 			Vec3 pos = { data.pos.x, data.pos.y , data.pos.z };
