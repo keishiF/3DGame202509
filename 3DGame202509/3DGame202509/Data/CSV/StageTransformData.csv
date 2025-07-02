@@ -1,4 +1,6 @@
 Name,PosX,PosY,PosZ,RotX,RotY,RotZ,ScaleX,ScaleY,ScaleZ
+Floor_Brick,0,0,-4,0,0,0,100,100,100
+Floor_Brick,0,0,-2,0,0,0,100,100,100
 Floor_Brick,0,0,0,0,0,0,100,100,100
 Floor_Brick,0,0,2,0,0,0,100,100,100
 Floor_Brick,0,0,4,0,0,0,100,100,100
