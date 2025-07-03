@@ -23,6 +23,8 @@ namespace
 	constexpr float kRadius = 15.0f;
 	constexpr float kColScale = 90.0f;
 	constexpr float kAttackOffsetRadius = 100.0f;
+	// プレイヤーの最大スタミナ
+	constexpr float kMaxStamina = 100.0f;
 
 	// アニメーション名
 	// 待機
@@ -95,6 +97,8 @@ Player::Player() :
 	m_hp(kHp),
 	m_isCombo(false),
 	m_isDead(false),
+	m_maxStamina(kMaxStamina),
+	m_stamina(m_maxStamina),
 	m_attackFrame(0.0f),
 	m_state(PlayerState::Idle),
 	Collidable(ObjectTag::Player, ObjectPriority::High, ColliderData::Kind::Capsule)
@@ -112,6 +116,8 @@ void Player::Init(std::shared_ptr<Physics> physics)
 	Vec3 pos = { 0.0f, 0.0f, -500.0f };
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
+
+	m_stamina = m_maxStamina;
 
 	//当たり判定
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
@@ -162,6 +168,13 @@ void Player::Update()
 	if (m_isDead && m_charModel < 0)
 	{
 		return;
+	}
+
+	if (!m_isDead) 
+	{
+		// 徐々に回復
+		m_stamina += 0.5f;
+		m_stamina = std::clamp(m_stamina, 0.0f, m_maxStamina);
 	}
 
 	// アニメーションの更新
@@ -274,6 +287,43 @@ void Player::Draw()
 		gaugeX + gaugeWidth,
 		gaugeY + gaugeHeight,
 		0x000000, false);
+
+
+	const int segments = 50; // 精度
+	const float angleStep = DX_PI * 2.0f / segments;
+
+	// スタミナの割合
+	float rate = m_stamina / m_maxStamina;
+	rate = std::clamp(rate, 0.0f, 1.0f);
+
+	// プレイヤーの頭上に表示する位置
+	VECTOR worldPos = MV1GetPosition(m_charModel);
+	worldPos.x -= 50.0f;
+	worldPos.y += 100.0f;
+
+	// 画面座標へ変換（正しい使い方）
+	VECTOR screenPos = ConvWorldPosToScreenPos(worldPos);
+
+	const int centerX = static_cast<int>(screenPos.x);
+	const int centerY = static_cast<int>(screenPos.y);
+	const float radius = 30.0f;
+
+	for (int i = 0; i < segments * rate; ++i)
+	{
+		float angle1 = i * angleStep;
+		float angle2 = (i + 1) * angleStep;
+
+		int x1 = static_cast<int>(centerX + std::cos(angle1) * radius);
+		int y1 = static_cast<int>(centerY + std::sin(angle1) * radius);
+		int x2 = static_cast<int>(centerX + std::cos(angle2) * radius);
+		int y2 = static_cast<int>(centerY + std::sin(angle2) * radius);
+
+		DrawLine(x1, y1, x2, y2, 0x00ffff);
+	}
+
+	// 輪郭
+	DrawCircle(centerX, centerY, static_cast<int>(radius), 0xffffff, false);
+
 }
 
 void Player::OnDamage()
@@ -333,8 +383,6 @@ void Player::ChangeState(PlayerState newState)
 	case PlayerState::Special:
 		// アニメーション順を登録
 		while (!m_ultimateAnimQueue.empty()) m_ultimateAnimQueue.pop(); // 念のためクリア
-		m_ultimateAnimQueue.push(kUltimateAnimName1);
-		m_ultimateAnimQueue.push(kUltimateAnimName2);
 		m_ultimateAnimQueue.push(kUltimateAnimName1);
 		m_ultimateAnimQueue.push(kUltimateAnimName2);
 		m_ultimateAnimQueue.push(kUltimateAnimName3);
@@ -701,6 +749,11 @@ void Player::DodgeUpdate()
 	SetActive(false);
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Dodge));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Dodge));
+
+	if (m_attackFrame == 0.0f && m_stamina >= 20.0f)
+	{
+		m_stamina -= 20.0f;  // Dodgeで消費
+	}
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)

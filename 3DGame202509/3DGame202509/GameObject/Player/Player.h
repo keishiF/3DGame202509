@@ -96,6 +96,9 @@ private:
 	bool m_isCombo;
 	bool m_isDead;
 
+	float m_maxStamina;
+	float m_stamina;
+
 	// Œo‰ßƒtƒŒ[ƒ€‚ğ‘ª‚é
 	float m_attackFrame;
 
