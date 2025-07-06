@@ -23,5 +23,8 @@ private:
 	float m_fov;
 	// ロックオンフラグ
 	bool m_isLockOn;
+
+	float m_cameraRotX;
+	float m_cameraRotY;
 };
 

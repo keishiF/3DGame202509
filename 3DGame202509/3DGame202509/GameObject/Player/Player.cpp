@@ -14,8 +14,8 @@ namespace
 	// HPの初期値
 	constexpr int kHp = 100;
 	// 移動速度
-	constexpr float kWalkSpeed = 1.5f;
-	constexpr float kRunSpeed = 5.0f;
+	constexpr float kWalkSpeed = 3.0f;
+	constexpr float kRunSpeed = 7.0f;
 	constexpr float kAttackMoveSpeed = 0.75f;
 	// プレイヤーのモデルの拡大値
 	constexpr float kModelScale = 45.0f;

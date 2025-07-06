@@ -7,16 +7,20 @@ namespace
 {
 	constexpr float kLerpRate = 0.05f;
 
+	constexpr float kRotSpeed = 0.00005f;
+
 	constexpr float kCameraPosX = 0.0f;
-	constexpr float kCameraPosY = 400.0f;
-	constexpr float kCameraPosZ = -400.0f;
+	constexpr float kCameraPosY = 600.0f;
+	constexpr float kCameraPosZ = -500.0f;
 }
 
 Camera::Camera() :
 	m_pos(0.0f, 0.0f, 0.0f),
 	m_lookAtPos(0.0f, 0.0f, 0.0f),
 	m_fov(DX_PI_F / 3.0f),
-	m_isLockOn(false)
+	m_isLockOn(false),
+	m_cameraRotX(0.0f),
+	m_cameraRotY(0.0f)
 {
 }
 
@@ -29,12 +33,37 @@ void Camera::Update(std::shared_ptr<Player> player)
 	// プレイヤーの位置を取得し、カメラをプレイヤーの位置に合わせる
 	Vec3 playerPos = player->GetPos();
 	Vec3 cameraPos = { kCameraPosX, kCameraPosY, kCameraPosZ };
-	m_pos = playerPos + cameraPos;
+	//m_pos = playerPos + cameraPos;
 
 	// カメラの注視点をプレイヤーの位置に合わせる
 	m_lookAtPos = { playerPos.x, playerPos.y + 150.0f, playerPos.z };
 
-	SetCameraPositionAndTarget_UpVecY(
+	Vec3 offset = { kCameraPosX, kCameraPosY, kCameraPosZ };
+	int inputX, inputY;
+	// 右スティックの入力を取得
+	GetJoypadAnalogInputRight(&inputX, &inputY, DX_INPUT_PAD1);
+
+	// カメラの回転をジョイパッドの入力に基づいて更新
+	if (inputX != 0)
+	{
+		m_cameraRotX += inputX * kRotSpeed;
+	}
+	if (inputY != 0)
+	{
+		m_cameraRotY += inputY * kRotSpeed;
+		// 縦回転に制限を付ける
+		m_cameraRotY = std::clamp(m_cameraRotY, -DX_PI_F / 3.0f, DX_PI_F / 5.80f);
+	}
+
+	// カメラの位置を回転に基づいて更新
+	Vec3 rotatedOffset = {
+		offset.x * cos(m_cameraRotX) - offset.z * sin(m_cameraRotX),
+		offset.y * cos(m_cameraRotY) - offset.z * sin(m_cameraRotY),
+		offset.x * sin(m_cameraRotX) + offset.z * cos(m_cameraRotX)
+	};
+	m_pos = playerPos + rotatedOffset;
+
+	DxLib::SetCameraPositionAndTarget_UpVecY(
 		VGet(m_pos.x, m_pos.y, m_pos.z),
 		VGet(m_lookAtPos.x, m_lookAtPos.y, m_lookAtPos.z));
 }
@@ -49,7 +78,7 @@ void Camera::SetCamera(std::shared_ptr<Player> player)
 	// カメラの注視点をプレイヤーの位置に合わせる
 	m_lookAtPos = { playerPos.x, playerPos.y + 150.0f, playerPos.z };
 
-	SetCameraPositionAndTarget_UpVecY(
+	DxLib::SetCameraPositionAndTarget_UpVecY(
 		VGet(m_pos.x, m_pos.y, m_pos.z),
 		VGet(m_lookAtPos.x, m_lookAtPos.y, m_lookAtPos.z));
 }
