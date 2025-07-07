@@ -287,43 +287,6 @@ void Player::Draw()
 		gaugeX + gaugeWidth,
 		gaugeY + gaugeHeight,
 		0x000000, false);
-
-
-	const int segments = 50; // 精度
-	const float angleStep = DX_PI * 2.0f / segments;
-
-	// スタミナの割合
-	float rate = m_stamina / m_maxStamina;
-	rate = std::clamp(rate, 0.0f, 1.0f);
-
-	// プレイヤーの頭上に表示する位置
-	VECTOR worldPos = MV1GetPosition(m_charModel);
-	worldPos.x -= 50.0f;
-	worldPos.y += 100.0f;
-
-	// 画面座標へ変換（正しい使い方）
-	VECTOR screenPos = ConvWorldPosToScreenPos(worldPos);
-
-	const int centerX = static_cast<int>(screenPos.x);
-	const int centerY = static_cast<int>(screenPos.y);
-	const float radius = 30.0f;
-
-	for (int i = 0; i < segments * rate; ++i)
-	{
-		float angle1 = i * angleStep;
-		float angle2 = (i + 1) * angleStep;
-
-		int x1 = static_cast<int>(centerX + std::cos(angle1) * radius);
-		int y1 = static_cast<int>(centerY + std::sin(angle1) * radius);
-		int x2 = static_cast<int>(centerX + std::cos(angle2) * radius);
-		int y2 = static_cast<int>(centerY + std::sin(angle2) * radius);
-
-		DrawLine(x1, y1, x2, y2, 0x00ffff);
-	}
-
-	// 輪郭
-	DrawCircle(centerX, centerY, static_cast<int>(radius), 0xffffff, false);
-
 }
 
 void Player::OnDamage()

@@ -141,7 +141,25 @@
       <Filter>ソース ファイル\GameObject\Stage</Filter>
     </ClCompile>
     <ClCompile Include="GameObject\Player\PlayerLeftWeapon.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\GameObject\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Enemy\EnemyBoss.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Enemy\EnemyBossAxe.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Stage\StageObjectManager.cpp">
+      <Filter>ソース ファイル\GameObject\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Stage\Mountain.cpp">
+      <Filter>ソース ファイル\GameObject\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Stage\Meadow.cpp">
+      <Filter>ソース ファイル\GameObject\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Stage\StageObjectBase.cpp">
+      <Filter>ソース ファイル\GameObject\Stage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -239,7 +257,25 @@
       <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\Player\PlayerLeftWeapon.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\GameObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy\EnemyBoss.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy\EnemyBossAxe.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Stage\StageObjectManager.h">
+      <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Stage\Mountain.h">
+      <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Stage\Meadow.h">
+      <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Stage\StageObjectBase.h">
+      <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

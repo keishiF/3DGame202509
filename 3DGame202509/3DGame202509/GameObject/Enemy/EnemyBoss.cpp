@@ -1,5 +1,5 @@
-#include "EnemyMinion.h"
-#include "EnemyMinionBlade.h"
+#include "EnemyBoss.h"
+#include "EnemyBossAxe.h"
 #include "Player/Player.h"
 
 #include "CapsuleColliderData.h"
@@ -13,8 +13,8 @@
 namespace
 {
 	// エネミーがプレイヤーを発見できる範囲
-	constexpr float kFindRadius   = 500.0f;
-	constexpr float kAttackRadius = 100.0f;
+	constexpr float kFindRadius = 300.0f;
+	constexpr float kAttackRadius = 200.0f;
 
 	// 初期HP
 	constexpr int kHp = 5;
@@ -23,48 +23,48 @@ namespace
 	constexpr float kSpeed = 1.0f;
 
 	// エネミーの当たり判定用半径
-	constexpr float kColScale = 70.0f;
-	constexpr float kColRadius = 25.0f;
+	constexpr float kColScale = 200.0f;
+	constexpr float kColRadius = 75.0f;
 
 	constexpr float kAttackFrame = 32.0f;
 
 	// モデルの拡大率
-	constexpr float kModelScale = 45.0f;
+	constexpr float kModelScale = 150.0f;
 
 	// アニメーション名
 	// 待機
-	const char* kFindAnimName   = "2H_Melee_Idle";
+	const char* kFindAnimName = "2H_Melee_Idle";
 	// 発見
-	const char* kChaseAnimName  = "Running_C";
+	const char* kChaseAnimName = "Running_C";
 	// 攻撃
 	const char* kAttackAnimName = "1H_Melee_Attack_Slice_Diagonal";
 	// 被弾
-	const char* kHitAnimName    = "Hit_B";
+	const char* kHitAnimName = "Hit_B";
 	// 死亡
-	const char* kDeadAnimName   = "Death_B";
+	const char* kDeadAnimName = "Death_B";
 
 	// アニメーションの再生速度
-	constexpr float kAnimSpeed = 1.0f;
+	constexpr float kAnimSpeed = 0.5f;
 
 	const std::unordered_map<EnemyState, AttackTiming> kColTimingTable =
 	{
 		{EnemyState::Find,	 { 0,  0}},
 		{EnemyState::Chase,	 { 0,  0}},
-		{EnemyState::Attack, {20, 48}},
+		{EnemyState::Attack, { 0, 48}},
 		{EnemyState::Hit,	 { 0,  0}},
 		{EnemyState::Dead,	 { 0,  0}}
 	};
 }
 
-EnemyMinion::EnemyMinion()
-{	
-}
-
-EnemyMinion::~EnemyMinion()
+EnemyBoss::EnemyBoss()
 {
 }
 
-void EnemyMinion::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale)
+EnemyBoss::~EnemyBoss()
+{
+}
+
+void EnemyBoss::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale)
 {
 	Collidable::Init(physics);
 
@@ -82,20 +82,20 @@ void EnemyMinion::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& 
 	m_isDead = false;
 	m_attackFrame = 0.0f;
 
-	m_charModel = MV1LoadModel("Data/Model/Enemy/Minion/Minion.mv1");
+	m_charModel = MV1LoadModel("Data/Model/Enemy/Boss/Boss.mv1");
 	assert(m_charModel >= 0);
 
-	MV1SetScale(m_charModel, VGet(scale.x * 50.0f, scale.y * 50.0f, scale.z * 50.0f));
+	MV1SetScale(m_charModel, VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
 
 	m_anim.Init(m_charModel);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, kAnimSpeed, true);
 
-	m_weapon = std::make_shared<EnemyMinionBlade>();
+	m_weapon = std::make_shared<EnemyBossAxe>();
 	m_weapon->Init(physics);
 }
 
-void EnemyMinion::Update(std::shared_ptr<Player> player)
+void EnemyBoss::Update(std::shared_ptr<Player> player)
 {
 	if (m_isDead && m_charModel < 0)
 	{
@@ -135,7 +135,7 @@ void EnemyMinion::Update(std::shared_ptr<Player> player)
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 }
 
-void EnemyMinion::Draw()
+void EnemyBoss::Draw()
 {
 	if (m_isDead && m_charModel < 0)
 	{
@@ -150,7 +150,7 @@ void EnemyMinion::Draw()
 #endif
 	MV1DrawModel(m_charModel);
 	m_weapon->Draw();
-	
+
 	Vec3 worldPos = m_rigidbody.GetPos();
 	worldPos.y += 120.0f; // 頭上の高さ調整
 
@@ -185,7 +185,7 @@ void EnemyMinion::Draw()
 		0x000000, false);
 }
 
-void EnemyMinion::OnDamage()
+void EnemyBoss::OnDamage()
 {
 	m_hp -= 1;
 
@@ -199,7 +199,7 @@ void EnemyMinion::OnDamage()
 	}
 }
 
-void EnemyMinion::FindUpdate(std::shared_ptr<Player> player)
+void EnemyBoss::FindUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
 	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Find));
@@ -211,7 +211,7 @@ void EnemyMinion::FindUpdate(std::shared_ptr<Player> player)
 	}
 }
 
-void EnemyMinion::ChaseUpdate(std::shared_ptr<Player> player)
+void EnemyBoss::ChaseUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
 	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Chase));
@@ -249,7 +249,7 @@ void EnemyMinion::ChaseUpdate(std::shared_ptr<Player> player)
 	}
 }
 
-void EnemyMinion::AttackUpdate(std::shared_ptr<Player> player)
+void EnemyBoss::AttackUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
 	++m_attackFrame;
@@ -285,7 +285,7 @@ void EnemyMinion::AttackUpdate(std::shared_ptr<Player> player)
 	}
 }
 
-void EnemyMinion::HitUpdate(std::shared_ptr<Player> player)
+void EnemyBoss::HitUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
 	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Hit));
@@ -298,7 +298,7 @@ void EnemyMinion::HitUpdate(std::shared_ptr<Player> player)
 	}
 }
 
-void EnemyMinion::DeadUpdate(std::shared_ptr<Player> player)
+void EnemyBoss::DeadUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
 	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Dead));
@@ -315,7 +315,7 @@ void EnemyMinion::DeadUpdate(std::shared_ptr<Player> player)
 	}
 }
 
-const char* EnemyMinion::GetAnimName(EnemyState state) const
+const char* EnemyBoss::GetAnimName(EnemyState state) const
 {
 	switch (state)
 	{
@@ -335,7 +335,7 @@ const char* EnemyMinion::GetAnimName(EnemyState state) const
 	}
 }
 
-bool EnemyMinion::IsLoopAnim(EnemyState state) const
+bool EnemyBoss::IsLoopAnim(EnemyState state) const
 {
 	switch (state)
 	{

@@ -233,46 +233,6 @@ void EnemyMage::OnDamage()
 	}
 }
 
-const char* EnemyMage::GetAnimName(EnemyState state) const
-{
-	switch (state)
-	{
-	case EnemyState::Find:
-		return kFindAnimName;
-	case EnemyState::Chase:
-		return kChaseAnimName;
-	case EnemyState::Attack:
-		return kAttackAnimName;
-	case EnemyState::Hit:
-		return kHitAnimName;
-	case EnemyState::Dead:
-		return kDeadAnimName;
-	default:
-		return "";
-		assert(0 && "存在しないアニメーション");
-	}
-}
-
-bool EnemyMage::IsLoopAnim(EnemyState state) const
-{
-	switch (state)
-	{
-	case EnemyState::Find:
-		return true;
-	case EnemyState::Chase:
-		return true;
-	case EnemyState::Attack:
-		return false;
-	case EnemyState::Hit:
-		return false;
-	case EnemyState::Dead:
-		return false;
-	default:
-		return "";
-		assert(0 && "存在しないステート");
-	}
-}
-
 void EnemyMage::FindUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
@@ -402,4 +362,44 @@ void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)
 		bullet->Final(m_physics);
 	}
 	m_bullets.clear();
+}
+
+const char* EnemyMage::GetAnimName(EnemyState state) const
+{
+	switch (state)
+	{
+	case EnemyState::Find:
+		return kFindAnimName;
+	case EnemyState::Chase:
+		return kChaseAnimName;
+	case EnemyState::Attack:
+		return kAttackAnimName;
+	case EnemyState::Hit:
+		return kHitAnimName;
+	case EnemyState::Dead:
+		return kDeadAnimName;
+	default:
+		return "";
+		assert(0 && "存在しないアニメーション");
+	}
+}
+
+bool EnemyMage::IsLoopAnim(EnemyState state) const
+{
+	switch (state)
+	{
+	case EnemyState::Find:
+		return true;
+	case EnemyState::Chase:
+		return true;
+	case EnemyState::Attack:
+		return false;
+	case EnemyState::Hit:
+		return false;
+	case EnemyState::Dead:
+		return false;
+	default:
+		return "";
+		assert(0 && "存在しないステート");
+	}
 }

@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Physics.h"
 #include "GameObjectManager.h"
+#include "Stage/StageObjectManager.h"
 #include "game.h"
 #include "Input.h"
 #include <cassert>
@@ -37,7 +38,10 @@ GameScene::GameScene(SceneController& controller) :
 	m_gameObjectManager = std::make_shared<GameObjectManager>();
 	m_gameObjectManager->Init();
 
-	int dirLight = CreateDirLightHandle(VGet(0.0f, -1.0f, 0.0f));
+	m_stageObjectManager = std::make_shared<StageObjectManager>();
+	m_stageObjectManager->Init();
+
+	int dirLight = CreateDirLightHandle(VGet(0.0f, 1.0f, 0.0f));
 }
 
 GameScene::~GameScene()
@@ -96,6 +100,7 @@ void GameScene::NormalDraw()
 	DrawField();
 
 	m_gameObjectManager->Draw();
+	m_stageObjectManager->Draw();
 }
 
 void GameScene::FadeDraw()
@@ -105,6 +110,7 @@ void GameScene::FadeDraw()
 	DrawField();
 
 	m_gameObjectManager->Draw();
+	m_stageObjectManager->Draw();
 
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));

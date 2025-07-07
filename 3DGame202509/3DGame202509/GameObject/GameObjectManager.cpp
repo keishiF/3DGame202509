@@ -3,6 +3,7 @@
 #include "Player/Player.h"
 #include "Enemy/EnemyMinion.h"
 #include "Enemy/EnemyMage.h"
+#include "Enemy/EnemyBoss.h"
 #include "Camera.h"
 #include "Stage/Stage.h"
 #include "TransformDataLoader.h"
@@ -50,6 +51,15 @@ void GameObjectManager::Init()
 			mage->Init(m_physics, pos, rot, scale);
 			m_mages.emplace_back(mage);
 		}
+		else if (data.name == "Skeleton_Warrior")
+		{
+			auto boss = std::make_shared<EnemyBoss>();
+			Vec3 pos = { data.pos.x, data.pos.y , data.pos.z };
+			Vec3 rot = { data.rot.x, data.rot.y , data.rot.z };
+			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
+			boss->Init(m_physics, pos, rot, scale);
+			m_boss.emplace_back(boss);
+		}
 	}
 
 	if (m_player)
@@ -61,8 +71,8 @@ void GameObjectManager::Init()
 	m_camera = std::make_shared<Camera>();
 	m_camera->SetCamera(m_player);
 
-	m_stage = std::make_shared<Stage>();
-	m_stage->Init();
+	/*m_stage = std::make_shared<Stage>();
+	m_stage->Init();*/
 }
 
 void GameObjectManager::Update()
@@ -82,11 +92,18 @@ void GameObjectManager::Update()
 		mage->Update(m_player);
 	}
 
+	for (auto& boss: m_boss)
+	{
+		boss->Update(m_player);
+	}
+
 	if (m_camera) m_camera->Update(m_player);
 }
 
 void GameObjectManager::Draw()
 {
+	//m_stage->Draw();
+
 #ifdef _DEBUG
 	m_physics->DebugDraw();
 #endif
@@ -103,5 +120,8 @@ void GameObjectManager::Draw()
 		mage->Draw();
 	}
 
-	m_stage->Draw();
+	for (auto& boss : m_boss)
+	{
+		boss->Draw();
+	}
 }

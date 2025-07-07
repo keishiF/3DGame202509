@@ -1,13 +1,13 @@
 #pragma once
 #include "EnemyBase.h"
 
-class EnemyMinionBlade;
-class EnemyMinion : public EnemyBase
+class EnemyBossAxe;
+class EnemyBoss : public EnemyBase
 {
 public:
 	// コンストラクタとデストラクタ
-	EnemyMinion();
-	virtual ~EnemyMinion();
+	EnemyBoss();
+	~EnemyBoss();
 
 	// 初期化、更新、描画
 	void Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale) override;
@@ -36,6 +36,6 @@ private:
 	// 死亡状態
 	void DeadUpdate(std::shared_ptr<Player> player) override;
 
-	std::shared_ptr<EnemyMinionBlade> m_weapon;
+	std::shared_ptr<EnemyBossAxe> m_weapon;
 };
 
