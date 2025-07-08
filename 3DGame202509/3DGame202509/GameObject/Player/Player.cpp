@@ -48,7 +48,7 @@ namespace
 	// 死亡
 	const char* kDeadAnimName         = "Death_B";
 	// アニメーションの再生速度
-	constexpr float kAnimSpeed = 1.0f;
+	constexpr float kAnimSpeed	   = 1.0f;
 	constexpr float kIdleAnimSpeed = 0.5f;
 	constexpr float kWalkAnimSpeed = 0.75f;
 	constexpr float kChopAnimSpeed = 1.0f;
