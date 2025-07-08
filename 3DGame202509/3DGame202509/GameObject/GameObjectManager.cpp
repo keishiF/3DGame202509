@@ -1,6 +1,7 @@
 #include "GameObjectManager.h"
 #include "Physics.h"
 #include "Player/Player.h"
+#include "Enemy/EnemyBase.h"
 #include "Enemy/EnemyMinion.h"
 #include "Enemy/EnemyMage.h"
 #include "Enemy/EnemyBoss.h"
@@ -124,4 +125,22 @@ void GameObjectManager::Draw()
 	{
 		boss->Draw();
 	}
+}
+
+std::vector<std::shared_ptr<EnemyBase>> GameObjectManager::GetEnemies()
+{
+	std::vector<std::shared_ptr<EnemyBase>> result;
+	for (const auto& minion : m_minions) 
+	{
+		if (minion) result.push_back(minion);
+	}
+	for (const auto& mage : m_mages) 
+	{
+		if (mage) result.push_back(mage);
+	}
+	for (const auto& boss : m_boss) 
+	{
+		if (boss) result.push_back(boss);
+	}
+	return result;
 }

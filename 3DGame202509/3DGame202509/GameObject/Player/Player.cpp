@@ -28,7 +28,7 @@ namespace
 
 	// アニメーション名
 	// 待機
-	const char* kIdleAnimName = "Idle";
+	const char* kIdleAnimName         = "Idle";
 	// 歩き
 	const char* kWalkAnimName         = "Walking_B";
 	// 走り
@@ -92,6 +92,7 @@ namespace
 }
 
 Player::Player() :
+	m_forward(0.0f, 0.0f, 1.0f),
 	m_charModel(-1),
 	m_radius(kRadius),
 	m_hp(kHp),
@@ -99,6 +100,7 @@ Player::Player() :
 	m_isDead(false),
 	m_maxStamina(kMaxStamina),
 	m_stamina(m_maxStamina),
+	m_attackPower(1),
 	m_attackFrame(0.0f),
 	m_state(PlayerState::Idle),
 	Collidable(ObjectTag::Player, ObjectPriority::High, ColliderData::Kind::Capsule)
@@ -755,5 +757,10 @@ void Player::DeadUpdate()
 		}
 		m_isDead = true;
 	}
+}
+
+std::shared_ptr<EnemyBase> Player::FindNearestEnemy(float radius)
+{
+	return std::shared_ptr<EnemyBase>();
 }
 

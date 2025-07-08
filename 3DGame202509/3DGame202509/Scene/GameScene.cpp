@@ -99,8 +99,8 @@ void GameScene::NormalDraw()
 
 	DrawField();
 
-	m_gameObjectManager->Draw();
 	m_stageObjectManager->Draw();
+	m_gameObjectManager->Draw();
 }
 
 void GameScene::FadeDraw()
@@ -109,8 +109,8 @@ void GameScene::FadeDraw()
 
 	DrawField();
 
-	m_gameObjectManager->Draw();
 	m_stageObjectManager->Draw();
+	m_gameObjectManager->Draw();
 
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));

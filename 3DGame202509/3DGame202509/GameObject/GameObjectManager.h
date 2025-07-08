@@ -4,6 +4,7 @@
 
 class Physics;
 class Player;
+class EnemyBase;
 class EnemyMinion;
 class EnemyMage;
 class EnemyBoss;
@@ -18,6 +19,8 @@ public:
 	void Init();
 	void Update();
 	void Draw();
+
+	std::vector<std::shared_ptr<EnemyBase>> GetEnemies();
 
 private:
 	std::shared_ptr<Physics> m_physics;

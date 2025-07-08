@@ -25,6 +25,7 @@ enum class PlayerState
 	Dead        // 死亡
 };
 
+class EnemyBase;
 class PlayerRightWeapon;
 class PlayerLeftWeapon;
 class Player : public Collidable
@@ -85,7 +86,11 @@ private:
 	std::queue<const char*> m_ultimateAnimQueue;
 	std::string m_currentSpecialAnim;
 
+	std::shared_ptr<EnemyBase> FindNearestEnemy(float radius);
+
 private:
+	Vec3 m_forward;
+
 	// プレイヤーのモデル
 	int m_charModel;
 	// プレイヤーの当たり判定
@@ -98,6 +103,8 @@ private:
 
 	float m_maxStamina;
 	float m_stamina;
+
+	int m_attackPower;
 
 	// 経過フレームを測る
 	float m_attackFrame;

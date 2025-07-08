@@ -10,14 +10,14 @@ namespace
 	constexpr float kRotSpeed = 0.00005f;
 
 	constexpr float kCameraPosX = 0.0f;
-	constexpr float kCameraPosY = 600.0f;
-	constexpr float kCameraPosZ = -500.0f;
+	constexpr float kCameraPosY = 500.0f;
+	constexpr float kCameraPosZ = -400.0f;
 }
 
 Camera::Camera() :
 	m_pos(0.0f, 0.0f, 0.0f),
 	m_lookAtPos(0.0f, 0.0f, 0.0f),
-	m_fov(DX_PI_F / 3.0f),
+	m_fov(DX_PI_F / 2.5f),
 	m_isLockOn(false),
 	m_cameraRotX(0.0f),
 	m_cameraRotY(0.0f)
@@ -78,6 +78,7 @@ void Camera::SetCamera(std::shared_ptr<Player> player)
 	// カメラの注視点をプレイヤーの位置に合わせる
 	m_lookAtPos = { playerPos.x, playerPos.y + 150.0f, playerPos.z };
 
+	SetupCamera_Perspective(m_fov);
 	DxLib::SetCameraPositionAndTarget_UpVecY(
 		VGet(m_pos.x, m_pos.y, m_pos.z),
 		VGet(m_lookAtPos.x, m_lookAtPos.y, m_lookAtPos.z));
