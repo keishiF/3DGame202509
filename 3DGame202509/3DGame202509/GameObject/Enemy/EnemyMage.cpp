@@ -306,6 +306,7 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 	{
 		// ’e‚ð¶¬
 		Vec3 myPos = m_rigidbody.GetPos();
+		myPos.y += 50.0f;
 		Vec3 playerPos = player->GetPos();
 
 		auto bullet = std::make_shared<EnemyMageBullet>();

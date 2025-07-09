@@ -3,7 +3,7 @@
 #include <vector>
 
 class Mountain;
-class Meadow;
+class Floor;
 class StageObjectManager
 {
 public:
@@ -16,6 +16,6 @@ public:
 
 private:
 	std::vector<std::shared_ptr<Mountain>> m_mountains;
-	std::vector<std::shared_ptr<Meadow>> m_meadows;
+	std::vector<std::shared_ptr<Floor>> m_floors;
 };
 

@@ -1,9 +1,12 @@
 #include "Animator.h"
 #include "CapsuleColliderData.h"
+#include "GameObjectManager.h"
+#include "Enemy/EnemyBase.h"
 #include "Physics.h"
 #include "Player.h"
 #include "PlayerRightWeapon.h"
 #include "PlayerLeftWeapon.h"
+#include "Quaternion.h"
 #include "DxLib.h"
 #include <algorithm>
 #include <cassert>
@@ -16,13 +19,13 @@ namespace
 	// 移動速度
 	constexpr float kWalkSpeed = 3.0f;
 	constexpr float kRunSpeed = 7.0f;
-	constexpr float kAttackMoveSpeed = 0.75f;
+	constexpr float kAttackMoveSpeed = 1.0f;
 	// プレイヤーのモデルの拡大値
 	constexpr float kModelScale = 45.0f;
 	// プレイヤーの当たり判定
 	constexpr float kRadius = 15.0f;
 	constexpr float kColScale = 90.0f;
-	constexpr float kAttackOffsetRadius = 100.0f;
+	constexpr float kAttackOffsetRadius = 175.0f;
 	// プレイヤーの最大スタミナ
 	constexpr float kMaxStamina = 100.0f;
 
@@ -115,7 +118,7 @@ Player::~Player()
 void Player::Init(std::shared_ptr<Physics> physics)
 {
 	Collidable::Init(physics);
-	Vec3 pos = { 0.0f, 0.0f, -500.0f };
+	Vec3 pos = { 0.0f, 10.0f, -500.0f };
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
 
@@ -373,7 +376,9 @@ void Player::ChangeState(PlayerState newState)
 
 void Player::IdleUpdate()
 {
+	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
+
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Idle));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Idle));
 
@@ -413,7 +418,9 @@ void Player::IdleUpdate()
 
 void Player::WalkUpdate()
 {
+	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
+
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Walk));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Walk));
 
@@ -455,11 +462,24 @@ void Player::WalkUpdate()
 	m_rigidbody.SetVelo(dir * kWalkSpeed);
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 
-	// 進行方向が0でなければ回転
-	if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
+	// 進行方向にモデルを回転させる
+	static Quaternion currentRot;
+	Vec3 velocity = m_rigidbody.GetVelo();
+	if (velocity.x != 0.0f || velocity.z != 0.0f)
 	{
-		// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
-		float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
+		// Y軸回転
+		Vec3 axis(0.0f, 1.0f, 0.0f);
+		float angle = std::atan2(velocity.x, -velocity.z);
+
+		Quaternion targetRot;
+		targetRot.AngleAxis(angle, axis);
+
+		// Slerpを使って線形補間
+		constexpr float t = 0.25f;
+		currentRot = Quaternion::Slerp(currentRot, targetRot, t);
+
+		// Y軸の回転角だけ取得して適用
+		float angleY = currentRot.ToEulerY();
 		MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 	}
 
@@ -496,7 +516,9 @@ void Player::WalkUpdate()
 
 void Player::RunUpdate()
 {
+	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
+
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Run));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Run));
 
@@ -538,11 +560,24 @@ void Player::RunUpdate()
 	m_rigidbody.SetVelo(dir * kRunSpeed);
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 
-	// 進行方向が0でなければ回転
-	if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
+	// 進行方向にモデルを回転させる
+	static Quaternion currentRot;
+	Vec3 velocity = m_rigidbody.GetVelo();
+	if (velocity.x != 0.0f || velocity.z != 0.0f)
 	{
-		// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
-		float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
+		// Y軸回転
+		Vec3 axis(0.0f, 1.0f, 0.0f);
+		float angle = std::atan2(velocity.x, -velocity.z);
+
+		Quaternion targetRot;
+		targetRot.AngleAxis(angle, axis);
+
+		// Slerpを使って線形補間
+		constexpr float t = 0.25f;
+		currentRot = Quaternion::Slerp(currentRot, targetRot, t);
+
+		// Y軸の回転角だけ取得して適用
+		float angleY = currentRot.ToEulerY();
 		MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 	}
 
@@ -579,7 +614,25 @@ void Player::RunUpdate()
 
 void Player::ChopUpdate()
 {
+	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
+
+	// 一番近い敵の方向に回転
+	RotateToNearestEnemy(kAttackOffsetRadius);
+
+	// 攻撃開始から一定フレームの間前進
+	if (m_attackFrame <= 15.0f)
+	{
+		// 攻撃中に前進する処理（現在の回転方向に進む）
+		VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
+		float angleY = -rotVec.y; // モデル回転と一致させるため-が必要
+		Vec3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
+		forward.Normalize();
+		m_rigidbody.SetVelo(forward * kAttackMoveSpeed); // 攻撃中の速度（定数）
+
+		MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+	}
+
 	++m_attackFrame;
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Chop));
 
@@ -607,7 +660,25 @@ void Player::ChopUpdate()
 
 void Player::SliceUpdate()
 {
+	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
+
+	// 一番近い敵の方向に回転
+	RotateToNearestEnemy(kAttackOffsetRadius);
+
+	// 攻撃開始から一定フレームの間前進
+	if (m_attackFrame <= 15.0f)
+	{
+		// 攻撃中に前進する処理（現在の回転方向に進む）
+		VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
+		float angleY = -rotVec.y; // モデル回転と一致させるため-が必要
+		Vec3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
+		forward.Normalize();
+		m_rigidbody.SetVelo(forward * kAttackMoveSpeed); // 攻撃中の速度（定数）
+
+		MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+	}
+
 	++m_attackFrame;
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Slice));
 
@@ -634,7 +705,25 @@ void Player::SliceUpdate()
 
 void Player::StabUpdate()
 {
+	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
+
+	// 一番近い敵の方向に回転
+	RotateToNearestEnemy(kAttackOffsetRadius);
+
+	// 攻撃開始から一定フレームの間前進
+	if (m_attackFrame <= 15.0f)
+	{
+		// 攻撃中に前進する処理（現在の回転方向に進む）
+		VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
+		float angleY = -rotVec.y; // モデル回転と一致させるため-が必要
+		Vec3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
+		forward.Normalize();
+		m_rigidbody.SetVelo(forward * kAttackMoveSpeed); // 攻撃中の速度（定数）
+
+		MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+	}
+
 	++m_attackFrame;
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Stab));
 
@@ -661,7 +750,9 @@ void Player::StabUpdate()
 
 void Player::SpinUpdate()
 {
+	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
+
 	++m_attackFrame;
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Spin));
 
@@ -673,7 +764,12 @@ void Player::SpinUpdate()
 
 void Player::SpecialUpdate()
 {
+	// プレイヤー自身の当たり判定をオフにする
 	SetActive(false);
+
+	// 一番近い敵の方向に回転
+	RotateToNearestEnemy(kAttackOffsetRadius);
+
 	++m_attackFrame;
 
 	if (m_currentSpecialAnim == kUltimateAnimName1)
@@ -759,8 +855,59 @@ void Player::DeadUpdate()
 	}
 }
 
+void Player::RotateToNearestEnemy(float radius)
+{
+	// 攻撃開始から一定フレームで敵の方向に回転補間を始める
+	if (m_attackFrame <= 7.0f)
+	{
+		// プレイヤーから一定範囲内の敵で一番近い敵を探す
+		auto nearestEnemy = FindNearestEnemy(kAttackOffsetRadius);
+		if (nearestEnemy)
+		{
+			// 一番近い敵へのベクトル
+			Vec3 toEnemy = nearestEnemy->GetPos() - m_rigidbody.GetPos();
+			toEnemy.y = 0.0f;
+
+			// 一番近い敵の方向に回転
+			static Quaternion currentRot;
+			if (toEnemy.x != 0.0f || toEnemy.z != 0.0f)
+			{
+				// 敵方向への目標回転
+				float targetAngle = std::atan2(toEnemy.x, -toEnemy.z);
+				Vec3 axis(0.0f, 1.0f, 0.0f);
+				Quaternion targetRot;
+				targetRot.AngleAxis(targetAngle, axis);
+
+				// 補間開始（補間率は任意で調整可能）
+				float t = 0.25f;
+				currentRot = Quaternion::Slerp(currentRot, targetRot, t);
+
+				// 回転を適用
+				float angleY = currentRot.ToEulerY();
+				MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+			}
+		}
+	}
+}
+
 std::shared_ptr<EnemyBase> Player::FindNearestEnemy(float radius)
 {
-	return std::shared_ptr<EnemyBase>();
+	std::shared_ptr<EnemyBase> nearest = nullptr;
+	float minDist = radius;
+
+	auto enemies = GameObjectManager::Instance().GetEnemies();
+	Vec3 myPos = m_rigidbody.GetPos();
+
+	for (auto& enemy : enemies) 
+	{
+		if (enemy->IsDead()) continue;
+		float dist = (enemy->GetPos() - myPos).Length();
+		if (dist < minDist)
+		{
+			minDist = dist;
+			nearest = enemy;
+		}
+	}
+	return nearest;
 }
 

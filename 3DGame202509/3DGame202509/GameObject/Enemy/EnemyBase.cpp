@@ -41,3 +41,8 @@ void EnemyBase::ChangeState(EnemyState newState, float playSpeed)
         m_anim.ChangeAnim(animName, playSpeed, loop);
     }
 }
+
+Vec3 EnemyBase::GetPos() const
+{
+    return m_rigidbody.GetPos();
+}

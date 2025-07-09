@@ -52,9 +52,16 @@ void Physics::Update()
 	}
 	std::vector<OnCollideInfo> onCollideInfo = CheckCollide();
 	FixPosition();
+
 	for (auto& item : onCollideInfo)
 	{
-		item.owner->OnCollide(item.collider);
+		ObjectTag tagA = item.owner->GetTag();
+		ObjectTag tagB = item.collider->GetTag();
+
+		if (ShouldCallOnCollide(tagA, tagB))
+		{
+			item.owner->OnCollide(item.collider);
+		}
 	}
 
 	//位置修正
@@ -225,31 +232,14 @@ std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
 				if (!hasFirstColData)
 				{
 					onCollideInfo.push_back({ first,second });
-					/*if (first->GetTag() == ObjectTag::Player)
-					{
-						printfDx("プレイヤーとぶつかった\n");
-					}
-					if (first->GetTag() == ObjectTag::Enemy)
-					{
-						printfDx("エネミーとぶつかった\n");
-					}*/
 				}
 				if (!hasSecondColData)
 				{
 					onCollideInfo.push_back({ second,first });
-					/*if (first->GetTag() == ObjectTag::Player)
-					{
-						printfDx("プレイヤーとぶつかった\n");
-					}
-					if (first->GetTag() == ObjectTag::Enemy)
-					{
-						printfDx("エネミーとぶつかった\n");
-					}*/
 				}
 			}
 		}
 	}
-	//return std::vector<OnCollideInfo>();
 	return onCollideInfo;
 }
 
@@ -397,6 +387,20 @@ bool Physics::SkipFixPos(std::shared_ptr<Collidable> primary, std::shared_ptr<Co
 		return true;
 	}
 	return false;
+}
+
+bool Physics::ShouldCallOnCollide(ObjectTag tagA, ObjectTag tagB) const
+{
+	if ((tagA == ObjectTag::Player && tagB == ObjectTag::Enemy)  ||
+		(tagA == ObjectTag::Enemy  && tagB == ObjectTag::Player) ||
+		(tagA == ObjectTag::Player && tagB == ObjectTag::Boss)   ||
+		(tagA == ObjectTag::Boss   && tagB == ObjectTag::Player))
+	{
+		// プレイヤーと敵は物理衝突（押し戻し）はするが、OnCollide は呼ばない
+		return false;
+	}
+
+	return true;
 }
 
 void Physics::SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,

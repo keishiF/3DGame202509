@@ -1,7 +1,7 @@
 #pragma once
 #include "StageObjectBase.h"
 
-class Meadow : public StageObjectBase
+class Floor : public StageObjectBase
 {
 public:
 	virtual void Init(const std::string& modelPath, Vec3 pos, Vec3 rot, Vec3 scale) override;

@@ -9,7 +9,6 @@ class Player;
 class EnemyMinion;
 class EnemyMage;
 class Camera;
-class GameObjectManager;
 class StageObjectManager;
 class GameScene final:
 	public SceneBase
@@ -38,7 +37,6 @@ private:
 	std::shared_ptr<EnemyMinion>  m_minion;
 	std::shared_ptr<EnemyMage>  m_mage;
 	std::shared_ptr<Camera> m_camera;
-	std::shared_ptr<GameObjectManager> m_gameObjectManager;
 	std::shared_ptr<StageObjectManager> m_stageObjectManager;
 
 	// ’ÊíXVˆ—

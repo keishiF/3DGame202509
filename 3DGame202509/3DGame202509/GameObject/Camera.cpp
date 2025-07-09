@@ -39,6 +39,8 @@ void Camera::Update(std::shared_ptr<Player> player)
 	m_lookAtPos = { playerPos.x, playerPos.y + 150.0f, playerPos.z };
 
 	Vec3 offset = { kCameraPosX, kCameraPosY, kCameraPosZ };
+
+#ifdef _DEBUG
 	int inputX, inputY;
 	// 右スティックの入力を取得
 	GetJoypadAnalogInputRight(&inputX, &inputY, DX_INPUT_PAD1);
@@ -54,6 +56,7 @@ void Camera::Update(std::shared_ptr<Player> player)
 		// 縦回転に制限を付ける
 		m_cameraRotY = std::clamp(m_cameraRotY, -DX_PI_F / 3.0f, DX_PI_F / 5.80f);
 	}
+#endif
 
 	// カメラの位置を回転に基づいて更新
 	Vec3 rotatedOffset = {

@@ -13,6 +13,10 @@ class Stage;
 class GameObjectManager
 {
 public:
+	static GameObjectManager& Instance();
+	GameObjectManager(const GameObjectManager&) = delete;
+	GameObjectManager& operator =(const GameObjectManager&) = delete;
+
 	GameObjectManager();
 	~GameObjectManager();
 

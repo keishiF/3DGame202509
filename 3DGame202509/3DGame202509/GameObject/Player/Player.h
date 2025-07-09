@@ -86,6 +86,7 @@ private:
 	std::queue<const char*> m_ultimateAnimQueue;
 	std::string m_currentSpecialAnim;
 
+	void RotateToNearestEnemy(float radius);
 	std::shared_ptr<EnemyBase> FindNearestEnemy(float radius);
 
 private:

@@ -26,7 +26,7 @@ void PlayerLeftWeapon::Init(std::shared_ptr<Physics> physics)
 	Collidable::Init(physics);
 	m_rigidbody.Init();
 
-	m_model = MV1LoadModel("Data/Model/Player/SwordBlender.mv1");
+	m_model = MV1LoadModel("Data/Model/Player/Sword.mv1");
 	assert(m_model >= 0);
 }
 

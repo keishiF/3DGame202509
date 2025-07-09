@@ -1,6 +1,6 @@
 #include "StageObjectManager.h"
 #include "Mountain.h"
-#include "Meadow.h"
+#include "Floor.h"
 #include "TransformDataLoader.h"
 
 StageObjectManager::StageObjectManager()
@@ -24,21 +24,21 @@ void StageObjectManager::Init()
 		{
 			modelPath = "Data/Model/Stage/Mountain/Mountain.mv1";
 			auto mountain = std::make_shared<Mountain>();
-			Vec3 pos = { data.pos.x, data.pos.y , data.pos.z };
-			Vec3 rot = { data.rot.x, data.rot.y , data.rot.z };
+			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
+			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
 			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			mountain->Init(modelPath, pos, rot, scale);
 			m_mountains.emplace_back(mountain);
 		}
-		else if (data.name == "Meadow")
+		else if (data.name == "Plane")
 		{
-			modelPath = "Data/Model/Stage/Meadow/Meadow.mv1";
-			auto meadow = std::make_shared<Meadow>();
-			Vec3 pos = { data.pos.x, data.pos.y , data.pos.z };
-			Vec3 rot = { data.rot.x, data.rot.y , data.rot.z };
-			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
-			meadow->Init(modelPath, pos, rot, scale);
-			m_meadows.emplace_back(meadow);
+			modelPath = "Data/Model/Stage/Floor/Plane.mv1";
+			auto floor = std::make_shared<Floor>();
+			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
+			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
+			Vec3 scale = { data.scale.x, data.scale.y, data.scale.z};
+			floor->Init(modelPath, pos, rot, scale);
+			m_floors.emplace_back(floor);
 		}
 	}
 }
@@ -54,8 +54,8 @@ void StageObjectManager::Draw()
 		mountain->Draw();
 	}
 
-	for (auto& meadow : m_meadows)
+	for (auto& floor : m_floors)
 	{
-		meadow->Draw();
+		floor->Draw();
 	}
 }

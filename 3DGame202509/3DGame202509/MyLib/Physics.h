@@ -28,8 +28,12 @@ private:
 	std::vector<OnCollideInfo> CheckCollide() const;
 	bool IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Collidable> second) const;
 
+	// 当たり判定をそもそも取らないようにする
 	bool SkipCheckCollide(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const;
+	// 当たり判定自体はとるが押し戻しはしないようにする
 	bool SkipFixPos(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const;
+	// 位置補正はするがそれ以外の処理(ダメージを受けるなど)はしないようにする
+	bool ShouldCallOnCollide(ObjectTag tagA, ObjectTag tagB) const;
 
 	void SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,
 		Vec3& segBStart, Vec3& segBEnd, 

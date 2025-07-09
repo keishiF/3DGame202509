@@ -17,7 +17,7 @@ namespace
 	constexpr float kAttackRadius = 100.0f;
 
 	// 初期HP
-	constexpr int kHp = 5;
+	constexpr int kHp = 50;
 
 	// エネミーの速度
 	constexpr float kSpeed = 1.0f;
@@ -44,7 +44,7 @@ namespace
 	const char* kDeadAnimName   = "Death_B";
 
 	// アニメーションの再生速度
-	constexpr float kAnimSpeed = 1.0f;
+	constexpr float kAnimSpeed = 0.5f;
 
 	const std::unordered_map<EnemyState, AttackTiming> kColTimingTable =
 	{

@@ -25,7 +25,7 @@ public:
 	virtual void Update(std::shared_ptr<Player> player) abstract;
 	virtual void Draw() abstract;
 
-	//Vec3 GetPos() const { return m_pos; }
+	Vec3 GetPos() const;
 	virtual void OnDamage() abstract;
 	bool IsDead() const { return m_isDead; }
 

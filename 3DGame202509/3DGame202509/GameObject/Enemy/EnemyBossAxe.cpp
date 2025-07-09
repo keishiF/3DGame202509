@@ -27,7 +27,7 @@ void EnemyBossAxe::Init(std::shared_ptr<Physics> physics)
 	Collidable::Init(physics);
 	m_rigidbody.Init();
 
-	m_model = MV1LoadModel("Data/Model/Enemy/Boss/BlenderAxe.mv1");
+	m_model = MV1LoadModel("Data/Model/Enemy/Boss/Axe.mv1");
 	assert(m_model >= 0);
 }
 

@@ -155,7 +155,7 @@
     <ClCompile Include="GameObject\Stage\Mountain.cpp">
       <Filter>ソース ファイル\GameObject\Stage</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\Stage\Meadow.cpp">
+    <ClCompile Include="GameObject\Stage\Floor.cpp">
       <Filter>ソース ファイル\GameObject\Stage</Filter>
     </ClCompile>
     <ClCompile Include="GameObject\Stage\StageObjectBase.cpp">
@@ -271,7 +271,7 @@
     <ClInclude Include="GameObject\Stage\Mountain.h">
       <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\Stage\Meadow.h">
+    <ClInclude Include="GameObject\Stage\Floor.h">
       <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\Stage\StageObjectBase.h">

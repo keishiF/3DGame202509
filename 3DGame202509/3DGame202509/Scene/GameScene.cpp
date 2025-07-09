@@ -35,13 +35,10 @@ GameScene::GameScene(SceneController& controller) :
 	assert(m_skyModel >= 0);
 	MV1SetScale(m_skyModel, VGet(kSkyModelScale, kSkyModelScale, kSkyModelScale));
 
-	m_gameObjectManager = std::make_shared<GameObjectManager>();
-	m_gameObjectManager->Init();
+	GameObjectManager::Instance().Init();
 
 	m_stageObjectManager = std::make_shared<StageObjectManager>();
 	m_stageObjectManager->Init();
-
-	int dirLight = CreateDirLightHandle(VGet(0.0f, 1.0f, 0.0f));
 }
 
 GameScene::~GameScene()
@@ -63,7 +60,7 @@ void GameScene::NormalUpdate()
 	++m_frame;
 	++m_blinkFrame;
 
-	m_gameObjectManager->Update();
+	GameObjectManager::Instance().Update();
 }
 
 void GameScene::FadeInUpdate()
@@ -97,20 +94,16 @@ void GameScene::NormalDraw()
 
 	MV1DrawModel(m_skyModel);
 
-	DrawField();
-
 	m_stageObjectManager->Draw();
-	m_gameObjectManager->Draw();
+	GameObjectManager::Instance().Draw();
 }
 
 void GameScene::FadeDraw()
 {
 	MV1DrawModel(m_skyModel);
 
-	DrawField();
-
 	m_stageObjectManager->Draw();
-	m_gameObjectManager->Draw();
+	GameObjectManager::Instance().Draw();
 
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));
