@@ -18,7 +18,7 @@ namespace
 	constexpr int kHp = 100;
 	// 移動速度
 	constexpr float kWalkSpeed = 5.0f;
-	constexpr float kRunSpeed = 15.0f;
+	constexpr float kRunSpeed = 150.0f;
 	constexpr float kAttackMoveSpeed = 1.0f;
 	// プレイヤーのモデルの拡大値
 	constexpr float kModelScale = 45.0f;
@@ -113,32 +113,6 @@ Player::Player() :
 Player::~Player()
 {
 	MV1DeleteModel(m_charModel);
-}
-
-void Player::Init(std::shared_ptr<Physics> physics)
-{
-	Collidable::Init(physics);
-	Vec3 pos = { 0.0f, 10.0f, -500.0f };
-	m_rigidbody.Init();
-	m_rigidbody.SetPos(pos);
-
-	m_stamina = m_maxStamina;
-
-	//当たり判定
-	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
-	colData->m_startPos = pos;
-	colData->m_radius = kRadius;
-
-	m_charModel = MV1LoadModel("Data/Model/Player/Player.mv1");
-	assert(m_charModel >= 0);
-	MV1SetScale(m_charModel, VGet(kModelScale, kModelScale, kModelScale));
-	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
-
-	m_anim.Init(m_charModel);
-	m_anim.AttachAnim(m_anim.GetNextAnim(), kIdleAnimName, kIdleAnimSpeed, true);
-
-	m_rightWeapon = std::make_shared<PlayerRightWeapon>();
-	m_rightWeapon->Init(physics);
 }
 
 void Player::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale)
