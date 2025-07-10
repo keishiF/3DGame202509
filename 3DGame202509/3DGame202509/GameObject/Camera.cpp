@@ -10,7 +10,7 @@ namespace
 	constexpr float kRotSpeed = 0.00005f;
 
 	constexpr float kCameraPosX = 0.0f;
-	constexpr float kCameraPosY = 500.0f;
+	constexpr float kCameraPosY = 600.0f;
 	constexpr float kCameraPosZ = -400.0f;
 }
 

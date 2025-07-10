@@ -29,7 +29,7 @@ void GameObjectManager::Init()
 		if (data.name == "Knight")
 		{
 			m_player   = std::make_shared<Player>();
-			Vec3 pos   = { data.pos.x, data.pos.y + 20.0f, data.pos.z };
+			Vec3 pos   = { data.pos.x, data.pos.y, data.pos.z };
 			Vec3 rot   = { data.rot.x, data.rot.y, data.rot.z };
 			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			m_player->Init(m_physics, pos, rot, scale);
@@ -37,7 +37,7 @@ void GameObjectManager::Init()
 		else if (data.name == "Skeleton_Minion")
 		{
 			auto minion = std::make_shared<EnemyMinion>();
-			Vec3 pos = { data.pos.x, data.pos.y + 20.0f, data.pos.z };
+			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
 			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			minion->Init(m_physics, pos, rot, scale);
@@ -46,7 +46,7 @@ void GameObjectManager::Init()
 		else if (data.name == "Skeleton_Mage")
 		{
 			auto mage = std::make_shared<EnemyMage>();
-			Vec3 pos = { data.pos.x, data.pos.y + 20.0f, data.pos.z };
+			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
 			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			mage->Init(m_physics, pos, rot, scale);
@@ -55,7 +55,7 @@ void GameObjectManager::Init()
 		else if (data.name == "Skeleton_Warrior")
 		{
 			auto boss = std::make_shared<EnemyBoss>();
-			Vec3 pos = { data.pos.x, data.pos.y + 20.0f, data.pos.z };
+			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
 			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			boss->Init(m_physics, pos, rot, scale);
