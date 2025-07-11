@@ -28,7 +28,7 @@ enum class PlayerState
 class EnemyBase;
 class PlayerRightWeapon;
 class PlayerLeftWeapon;
-class Player : public Collidable
+class Player : public Collidable, public std::enable_shared_from_this<Player>
 {
 public:
 	// コンストラクタとデストラクタ
@@ -107,6 +107,7 @@ private:
 	int m_attackPower;
 
 	// 経過フレームを測る
+	float m_walkFrame;
 	float m_attackFrame;
 
 	// プレイヤーのアニメーション

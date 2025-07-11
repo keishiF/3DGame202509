@@ -17,19 +17,19 @@ namespace
 	constexpr float kAttackRadius = 100.0f;
 
 	// 初期HP
-	constexpr int kHp = 50;
+	constexpr int kHp = 5;
 
 	// エネミーの速度
-	constexpr float kSpeed = 1.0f;
+	constexpr float kSpeed = 5.0f;
 
 	// エネミーの当たり判定用半径
-	constexpr float kColScale = 70.0f;
-	constexpr float kColRadius = 25.0f;
+	constexpr float kColScale = 140.0f;
+	constexpr float kColRadius = 45.0f;
 
 	constexpr float kAttackFrame = 32.0f;
 
 	// モデルの拡大率
-	constexpr float kModelScale = 45.0f;
+	constexpr float kModelScale = 75.0f;
 
 	// アニメーション名
 	// 待機
@@ -45,6 +45,7 @@ namespace
 
 	// アニメーションの再生速度
 	constexpr float kAnimSpeed = 0.5f;
+	constexpr float kHitAnimSpeed = 1.0f;
 
 	const std::unordered_map<EnemyState, AttackTiming> kColTimingTable =
 	{
@@ -85,7 +86,7 @@ void EnemyMinion::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& 
 	m_charModel = MV1LoadModel("Data/Model/Enemy/Minion/Minion.mv1");
 	assert(m_charModel >= 0);
 
-	MV1SetScale(m_charModel, VGet(scale.x * 50.0f, scale.y * 50.0f, scale.z * 50.0f));
+	MV1SetScale(m_charModel, VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
 
 	m_anim.Init(m_charModel);
@@ -195,7 +196,7 @@ void EnemyMinion::OnDamage()
 	}
 	else
 	{
-		ChangeState(EnemyState::Hit, kAnimSpeed);
+		ChangeState(EnemyState::Hit, kHitAnimSpeed);
 	}
 }
 

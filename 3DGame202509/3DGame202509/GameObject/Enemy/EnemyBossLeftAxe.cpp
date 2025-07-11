@@ -1,4 +1,4 @@
-#include "EnemyBossAxe.h"
+#include "EnemyBossLeftAxe.h"
 
 #include "CapsuleColliderData.h"
 
@@ -12,17 +12,17 @@ namespace
 	constexpr float kBladeModelScale = 0.03f;
 }
 
-EnemyBossAxe::EnemyBossAxe() :
+EnemyBossLeftAxe::EnemyBossLeftAxe() :
 	m_model(-1),
 	Collidable(ObjectTag::EnemyWeapon, ObjectPriority::Low, ColliderData::Kind::Capsule)
 {
 }
 
-EnemyBossAxe::~EnemyBossAxe()
+EnemyBossLeftAxe::~EnemyBossLeftAxe()
 {
 }
 
-void EnemyBossAxe::Init(std::shared_ptr<Physics> physics)
+void EnemyBossLeftAxe::Init(std::shared_ptr<Physics> physics)
 {
 	Collidable::Init(physics);
 	m_rigidbody.Init();
@@ -31,7 +31,7 @@ void EnemyBossAxe::Init(std::shared_ptr<Physics> physics)
 	assert(m_model >= 0);
 }
 
-void EnemyBossAxe::Update(int model, float currentFrame, const AttackTiming& timing)
+void EnemyBossLeftAxe::Update(int model, float currentFrame, const LeftAttackTiming& timing)
 {
 	if (currentFrame >= timing.start && currentFrame < timing.end)
 	{
@@ -43,7 +43,7 @@ void EnemyBossAxe::Update(int model, float currentFrame, const AttackTiming& tim
 	}
 }
 
-void EnemyBossAxe::IdleUpdate(int model)
+void EnemyBossLeftAxe::IdleUpdate(int model)
 {
 	// 当たり判定を無効化する
 	SetActive(false);
@@ -70,7 +70,7 @@ void EnemyBossAxe::IdleUpdate(int model)
 	MV1SetMatrix(m_model, mixMat);
 }
 
-void EnemyBossAxe::AttackUpdate(int model)
+void EnemyBossLeftAxe::AttackUpdate(int model)
 {
 	// 当たり判定を有効化する
 	SetActive(true);
@@ -82,7 +82,7 @@ void EnemyBossAxe::AttackUpdate(int model)
 	// アタッチするモデルを,フレームの座標を原点にするための平行移動行列を作成
 	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
 	// アタッチされるモデルのフレームの行列を取得
-	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 14);
+	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 9);
 	// アタッチするモデルの拡大行列を取得
 	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
 	// アタッチするモデルの回転行列を取得
@@ -107,11 +107,11 @@ void EnemyBossAxe::AttackUpdate(int model)
 	colData->m_startPos = startPos;
 }
 
-void EnemyBossAxe::Draw()
+void EnemyBossLeftAxe::Draw()
 {
 	MV1DrawModel(m_model);
 }
 
-void EnemyBossAxe::OnCollide(std::shared_ptr<Collidable> collider)
+void EnemyBossLeftAxe::OnCollide(std::shared_ptr<Collidable> collider)
 {
 }

@@ -79,6 +79,7 @@
       <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -97,6 +98,7 @@
       <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -115,6 +117,7 @@
       <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -133,6 +136,7 @@
       <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -147,7 +151,8 @@
     <ClCompile Include="GameObject\Camera.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyBase.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyBoss.cpp" />
-    <ClCompile Include="GameObject\Enemy\EnemyBossAxe.cpp" />
+    <ClCompile Include="GameObject\Enemy\EnemyBossLeftAxe.cpp" />
+    <ClCompile Include="GameObject\Enemy\EnemyBossRightAxe.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyMage.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyMageBullet.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyMinion.cpp" />
@@ -184,7 +189,8 @@
     <ClInclude Include="GameObject\Camera.h" />
     <ClInclude Include="GameObject\Enemy\EnemyBase.h" />
     <ClInclude Include="GameObject\Enemy\EnemyBoss.h" />
-    <ClInclude Include="GameObject\Enemy\EnemyBossAxe.h" />
+    <ClInclude Include="GameObject\Enemy\EnemyBossLeftAxe.h" />
+    <ClInclude Include="GameObject\Enemy\EnemyBossRightAxe.h" />
     <ClInclude Include="GameObject\Enemy\EnemyMage.h" />
     <ClInclude Include="GameObject\Enemy\EnemyMageBullet.h" />
     <ClInclude Include="GameObject\Enemy\EnemyMinion.h" />

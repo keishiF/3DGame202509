@@ -10,6 +10,10 @@ enum class EnemyState
 	Find,
 	Chase,
 	Attack,
+	Chop,
+	Slice,
+	Stab,
+	Spin,
 	Hit,
 	Dead
 };

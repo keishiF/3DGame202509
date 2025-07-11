@@ -1,5 +1,6 @@
 #include "EnemyBoss.h"
-#include "EnemyBossAxe.h"
+#include "EnemyBossRightAxe.h"
+#include "EnemyBossLeftAxe.h"
 #include "Player/Player.h"
 
 #include "CapsuleColliderData.h"
@@ -13,14 +14,14 @@
 namespace
 {
 	// エネミーがプレイヤーを発見できる範囲
-	constexpr float kFindRadius = 300.0f;
-	constexpr float kAttackRadius = 200.0f;
+	constexpr float kFindRadius = 1500.0f;
+	constexpr float kAttackRadius = 600.0f;
 
 	// 初期HP
 	constexpr int kHp = 5;
 
 	// エネミーの速度
-	constexpr float kSpeed = 1.0f;
+	constexpr float kSpeed = 10.0f;
 
 	// エネミーの当たり判定用半径
 	constexpr float kColScale = 200.0f;
@@ -29,28 +30,48 @@ namespace
 	constexpr float kAttackFrame = 32.0f;
 
 	// モデルの拡大率
-	constexpr float kModelScale = 150.0f;
+	constexpr float kModelScale = 200.0f;
 
 	// アニメーション名
 	// 待機
-	const char* kFindAnimName = "2H_Melee_Idle";
+	const char* kFindAnimName = "Idle";
 	// 発見
-	const char* kChaseAnimName = "Running_C";
+	const char* kChaseAnimName = "Running_A";
 	// 攻撃
-	const char* kAttackAnimName = "1H_Melee_Attack_Slice_Diagonal";
+	const char* kAttackAnimName      = "1H_Melee_Attack_Slice_Diagonal";
+	const char* kChopAttackAnimName  = "Dualwield_Melee_Attack_Chop";
+	const char* kSliceAttackAnimName = "Dualwield_Melee_Attack_Slice";
+	const char* kStabAttackAnimName  = "Dualwield_Melee_Attack_Stab";
+	const char* kSpinAttackAnimName  = "2H_Melee_Attack_Spinning";
 	// 被弾
-	const char* kHitAnimName = "Hit_B";
+	const char* kHitAnimName  = "Hit_B";
 	// 死亡
 	const char* kDeadAnimName = "Death_B";
 
 	// アニメーションの再生速度
 	constexpr float kAnimSpeed = 0.5f;
 
-	const std::unordered_map<EnemyState, AttackTiming> kColTimingTable =
+	const std::unordered_map<EnemyState, RightAttackTiming> kRightColTimingTable =
 	{
 		{EnemyState::Find,	 { 0,  0}},
 		{EnemyState::Chase,	 { 0,  0}},
 		{EnemyState::Attack, { 0, 48}},
+		{EnemyState::Chop  , {12, 48}},
+		{EnemyState::Slice,  {12, 56}},
+		{EnemyState::Stab,   {12, 48}},
+		{EnemyState::Spin,   { 0, 180}},
+		{EnemyState::Hit,	 { 0,  0}},
+		{EnemyState::Dead,	 { 0,  0}}
+	};
+	const std::unordered_map<EnemyState, LeftAttackTiming> kLeftColTimingTable =
+	{
+		{EnemyState::Find,	 { 0,  0}},
+		{EnemyState::Chase,	 { 0,  0}},
+		{EnemyState::Attack, { 0, 48}},
+		{EnemyState::Chop  , {12, 48}},
+		{EnemyState::Slice,  {12, 56}},
+		{EnemyState::Stab,   {12, 48}},
+		{EnemyState::Spin,   { 0, 180}},
 		{EnemyState::Hit,	 { 0,  0}},
 		{EnemyState::Dead,	 { 0,  0}}
 	};
@@ -91,8 +112,11 @@ void EnemyBoss::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& ro
 	m_anim.Init(m_charModel);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, kAnimSpeed, true);
 
-	m_weapon = std::make_shared<EnemyBossAxe>();
-	m_weapon->Init(physics);
+	m_rightWeapon = std::make_shared<EnemyBossRightAxe>();
+	m_rightWeapon->Init(physics);
+
+	m_leftWeapon = std::make_shared<EnemyBossLeftAxe>();
+	m_leftWeapon->Init(physics);
 }
 
 void EnemyBoss::Update(std::shared_ptr<Player> player)
@@ -117,6 +141,18 @@ void EnemyBoss::Update(std::shared_ptr<Player> player)
 		break;
 	case EnemyState::Attack:
 		AttackUpdate(player);
+		break;
+	case EnemyState::Chop:
+		ChopUpdate(player);
+		break;
+	case EnemyState::Slice:
+		SliceUpdate(player);
+		break;
+	case EnemyState::Stab:
+		StabUpdate(player);
+		break;
+	case EnemyState::Spin:
+		SpinUpdate(player);
 		break;
 	case EnemyState::Hit:
 		HitUpdate(player);
@@ -149,7 +185,8 @@ void EnemyBoss::Draw()
 
 #endif
 	MV1DrawModel(m_charModel);
-	m_weapon->Draw();
+	m_rightWeapon->Draw();
+	m_leftWeapon->Draw();
 
 	Vec3 worldPos = m_rigidbody.GetPos();
 	worldPos.y += 120.0f; // 頭上の高さ調整
@@ -202,7 +239,8 @@ void EnemyBoss::OnDamage()
 void EnemyBoss::FindUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Find));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Find));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Find));
 
 	float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
 	if (distance <= (m_findRadius + player->GetRadius()))
@@ -214,7 +252,8 @@ void EnemyBoss::FindUpdate(std::shared_ptr<Player> player)
 void EnemyBoss::ChaseUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Chase));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Chase));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Chase));
 
 	// プレイヤーへの方向ベクトル
 	Vec3 myPos = m_rigidbody.GetPos();
@@ -245,7 +284,22 @@ void EnemyBoss::ChaseUpdate(std::shared_ptr<Player> player)
 
 	if (distance <= (m_attackRadius + player->GetRadius()))
 	{
-		ChangeState(EnemyState::Attack, kAnimSpeed);
+		if (distance > 500.0f)
+		{
+			ChangeState(EnemyState::Stab, kAnimSpeed);
+		}
+		else if (distance > 400.0f)
+		{
+			ChangeState(EnemyState::Chop, kAnimSpeed);
+		}
+		else if (distance > 300.0f)
+		{
+			ChangeState(EnemyState::Slice, kAnimSpeed);
+		}
+		else
+		{
+			ChangeState(EnemyState::Spin, kAnimSpeed);
+		}
 	}
 }
 
@@ -253,7 +307,8 @@ void EnemyBoss::AttackUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
 	++m_attackFrame;
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Attack));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Attack));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Attack));
 
 	// プレイヤーへの方向ベクトル
 	Vec3 myPos = m_rigidbody.GetPos();
@@ -285,10 +340,159 @@ void EnemyBoss::AttackUpdate(std::shared_ptr<Player> player)
 	}
 }
 
+void EnemyBoss::ChopUpdate(std::shared_ptr<Player> player)
+{
+	SetActive(true);
+	++m_attackFrame;
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Chop));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Chop));
+
+	// プレイヤーへの方向ベクトル
+	Vec3 myPos = m_rigidbody.GetPos();
+	Vec3 dir = player->GetPos() - myPos;
+	dir.y = 0.0f;
+
+	if (m_attackFrame <= kAttackFrame)
+	{
+		++m_attackFrame;
+		if (dir.x != 0.0f || dir.z != 0.0f)
+		{
+			// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
+			float angleY = std::atan2(dir.x, -dir.z);
+			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+		}
+	}
+
+	if (m_anim.GetNextAnim().isEnd)
+	{
+		float distance = (myPos - player->GetPos()).Length();
+		if (distance >= (m_findRadius + player->GetRadius()))
+		{
+			ChangeState(EnemyState::Find, kAnimSpeed);
+		}
+		else
+		{
+			ChangeState(EnemyState::Chase, kAnimSpeed);
+		}
+	}
+}
+
+void EnemyBoss::SliceUpdate(std::shared_ptr<Player> player)
+{
+	SetActive(true);
+	++m_attackFrame;
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Slice));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Slice));
+
+	// プレイヤーへの方向ベクトル
+	Vec3 myPos = m_rigidbody.GetPos();
+	Vec3 dir = player->GetPos() - myPos;
+	dir.y = 0.0f;
+
+	if (m_attackFrame <= kAttackFrame)
+	{
+		++m_attackFrame;
+		if (dir.x != 0.0f || dir.z != 0.0f)
+		{
+			// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
+			float angleY = std::atan2(dir.x, -dir.z);
+			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+		}
+	}
+
+	if (m_anim.GetNextAnim().isEnd)
+	{
+		float distance = (myPos - player->GetPos()).Length();
+		if (distance >= (m_findRadius + player->GetRadius()))
+		{
+			ChangeState(EnemyState::Find, kAnimSpeed);
+		}
+		else
+		{
+			ChangeState(EnemyState::Chase, kAnimSpeed);
+		}
+	}
+}
+
+void EnemyBoss::StabUpdate(std::shared_ptr<Player> player)
+{
+	SetActive(true);
+	++m_attackFrame;
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Stab));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Stab));
+
+	// プレイヤーへの方向ベクトル
+	Vec3 myPos = m_rigidbody.GetPos();
+	Vec3 dir = player->GetPos() - myPos;
+	dir.y = 0.0f;
+
+	if (m_attackFrame <= kAttackFrame)
+	{
+		++m_attackFrame;
+		if (dir.x != 0.0f || dir.z != 0.0f)
+		{
+			// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
+			float angleY = std::atan2(dir.x, -dir.z);
+			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+		}
+	}
+
+	if (m_anim.GetNextAnim().isEnd)
+	{
+		float distance = (myPos - player->GetPos()).Length();
+		if (distance >= (m_findRadius + player->GetRadius()))
+		{
+			ChangeState(EnemyState::Find, kAnimSpeed);
+		}
+		else
+		{
+			ChangeState(EnemyState::Chase, kAnimSpeed);
+		}
+	}
+}
+
+void EnemyBoss::SpinUpdate(std::shared_ptr<Player> player)
+{
+	SetActive(true);
+	++m_attackFrame;
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Spin));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Spin));
+
+	// プレイヤーへの方向ベクトル
+	Vec3 myPos = m_rigidbody.GetPos();
+	Vec3 dir = player->GetPos() - myPos;
+	dir.y = 0.0f;
+
+	if (m_attackFrame <= kAttackFrame)
+	{
+		++m_attackFrame;
+		if (dir.x != 0.0f || dir.z != 0.0f)
+		{
+			// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
+			float angleY = std::atan2(dir.x, -dir.z);
+			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+		}
+	}
+
+	if (m_attackFrame >= 180.0f)
+	{
+		float distance = (myPos - player->GetPos()).Length();
+		if (distance >= (m_findRadius + player->GetRadius()))
+		{
+			ChangeState(EnemyState::Find, kAnimSpeed);
+		}
+		else
+		{
+			ChangeState(EnemyState::Chase, kAnimSpeed);
+		}
+	}
+}
+
 void EnemyBoss::HitUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Hit));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Hit));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Hit));
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
@@ -301,7 +505,8 @@ void EnemyBoss::HitUpdate(std::shared_ptr<Player> player)
 void EnemyBoss::DeadUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Dead));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Dead));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Dead));
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
@@ -325,6 +530,14 @@ const char* EnemyBoss::GetAnimName(EnemyState state) const
 		return kChaseAnimName;
 	case EnemyState::Attack:
 		return kAttackAnimName;
+	case EnemyState::Chop:
+		return kChopAttackAnimName;
+	case EnemyState::Slice:
+		return kSliceAttackAnimName;
+	case EnemyState::Stab:
+		return kStabAttackAnimName;
+	case EnemyState::Spin:
+		return kSpinAttackAnimName;
 	case EnemyState::Hit:
 		return kHitAnimName;
 	case EnemyState::Dead:
@@ -345,6 +558,14 @@ bool EnemyBoss::IsLoopAnim(EnemyState state) const
 		return true;
 	case EnemyState::Attack:
 		return false;
+	case EnemyState::Chop:
+		return false;
+	case EnemyState::Slice:
+		return false;
+	case EnemyState::Stab:
+		return false;
+	case EnemyState::Spin:
+		return true;
 	case EnemyState::Hit:
 		return false;
 	case EnemyState::Dead:

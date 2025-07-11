@@ -146,7 +146,7 @@
     <ClCompile Include="GameObject\Enemy\EnemyBoss.cpp">
       <Filter>ソース ファイル\GameObject\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\Enemy\EnemyBossAxe.cpp">
+    <ClCompile Include="GameObject\Enemy\EnemyBossRightAxe.cpp">
       <Filter>ソース ファイル\GameObject\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="GameObject\Stage\StageObjectManager.cpp">
@@ -160,6 +160,9 @@
     </ClCompile>
     <ClCompile Include="GameObject\Stage\StageObjectBase.cpp">
       <Filter>ソース ファイル\GameObject\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Enemy\EnemyBossLeftAxe.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -262,7 +265,7 @@
     <ClInclude Include="GameObject\Enemy\EnemyBoss.h">
       <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\Enemy\EnemyBossAxe.h">
+    <ClInclude Include="GameObject\Enemy\EnemyBossRightAxe.h">
       <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\Stage\StageObjectManager.h">
@@ -276,6 +279,9 @@
     </ClInclude>
     <ClInclude Include="GameObject\Stage\StageObjectBase.h">
       <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy\EnemyBossLeftAxe.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

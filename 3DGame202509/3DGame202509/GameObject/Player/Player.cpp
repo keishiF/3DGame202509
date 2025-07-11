@@ -18,13 +18,13 @@ namespace
 	constexpr int kHp = 100;
 	// 移動速度
 	constexpr float kWalkSpeed = 5.0f;
-	constexpr float kRunSpeed = 150.0f;
+	constexpr float kRunSpeed  = 15.0f;
 	constexpr float kAttackMoveSpeed = 1.0f;
 	// プレイヤーのモデルの拡大値
-	constexpr float kModelScale = 45.0f;
+	constexpr float kModelScale = 70.0f;
 	// プレイヤーの当たり判定
-	constexpr float kRadius = 15.0f;
-	constexpr float kColScale = 90.0f;
+	constexpr float kRadius = 45.0f;
+	constexpr float kColScale = 140.0f;
 	constexpr float kAttackOffsetRadius = 175.0f;
 	// プレイヤーの最大スタミナ
 	constexpr float kMaxStamina = 100.0f;
@@ -67,7 +67,7 @@ namespace
 		{PlayerState::Stab,		 {16, 28}},
 		{PlayerState::Spin,      {16, 36}},
 		{PlayerState::Special,   {16, 36}},
-		{PlayerState::DualChop,  {16, 36}},
+		{PlayerState::DualChop,  {12, 48}},
 		{PlayerState::DualSlice, {16, 36}},
 		{PlayerState::DualStab,  {16, 36}},
 		{PlayerState::Dodge,	 { 0,  0}},
@@ -85,7 +85,7 @@ namespace
 		{PlayerState::Stab,		 {16, 28}},
 		{PlayerState::Spin,      {16, 36}},
 		{PlayerState::Special,   {16, 36}},
-		{PlayerState::DualChop,  {16, 36}},
+		{PlayerState::DualChop,  {12, 48}},
 		{PlayerState::DualSlice, {16, 36}},
 		{PlayerState::DualStab,  {16, 36}},
 		{PlayerState::Dodge,	 { 0,  0}},
@@ -104,6 +104,7 @@ Player::Player() :
 	m_maxStamina(kMaxStamina),
 	m_stamina(m_maxStamina),
 	m_attackPower(1),
+	m_walkFrame(0.0f),
 	m_attackFrame(0.0f),
 	m_state(PlayerState::Idle),
 	Collidable(ObjectTag::Player, ObjectPriority::High, ColliderData::Kind::Capsule)
@@ -129,7 +130,7 @@ void Player::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, 
 	m_charModel = MV1LoadModel("Data/Model/Player/Player.mv1");
 	assert(m_charModel >= 0);
 
-	MV1SetScale(m_charModel, VGet(scale.x * 50.0f, scale.y * 50.0f, scale.z * 50.0f));
+	MV1SetScale(m_charModel, VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
 
 	m_anim.Init(m_charModel);
@@ -270,7 +271,7 @@ void Player::Draw()
 
 void Player::OnDamage()
 {
-	m_hp -= 10;
+	m_hp -= 1;
 
 	if (m_hp <= 0 && !m_isDead)
 	{
@@ -296,6 +297,7 @@ void Player::ChangeState(PlayerState newState)
 	m_state = newState;
 
 	m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
+	m_walkFrame = 0.0f;
 	m_attackFrame = 0.0f;
 	m_isCombo = false;
 
@@ -392,6 +394,11 @@ void Player::IdleUpdate()
 
 void Player::WalkUpdate()
 {
+	if (++m_walkFrame >= 60)
+	{
+		ChangeState(PlayerState::Run);
+	}
+
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
 
@@ -463,11 +470,11 @@ void Player::WalkUpdate()
 		ChangeState(PlayerState::Idle);
 	}
 
-	// Lスティック押し込みの入力があればダッシュ状態に移行する
-	if (Input::Instance().IsTrigger("LPush"))
-	{
-		ChangeState(PlayerState::Run);
-	}
+	//// Lスティック押し込みの入力があればダッシュ状態に移行する
+	//if (Input::Instance().IsTrigger("LPush"))
+	//{
+	//	ChangeState(PlayerState::Run);
+	//}
 
 	// Aボタンの入力があれば攻撃状態に移行する
 	if (Input::Instance().IsTrigger("A"))
@@ -561,11 +568,11 @@ void Player::RunUpdate()
 		ChangeState(PlayerState::Idle);
 	}
 
-	// 左スティック押し込みの入力があれば歩き状態に移行する
-	if (Input::Instance().IsTrigger("LPush"))
-	{
-		ChangeState(PlayerState::Walk);
-	}
+	//// 左スティック押し込みの入力があれば歩き状態に移行する
+	//if (Input::Instance().IsTrigger("LPush"))
+	//{
+	//	ChangeState(PlayerState::Walk);
+	//}
 
 	// Aボタンの入力があれば攻撃状態に移行する
 	if (Input::Instance().IsTrigger("A"))

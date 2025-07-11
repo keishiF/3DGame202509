@@ -1,7 +1,8 @@
 #pragma once
 #include "EnemyBase.h"
 
-class EnemyBossAxe;
+class EnemyBossRightAxe;
+class EnemyBossLeftAxe;
 class EnemyBoss : public EnemyBase
 {
 public:
@@ -29,6 +30,10 @@ private:
 
 	// UŒ‚ó‘Ô
 	void AttackUpdate(std::shared_ptr<Player> player) override;
+	void ChopUpdate(std::shared_ptr<Player> player);
+	void SliceUpdate(std::shared_ptr<Player> player);
+	void StabUpdate(std::shared_ptr<Player> player);
+	void SpinUpdate(std::shared_ptr<Player> player);
 
 	// ”í’eó‘Ô
 	void HitUpdate(std::shared_ptr<Player> player) override;
@@ -36,6 +41,7 @@ private:
 	// €–Só‘Ô
 	void DeadUpdate(std::shared_ptr<Player> player) override;
 
-	std::shared_ptr<EnemyBossAxe> m_weapon;
+	std::shared_ptr<EnemyBossRightAxe> m_rightWeapon;
+	std::shared_ptr<EnemyBossLeftAxe> m_leftWeapon;
 };
 

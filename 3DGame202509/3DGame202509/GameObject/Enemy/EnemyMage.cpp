@@ -25,6 +25,7 @@ namespace
 
 	// アニメーションの再生速度
 	constexpr float kAnimSpeed = 1.0f;
+	constexpr float kAttackAnimSpeed = 0.75f;
 
 	// エネミーがプレイヤーを発見できる範囲
 	constexpr float kFindRadius   = 500.0f;
@@ -36,14 +37,19 @@ namespace
 	// エネミーの速度
 	constexpr float kSpeed = 0.5f;
 
-	constexpr float kColScale  = 70.0f;
-	constexpr float kColRadius = 25.0f;
+	constexpr float kColScale  = 140.0f;
+	constexpr float kColRadius = 45.0f;
 
 	// モデルの拡大率
-	constexpr float kModelScale      = 45.0f;
+	constexpr float kModelScale      = 75.0f;
 	constexpr float kBladeModelScale = 0.01f;
 
 	constexpr float kAttackFrame = 32.0f;
+
+	// 視野角
+	constexpr float kViewAngleRad = DX_PI_F / 2.0f;  // 90度
+	// 見える距離
+	constexpr float kViewDistance = 750.0f;
 }
 
 EnemyMage::EnemyMage()
@@ -67,19 +73,23 @@ void EnemyMage::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& ro
 	colData->m_startPos = pos;
 	colData->m_radius = kColRadius;
 
-	// スピードの初期化
+	// メンバ変数の初期化
 	m_findRadius = kFindRadius;
 	m_attackRadius = kAttackRadius;
 	m_hp = kHp;
 	m_isDead = false;
 	m_attackFrame = 0.0f;
+	m_angle = 0.0f;
+	m_rotSpeed = 1.5f;
+	m_angleMax = DX_PI_F / 4.0f;
+	m_forward = { 0.0f, 0.0f, -1.0f };
 
 	m_charModel = MV1LoadModel("Data/Model/Enemy/Mage/Mage.mv1");
 	assert(m_charModel >= 0);
 	m_weaponModel = MV1LoadModel("Data/Model/Enemy/Mage/Staff.mv1");
 	assert(m_weaponModel >= 0);
 
-	MV1SetScale(m_charModel, VGet(scale.x * 50.0f, scale.y * 50.0f, scale.z * 50.0f));
+	MV1SetScale(m_charModel, VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
 
 	m_anim.Init(m_charModel);
@@ -172,7 +182,6 @@ void EnemyMage::Draw()
 
 #if _DEBUG
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), 10.0f, 16, 0x0000ff, 0x0000ff, true);
-	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_findRadius, 16, 0xff00ff, 0xff00ff, false);
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_attackRadius, 16, 0xff00ff, 0xff00ff, false);
 
 #endif
@@ -217,6 +226,79 @@ void EnemyMage::Draw()
 		gaugeX + gaugeWidth,
 		gaugeY + gaugeHeight,
 		0x000000, false);
+
+#ifdef _DEBUG
+	Vec3 pos = m_rigidbody.GetPos();
+	VECTOR base = pos.ToDxVECTOR();
+
+	// 首振り角度
+	float offsetAngle = std::sin(m_angle * m_rotSpeed) * m_angleMax;
+
+	// 前方向（または Rigidbody に保存されてる向き）
+	Vec3 forward = m_rigidbody.GetDir();
+	if (forward.Length() == 0.0f)
+	{
+		forward = Vec3(0, 0, -1);
+	}
+	forward.Normalize();
+
+	// スイングした方向（Y軸回転）
+	Vec3 swingDir{
+		forward.x * std::cos(offsetAngle) - forward.z * std::sin(offsetAngle),
+		0.0f,
+		forward.x * std::sin(offsetAngle) + forward.z * std::cos(offsetAngle)
+	};
+	swingDir.Normalize();
+
+	// 左右端方向を計算
+	float halfAngle = kViewAngleRad * 0.5f;
+
+	Vec3 left{
+		swingDir.x * std::cos(halfAngle) - swingDir.z * std::sin(halfAngle),
+		0.0f,
+		swingDir.x * std::sin(halfAngle) + swingDir.z * std::cos(halfAngle)
+	};
+	Vec3 right{
+		swingDir.x * std::cos(-halfAngle) - swingDir.z * std::sin(-halfAngle),
+		0.0f,
+		swingDir.x * std::sin(-halfAngle) + swingDir.z * std::cos(-halfAngle)
+	};
+
+	left.Normalize();
+	right.Normalize();
+
+	Vec3 frontEnd = pos + swingDir * kViewDistance;
+	Vec3 leftEnd = pos + left * kViewDistance;
+	Vec3 rightEnd = pos + right * kViewDistance;
+
+	DrawLine3D(base, frontEnd.ToDxVECTOR(), GetColor(255, 255, 0)); // 正面
+	DrawLine3D(base, leftEnd.ToDxVECTOR(), GetColor(0, 255, 255));  // 左端
+	DrawLine3D(base, rightEnd.ToDxVECTOR(), GetColor(0, 255, 255)); // 右端
+
+	// 扇形の円弧を描画
+	constexpr int kSegments = 24;
+	for (int i = 0; i < kSegments; ++i)
+	{
+		float t1 = -halfAngle + (kViewAngleRad * i / kSegments);
+		float t2 = -halfAngle + (kViewAngleRad * (i + 1) / kSegments);
+
+		Vec3 d1{
+			swingDir.x * std::cos(t1) - swingDir.z * std::sin(t1),
+			0.0f,
+			swingDir.x * std::sin(t1) + swingDir.z * std::cos(t1)
+		};
+		Vec3 d2{
+			swingDir.x * std::cos(t2) - swingDir.z * std::sin(t2),
+			0.0f,
+			swingDir.x * std::sin(t2) + swingDir.z * std::cos(t2)
+		};
+
+		Vec3 p1 = pos + d1 * kViewDistance;
+		Vec3 p2 = pos + d2 * kViewDistance;
+
+		DrawLine3D(p1.ToDxVECTOR(), p2.ToDxVECTOR(), GetColor(255, 0, 255));
+	}
+#endif
 }
 
 void EnemyMage::OnDamage()
@@ -237,10 +319,36 @@ void EnemyMage::FindUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
 
-	float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
-	if (distance <= (m_findRadius + player->GetRadius()))
+	// 経過時間で左右に回転
+	m_angle += 1.0f / 60.0f;  // 毎フレーム約1/60秒加算
+
+	float offsetAngle = std::sin(m_angle * m_rotSpeed) * m_angleMax;
+
+	// 基本の向きベクトル（前方向）
+	Vec3 forward = m_rigidbody.GetDir();
+	if (forward.Length() == 0.0f)
 	{
-		ChangeState(EnemyState::Chase, kAnimSpeed);
+		forward = Vec3(0, 0, -1);
+	}
+	forward.Normalize();
+
+	// 探知中心方向（スイングで回転）
+	Vec3 dir
+	{
+		forward.x * std::cos(offsetAngle) - forward.z * std::sin(offsetAngle),
+		0.0f,
+		forward.x * std::sin(offsetAngle) + forward.z * std::cos(offsetAngle)
+	};
+	dir.Normalize();
+
+	// モデルの回転を設定（Z前提 → atan2）
+	float angleY = std::atan2(dir.x, -dir.z); // X右/Z前の座標系
+	MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+
+	// 探知処理：この方向を中心に視野角で探す
+	if (IsPlayerFind(player, dir, kViewAngleRad, kViewDistance))
+	{
+		ChangeState(EnemyState::Attack, kAttackAnimSpeed);
 	}
 }
 
@@ -363,6 +471,27 @@ void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)
 		bullet->Final(m_physics);
 	}
 	m_bullets.clear();
+}
+
+bool EnemyMage::IsPlayerFind(const std::shared_ptr<Player>& player, const Vec3& centerDir, float viewAngleRad, float viewDistance)
+{
+	// 現在位置を取得
+	Vec3 myPos = m_rigidbody.GetPos();
+	// 自分からPlayerに向かうベクトルを生成
+	Vec3 toPlayer = player->GetPos() - myPos;
+
+	// Playerに向かうベクトルの長さが視界距離より長ければ見えないのでfalse
+	if (toPlayer.Length() > viewDistance)
+		return false;
+
+	// Playerに向かうベクトルと自分の視線方向ベクトルを正規化
+	Vec3 toPlayerNorm = toPlayer.GetNormalize();
+	Vec3 centerNorm = centerDir.GetNormalize();
+
+	float dot = centerNorm.Dot(toPlayerNorm);
+	float cosHalfView = std::cos(viewAngleRad * 0.5f);
+
+	return dot >= cosHalfView;
 }
 
 const char* EnemyMage::GetAnimName(EnemyState state) const

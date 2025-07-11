@@ -10,8 +10,8 @@ namespace
 	constexpr float kRotSpeed = 0.00005f;
 
 	constexpr float kCameraPosX = 0.0f;
-	constexpr float kCameraPosY = 600.0f;
-	constexpr float kCameraPosZ = -400.0f;
+	constexpr float kCameraPosY = 700.0f;
+	constexpr float kCameraPosZ = -600.0f;
 }
 
 Camera::Camera() :
@@ -33,7 +33,7 @@ void Camera::Update(std::shared_ptr<Player> player)
 	// プレイヤーの位置を取得し、カメラをプレイヤーの位置に合わせる
 	Vec3 playerPos = player->GetPos();
 	Vec3 cameraPos = { kCameraPosX, kCameraPosY, kCameraPosZ };
-	//m_pos = playerPos + cameraPos;
+	m_pos = playerPos + cameraPos;
 
 	// カメラの注視点をプレイヤーの位置に合わせる
 	m_lookAtPos = { playerPos.x, playerPos.y + 150.0f, playerPos.z };

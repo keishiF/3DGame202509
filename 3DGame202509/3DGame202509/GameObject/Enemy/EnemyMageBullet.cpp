@@ -5,8 +5,8 @@
 
 namespace
 {
-	constexpr float kSpeed = 5.0f;
-	constexpr float kLifeFrame = 180.0f;
+	constexpr float kSpeed = 7.5f;
+	constexpr float kLifeFrame = 300.0f;
 	constexpr float kColRadius = 20.0f;
 }
 

@@ -1,4 +1,5 @@
 #include "PlayerRightWeapon.h"
+#include "Player.h"
 #include "SphereColliderData.h"
 #include "CapsuleColliderData.h"
 #include <cassert>
@@ -108,6 +109,11 @@ void PlayerRightWeapon::AttackUpdate(int model)
 void PlayerRightWeapon::Draw()
 {
 	MV1DrawModel(m_model);
+}
+
+void PlayerRightWeapon::SetPlayer(std::shared_ptr<Player> player)
+{
+	m_player = player;
 }
 
 void PlayerRightWeapon::OnCollide(std::shared_ptr<Collidable> collider)

@@ -1,20 +1,20 @@
 #pragma once
 #include "Collidable.h"
 
-struct AttackTiming
+struct RightAttackTiming
 {
 	float start;
 	float end;
 };
 
-class EnemyBossAxe : public Collidable
+class EnemyBossRightAxe : public Collidable
 {
 public:
-	EnemyBossAxe();
-	~EnemyBossAxe();
+	EnemyBossRightAxe();
+	~EnemyBossRightAxe();
 
 	void Init(std::shared_ptr<Physics> physics);
-	void Update(int model, float currentFrame, const AttackTiming& timing);
+	void Update(int model, float currentFrame, const RightAttackTiming& timing);
 	// ë“ã@èÛë‘
 	void IdleUpdate(int model);
 	// äeçUåÇèÛë‘

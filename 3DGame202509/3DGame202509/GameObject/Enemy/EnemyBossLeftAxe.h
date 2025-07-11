@@ -1,30 +1,24 @@
 #pragma once
 #include "Collidable.h"
-#include "DxLib.h"
-
-struct RightAttackTiming
+struct LeftAttackTiming
 {
 	float start;
 	float end;
 };
 
-class Player;
-class PlayerRightWeapon : public Collidable
+class EnemyBossLeftAxe : public Collidable
 {
 public:
-	PlayerRightWeapon();
-	~PlayerRightWeapon();
+	EnemyBossLeftAxe();
+	~EnemyBossLeftAxe();
 
 	void Init(std::shared_ptr<Physics> physics);
-	void Update(int model, float currentFrame, const RightAttackTiming& timing);
+	void Update(int model, float currentFrame, const LeftAttackTiming& timing);
 	// ë“ã@èÛë‘
 	void IdleUpdate(int model);
 	// äeçUåÇèÛë‘
 	void AttackUpdate(int model);
 	void Draw();
-
-	void SetPlayer(std::shared_ptr<Player> player);
-	std::shared_ptr<Player> m_player;
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 
