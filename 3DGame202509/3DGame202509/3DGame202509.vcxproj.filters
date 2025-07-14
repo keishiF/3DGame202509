@@ -162,7 +162,13 @@
       <Filter>ソース ファイル\GameObject\Stage</Filter>
     </ClCompile>
     <ClCompile Include="GameObject\Enemy\EnemyBossLeftAxe.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\BoxColliderData.cpp">
+      <Filter>ソース ファイル\MyLib</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Stage\CollisionWall.cpp">
+      <Filter>ソース ファイル\GameObject\Stage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -281,7 +287,13 @@
       <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\Enemy\EnemyBossLeftAxe.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\BoxColliderData.h">
+      <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Stage\CollisionWall.h">
+      <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

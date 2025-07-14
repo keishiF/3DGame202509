@@ -6,7 +6,8 @@ public:
 	enum class Kind
 	{
 		Sphere,
-		Capsule
+		Capsule,
+		Box
 	};
 
 	ColliderData(Kind kind) { m_kind = kind; }

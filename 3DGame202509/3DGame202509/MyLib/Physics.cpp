@@ -2,6 +2,7 @@
 #include "Vec3.h"
 #include "Collidable.h"
 #include "CapsuleColliderData.h"
+#include "BoxColliderData.h"
 #include "SphereColliderData.h"
 #include "Enemy/EnemyMage.h"
 #include "Enemy/EnemyMinion.h"
@@ -346,6 +347,71 @@ bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Colli
 			}
 
 
+		}
+		// ボックスとカプセルの当たり判定
+		else if (firstKind == ColliderData::Kind::Box && secondKind == ColliderData::Kind::Capsule ||
+			firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Box)
+		{
+			// カプセルを常に first にする
+			std::shared_ptr<CapsuleColliderData> capsule;
+			std::shared_ptr<BoxColliderData> box;
+			Vec3 capsuleStart, capsuleEnd;
+			Vec3 boxCenter;
+			Vec3 boxHalf;
+
+			if (firstKind == ColliderData::Kind::Capsule)
+			{
+				capsule = std::dynamic_pointer_cast<CapsuleColliderData>(first->m_colliderData);
+				box = std::dynamic_pointer_cast<BoxColliderData>(second->m_colliderData);
+
+				capsuleStart = capsule->m_startPos;
+				capsuleEnd = first->m_nextPos;
+
+				boxCenter = second->m_nextPos;
+				boxHalf = box->m_halfWidth;
+			}
+			else
+			{
+				capsule = std::dynamic_pointer_cast<CapsuleColliderData>(second->m_colliderData);
+				box = std::dynamic_pointer_cast<BoxColliderData>(first->m_colliderData);
+
+				capsuleStart = capsule->m_startPos;
+				capsuleEnd = second->m_nextPos;
+
+				boxCenter = first->m_nextPos;
+				boxHalf = box->m_halfWidth;
+			}
+
+			// AABB の min / max を計算
+			Vec3 boxMin = boxCenter - boxHalf;
+			Vec3 boxMax = boxCenter + boxHalf;
+
+			// カプセル線分を複数点でサンプリング
+			constexpr int kSampleCount = 5;
+			float minDist = FLT_MAX;
+
+			for (int i = 0; i <= kSampleCount; ++i)
+			{
+				float t = static_cast<float>(i) / kSampleCount;
+				Vec3 capsulePoint = capsuleStart + (capsuleEnd - capsuleStart) * t;
+
+				Vec3 closestPoint;
+				closestPoint.x = std::clamp(capsulePoint.x, boxMin.x, boxMax.x);
+				closestPoint.y = std::clamp(capsulePoint.y, boxMin.y, boxMax.y);
+				closestPoint.z = std::clamp(capsulePoint.z, boxMin.z, boxMax.z);
+
+				float dist = (capsulePoint - closestPoint).Length();
+				minDist = std::min(minDist, dist);
+			}
+
+			if (minDist < capsule->m_radius)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 		//どれにも当てはまらなかったら
 		else

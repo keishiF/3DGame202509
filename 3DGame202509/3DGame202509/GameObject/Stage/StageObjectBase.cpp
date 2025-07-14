@@ -1,5 +1,6 @@
 #include "StageObjectBase.h"
 
-StageObjectBase::StageObjectBase()
+StageObjectBase::StageObjectBase() :
+	Collidable(ObjectTag::Stage, ObjectPriority::Static, ColliderData::Kind::Box)
 {
 }
