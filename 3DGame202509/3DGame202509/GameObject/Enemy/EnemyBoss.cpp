@@ -6,7 +6,7 @@
 #include "CapsuleColliderData.h"
 #include "Animator.h"
 
-#include "DxLib.h"
+#include <DxLib.h>
 #include <algorithm>
 #include <cassert>
 #include <unordered_map>
@@ -21,7 +21,8 @@ namespace
 	constexpr int kHp = 5;
 
 	// エネミーの速度
-	constexpr float kSpeed = 10.0f;
+	constexpr float kWalkSpeed = 2.0f;
+	constexpr float kChaseSpeed = 10.0f;
 
 	// エネミーの当たり判定用半径
 	constexpr float kColScale = 200.0f;
@@ -33,6 +34,9 @@ namespace
 	constexpr float kModelScale = 200.0f;
 
 	// アニメーション名
+
+	// 歩き
+	const char* kWalkAnimName = "Walking_D_Skeletons";
 	// 待機
 	const char* kFindAnimName = "Idle";
 	// 発見
@@ -49,14 +53,19 @@ namespace
 	const char* kDeadAnimName = "Death_B";
 
 	// アニメーションの再生速度
-	constexpr float kAnimSpeed = 0.5f;
+	constexpr float kAnimSpeed      = 0.5f;
+	constexpr float kChopAnimSpeed  = 0.4f;
+	constexpr float kSliceAnimSpeed = 0.4f;
+	constexpr float kStabAnimSpeed  = 0.4f;
+	constexpr float kSpinAnimSpeed  = 0.4f;
 
 	const std::unordered_map<EnemyState, RightAttackTiming> kRightColTimingTable =
 	{
+		{EnemyState::Walk,	 { 0,  0}},
 		{EnemyState::Find,	 { 0,  0}},
 		{EnemyState::Chase,	 { 0,  0}},
 		{EnemyState::Attack, { 0, 48}},
-		{EnemyState::Chop  , {12, 48}},
+		{EnemyState::Chop,   {12, 48}},
 		{EnemyState::Slice,  {12, 56}},
 		{EnemyState::Stab,   {12, 48}},
 		{EnemyState::Spin,   { 0, 180}},
@@ -65,10 +74,11 @@ namespace
 	};
 	const std::unordered_map<EnemyState, LeftAttackTiming> kLeftColTimingTable =
 	{
+		{EnemyState::Walk,	 { 0,  0}},
 		{EnemyState::Find,	 { 0,  0}},
 		{EnemyState::Chase,	 { 0,  0}},
 		{EnemyState::Attack, { 0, 48}},
-		{EnemyState::Chop  , {12, 48}},
+		{EnemyState::Chop,   {12, 48}},
 		{EnemyState::Slice,  {12, 56}},
 		{EnemyState::Stab,   {12, 48}},
 		{EnemyState::Spin,   { 0, 180}},
@@ -102,12 +112,14 @@ void EnemyBoss::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& ro
 	m_hp = kHp;
 	m_isDead = false;
 	m_attackFrame = 0.0f;
+	m_walkFrame = 0.0f;
 
 	m_charModel = MV1LoadModel("Data/Model/Enemy/Boss/Boss.mv1");
 	assert(m_charModel >= 0);
 
 	MV1SetScale(m_charModel, VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
+	MV1SetRotationXYZ(m_charModel, VGet(rot.x, rot.y, rot.z));
 
 	m_anim.Init(m_charModel);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, kAnimSpeed, true);
@@ -133,6 +145,9 @@ void EnemyBoss::Update(std::shared_ptr<Player> player)
 
 	switch (m_state)
 	{
+	case EnemyState::Walk:
+		WalkUpdate(player);
+		break;
 	case EnemyState::Find:
 		FindUpdate(player);
 		break;
@@ -236,6 +251,61 @@ void EnemyBoss::OnDamage()
 	}
 }
 
+void EnemyBoss::WalkUpdate(std::shared_ptr<Player> player)
+{
+	SetActive(false);
+	++m_walkFrame;
+
+	// プレイヤーへの方向ベクトル
+	Vec3 myPos = m_rigidbody.GetPos();
+	Vec3 toPlayerDir = player->GetPos() - myPos;
+	toPlayerDir.y = 0.0f;
+	toPlayerDir.Normalize();
+	m_rigidbody.SetVelo(toPlayerDir * kWalkSpeed);
+	MV1SetPosition(m_charModel, myPos.ToDxVECTOR());
+
+	// 進行方向が0でなければ回転
+	if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
+	{
+		// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
+		float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
+		MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+	}
+
+	if (m_walkFrame >= 120.0f)
+	{
+		float distance = (myPos - player->GetPos()).Length();
+		if (distance >= (m_findRadius + player->GetRadius()))
+		{
+			ChangeState(EnemyState::Find, kAnimSpeed);
+		}
+
+		if (distance <= (m_attackRadius + player->GetRadius()))
+		{
+			if (distance > 500.0f && m_prevState != EnemyState::Stab)
+			{
+				ChangeState(EnemyState::Stab, kStabAnimSpeed);
+			}
+			else if (distance > 400.0f && m_prevState != EnemyState::Chop)
+			{
+				ChangeState(EnemyState::Chop, kChopAnimSpeed);
+			}
+			else if (distance > 300.0f && m_prevState != EnemyState::Slice)
+			{
+				ChangeState(EnemyState::Slice, kSliceAnimSpeed);
+			}
+			else if (distance < 300.0f && m_prevState == EnemyState::Spin)
+			{
+				ChangeState(EnemyState::Slice, kSliceAnimSpeed);
+			}
+			else if (m_prevState != EnemyState::Spin)
+			{
+				ChangeState(EnemyState::Spin, kSpinAnimSpeed);
+			}
+		}
+	}
+}
+
 void EnemyBoss::FindUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
@@ -264,7 +334,7 @@ void EnemyBoss::ChaseUpdate(std::shared_ptr<Player> player)
 	if (toPlayerDir.Length() > 1.0f)
 	{
 		toPlayerDir.Normalize();
-		m_rigidbody.SetVelo(toPlayerDir * kSpeed);
+		m_rigidbody.SetVelo(toPlayerDir * kChaseSpeed);
 		MV1SetPosition(m_charModel, myPos.ToDxVECTOR());
 
 		// 進行方向が0でなければ回転
@@ -284,21 +354,25 @@ void EnemyBoss::ChaseUpdate(std::shared_ptr<Player> player)
 
 	if (distance <= (m_attackRadius + player->GetRadius()))
 	{
-		if (distance > 500.0f)
+		if (distance > 500.0f && m_prevState != EnemyState::Stab)
 		{
-			ChangeState(EnemyState::Stab, kAnimSpeed);
+			ChangeState(EnemyState::Stab, kStabAnimSpeed);
 		}
-		else if (distance > 400.0f)
+		else if (distance > 400.0f && m_prevState != EnemyState::Chop)
 		{
-			ChangeState(EnemyState::Chop, kAnimSpeed);
+			ChangeState(EnemyState::Chop, kChopAnimSpeed);
 		}
-		else if (distance > 300.0f)
+		else if (distance > 300.0f && m_prevState != EnemyState::Slice)
 		{
-			ChangeState(EnemyState::Slice, kAnimSpeed);
+			ChangeState(EnemyState::Slice, kSliceAnimSpeed);
 		}
-		else
+		else if (distance < 300.0f && m_prevState == EnemyState::Spin)
 		{
-			ChangeState(EnemyState::Spin, kAnimSpeed);
+			ChangeState(EnemyState::Slice, kSliceAnimSpeed);
+		}
+		else if (m_prevState != EnemyState::Spin)
+		{
+			ChangeState(EnemyState::Spin, kSpinAnimSpeed);
 		}
 	}
 }
@@ -372,7 +446,7 @@ void EnemyBoss::ChopUpdate(std::shared_ptr<Player> player)
 		}
 		else
 		{
-			ChangeState(EnemyState::Chase, kAnimSpeed);
+			ChangeState(EnemyState::Walk, kAnimSpeed);
 		}
 	}
 }
@@ -409,7 +483,7 @@ void EnemyBoss::SliceUpdate(std::shared_ptr<Player> player)
 		}
 		else
 		{
-			ChangeState(EnemyState::Chase, kAnimSpeed);
+			ChangeState(EnemyState::Walk, kAnimSpeed);
 		}
 	}
 }
@@ -446,7 +520,7 @@ void EnemyBoss::StabUpdate(std::shared_ptr<Player> player)
 		}
 		else
 		{
-			ChangeState(EnemyState::Chase, kAnimSpeed);
+			ChangeState(EnemyState::Walk, kAnimSpeed);
 		}
 	}
 }
@@ -483,7 +557,7 @@ void EnemyBoss::SpinUpdate(std::shared_ptr<Player> player)
 		}
 		else
 		{
-			ChangeState(EnemyState::Chase, kAnimSpeed);
+			ChangeState(EnemyState::Walk, kAnimSpeed);
 		}
 	}
 }
@@ -524,6 +598,8 @@ const char* EnemyBoss::GetAnimName(EnemyState state) const
 {
 	switch (state)
 	{
+	case EnemyState::Walk:
+		return kWalkAnimName;
 	case EnemyState::Find:
 		return kFindAnimName;
 	case EnemyState::Chase:
@@ -552,6 +628,8 @@ bool EnemyBoss::IsLoopAnim(EnemyState state) const
 {
 	switch (state)
 	{
+	case EnemyState::Walk:
+		return true;
 	case EnemyState::Find:
 		return true;
 	case EnemyState::Chase:

@@ -1,5 +1,5 @@
 #include "Animator.h"
-#include "DxLib.h"
+#include <DxLib.h>
 
 Animator::Animator() :
 	m_model(-1),

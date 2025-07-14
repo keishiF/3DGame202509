@@ -1,19 +1,22 @@
 #include "PlayerRightWeapon.h"
-#include "Player.h"
 #include "SphereColliderData.h"
-#include "CapsuleColliderData.h"
 #include <cassert>
 
 namespace
 {
-	constexpr float kRadius = 20.0f;
+	// 球の当たり判定の半径
+	constexpr float kRadius = 100.0f;
 
+	// モデルの拡大値
 	constexpr float kBladeModelScale = 0.01f;
+
+	// 当たり判定を前方向に出すための補正値
+	constexpr float kColOffsetScale = 100.0f;
 }
 
 PlayerRightWeapon::PlayerRightWeapon() :
 	m_model(-1),
-	Collidable(ObjectTag::PlayerWeapon, ObjectPriority::Low, ColliderData::Kind::Capsule)
+	Collidable(ObjectTag::PlayerWeapon, ObjectPriority::Low, ColliderData::Kind::Sphere)
 {
 }
 
@@ -95,25 +98,30 @@ void PlayerRightWeapon::AttackUpdate(int model)
 	// 合成した行列をモデルにセット
 	MV1SetMatrix(m_model, mixMat);
 
-	//当たり判定
-	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
+	// 当たり判定
+	auto colData = std::dynamic_pointer_cast<SphereColliderData>(m_colliderData);
+
+	// プレイヤーのモデルから位置と回転を取得
+	VECTOR playerPos = MV1GetPosition(model);
+	VECTOR rotVec = MV1GetRotationXYZ(model);
+	float angleY = -rotVec.y;
+
+	// 前方ベクトルを計算
+	Vec3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
+	forward.Normalize();
+
+	// プレイヤー位置から前方へオフセット
+	Vec3 weaponPos(playerPos.x, playerPos.y, playerPos.z);
+	weaponPos += forward * kColOffsetScale;
+
+	// 当たり判定のセット
 	colData->m_radius = kRadius;
-	VECTOR start = MV1GetFramePosition(m_model, 2);
-	VECTOR end = MV1GetFramePosition(m_model, 1);
-	Vec3 startPos = { start.x, start.y, start.z };
-	Vec3 endPos = { end.x, end.y, end.z };
-	m_rigidbody.SetPos(endPos);
-	colData->m_startPos = startPos;
+	m_rigidbody.SetPos(weaponPos);
 }
 
 void PlayerRightWeapon::Draw()
 {
 	MV1DrawModel(m_model);
-}
-
-void PlayerRightWeapon::SetPlayer(std::shared_ptr<Player> player)
-{
-	m_player = player;
 }
 
 void PlayerRightWeapon::OnCollide(std::shared_ptr<Collidable> collider)

@@ -3,7 +3,7 @@
 #include "TitleScene.h"
 #include "Input.h"
 #include "game.h"
-#include "DxLib.h"
+#include <DxLib.h>
 #include <cstring>
 #include <string>
 #include <iostream>

@@ -3,7 +3,7 @@
 #include "SceneController.h"
 #include "game.h"
 #include "Input.h"
-#include "DxLib.h"
+#include <DxLib.h>
 #include <cassert>
 
 namespace

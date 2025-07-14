@@ -1,7 +1,7 @@
 #include "EnemyMageBullet.h"
 
 #include "SphereColliderData.h"
-#include "DxLib.h"
+#include <DxLib.h>
 
 namespace
 {

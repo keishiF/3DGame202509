@@ -7,7 +7,7 @@
 #include "PlayerRightWeapon.h"
 #include "PlayerLeftWeapon.h"
 #include "Quaternion.h"
-#include "DxLib.h"
+#include <DxLib.h>
 #include <algorithm>
 #include <cassert>
 #include <unordered_map>
@@ -795,7 +795,17 @@ void Player::DodgeUpdate()
 	if (m_attackFrame == 0.0f && m_stamina >= 20.0f)
 	{
 		m_stamina -= 20.0f;  // Dodgeで消費
+
+		// m_forward に基づいて移動ベクトルを設定（前方向へ）
+		Vec3 dodgeDir = m_forward;
+		dodgeDir.Normalize();
+		constexpr float kDodgeSpeed = 50.0f; // 回避の移動速度（調整可能）
+
+		m_rigidbody.SetVelo(dodgeDir * kDodgeSpeed);
 	}
+
+	// 現在位置にモデルを反映
+	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)

@@ -1,6 +1,6 @@
 #pragma once
 #include "Collidable.h"
-#include "DxLib.h"
+#include <DxLib.h>
 
 struct RightAttackTiming
 {
@@ -8,7 +8,6 @@ struct RightAttackTiming
 	float end;
 };
 
-class Player;
 class PlayerRightWeapon : public Collidable
 {
 public:
@@ -22,9 +21,6 @@ public:
 	// ŠeUŒ‚ó‘Ô
 	void AttackUpdate(int model);
 	void Draw();
-
-	void SetPlayer(std::shared_ptr<Player> player);
-	std::shared_ptr<Player> m_player;
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 

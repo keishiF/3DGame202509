@@ -26,6 +26,9 @@ public:
 
 	std::vector<std::shared_ptr<EnemyBase>> GetEnemies();
 
+	bool IsClear()	  { return m_isClear; }
+	bool IsGameOver() { return m_isGameOver; }
+
 private:
 	std::shared_ptr<Physics> m_physics;
 	std::shared_ptr<Player> m_player;
@@ -34,5 +37,8 @@ private:
 	std::vector<std::shared_ptr<EnemyBoss>>  m_boss;
 	std::shared_ptr<Camera> m_camera;
 	std::shared_ptr<Stage> m_stage;
+
+	bool m_isClear;
+	bool m_isGameOver;
 };
 

@@ -1,7 +1,7 @@
 #include "Application.h"
 #include "SceneController.h"
 #include "Input.h"
-#include "DxLib.h"
+#include <DxLib.h>
 #include "game.h"
 #include <cassert>
 

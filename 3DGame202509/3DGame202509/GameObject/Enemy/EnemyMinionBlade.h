@@ -1,6 +1,6 @@
 #pragma once
 #include "Collidable.h"
-#include "DxLib.h"
+#include <DxLib.h>
 
 struct AttackTiming
 {

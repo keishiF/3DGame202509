@@ -28,7 +28,7 @@ enum class PlayerState
 class EnemyBase;
 class PlayerRightWeapon;
 class PlayerLeftWeapon;
-class Player : public Collidable, public std::enable_shared_from_this<Player>
+class Player : public Collidable
 {
 public:
 	// コンストラクタとデストラクタ

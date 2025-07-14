@@ -8,6 +8,7 @@
 enum class EnemyState
 {
 	Find,
+	Walk,
 	Chase,
 	Attack,
 	Chop,
@@ -37,6 +38,7 @@ public:
 
 protected:
 	EnemyState m_state;
+	EnemyState m_prevState;
 	virtual const char* GetAnimName(EnemyState state) const abstract;
 	virtual bool IsLoopAnim(EnemyState state) const abstract;
 	void ChangeState(EnemyState newState, float playSpeed);

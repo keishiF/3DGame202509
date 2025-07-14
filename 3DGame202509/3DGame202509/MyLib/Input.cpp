@@ -1,5 +1,5 @@
 #include "Input.h"
-#include "DxLib.h"
+#include <DxLib.h>
 
 Input::Input()
 {

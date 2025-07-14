@@ -5,7 +5,7 @@
 #include "CapsuleColliderData.h"
 #include "Animator.h"
 
-#include "DxLib.h"
+#include <DxLib.h>
 #include <algorithm>
 #include <cassert>
 #include <unordered_map>
@@ -88,6 +88,7 @@ void EnemyMinion::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& 
 
 	MV1SetScale(m_charModel, VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
+	MV1SetRotationXYZ(m_charModel, VGet(rot.x, rot.y, rot.z));
 
 	m_anim.Init(m_charModel);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, kAnimSpeed, true);

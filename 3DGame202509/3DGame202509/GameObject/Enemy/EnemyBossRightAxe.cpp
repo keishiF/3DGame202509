@@ -2,7 +2,7 @@
 
 #include "CapsuleColliderData.h"
 
-#include "DxLib.h"
+#include <DxLib.h>
 #include <cassert>
 
 namespace

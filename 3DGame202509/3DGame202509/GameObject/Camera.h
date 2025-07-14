@@ -1,6 +1,6 @@
 #pragma once
 #include "Vec3.h"
-#include "DxLib.h"
+#include <DxLib.h>
 #include <memory>
 
 class Player;

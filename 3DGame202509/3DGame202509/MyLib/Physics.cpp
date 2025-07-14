@@ -5,7 +5,7 @@
 #include "SphereColliderData.h"
 #include "Enemy/EnemyMage.h"
 #include "Enemy/EnemyMinion.h"
-#include "DxLib.h"
+#include <DxLib.h>
 #include <cassert>
 #include <algorithm>
 

@@ -17,31 +17,33 @@ public:
 
 	virtual void OnDamage() override;
 
+	bool IsDead() { return m_isDead; }
+
 	// “G‚Ìó‘Ô
 private:
 	const char* GetAnimName(EnemyState state) const override;
 	bool IsLoopAnim(EnemyState state) const override;
 
-	// ‘Ò‹@ó‘Ô
+	void WalkUpdate(std::shared_ptr<Player> player);
+	// ’Tõó‘Ô
 	void FindUpdate(std::shared_ptr<Player> player) override;
-
 	// ”­Œ©ó‘Ô
 	void ChaseUpdate(std::shared_ptr<Player> player) override;
-
 	// UŒ‚ó‘Ô
 	void AttackUpdate(std::shared_ptr<Player> player) override;
 	void ChopUpdate(std::shared_ptr<Player> player);
 	void SliceUpdate(std::shared_ptr<Player> player);
 	void StabUpdate(std::shared_ptr<Player> player);
 	void SpinUpdate(std::shared_ptr<Player> player);
-
 	// ”í’eó‘Ô
 	void HitUpdate(std::shared_ptr<Player> player) override;
-
 	// €–Só‘Ô
 	void DeadUpdate(std::shared_ptr<Player> player) override;
 
 	std::shared_ptr<EnemyBossRightAxe> m_rightWeapon;
 	std::shared_ptr<EnemyBossLeftAxe> m_leftWeapon;
+
+	float m_walkFrame;
+	bool m_isDead;
 };
 

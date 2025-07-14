@@ -9,7 +9,9 @@
 #include "Stage/Stage.h"
 #include "TransformDataLoader.h"
 
-GameObjectManager::GameObjectManager()
+GameObjectManager::GameObjectManager() :
+	m_isClear(false),
+	m_isGameOver(false)
 {
 }
 
@@ -71,9 +73,6 @@ void GameObjectManager::Init()
 
 	m_camera = std::make_shared<Camera>();
 	m_camera->SetCamera(m_player);
-
-	/*m_stage = std::make_shared<Stage>();
-	m_stage->Init();*/
 }
 
 void GameObjectManager::Update()
@@ -99,12 +98,12 @@ void GameObjectManager::Update()
 	}
 
 	if (m_camera) m_camera->Update(m_player);
+
+	m_isGameOver = m_player->IsDead();
 }
 
 void GameObjectManager::Draw()
 {
-	//m_stage->Draw();
-
 #ifdef _DEBUG
 	m_physics->DebugDraw();
 #endif

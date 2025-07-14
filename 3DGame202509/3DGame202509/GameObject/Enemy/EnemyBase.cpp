@@ -2,6 +2,7 @@
 
 EnemyBase::EnemyBase() :
     m_state(EnemyState::Find),
+    m_prevState(EnemyState::Find),
     m_charModel(-1),
     m_weaponModel(-1),
     m_findRadius(0.0f),
@@ -30,6 +31,7 @@ void EnemyBase::ChangeState(EnemyState newState, float playSpeed)
     // Hit‚¾‚¯—áŠOˆ—
     if (m_state == newState && m_state != EnemyState::Hit) return;
 
+    m_prevState = m_state;
     m_state = newState;
     m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
     m_attackFrame = 0.0f;

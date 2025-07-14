@@ -5,7 +5,7 @@
 #include "Physics.h"
 #include "Player/Player.h"
 
-#include "DxLib.h"
+#include <DxLib.h>
 #include <algorithm>
 #include <cassert>
 
@@ -25,7 +25,7 @@ namespace
 
 	// アニメーションの再生速度
 	constexpr float kAnimSpeed = 1.0f;
-	constexpr float kAttackAnimSpeed = 0.75f;
+	constexpr float kAttackAnimSpeed = 0.5f;
 
 	// エネミーがプレイヤーを発見できる範囲
 	constexpr float kFindRadius   = 500.0f;
@@ -91,6 +91,7 @@ void EnemyMage::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& ro
 
 	MV1SetScale(m_charModel, VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
+	MV1SetRotationXYZ(m_charModel, VGet(rot.x, rot.y, rot.z));
 
 	m_anim.Init(m_charModel);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, kAnimSpeed, true);

@@ -1,5 +1,5 @@
 #pragma once
-#include "DxLib.h"
+#include <DxLib.h>
 #include <cmath>
 
 // 3次元ベクトルクラス
