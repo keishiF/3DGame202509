@@ -2,6 +2,7 @@
 #include "Animator.h"
 #include "Collidable.h"
 #include "Input.h"
+#include "Quaternion.h"
 #include "Vec3.h"
 #include <memory>
 #include <queue>
@@ -97,6 +98,8 @@ private:
 	float m_radius;
 	// プレイヤーのHP
 	int m_hp;
+	// 必殺技ゲージ
+	int m_specialGauge;
 	// プレイヤーのフラグ
 	bool m_isCombo;
 	bool m_isDead;
@@ -109,6 +112,8 @@ private:
 
 	// プレイヤーのアニメーション
 	Animator m_anim;
+
+	Quaternion m_currentRot;
 
 	std::shared_ptr<PlayerRightWeapon> m_rightWeapon;
 	std::shared_ptr<PlayerLeftWeapon> m_leftWeapon;

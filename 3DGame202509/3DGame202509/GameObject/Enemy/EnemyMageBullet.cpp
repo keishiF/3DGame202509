@@ -5,7 +5,7 @@
 
 namespace
 {
-	constexpr float kSpeed = 7.5f;
+	constexpr float kRunSpeed = 7.5f;
 	constexpr float kLifeFrame = 300.0f;
 	constexpr float kColRadius = 20.0f;
 }
@@ -41,7 +41,7 @@ void EnemyMageBullet::Update()
 
 	// ˆÚ“®ˆ—
 	m_dir.Normalize();
-	m_rigidbody.SetVelo(m_dir * kSpeed);
+	m_rigidbody.SetVelo(m_dir * kRunSpeed);
 
 	if (m_frame >= kLifeFrame)
 	{

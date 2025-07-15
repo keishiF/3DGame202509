@@ -11,14 +11,16 @@
 namespace
 {
 	// エネミーがプレイヤーを発見できる範囲
-	constexpr float kFindRadius   = 500.0f;
+	constexpr float kFindRadius   = 900.0f;
+	constexpr float kRunRadius	  = 450.0f;
 	constexpr float kAttackRadius = 100.0f;
 
 	// 初期HP
 	constexpr int kHp = 5;
 
 	// エネミーの速度
-	constexpr float kSpeed = 5.0f;
+	constexpr float kWalkSpeed = 2.5f;
+	constexpr float kRunSpeed = 5.0f;
 
 	// エネミーの当たり判定用半径
 	constexpr float kColScale = 140.0f;
@@ -32,6 +34,9 @@ namespace
 	// アニメーション名
 	// 待機
 	const char* kFindAnimName   = "2H_Melee_Idle";
+
+	const char* kWalkAnimName   = "Walking_D_Skeletons";
+
 	// 発見
 	const char* kChaseAnimName  = "Running_C";
 	// 攻撃
@@ -63,7 +68,7 @@ EnemyMinion::~EnemyMinion()
 {
 }
 
-void EnemyMinion::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale)
+void EnemyMinion::Init(std::shared_ptr<Physics> physics, Vec3& pos, Vec3& rot, Vec3& scale)
 {
 	Collidable::Init(physics);
 
@@ -112,6 +117,9 @@ void EnemyMinion::Update(std::shared_ptr<Player> player)
 	case EnemyState::Find:
 		FindUpdate(player);
 		break;
+	case EnemyState::Walk:
+		WalkUpdate(player);
+		break;
 	case EnemyState::Chase:
 		ChaseUpdate(player);
 		break;
@@ -145,12 +153,13 @@ void EnemyMinion::Draw()
 #if _DEBUG
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), 10.0f, 16, 0x0000ff, 0x0000ff, true);
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_findRadius, 16, 0xff00ff, 0xff00ff, false);
+	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kRunRadius, 16, 0xff00ff, 0xff00ff, false);
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_attackRadius, 16, 0xff00ff, 0xff00ff, false);
 
 #endif
 	MV1DrawModel(m_charModel);
 	m_weapon->Draw();
-	
+
 	Vec3 worldPos = m_rigidbody.GetPos();
 	worldPos.y += 120.0f; // 頭上の高さ調整
 
@@ -207,7 +216,48 @@ void EnemyMinion::FindUpdate(std::shared_ptr<Player> player)
 	float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
 	if (distance <= (m_findRadius + player->GetRadius()))
 	{
+		ChangeState(EnemyState::Walk, kAnimSpeed);
+	}
+}
+
+void EnemyMinion::WalkUpdate(std::shared_ptr<Player> player)
+{
+	SetActive(true);
+	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Chase));
+
+	// プレイヤーへの方向ベクトル
+	Vec3 myPos = m_rigidbody.GetPos();
+	Vec3 toPlayerDir = player->GetPos() - myPos;
+	toPlayerDir.y = 0.0f;
+
+	// 距離が十分にある場合のみ移動
+	if (toPlayerDir.Length() > 1.0f)
+	{
+		toPlayerDir.Normalize();
+		m_rigidbody.SetVelo(toPlayerDir * kWalkSpeed);
+		MV1SetPosition(m_charModel, myPos.ToDxVECTOR());
+
+		// 進行方向が0でなければ回転
+		if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
+		{
+			// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
+			float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
+			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+		}
+	}
+
+	float distance = (myPos - player->GetPos()).Length();
+	if (distance >= (m_findRadius + player->GetRadius()))
+	{
+		ChangeState(EnemyState::Find, kAnimSpeed);
+	}
+	else if (distance <= (kRunRadius + player->GetRadius()))
+	{
 		ChangeState(EnemyState::Chase, kAnimSpeed);
+	}
+	else if (distance <= (m_attackRadius + player->GetRadius()))
+	{
+		ChangeState(EnemyState::Attack, kAnimSpeed);
 	}
 }
 
@@ -225,7 +275,7 @@ void EnemyMinion::ChaseUpdate(std::shared_ptr<Player> player)
 	if (toPlayerDir.Length() > 1.0f)
 	{
 		toPlayerDir.Normalize();
-		m_rigidbody.SetVelo(toPlayerDir * kSpeed);
+		m_rigidbody.SetVelo(toPlayerDir * kRunSpeed);
 		MV1SetPosition(m_charModel, myPos.ToDxVECTOR());
 
 		// 進行方向が0でなければ回転
@@ -321,6 +371,8 @@ const char* EnemyMinion::GetAnimName(EnemyState state) const
 	{
 	case EnemyState::Find:
 		return kFindAnimName;
+	case EnemyState::Walk:
+		return kWalkAnimName;
 	case EnemyState::Chase:
 		return kChaseAnimName;
 	case EnemyState::Attack:
@@ -340,6 +392,8 @@ bool EnemyMinion::IsLoopAnim(EnemyState state) const
 	switch (state)
 	{
 	case EnemyState::Find:
+		return true;
+	case EnemyState::Walk:
 		return true;
 	case EnemyState::Chase:
 		return true;

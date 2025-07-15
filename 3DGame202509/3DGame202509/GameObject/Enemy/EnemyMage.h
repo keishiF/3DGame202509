@@ -11,7 +11,7 @@ public:
 	EnemyMage();
 	virtual ~EnemyMage();
 
-	void Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale) override;
+	void Init(std::shared_ptr<Physics> physics, Vec3& pos, Vec3& rot, Vec3& scale) override;
 	void Update(std::shared_ptr<Player> player) override;
 	void Draw() override;
 
@@ -38,9 +38,9 @@ private:
 
 	bool IsPlayerFind(const std::shared_ptr<Player>& player, const Vec3& centerDir, float viewAngleRad, float viewDistance);
 
-	float m_angle;        // 経過時間（スイング用）
-	float m_rotSpeed = 1.5f;        // 回転速度（ラジアン/秒）
-	float m_angleMax   = DX_PI_F / 4; // 左右最大回転角（±45度）
+	float m_angle;
+	float m_rotSpeed;
+	float m_angleMax;
 
 	Vec3 m_forward;
 

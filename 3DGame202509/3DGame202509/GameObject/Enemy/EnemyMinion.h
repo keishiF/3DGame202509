@@ -10,7 +10,7 @@ public:
 	virtual ~EnemyMinion();
 
 	// 初期化、更新、描画
-	void Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale) override;
+	void Init(std::shared_ptr<Physics> physics, Vec3& pos, Vec3& rot, Vec3& scale) override;
 	void Update(std::shared_ptr<Player> player) override;
 	void Draw() override;
 
@@ -23,6 +23,8 @@ private:
 
 	// 待機状態
 	void FindUpdate(std::shared_ptr<Player> player) override;
+
+	void WalkUpdate(std::shared_ptr<Player> player);
 
 	// 発見状態
 	void ChaseUpdate(std::shared_ptr<Player> player) override;

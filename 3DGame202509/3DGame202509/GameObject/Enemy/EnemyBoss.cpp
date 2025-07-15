@@ -93,7 +93,7 @@ EnemyBoss::~EnemyBoss()
 {
 }
 
-void EnemyBoss::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale)
+void EnemyBoss::Init(std::shared_ptr<Physics> physics, Vec3& pos, Vec3& rot, Vec3& scale)
 {
 	Collidable::Init(physics);
 

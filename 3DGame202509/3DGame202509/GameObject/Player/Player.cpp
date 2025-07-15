@@ -6,7 +6,6 @@
 #include "Player.h"
 #include "PlayerLeftWeapon.h"
 #include "PlayerRightWeapon.h"
-#include "Quaternion.h"
 #include <algorithm>
 #include <cassert>
 #include <DxLib.h>
@@ -16,9 +15,12 @@ namespace
 {
 	// HPの初期値
 	constexpr int kHp = 100;
+
+	constexpr int kSpecialGaugeMax = 100;
+
 	// 移動速度
-	constexpr float kWalkSpeed = 5.0f;
-	constexpr float kRunSpeed  = 15.0f;
+	constexpr float kWalkSpeed = 8.5f;
+	constexpr float kRunSpeed  = 17.5f;
 	constexpr float kAttackMoveSpeed = 1.0f;
 	// プレイヤーのモデルの拡大値
 	constexpr float kModelScale = 70.0f;
@@ -97,6 +99,7 @@ Player::Player() :
 	m_charModel(-1),
 	m_radius(kRadius),
 	m_hp(kHp),
+	m_specialGauge(0),
 	m_isCombo(false),
 	m_isDead(false),
 	m_attackPower(1),
@@ -243,14 +246,12 @@ void Player::Draw()
 		gaugeX + gaugeWidth,
 		gaugeY + gaugeHeight,
 		0x808080, true);
-
 	// 現在のHP分の長さのゲージ
 	int hpBarWidth = static_cast<int>(gaugeWidth * hpRate);
 	DrawBox(gaugeX, gaugeY,
 		gaugeX + hpBarWidth,
 		gaugeY + gaugeHeight,
 		color, true);
-
 	// 枠線（黒）
 	DrawBox(gaugeX, gaugeY,
 		gaugeX + gaugeWidth,
@@ -289,6 +290,11 @@ void Player::ChangeState(PlayerState newState)
 	m_walkFrame = 0.0f;
 	m_attackFrame = 0.0f;
 	m_isCombo = false;
+
+	VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
+	float angleY = -rotVec.y;
+	Vec3 axis(0.0f, 1.0f, 0.0f);
+	m_currentRot.AngleAxis(angleY, axis);
 
 	switch (m_state)
 	{
@@ -369,16 +375,17 @@ void Player::IdleUpdate()
 	// RBボタンの入力があれば必殺技状態に移行する
 	if (Input::Instance().IsTrigger("RB"))
 	{
-		ChangeState(PlayerState::Special);
-	}
-
-#if _DEBUG
-	// 死亡状態に移行
-	if (Input::Instance().IsTrigger("LB"))
-	{
-		ChangeState(PlayerState::Dead);
-	}
+#ifdef _DEBUG
+		if (m_specialGauge < kSpecialGaugeMax)
+		{
+			m_specialGauge = kSpecialGaugeMax;
+		}
 #endif
+		if (m_specialGauge >= kSpecialGaugeMax)
+		{
+			ChangeState(PlayerState::Special);
+		}
+	}
 }
 
 void Player::WalkUpdate()
@@ -433,23 +440,19 @@ void Player::WalkUpdate()
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 
 	// 進行方向にモデルを回転させる
-	static Quaternion currentRot;
 	Vec3 velocity = m_rigidbody.GetVelo();
 	if (velocity.x != 0.0f || velocity.z != 0.0f)
 	{
-		// Y軸回転
 		Vec3 axis(0.0f, 1.0f, 0.0f);
 		float angle = std::atan2(velocity.x, -velocity.z);
 
 		Quaternion targetRot;
 		targetRot.AngleAxis(angle, axis);
 
-		// Slerpを使って線形補間
 		constexpr float t = 0.25f;
-		currentRot = Quaternion::Slerp(currentRot, targetRot, t);
+		m_currentRot = Quaternion::Slerp(m_currentRot, targetRot, t);
 
-		// Y軸の回転角だけ取得して適用
-		float angleY = currentRot.ToEulerY();
+		float angleY = m_currentRot.ToEulerY();
 		MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 	}
 
@@ -457,6 +460,12 @@ void Player::WalkUpdate()
 	if (m_rigidbody.GetVelo().x == 0.0f && m_rigidbody.GetVelo().z == 0.0f)
 	{
 		ChangeState(PlayerState::Idle);
+	}
+
+	// LBの入力があればダッシュ状態に移行する
+	if (Input::Instance().IsTrigger("LB"))
+	{
+		ChangeState(PlayerState::Run);
 	}
 
 	// Aボタンの入力があれば攻撃状態に移行する
@@ -471,11 +480,11 @@ void Player::WalkUpdate()
 		ChangeState(PlayerState::Spin);
 	}
 
-	// Bボタンの入力があれば回避状態に移行する
-	if (Input::Instance().IsTrigger("B"))
-	{
-		ChangeState(PlayerState::Dodge);
-	}
+	//// Bボタンの入力があれば回避状態に移行する
+	//if (Input::Instance().IsTrigger("B"))
+	//{
+	//	ChangeState(PlayerState::Dodge);
+	//}
 }
 
 void Player::RunUpdate()
@@ -525,23 +534,19 @@ void Player::RunUpdate()
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 
 	// 進行方向にモデルを回転させる
-	static Quaternion currentRot;
 	Vec3 velocity = m_rigidbody.GetVelo();
 	if (velocity.x != 0.0f || velocity.z != 0.0f)
 	{
-		// Y軸回転
 		Vec3 axis(0.0f, 1.0f, 0.0f);
 		float angle = std::atan2(velocity.x, -velocity.z);
 
 		Quaternion targetRot;
 		targetRot.AngleAxis(angle, axis);
 
-		// Slerpを使って線形補間
 		constexpr float t = 0.25f;
-		currentRot = Quaternion::Slerp(currentRot, targetRot, t);
+		m_currentRot = Quaternion::Slerp(m_currentRot, targetRot, t);
 
-		// Y軸の回転角だけ取得して適用
-		float angleY = currentRot.ToEulerY();
+		float angleY = m_currentRot.ToEulerY();
 		MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 	}
 
@@ -563,11 +568,11 @@ void Player::RunUpdate()
 		ChangeState(PlayerState::Spin);
 	}
 
-	// Bボタンの入力があれば回避状態に移行する
-	if (Input::Instance().IsTrigger("B"))
-	{
-		ChangeState(PlayerState::Dodge);
-	}
+	//// Bボタンの入力があれば回避状態に移行する
+	//if (Input::Instance().IsTrigger("B"))
+	//{
+	//	ChangeState(PlayerState::Dodge);
+	//}
 }
 
 void Player::ChopUpdate()

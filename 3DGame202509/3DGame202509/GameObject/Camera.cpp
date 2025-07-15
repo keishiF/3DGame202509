@@ -13,7 +13,7 @@ namespace
 	constexpr float kCameraPosY = 700.0f;
 	constexpr float kCameraPosZ = -600.0f;
 	/*constexpr float kCameraPosY = 300.0f;
-	constexpr float kCameraPosZ = -500.0f;*/
+	constexpr float kCameraPosZ = -600.0f;*/
 }
 
 Camera::Camera() :

@@ -34,7 +34,7 @@ namespace
 	constexpr int kHp = 3;
 
 	// エネミーの速度
-	constexpr float kSpeed = 0.5f;
+	constexpr float kRunSpeed = 0.5f;
 
 	constexpr float kColScale  = 140.0f;
 	constexpr float kColRadius = 45.0f;
@@ -51,7 +51,10 @@ namespace
 	constexpr float kViewDistance = 750.0f;
 }
 
-EnemyMage::EnemyMage()
+EnemyMage::EnemyMage() :
+	m_angle(0.0f),
+	m_rotSpeed(1.5f),
+	m_angleMax(DX_PI_F / 4.0f)
 {
 }
 
@@ -59,7 +62,7 @@ EnemyMage::~EnemyMage()
 {
 }
 
-void EnemyMage::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale)
+void EnemyMage::Init(std::shared_ptr<Physics> physics, Vec3& pos, Vec3& rot, Vec3& scale)
 {
 	Collidable::Init(physics);
 
@@ -78,9 +81,6 @@ void EnemyMage::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& ro
 	m_hp = kHp;
 	m_isDead = false;
 	m_attackFrame = 0.0f;
-	m_angle = 0.0f;
-	m_rotSpeed = 1.5f;
-	m_angleMax = DX_PI_F / 4.0f;
 	m_forward = { 0.0f, 0.0f, -1.0f };
 
 	m_charModel = MV1LoadModel("Data/Model/Enemy/Mage/Mage.mv1");
@@ -365,7 +365,7 @@ void EnemyMage::ChaseUpdate(std::shared_ptr<Player> player)
 	if (toPlayerDir.Length() > 1.0f) 
 	{
 		toPlayerDir.Normalize();
-		m_rigidbody.SetVelo(toPlayerDir * kSpeed);
+		m_rigidbody.SetVelo(toPlayerDir * kRunSpeed);
 		MV1SetPosition(m_charModel, myPos.ToDxVECTOR());
 
 		// 進行方向が0でなければ回転

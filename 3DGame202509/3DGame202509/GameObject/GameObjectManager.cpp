@@ -112,6 +112,8 @@ void GameObjectManager::Draw()
 	m_physics->DebugDraw();
 #endif
 
+	m_skyDome->Draw();
+
 	if (m_player) m_player->Draw();
 
 	for (auto& minion : m_minions)
@@ -128,8 +130,6 @@ void GameObjectManager::Draw()
 	{
 		boss->Draw();
 	}
-
-	m_skyDome->Draw();
 }
 
 std::vector<std::shared_ptr<EnemyBase>> GameObjectManager::GetEnemies()
