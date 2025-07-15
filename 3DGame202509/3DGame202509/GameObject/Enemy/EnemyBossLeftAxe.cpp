@@ -1,9 +1,7 @@
-#include "EnemyBossLeftAxe.h"
-
 #include "CapsuleColliderData.h"
-
-#include <DxLib.h>
+#include "EnemyBossLeftAxe.h"
 #include <cassert>
+#include <DxLib.h>
 
 namespace
 {

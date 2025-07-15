@@ -1,14 +1,12 @@
-#include "EnemyBoss.h"
-#include "EnemyBossRightAxe.h"
-#include "EnemyBossLeftAxe.h"
-#include "Player/Player.h"
-
-#include "CapsuleColliderData.h"
 #include "Animator.h"
-
-#include <DxLib.h>
+#include "CapsuleColliderData.h"
+#include "EnemyBoss.h"
+#include "EnemyBossLeftAxe.h"
+#include "EnemyBossRightAxe.h"
+#include "Player/Player.h"
 #include <algorithm>
 #include <cassert>
+#include <DxLib.h>
 #include <unordered_map>
 
 namespace

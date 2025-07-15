@@ -1,6 +1,6 @@
 #include "Mountain.h"
-#include <DxLib.h>
 #include <cassert>
+#include <DxLib.h>
 
 void Mountain::Init(const std::string& modelPath, Vec3 pos, Vec3 rot, Vec3 scale)
 {

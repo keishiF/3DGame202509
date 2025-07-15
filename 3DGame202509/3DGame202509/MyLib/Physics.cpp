@@ -1,14 +1,14 @@
-#include "Physics.h"
-#include "Vec3.h"
-#include "Collidable.h"
-#include "CapsuleColliderData.h"
 #include "BoxColliderData.h"
-#include "SphereColliderData.h"
+#include "CapsuleColliderData.h"
+#include "Collidable.h"
 #include "Enemy/EnemyMage.h"
 #include "Enemy/EnemyMinion.h"
-#include <DxLib.h>
-#include <cassert>
+#include "Physics.h"
+#include "SphereColliderData.h"
+#include "Vec3.h"
 #include <algorithm>
+#include <cassert>
+#include <DxLib.h>
 
 void Physics::Entry(std::shared_ptr<Collidable> collider)
 {

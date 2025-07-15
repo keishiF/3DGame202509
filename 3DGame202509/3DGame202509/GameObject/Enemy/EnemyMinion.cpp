@@ -1,13 +1,11 @@
+#include "Animator.h"
+#include "CapsuleColliderData.h"
 #include "EnemyMinion.h"
 #include "EnemyMinionBlade.h"
 #include "Player/Player.h"
-
-#include "CapsuleColliderData.h"
-#include "Animator.h"
-
-#include <DxLib.h>
 #include <algorithm>
 #include <cassert>
+#include <DxLib.h>
 #include <unordered_map>
 
 namespace

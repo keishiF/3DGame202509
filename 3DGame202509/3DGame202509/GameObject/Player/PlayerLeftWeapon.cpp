@@ -1,7 +1,5 @@
 #include "PlayerLeftWeapon.h"
-#include "PlayerRightWeapon.h"
 #include "SphereColliderData.h"
-#include "CapsuleColliderData.h"
 #include <cassert>
 
 namespace

@@ -4,10 +4,9 @@
 #include "EnemyMageBullet.h"
 #include "Physics.h"
 #include "Player/Player.h"
-
-#include <DxLib.h>
 #include <algorithm>
 #include <cassert>
+#include <DxLib.h>
 
 namespace
 {
