@@ -26,30 +26,28 @@ namespace
 	constexpr float kRadius = 45.0f;
 	constexpr float kColScale = 140.0f;
 	constexpr float kAttackOffsetRadius = 175.0f;
-	// プレイヤーの最大スタミナ
-	constexpr float kMaxStamina = 100.0f;
 
 	// アニメーション名
 	// 待機
-	const char* kIdleAnimName         = "Idle";
+	const char* kIdleAnimName      = "Idle";
 	// 歩き
-	const char* kWalkAnimName         = "Walking_B";
+	const char* kWalkAnimName      = "Walking_B";
 	// 走り
-	const char* kRunAnimName          = "Running_A";
+	const char* kRunAnimName       = "Running_A";
 	// 攻撃
-	const char* kChopAnimName	      = "1H_Melee_Attack_Chop";
-	const char* kSliceAnimName        = "1H_Melee_Attack_Slice_Diagonal";
-	const char* kStabAnimName         = "1H_Melee_Attack_Stab";
-	const char* kSpinAnimName         = "2H_Melee_Attack_Spin";
-	const char* kUltimateAnimName1    = "Dualwield_Melee_Attack_Chop";
-	const char* kUltimateAnimName2    = "Dualwield_Melee_Attack_Slice";
-	const char* kUltimateAnimName3    = "Dualwield_Melee_Attack_Stab";
+	const char* kChopAnimName	   = "1H_Melee_Attack_Chop";
+	const char* kSliceAnimName     = "1H_Melee_Attack_Slice_Diagonal";
+	const char* kStabAnimName      = "1H_Melee_Attack_Stab";
+	const char* kSpinAnimName      = "2H_Melee_Attack_Spin";
+	const char* kUltimateAnimName1 = "Dualwield_Melee_Attack_Chop";
+	const char* kUltimateAnimName2 = "Dualwield_Melee_Attack_Slice";
+	const char* kUltimateAnimName3 = "Dualwield_Melee_Attack_Stab";
 	// 回避
-	const char* kDodgeAnimName		  = "Dodge_Forward";
+	const char* kDodgeAnimName	   = "Dodge_Forward";
 	// 被弾
-	const char* kHitAnimName		  = "Hit_B";
+	const char* kHitAnimName	   = "Hit_B";
 	// 死亡
-	const char* kDeadAnimName         = "Death_B";
+	const char* kDeadAnimName      = "Death_B";
 	// アニメーションの再生速度
 	constexpr float kAnimSpeed	   = 1.0f;
 	constexpr float kIdleAnimSpeed = 0.5f;
@@ -101,8 +99,6 @@ Player::Player() :
 	m_hp(kHp),
 	m_isCombo(false),
 	m_isDead(false),
-	m_maxStamina(kMaxStamina),
-	m_stamina(m_maxStamina),
 	m_attackPower(1),
 	m_walkFrame(0.0f),
 	m_attackFrame(0.0f),
@@ -148,13 +144,6 @@ void Player::Update()
 	if (m_isDead && m_charModel < 0)
 	{
 		return;
-	}
-
-	if (!m_isDead) 
-	{
-		// 徐々に回復
-		m_stamina += 0.5f;
-		m_stamina = std::clamp(m_stamina, 0.0f, m_maxStamina);
 	}
 
 	// アニメーションの更新
@@ -470,12 +459,6 @@ void Player::WalkUpdate()
 		ChangeState(PlayerState::Idle);
 	}
 
-	//// Lスティック押し込みの入力があればダッシュ状態に移行する
-	//if (Input::Instance().IsTrigger("LPush"))
-	//{
-	//	ChangeState(PlayerState::Run);
-	//}
-
 	// Aボタンの入力があれば攻撃状態に移行する
 	if (Input::Instance().IsTrigger("A"))
 	{
@@ -567,12 +550,6 @@ void Player::RunUpdate()
 	{
 		ChangeState(PlayerState::Idle);
 	}
-
-	//// 左スティック押し込みの入力があれば歩き状態に移行する
-	//if (Input::Instance().IsTrigger("LPush"))
-	//{
-	//	ChangeState(PlayerState::Walk);
-	//}
 
 	// Aボタンの入力があれば攻撃状態に移行する
 	if (Input::Instance().IsTrigger("A"))
@@ -792,17 +769,12 @@ void Player::DodgeUpdate()
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Dodge));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Dodge));
 
-	if (m_attackFrame == 0.0f && m_stamina >= 20.0f)
-	{
-		m_stamina -= 20.0f;  // Dodgeで消費
+	// m_forward に基づいて移動ベクトルを設定（前方向へ）
+	Vec3 dodgeDir = m_forward;
+	dodgeDir.Normalize();
+	constexpr float kDodgeSpeed = 50.0f; // 回避の移動速度（調整可能）
 
-		// m_forward に基づいて移動ベクトルを設定（前方向へ）
-		Vec3 dodgeDir = m_forward;
-		dodgeDir.Normalize();
-		constexpr float kDodgeSpeed = 50.0f; // 回避の移動速度（調整可能）
-
-		m_rigidbody.SetVelo(dodgeDir * kDodgeSpeed);
-	}
+	m_rigidbody.SetVelo(dodgeDir * kDodgeSpeed);
 
 	// 現在位置にモデルを反映
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());

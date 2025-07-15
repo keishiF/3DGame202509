@@ -10,7 +10,7 @@ class BoxColliderData : public ColliderData
 public:
 	BoxColliderData();
 	~BoxColliderData();
-	// •½–Ê‚Ìˆê•Ó‚Ì”¼•ª
-	Vec3 m_halfWidth;
+
+	Vec3 m_size;
 };
 

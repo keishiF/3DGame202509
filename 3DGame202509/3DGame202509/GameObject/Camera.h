@@ -14,6 +14,8 @@ public:
 	// ƒJƒƒ‰‚Ì‰Šú‰»
 	void SetCamera(std::shared_ptr<Player> player);
 
+	Vec3 GetPos() const { return m_pos; }
+
 private:
 	// ƒJƒƒ‰‚ÌˆÊ’u
 	Vec3 m_pos;

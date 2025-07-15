@@ -12,6 +12,8 @@ namespace
 	constexpr float kCameraPosX = 0.0f;
 	constexpr float kCameraPosY = 700.0f;
 	constexpr float kCameraPosZ = -600.0f;
+	/*constexpr float kCameraPosY = 300.0f;
+	constexpr float kCameraPosZ = -500.0f;*/
 }
 
 Camera::Camera() :
@@ -41,21 +43,21 @@ void Camera::Update(std::shared_ptr<Player> player)
 	Vec3 offset = { kCameraPosX, kCameraPosY, kCameraPosZ };
 
 #ifdef _DEBUG
-	int inputX, inputY;
-	// 右スティックの入力を取得
-	GetJoypadAnalogInputRight(&inputX, &inputY, DX_INPUT_PAD1);
+	//int inputX, inputY;
+	//// 右スティックの入力を取得
+	//GetJoypadAnalogInputRight(&inputX, &inputY, DX_INPUT_PAD1);
 
-	// カメラの回転をジョイパッドの入力に基づいて更新
-	if (inputX != 0)
-	{
-		m_cameraRotX += inputX * kRotSpeed;
-	}
-	if (inputY != 0)
-	{
-		m_cameraRotY += inputY * kRotSpeed;
-		// 縦回転に制限を付ける
-		m_cameraRotY = std::clamp(m_cameraRotY, -DX_PI_F / 3.0f, DX_PI_F / 5.80f);
-	}
+	//// カメラの回転をジョイパッドの入力に基づいて更新
+	//if (inputX != 0)
+	//{
+	//	m_cameraRotX += inputX * kRotSpeed;
+	//}
+	//if (inputY != 0)
+	//{
+	//	m_cameraRotY += inputY * kRotSpeed;
+	//	// 縦回転に制限を付ける
+	//	m_cameraRotY = std::clamp(m_cameraRotY, -DX_PI_F / 3.0f, DX_PI_F / 5.80f);
+	//}
 #endif
 
 	// カメラの位置を回転に基づいて更新

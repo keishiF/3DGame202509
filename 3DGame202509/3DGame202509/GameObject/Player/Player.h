@@ -101,9 +101,6 @@ private:
 	bool m_isCombo;
 	bool m_isDead;
 
-	float m_maxStamina;
-	float m_stamina;
-
 	int m_attackPower;
 
 	// Œo‰ßƒtƒŒ[ƒ€‚ğ‘ª‚é

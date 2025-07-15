@@ -7,6 +7,7 @@
 #include "Enemy/EnemyBoss.h"
 #include "Camera.h"
 #include "Stage/Stage.h"
+#include "SkyDome.h"
 #include "TransformDataLoader.h"
 
 GameObjectManager::GameObjectManager() :
@@ -73,6 +74,8 @@ void GameObjectManager::Init()
 
 	m_camera = std::make_shared<Camera>();
 	m_camera->SetCamera(m_player);
+	m_skyDome = std::make_shared<SkyDome>();
+	m_skyDome->Init(m_camera);
 }
 
 void GameObjectManager::Update()
@@ -98,6 +101,7 @@ void GameObjectManager::Update()
 	}
 
 	if (m_camera) m_camera->Update(m_player);
+	if (m_skyDome) m_skyDome->Update(m_camera);
 
 	m_isGameOver = m_player->IsDead();
 }
@@ -124,6 +128,8 @@ void GameObjectManager::Draw()
 	{
 		boss->Draw();
 	}
+
+	m_skyDome->Draw();
 }
 
 std::vector<std::shared_ptr<EnemyBase>> GameObjectManager::GetEnemies()

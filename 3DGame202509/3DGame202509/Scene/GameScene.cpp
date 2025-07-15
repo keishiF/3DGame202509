@@ -27,14 +27,9 @@ GameScene::GameScene(SceneController& controller) :
 	m_frame(0),
 	m_fadeFrame(kFadeInterval),
 	m_blinkFrame(0),
-	m_skyModel(-1),
 	m_update(&GameScene::FadeInUpdate),
 	m_draw(&GameScene::FadeDraw)
 {
-	m_skyModel = MV1LoadModel("Data/Model/Sky/Sky_Daylight01.mv1");
-	assert(m_skyModel >= 0);
-	MV1SetScale(m_skyModel, VGet(kSkyModelScale, kSkyModelScale, kSkyModelScale));
-
 	GameObjectManager::Instance().Init();
 
 	m_stageObjectManager = std::make_shared<StageObjectManager>();
@@ -92,16 +87,12 @@ void GameScene::NormalDraw()
 	}
 	printf("frame %d\n", m_frame);
 
-	MV1DrawModel(m_skyModel);
-
 	m_stageObjectManager->Draw();
 	GameObjectManager::Instance().Draw();
 }
 
 void GameScene::FadeDraw()
 {
-	MV1DrawModel(m_skyModel);
-
 	m_stageObjectManager->Draw();
 	GameObjectManager::Instance().Draw();
 

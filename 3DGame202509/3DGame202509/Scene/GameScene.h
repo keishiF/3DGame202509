@@ -25,8 +25,6 @@ private:
 	int m_fadeFrame;
 	int m_blinkFrame;
 
-	int m_skyModel;
-
 	using UpdateFunc_t = void(GameScene::*)();
 	using DrawFunc_t = void(GameScene::*)();
 	UpdateFunc_t m_update;
