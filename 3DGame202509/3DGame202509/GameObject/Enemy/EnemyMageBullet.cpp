@@ -22,9 +22,9 @@ EnemyMageBullet::~EnemyMageBullet()
 {
 }
 
-void EnemyMageBullet::Init(Vec3 myPos, Vec3 playerPos, std::shared_ptr<Physics> physics)
+void EnemyMageBullet::Init(Vec3 myPos, Vec3 playerPos)
 {
-	Collidable::Init(physics);
+	Collidable::Init();
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(myPos);
 

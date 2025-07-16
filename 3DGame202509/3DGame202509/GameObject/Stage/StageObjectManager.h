@@ -5,6 +5,7 @@
 class Mountain;
 class Floor;
 class CollisionWall;
+class physics;
 class StageObjectManager
 {
 public:

@@ -1,8 +1,10 @@
-#include "StageObjectManager.h"
-#include "Mountain.h"
-#include "Floor.h"
 #include "CollisionWall.h"
+#include "Floor.h"
+#include "Mountain.h"
+#include "Physics.h"
+#include "StageObjectManager.h"
 #include "TransformDataLoader.h"
+#include <memory>
 
 StageObjectManager::StageObjectManager()
 {
@@ -43,9 +45,9 @@ void StageObjectManager::Init()
 		}
 		else if (data.name == "Wall")
 		{
-			modelPath = "";
+			modelPath = "a";
 			auto wall = std::make_shared<CollisionWall>();
-			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
+			Vec3 pos = { data.pos.x, data.pos.y + 50.0f, data.pos.z };
 			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
 			Vec3 scale = { data.scale.x, data.scale.y, data.scale.z };
 			wall->Init(modelPath, pos, rot, scale);
@@ -68,5 +70,10 @@ void StageObjectManager::Draw()
 	for (auto& floor : m_floors)
 	{
 		floor->Draw();
+	}
+
+	for (auto& wall : m_walls)
+	{
+		wall->Draw();
 	}
 }

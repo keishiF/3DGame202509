@@ -26,7 +26,7 @@ public:
 	EnemyBase();
 	virtual ~EnemyBase();
 
-	virtual void Init(std::shared_ptr<Physics> physics, Vec3& pos, Vec3& rot, Vec3& scale) abstract;
+	virtual void Init(Vec3& pos, Vec3& rot, Vec3& scale) abstract;
 	virtual void Update(std::shared_ptr<Player> player) abstract;
 	virtual void Draw() abstract;
 

@@ -13,7 +13,7 @@ public:
 	EnemyBossRightAxe();
 	~EnemyBossRightAxe();
 
-	void Init(std::shared_ptr<Physics> physics);
+	void Init();
 	void Update(int model, float currentFrame, const RightAttackTiming& timing);
 	// ë“ã@èÛë‘
 	void IdleUpdate(int model);

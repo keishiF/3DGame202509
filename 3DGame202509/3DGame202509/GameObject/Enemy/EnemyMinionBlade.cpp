@@ -21,9 +21,9 @@ EnemyMinionBlade::~EnemyMinionBlade()
 {
 }
 
-void EnemyMinionBlade::Init(std::shared_ptr<Physics> physics)
+void EnemyMinionBlade::Init()
 {
-	Collidable::Init(physics);
+	Collidable::Init();
 	m_rigidbody.Init();
 
 	m_model = MV1LoadModel("Data/Model/Enemy/Minion/Blade.mv1");

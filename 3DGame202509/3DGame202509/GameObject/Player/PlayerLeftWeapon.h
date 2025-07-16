@@ -14,7 +14,7 @@ public:
 	PlayerLeftWeapon();
 	~PlayerLeftWeapon();
 
-	void Init(std::shared_ptr<Physics> physics);
+	void Init();
 	void Update(int model, float currentFrame, const LeftAttackTiming& timing);
 	// ë“ã@èÛë‘
 	void IdleUpdate(int model);

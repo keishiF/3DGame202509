@@ -10,39 +10,50 @@
 #include <cassert>
 #include <DxLib.h>
 
+Physics::Physics()
+{
+
+}
+
+Physics& Physics::Instance()
+{
+	static Physics instance;
+	return instance;
+}
+
 void Physics::Entry(std::shared_ptr<Collidable> collider)
 {
-	// “o˜^
+	// ç™»éŒ²
 	bool found = (std::find(m_collidables.begin(), m_collidables.end(), collider) != m_collidables.end());
 	if (!found)
 	{
 		m_collidables.emplace_back(collider);
 	}
-	// Šù‚É“o˜^‚³‚ê‚Ä‚½‚çƒGƒ‰[
+	// æ—¢ã«ç™»éŒ²ã•ã‚Œã¦ãŸã‚‰ã‚¨ãƒ©ãƒ¼
 	else
 	{
-		assert(0 && "w’è‚Ìcollidable‚Í“o˜^Ï‚Å‚·B");
+		//assert(0 && "æŒ‡å®šã®collidableã¯ç™»éŒ²æ¸ˆã§ã™ã€‚");
 	}
 }
 
 void Physics::Exit(std::shared_ptr<Collidable> collider)
 {
-	// “o˜^‰ğœ
+	// ç™»éŒ²è§£é™¤
 	bool found = (std::find(m_collidables.begin(), m_collidables.end(), collider) != m_collidables.end());
 	if (found)
 	{
 		m_collidables.remove(collider);
 	}
-	// “o˜^‚³‚ê‚Ä‚È‚©‚Á‚½‚çƒGƒ‰[
+	// ç™»éŒ²ã•ã‚Œã¦ãªã‹ã£ãŸã‚‰ã‚¨ãƒ©ãƒ¼
 	else
 	{
-		assert(0 && "w’è‚Ìcollidable‚ª“o˜^‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+		//assert(0 && "æŒ‡å®šã®collidableãŒç™»éŒ²ã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
 	}
 }
 
 void Physics::Update()
 {
-	//‰¼ˆ—
+	//ä»®å‡¦ç†
 	for (auto& item : m_collidables)
 	{
 		auto pos = item->m_rigidbody.GetPos();
@@ -65,16 +76,16 @@ void Physics::Update()
 		}
 	}
 
-	//ˆÊ’uC³
+	//ä½ç½®ä¿®æ­£
 	FixPosition();
 }
 
 void Physics::DebugDraw()
 {
-	//“–‚½‚è”»’è‚Ì•`‰æ‚ğs‚¤
+	//å½“ãŸã‚Šåˆ¤å®šã®æç”»ã‚’è¡Œã†
 	for (auto& item : m_collidables)
 	{
-		// “–‚½‚è”»’è‚ªƒIƒt‚É‚È‚Á‚Ä‚¢‚é‚à‚Ì‚Í–³‹‚·‚é
+		// å½“ãŸã‚Šåˆ¤å®šãŒã‚ªãƒ•ã«ãªã£ã¦ã„ã‚‹ã‚‚ã®ã¯ç„¡è¦–ã™ã‚‹
 		if (!item->IsActive()) continue;
 
 		if (item->m_colliderData->GetKind() == ColliderData::Kind::Capsule)
@@ -98,22 +109,22 @@ void Physics::FixPosition()
 {
 	for (auto& item : m_collidables)
 	{
-		// Pos‚ğXV‚·‚é‚Ì‚ÅAvelocity‚à‚»‚±‚ÉˆÚ“®‚·‚évelocity‚ÉC³
+		// Posã‚’æ›´æ–°ã™ã‚‹ã®ã§ã€velocityã‚‚ãã“ã«ç§»å‹•ã™ã‚‹velocityã«ä¿®æ­£
 		Vec3 toFixedPos = item->m_nextPos - item->m_rigidbody.GetPos();
 		Vec3 nextPos = item->m_rigidbody.GetPos() + toFixedPos;
 
 		item->m_rigidbody.SetVelo(toFixedPos);
-		// ˆÊ’uŠm’è
+		// ä½ç½®ç¢ºå®š
 		item->m_rigidbody.SetPos(nextPos);
 
-		//“–‚½‚è”»’è‚ªƒJƒvƒZƒ‹‚¾‚Á‚½‚ç
+		//å½“ãŸã‚Šåˆ¤å®šãŒã‚«ãƒ—ã‚»ãƒ«ã ã£ãŸã‚‰
 		if (item->m_colliderData->GetKind() == ColliderData::Kind::Capsule)
 		{
 			auto capsuleCol = std::dynamic_pointer_cast<CapsuleColliderData>(item->m_colliderData);
-			//L‚Ñ‚éƒJƒvƒZƒ‹‚©‚Ç‚¤‚©æ“¾‚·‚é
+			//ä¼¸ã³ã‚‹ã‚«ãƒ—ã‚»ãƒ«ã‹ã©ã†ã‹å–å¾—ã™ã‚‹
 			if (!capsuleCol->m_isStartPos)
 			{
-				//L‚Ñ‚È‚¢ƒJƒvƒZƒ‹‚¾‚Á‚½‚ç‰ŠúˆÊ’u‚ğˆê‚É“®‚©‚·
+				//ä¼¸ã³ãªã„ã‚«ãƒ—ã‚»ãƒ«ã ã£ãŸã‚‰åˆæœŸä½ç½®ã‚’ä¸€ç·’ã«å‹•ã‹ã™
 				capsuleCol->m_startPos = item->m_nextPos;
 			}
 		}
@@ -122,13 +133,13 @@ void Physics::FixPosition()
 
 void Physics::FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const
 {
-	// “–‚½‚è”»’è‚ªƒIƒt‚É‚È‚Á‚Ä‚¢‚é‚à‚Ì‚Í–³‹‚·‚é
+	// å½“ãŸã‚Šåˆ¤å®šãŒã‚ªãƒ•ã«ãªã£ã¦ã„ã‚‹ã‚‚ã®ã¯ç„¡è¦–ã™ã‚‹
 	if (!primary->IsActive() || !secondary->IsActive()) return;
 
 	auto primaryKind   = primary->m_colliderData->GetKind();
 	auto secondaryKind = secondary->m_colliderData->GetKind();
 
-	// ‹…“¯m‚ÌˆÊ’u•â³
+	// çƒåŒå£«ã®ä½ç½®è£œæ­£
 	if (primaryKind == ColliderData::Kind::Sphere && secondaryKind == ColliderData::Kind::Sphere)
 	{
 		Vec3 primaryToSecondary = secondary->m_nextPos - primary->m_nextPos;
@@ -141,29 +152,79 @@ void Physics::FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_p
 		Vec3 fixedPos = primary->m_nextPos + primaryToNewSecondaryPos;
 		secondary->m_nextPos = fixedPos;
 	}
-	// ƒ{ƒbƒNƒX‚ÆƒJƒvƒZƒ‹‚ÌˆÊ’u•â³
+	// ãƒœãƒƒã‚¯ã‚¹ã¨ã‚«ãƒ—ã‚»ãƒ«ã®ä½ç½®è£œæ­£
 	else if (primaryKind == ColliderData::Kind::Box && secondaryKind == ColliderData::Kind::Capsule ||
 		     primaryKind == ColliderData::Kind::Capsule && secondaryKind == ColliderData::Kind::Box)
 	{
+		std::shared_ptr<Collidable> boxCollider;
+		std::shared_ptr<Collidable> capsuleCollider;
+		bool isPrimaryBox = primaryKind == ColliderData::Kind::Box;
+		if (isPrimaryBox)
+		{
+			boxCollider = primary;
+			capsuleCollider = secondary;
+		}
+		else
+		{
+			boxCollider = secondary;
+			capsuleCollider = primary;
+		}
+		
+		auto boxData = std::dynamic_pointer_cast<BoxColliderData>(boxCollider->m_colliderData);
+		auto capsuleData = std::dynamic_pointer_cast
+		<CapsuleColliderData>(capsuleCollider->m_colliderData);
+		// --- å½“ãŸã‚Šåˆ¤å®šã¨ã»ã¼åŒã˜è¨ˆç®— ---
+		Vec3 boxCenter = (boxData->m_min + boxData->m_max) * 0.5f;
+		Vec3 closestPointOnSegment;
+		Vec3 dummyClosestPoint;
+		SegmentClosestPoint(capsuleCollider->m_nextPos, capsuleData->m_startPos, boxCenter, boxCenter, &closestPointOnSegment, &dummyClosestPoint);
+		
+		Vec3 closestPointOnBox = closestPointOnSegment;
+		closestPointOnBox.x = std::clamp(closestPointOnBox.x, boxData->m_min.x, boxData->m_max.x);
+		closestPointOnBox.y = std::clamp(closestPointOnBox.y, boxData->m_min.y, boxData->m_max.y);
+		closestPointOnBox.z = std::clamp(closestPointOnBox.z, boxData->m_min.z, boxData->m_max.z);
+		
+		// --- æŠ¼ã—æˆ»ã—è¨ˆç®— ---
+		Vec3 penetrationVec = closestPointOnSegment - closestPointOnBox;
+		float dist = penetrationVec.Length();
+		penetrationVec.Normalize();
+		
+		float penetrationDepth = capsuleData->m_radius - dist;
+		// penetrationDepth > 0 ã®å ´åˆã®ã¿æŠ¼ã—å‡ºã™
+		if (penetrationDepth > 0)
+		{
+			// primaryãŒãƒœãƒƒã‚¯ã‚¹ã‹ã‚«ãƒ—ã‚»ãƒ«ã‹ã«ã‚ˆã£ã¦ã€æŠ¼ã—å‡ºã™ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å¤‰ãˆã‚‹
+			if (isPrimaryBox)
+			{
+				// secondary (ã‚«ãƒ—ã‚»ãƒ«) ã‚’æŠ¼ã—å‡ºã™
+				secondary->m_nextPos += penetrationVec * penetrationDepth;
+			}
+		}
+		else
+		{
+			// secondary (ãƒœãƒƒã‚¯ã‚¹) ã‚’æŠ¼ã—å‡ºã™
+			// ãƒœãƒƒã‚¯ã‚¹ã®æŠ¼ã—å‡ºã—ã¯å˜ç´”ã§ã¯ãªã„ãŒã€ã“ã“ã§ã¯ã‚«ãƒ—ã‚»ãƒ«ã¨ã¯é€†æ–¹å‘ã«æŠ¼ã—å‡ºã™
+			primary->m_nextPos -= penetrationVec * penetrationDepth;
+		}
 	}
-	// ƒJƒvƒZƒ‹‚ÆƒJƒvƒZƒ‹‚ÌˆÊ’u•â³
+	// ã‚«ãƒ—ã‚»ãƒ«ã¨ã‚«ãƒ—ã‚»ãƒ«ã®ä½ç½®è£œæ­£
 	else if (primaryKind == ColliderData::Kind::Capsule && secondaryKind == ColliderData::Kind::Capsule)
 	{
 		auto primaryColliderData = dynamic_pointer_cast<CapsuleColliderData>(primary->m_colliderData);
 		auto secondaryColliderData = dynamic_pointer_cast<CapsuleColliderData>(secondary->m_colliderData);
 
-		// ƒJƒvƒZƒ‹‚Ìü•ª‚Ìn“_‚ÆI“_
+		// ã‚«ãƒ—ã‚»ãƒ«ã®ç·šåˆ†ã®å§‹ç‚¹ã¨çµ‚ç‚¹
 		Vec3 primaryStart   = primary->m_nextPos;
 		Vec3 primaryEnd     = primaryColliderData->m_startPos;
 
 		Vec3 secondaryStart = secondary->m_nextPos;
 		Vec3 secondaryEnd   = secondaryColliderData->m_startPos;
 
-		// ü•ª“¯m‚ÌÅ‹ßÚ“_‚ğ‹‚ß‚é
+		// ç·šåˆ†åŒå£«ã®æœ€è¿‘æ¥ç‚¹ã‚’æ±‚ã‚ã‚‹
 		Vec3 closestPointA, closestPointB;
 		SegmentClosestPoint(primaryStart, primaryEnd, secondaryStart, secondaryEnd, &closestPointA, &closestPointB);
 
-		// Å‹ßÚ“_ŠÔ‚Ì‹——£‚Æ•ûŒü
+		// æœ€è¿‘æ¥ç‚¹é–“ã®è·é›¢ã¨æ–¹å‘
 		Vec3 closestDir = closestPointB - closestPointA;
 		float dist = closestDir.Length();
 
@@ -190,13 +251,13 @@ void Physics::FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_p
 
 std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
 {
-	//“–‚½‚Á‚Ä‚¢‚é‚à‚Ì‚ğ“ü‚ê‚é”z—ñ
+	//å½“ãŸã£ã¦ã„ã‚‹ã‚‚ã®ã‚’å…¥ã‚Œã‚‹é…åˆ—
 	std::vector<OnCollideInfo> onCollideInfo;
 	for (auto& first : m_collidables)
 	{
 		for (auto& second : m_collidables)
 		{
-			//“–‚½‚è”»’èƒ`ƒFƒbƒN
+			//å½“ãŸã‚Šåˆ¤å®šãƒã‚§ãƒƒã‚¯
 			if (IsCollide(first, second))
 			{
 				auto priority1 = first->GetPriority();
@@ -214,12 +275,12 @@ std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
 					FixNextPosition(primary, secondary);
 				}
 
-				//ˆê“x“ü‚ê‚½‚à‚Ì‚ğ“ñ“x“ü‚ê‚È‚¢‚æ‚¤‚Éƒ`ƒFƒbƒN
+				//ä¸€åº¦å…¥ã‚ŒãŸã‚‚ã®ã‚’äºŒåº¦å…¥ã‚Œãªã„ã‚ˆã†ã«ãƒã‚§ãƒƒã‚¯
 				bool hasFirstColData = false;
 				bool hasSecondColData = false;
 				for (auto& item : onCollideInfo)
 				{
-					//‚·‚Å‚É“ü‚ê‚Ä‚¢‚½‚ç’e‚­
+					//ã™ã§ã«å…¥ã‚Œã¦ã„ãŸã‚‰å¼¾ã
 					if (item.owner == primary)
 					{
 						hasFirstColData = true;
@@ -229,7 +290,7 @@ std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
 						hasSecondColData = true;
 					}
 				}
-				//’e‚©‚ê‚È‚©‚Á‚½ê‡“–‚½‚Á‚½‚à‚ÌƒŠƒXƒg‚É“ü‚ê‚é
+				//å¼¾ã‹ã‚Œãªã‹ã£ãŸå ´åˆå½“ãŸã£ãŸã‚‚ã®ãƒªã‚¹ãƒˆã«å…¥ã‚Œã‚‹
 				if (!hasFirstColData)
 				{
 					onCollideInfo.push_back({ first,second });
@@ -246,33 +307,33 @@ std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
 
 bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Collidable> second) const
 {
-	// “–‚½‚è”»’è‚ªƒIƒt‚É‚È‚Á‚Ä‚¢‚é‚à‚Ì‚Í–³‹‚·‚é
+	// å½“ãŸã‚Šåˆ¤å®šãŒã‚ªãƒ•ã«ãªã£ã¦ã„ã‚‹ã‚‚ã®ã¯ç„¡è¦–ã™ã‚‹
 	if (!first->IsActive() || !second->IsActive()) return false;
 
-	// “Á’è‚Ìƒ^ƒO“¯m‚Å‚Í“–‚½‚è”»’è‚ğæ‚ç‚¸‚ÉƒXƒLƒbƒv
+	// ç‰¹å®šã®ã‚¿ã‚°åŒå£«ã§ã¯å½“ãŸã‚Šåˆ¤å®šã‚’å–ã‚‰ãšã«ã‚¹ã‚­ãƒƒãƒ—
 	if (SkipCheckCollide(first, second))
 	{
 		return false;
 	}
 
-	//‘æˆê‚Ì“–‚½‚è”»’è‚Æ‘æ“ñ‚Ì“–‚½‚è”»’è‚ª‚¨‚È‚¶‚à‚Ì‚Å‚È‚¯‚ê‚Î
+	//ç¬¬ä¸€ã®å½“ãŸã‚Šåˆ¤å®šã¨ç¬¬äºŒã®å½“ãŸã‚Šåˆ¤å®šãŒãŠãªã˜ã‚‚ã®ã§ãªã‘ã‚Œã°
 	if (first != second)
 	{
-		//“–‚½‚è”»’è‚Ìí—Ş‚ğæ“¾
+		//å½“ãŸã‚Šåˆ¤å®šã®ç¨®é¡ã‚’å–å¾—
 		ColliderData::Kind firstKind = first->m_colliderData->GetKind();
 		ColliderData::Kind secondKind = second->m_colliderData->GetKind();
 
-		//‹…‚Ç‚¤‚µ‚Ì“–‚½‚è”»’è
+		//çƒã©ã†ã—ã®å½“ãŸã‚Šåˆ¤å®š
 		if (firstKind == ColliderData::Kind::Sphere && secondKind == ColliderData::Kind::Sphere)
 		{
-			//“–‚½‚è”»’è‚ğ‹…‚Éƒ_ƒEƒ“ƒLƒƒƒXƒg‚·‚é
+			//å½“ãŸã‚Šåˆ¤å®šã‚’çƒã«ãƒ€ã‚¦ãƒ³ã‚­ãƒ£ã‚¹ãƒˆã™ã‚‹
 			auto firstCol = std::dynamic_pointer_cast<SphereColliderData>(first->m_colliderData);
 			auto secondCol = std::dynamic_pointer_cast<SphereColliderData>(second->m_colliderData);
 
-			//“–‚½‚è”»’è‚Ì‹——£‚ğ‹‚ß‚é
+			//å½“ãŸã‚Šåˆ¤å®šã®è·é›¢ã‚’æ±‚ã‚ã‚‹
 			float distance = (first->m_nextPos - second->m_nextPos).Length();
 
-			//‹…‚Ì‘å‚«‚³‚ğ‡‚í‚¹‚½‚à‚Ì‚æ‚è‚à‹——£‚ª’Z‚¯‚ê‚Î‚Ô‚Â‚©‚Á‚Ä‚¢‚é
+			//çƒã®å¤§ãã•ã‚’åˆã‚ã›ãŸã‚‚ã®ã‚ˆã‚Šã‚‚è·é›¢ãŒçŸ­ã‘ã‚Œã°ã¶ã¤ã‹ã£ã¦ã„ã‚‹
 			if (distance < firstCol->m_radius + secondCol->m_radius)
 			{
 				return true;
@@ -282,14 +343,14 @@ bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Colli
 				return false;
 			}
 		}
-		//ƒJƒvƒZƒ‹“¯m‚Ì“–‚½‚è”»’è
+		//ã‚«ãƒ—ã‚»ãƒ«åŒå£«ã®å½“ãŸã‚Šåˆ¤å®š
 		else if (firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Capsule)
 		{
-			//“–‚½‚è”»’è‚ğƒJƒvƒZƒ‹‚Éƒ_ƒEƒ“ƒLƒƒƒXƒg‚·‚é
+			//å½“ãŸã‚Šåˆ¤å®šã‚’ã‚«ãƒ—ã‚»ãƒ«ã«ãƒ€ã‚¦ãƒ³ã‚­ãƒ£ã‚¹ãƒˆã™ã‚‹
 			auto firstCol = std::dynamic_pointer_cast<CapsuleColliderData>(first->m_colliderData);
 			auto secondCol = std::dynamic_pointer_cast<CapsuleColliderData>(second->m_colliderData);
 
-			//ƒJƒvƒZƒ‹“¯m‚ÌÅ’Z‹——£
+			//ã‚«ãƒ—ã‚»ãƒ«åŒå£«ã®æœ€çŸ­è·é›¢
 			float distance = Segment_Segment_MinLength(first->m_nextPos.ToDxVECTOR(), firstCol->m_startPos.ToDxVECTOR(),
 				second->m_nextPos.ToDxVECTOR(), secondCol->m_startPos.ToDxVECTOR());
 
@@ -302,23 +363,23 @@ bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Colli
 				return false;
 			}
 		}
-		//‹…‚ÆƒJƒvƒZƒ‹‚Ì“–‚½‚è”»’è
+		//çƒã¨ã‚«ãƒ—ã‚»ãƒ«ã®å½“ãŸã‚Šåˆ¤å®š
 		else if (firstKind == ColliderData::Kind::Sphere && secondKind == ColliderData::Kind::Capsule ||
 			firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Sphere)
 		{
-			//‹…‚ÆƒJƒvƒZƒ‹‚ÌƒRƒ‰ƒCƒ_[ƒf[ƒ^ì¬
+			//çƒã¨ã‚«ãƒ—ã‚»ãƒ«ã®ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ãƒ‡ãƒ¼ã‚¿ä½œæˆ
 			std::shared_ptr<ColliderData> sphereDataBase;
 			std::shared_ptr<ColliderData> capsuleDataBase;
 			float distance;
-			//‚Ç‚¿‚ç‚ªƒJƒvƒZƒ‹‚È‚Ì‚©‹…‚È‚Ì‚©”»•Ê‚µ‚Ä‚©‚çƒf[ƒ^‚ğ“ü‚ê‚é
+			//ã©ã¡ã‚‰ãŒã‚«ãƒ—ã‚»ãƒ«ãªã®ã‹çƒãªã®ã‹åˆ¤åˆ¥ã—ã¦ã‹ã‚‰ãƒ‡ãƒ¼ã‚¿ã‚’å…¥ã‚Œã‚‹
 			if (firstKind == ColliderData::Kind::Sphere)
 			{
 				sphereDataBase = first->m_colliderData;
 				capsuleDataBase = second->m_colliderData;
 
-				//ƒJƒvƒZƒ‹‚Ìü•ª‚Ìƒf[ƒ^‚ğg‚¤‚½‚ß‚Éƒ_ƒEƒ“ƒLƒƒƒXƒg
+				//ã‚«ãƒ—ã‚»ãƒ«ã®ç·šåˆ†ã®ãƒ‡ãƒ¼ã‚¿ã‚’ä½¿ã†ãŸã‚ã«ãƒ€ã‚¦ãƒ³ã‚­ãƒ£ã‚¹ãƒˆ
 				auto capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(capsuleDataBase);
-				//ü•ª‚Æ“_‚ÌÅ‹ß‹——£‚ğ‹‚ß‚é
+				//ç·šåˆ†ã¨ç‚¹ã®æœ€è¿‘è·é›¢ã‚’æ±‚ã‚ã‚‹
 				distance = Segment_Point_MinLength(second->m_nextPos.ToDxVECTOR(),
 					capsuleData->m_startPos.ToDxVECTOR(), first->m_nextPos.ToDxVECTOR());
 			}
@@ -326,17 +387,17 @@ bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Colli
 			{
 				capsuleDataBase = first->m_colliderData;
 				sphereDataBase = second->m_colliderData;
-				//ƒJƒvƒZƒ‹‚Ìü•ª‚Ìƒf[ƒ^‚ğg‚¤‚½‚ß‚Éƒ_ƒEƒ“ƒLƒƒƒXƒg
+				//ã‚«ãƒ—ã‚»ãƒ«ã®ç·šåˆ†ã®ãƒ‡ãƒ¼ã‚¿ã‚’ä½¿ã†ãŸã‚ã«ãƒ€ã‚¦ãƒ³ã‚­ãƒ£ã‚¹ãƒˆ
 				auto capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(capsuleDataBase);
-				//ü•ª‚Æ“_‚ÌÅ‹ß‹——£‚ğ‹‚ß‚é
+				//ç·šåˆ†ã¨ç‚¹ã®æœ€è¿‘è·é›¢ã‚’æ±‚ã‚ã‚‹
 				distance = Segment_Point_MinLength(first->m_nextPos.ToDxVECTOR(),
 					capsuleData->m_startPos.ToDxVECTOR(), second->m_nextPos.ToDxVECTOR());
 			}
-			//ƒ_ƒEƒ“ƒLƒƒƒXƒg
+			//ãƒ€ã‚¦ãƒ³ã‚­ãƒ£ã‚¹ãƒˆ
 			auto sphereData = std::dynamic_pointer_cast<SphereColliderData>(sphereDataBase);
 			auto capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(capsuleDataBase);
 
-			//‰~‚ÆƒJƒvƒZƒ‹‚Ì”¼Œa‚æ‚è‚à‰~‚ÆƒJƒvƒZƒ‹‚Ì‹——£‚ª‹ß‚¯‚ê‚Î“–‚½‚Á‚Ä‚¢‚é
+			//å††ã¨ã‚«ãƒ—ã‚»ãƒ«ã®åŠå¾„ã‚ˆã‚Šã‚‚å††ã¨ã‚«ãƒ—ã‚»ãƒ«ã®è·é›¢ãŒè¿‘ã‘ã‚Œã°å½“ãŸã£ã¦ã„ã‚‹
 			if (distance < sphereData->m_radius + capsuleData->m_radius)
 			{
 				return true;
@@ -348,10 +409,51 @@ bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Colli
 
 
 		}
-		// ƒ{ƒbƒNƒX‚ÆƒJƒvƒZƒ‹‚Ì“–‚½‚è”»’è
+		// ãƒœãƒƒã‚¯ã‚¹ã¨ã‚«ãƒ—ã‚»ãƒ«ã®å½“ãŸã‚Šåˆ¤å®š
 		else if (firstKind == ColliderData::Kind::Box && secondKind == ColliderData::Kind::Capsule ||
 			firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Box)
 		{
+			std::shared_ptr<Collidable> boxCollider;
+			std::shared_ptr<Collidable> capsuleCollider;
+			if (firstKind == ColliderData::Kind::Box)
+			{
+				boxCollider = first;
+				capsuleCollider = second;
+			}
+			else
+			{
+				boxCollider = second;
+				capsuleCollider = first;
+			}
+			
+			auto boxData = std::dynamic_pointer_cast<BoxColliderData>(boxCollider->m_colliderData);
+			auto capsuleData = std::dynamic_pointer_cast
+			< CapsuleColliderData > (capsuleCollider->m_colliderData);
+			// 1. ã‚«ãƒ—ã‚»ãƒ«ã®ä¸­å¿ƒç·šä¸Šã§ã€ãƒœãƒƒã‚¯ã‚¹ã®ä¸­å¿ƒã«æœ€ã‚‚è¿‘ã„ç‚¹Pã‚’æ±‚ã‚ã‚‹
+			Vec3 boxCenter = (boxData->m_min + boxData->m_max) * 0.5f;
+			Vec3 closestPointOnSegment;
+			Vec3 dummyClosestPoint;
+			// (SegmentClosestPointé–¢æ•°ã‚’ç‚¹ã¨ç·šåˆ†ã®æœ€çŸ­è·é›¢è¨ˆç®—ã«æµç”¨)
+			// â€»ã“ã®é–¢æ•°ã¯ç·šåˆ†ã¨ç·šåˆ†ã®æœ€çŸ­è·é›¢ã‚’æ±‚ã‚ã‚‹ã‚‚ã®ãªã®ã§ã€å³å¯†ã«ã¯ç‚¹ã¨ç·šåˆ†ã®æœ€çŸ­è·é›¢é–¢æ•°ã‚’åˆ¥é€”ç”¨æ„ã™ã¹ãã§ã™ãŒã€
+			// ã“ã“ã§ã¯ç‰‡æ–¹ã®ç·šåˆ†ã‚’ç‚¹ã¨ã—ã¦æ‰±ã†ã“ã¨ã§ä»£ç”¨ã—ã¾ã™ã€‚
+			SegmentClosestPoint(capsuleCollider->m_nextPos, capsuleData->m_startPos, boxCenter, boxCenter,
+			&closestPointOnSegment, &dummyClosestPoint);
+			// 2. ç‚¹Pã‚’AABBå†…ã«ã‚¯ãƒ©ãƒ³ãƒ—ã—ã¦ã€ãƒœãƒƒã‚¯ã‚¹è¡¨é¢ä¸Šã®æœ€è¿‘æ¥ç‚¹Qã‚’æ±‚ã‚ã‚‹
+			Vec3 closestPointOnBox = closestPointOnSegment;
+			closestPointOnBox.x = std::clamp(closestPointOnBox.x, boxData->m_min.x, boxData->m_max.x);
+			closestPointOnBox.y = std::clamp(closestPointOnBox.y, boxData->m_min.y, boxData->m_max.y);
+			closestPointOnBox.z = std::clamp(closestPointOnBox.z, boxData->m_min.z, boxData->m_max.z);
+			// 3. 2ç‚¹é–“ã®è·é›¢ã‚’è¨ˆç®—
+			float distSq = (closestPointOnSegment - closestPointOnBox).SqrLength();
+			// 4. è·é›¢ãŒã‚«ãƒ—ã‚»ãƒ«ã®åŠå¾„ã‚ˆã‚Šå°ã•ã„ã‹åˆ¤å®š
+			if (distSq < capsuleData->m_radius * capsuleData->m_radius)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 	}
 	return false;
@@ -394,9 +496,13 @@ bool Physics::ShouldCallOnCollide(ObjectTag tagA, ObjectTag tagB) const
 	if ((tagA == ObjectTag::Player && tagB == ObjectTag::Enemy)  ||
 		(tagA == ObjectTag::Enemy  && tagB == ObjectTag::Player) ||
 		(tagA == ObjectTag::Player && tagB == ObjectTag::Boss)   ||
-		(tagA == ObjectTag::Boss   && tagB == ObjectTag::Player))
+		(tagA == ObjectTag::Boss   && tagB == ObjectTag::Player) ||
+		(tagA == ObjectTag::Stage  && tagB == ObjectTag::Player) ||
+		(tagA == ObjectTag::Player && tagB == ObjectTag::Stage)  ||
+		(tagA == ObjectTag::Stage  && tagB == ObjectTag::Enemy)  ||
+		(tagA == ObjectTag::Enemy  && tagB == ObjectTag::Stage))
 	{
-		// ƒvƒŒƒCƒ„[‚Æ“G‚Í•¨—Õ“Ëi‰Ÿ‚µ–ß‚µj‚Í‚·‚é‚ªAOnCollide ‚ÍŒÄ‚Î‚È‚¢
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨æ•µã¯ç‰©ç†è¡çªï¼ˆæŠ¼ã—æˆ»ã—ï¼‰ã¯ã™ã‚‹ãŒã€OnCollide ã¯å‘¼ã°ãªã„
 		return false;
 	}
 
@@ -407,60 +513,60 @@ void Physics::SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,
 	Vec3& segBStart, Vec3& segBEnd,
 	Vec3* closestPtA, Vec3* closestPtB) const
 {
-	// ü•ªA‚Ì•ûŒüƒxƒNƒgƒ‹
+	// ç·šåˆ†Aã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vec3 segADir = segAEnd - segAStart;
-	// ü•ªB‚Ì•ûŒüƒxƒNƒgƒ‹
+	// ç·šåˆ†Bã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vec3 segBDir = segBEnd - segBStart;
-	// ü•ªA‚Ìn“_‚©‚çü•ªB‚Ìn“_
+	// ç·šåˆ†Aã®å§‹ç‚¹ã‹ã‚‰ç·šåˆ†Bã®å§‹ç‚¹
 	Vec3 startDiff = segAStart -segBStart;
 
-	// ü•ªA‚Ì’·‚³2æ
+	// ç·šåˆ†Aã®é•·ã•2ä¹—
 	float segASqLen = segADir.Dot(segADir);
-	// ü•ªB‚Ì’·‚³2æ
+	// ç·šåˆ†Bã®é•·ã•2ä¹—
 	float segBSqLen = segBDir.Dot(segBDir);
-	// Bn“_¨An“_ƒxƒNƒgƒ‹‚ªAü•ªB‚É‚Ç‚ê‚¾‚¯‰ˆ‚Á‚Ä‚¢‚é‚©
+	// Bå§‹ç‚¹â†’Aå§‹ç‚¹ãƒ™ã‚¯ãƒˆãƒ«ãŒã€ç·šåˆ†Bã«ã©ã‚Œã ã‘æ²¿ã£ã¦ã„ã‚‹ã‹
 	float segBDotDiff = segBDir.Dot(startDiff);
 
 	float paramA, paramB;
 
-	// —¼•û‚Ìü•ª‚ª“_‚Ìê‡
+	// ä¸¡æ–¹ã®ç·šåˆ†ãŒç‚¹ã®å ´åˆ
 	if (segASqLen <= 0.000001f && segBSqLen <= 0.000001f)
 	{
-		// ‘o•û‚Ìn“_‚ğÅ‹ßÚ“_‚É‚·‚é
+		// åŒæ–¹ã®å§‹ç‚¹ã‚’æœ€è¿‘æ¥ç‚¹ã«ã™ã‚‹
 		*closestPtA = segAStart;
 		*closestPtB = segBStart;
 		return;
 	}
 
-	// ü•ªA‚ª“_‚Ìê‡
+	// ç·šåˆ†AãŒç‚¹ã®å ´åˆ
 	if (segASqLen <= 0.000001f)
 	{
 		paramA = 0.0f;
-		// ü•ªBã‚ÌÅ‹ßÚ“_‚ÌŒvZ‚ğ‚µA0~1‚É§ŒÀ
+		// ç·šåˆ†Bä¸Šã®æœ€è¿‘æ¥ç‚¹ã®è¨ˆç®—ã‚’ã—ã€0~1ã«åˆ¶é™
 		paramB = segBDotDiff / segBSqLen;
 		paramB = std::clamp(paramB, 0.0f, 1.0f);
 	}
 	else
 	{
-		// A‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ÆAn“_ABn“_‚Ì“àÏ
+		// Aã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã¨Aå§‹ç‚¹ã€Bå§‹ç‚¹ã®å†…ç©
 		float segADotDiff = segADir.Dot(startDiff);
 
-		// ü•ªB‚ª“_‚Ìê‡
+		// ç·šåˆ†BãŒç‚¹ã®å ´åˆ
 		if (segBSqLen <= 0.000001f)
 		{
 			paramB = 0.0f;
-			// ü•ªAã‚ÌÅ‹ßÚ“_‚ÌŒvZ‚ğ‚µA0~1‚É§ŒÀ
+			// ç·šåˆ†Aä¸Šã®æœ€è¿‘æ¥ç‚¹ã®è¨ˆç®—ã‚’ã—ã€0~1ã«åˆ¶é™
 			paramA = -segADotDiff / segASqLen;
 			paramA = std::clamp(paramA, 0.0f, 1.0f);
 		}
 		else
 		{
-			// A‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ÆB‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚Ì“àÏ
+			// Aã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã¨Bã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã®å†…ç©
 			float segABDot = segADir.Dot(segBDir);
-			// “ñ‚Â‚Ìü•ª‚ª‚Ç‚ê‚¾‚¯•½s‚¶‚á‚È‚¢‚©(0‚É‹ß‚¢‚Ù‚Ç•½s)
+			// äºŒã¤ã®ç·šåˆ†ãŒã©ã‚Œã ã‘å¹³è¡Œã˜ã‚ƒãªã„ã‹(0ã«è¿‘ã„ã»ã©å¹³è¡Œ)
 			float segmentParallel = segASqLen * segBSqLen - segABDot * segABDot;
 
-			// •½s‚¶‚á‚È‚¢ê‡
+			// å¹³è¡Œã˜ã‚ƒãªã„å ´åˆ
 			if (segmentParallel != 0.0f)
 			{
 				paramA = (segABDot * segBDotDiff - segADotDiff * segBSqLen) / segmentParallel;
@@ -468,14 +574,14 @@ void Physics::SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,
 			}
 			else
 			{
-				// •½s‚Ìê‡‚ÍAn“_‚ğ‰¼‚ÌÅ‹ßÚ“_‚Æ‚·‚é
+				// å¹³è¡Œã®å ´åˆã¯Aå§‹ç‚¹ã‚’ä»®ã®æœ€è¿‘æ¥ç‚¹ã¨ã™ã‚‹
 				paramA = 0.0f;
 			}
 
-			// ü•ªBã‚ÌÅ‹ßÚ“_‚ÌŒvZ
+			// ç·šåˆ†Bä¸Šã®æœ€è¿‘æ¥ç‚¹ã®è¨ˆç®—
 			paramB = (segABDot * paramA + segBDotDiff) / segBSqLen;
 
-			// ü•ªB‚ÌŠO‚É‚¢‚éê‡A•â³‚µ‚ÄA‘¤‚ğ’²®
+			// ç·šåˆ†Bã®å¤–ã«ã„ã‚‹å ´åˆã€è£œæ­£ã—ã¦Aå´ã‚’èª¿æ•´
 			if (paramB < 0.0f)
 			{
 				paramB = 0.0f;
@@ -489,7 +595,7 @@ void Physics::SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,
 		}
 	}
 
-	// ü•ªã‚ÌÅ‹ßÚ“_À•W‚ğ‘ã“ü
+	// ç·šåˆ†ä¸Šã®æœ€è¿‘æ¥ç‚¹åº§æ¨™ã‚’ä»£å…¥
 	*closestPtA = segAStart + (segADir * paramA);
 	*closestPtB = segBStart + (segBDir * paramB);
 }

@@ -85,7 +85,9 @@ namespace
 	};
 }
 
-EnemyBoss::EnemyBoss()
+EnemyBoss::EnemyBoss() :
+	m_isDead(false),
+	m_walkFrame(0.0f)
 {
 }
 
@@ -93,9 +95,9 @@ EnemyBoss::~EnemyBoss()
 {
 }
 
-void EnemyBoss::Init(std::shared_ptr<Physics> physics, Vec3& pos, Vec3& rot, Vec3& scale)
+void EnemyBoss::Init(Vec3& pos, Vec3& rot, Vec3& scale)
 {
-	Collidable::Init(physics);
+	Collidable::Init();
 
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
@@ -123,10 +125,10 @@ void EnemyBoss::Init(std::shared_ptr<Physics> physics, Vec3& pos, Vec3& rot, Vec
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, kAnimSpeed, true);
 
 	m_rightWeapon = std::make_shared<EnemyBossRightAxe>();
-	m_rightWeapon->Init(physics);
+	m_rightWeapon->Init();
 
 	m_leftWeapon = std::make_shared<EnemyBossLeftAxe>();
-	m_leftWeapon->Init(physics);
+	m_leftWeapon->Init();
 }
 
 void EnemyBoss::Update(std::shared_ptr<Player> player)
@@ -252,6 +254,9 @@ void EnemyBoss::OnDamage()
 void EnemyBoss::WalkUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Walk));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Walk));
+
 	++m_walkFrame;
 
 	// プレイヤーへの方向ベクトル

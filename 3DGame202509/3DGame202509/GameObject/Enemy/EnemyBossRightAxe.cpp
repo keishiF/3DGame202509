@@ -20,9 +20,9 @@ EnemyBossRightAxe::~EnemyBossRightAxe()
 {
 }
 
-void EnemyBossRightAxe::Init(std::shared_ptr<Physics> physics)
+void EnemyBossRightAxe::Init()
 {
-	Collidable::Init(physics);
+	Collidable::Init();
 	m_rigidbody.Init();
 
 	m_model = MV1LoadModel("Data/Model/Enemy/Boss/Axe.mv1");

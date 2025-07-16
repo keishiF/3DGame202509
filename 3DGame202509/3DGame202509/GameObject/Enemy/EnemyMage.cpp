@@ -62,14 +62,12 @@ EnemyMage::~EnemyMage()
 {
 }
 
-void EnemyMage::Init(std::shared_ptr<Physics> physics, Vec3& pos, Vec3& rot, Vec3& scale)
+void EnemyMage::Init(Vec3& pos, Vec3& rot, Vec3& scale)
 {
-	Collidable::Init(physics);
+	Collidable::Init();
 
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
-
-	m_physics = physics;
 
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	colData->m_startPos = pos;
@@ -164,7 +162,7 @@ void EnemyMage::Update(std::shared_ptr<Player> player)
 	{
 		if (b->IsDead())
 		{
-			b->Final(m_physics);
+			b->Final();
 			return true;
 		}
 		return false;
@@ -182,8 +180,6 @@ void EnemyMage::Draw()
 
 #if _DEBUG
 	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), 10.0f, 16, 0x0000ff, 0x0000ff, true);
-	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_attackRadius, 16, 0xff00ff, 0xff00ff, false);
-
 #endif
 
 	MV1DrawModel(m_charModel);
@@ -418,7 +414,7 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 		Vec3 playerPos = player->GetPos();
 
 		auto bullet = std::make_shared<EnemyMageBullet>();
-		bullet->Init(myPos, playerPos, m_physics);
+		bullet->Init(myPos, playerPos);
 		m_bullets.push_back(bullet);
 	}
 
@@ -468,7 +464,7 @@ void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)
 
 	for (auto& bullet : m_bullets)
 	{
-		bullet->Final(m_physics);
+		bullet->Final();
 	}
 	m_bullets.clear();
 }

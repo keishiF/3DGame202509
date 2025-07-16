@@ -2,7 +2,6 @@
 #include <memory>
 #include <vector>
 
-class Physics;
 class Player;
 class EnemyBase;
 class EnemyMinion;
@@ -31,7 +30,6 @@ public:
 	bool IsGameOver() { return m_isGameOver; }
 
 private:
-	std::shared_ptr<Physics> m_physics;
 	std::shared_ptr<Player> m_player;
 	std::vector<std::shared_ptr<EnemyMinion>>  m_minions;
 	std::vector<std::shared_ptr<EnemyMage>>  m_mages;

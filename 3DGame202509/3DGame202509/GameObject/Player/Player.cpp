@@ -22,12 +22,15 @@ namespace
 	constexpr float kWalkSpeed = 8.5f;
 	constexpr float kRunSpeed  = 17.5f;
 	constexpr float kAttackMoveSpeed = 1.0f;
+	constexpr float kDodgeSpped = 40.0f;
 	// プレイヤーのモデルの拡大値
 	constexpr float kModelScale = 70.0f;
 	// プレイヤーの当たり判定
 	constexpr float kRadius = 45.0f;
 	constexpr float kColScale = 140.0f;
-	constexpr float kAttackOffsetRadius = 175.0f;
+	constexpr float kAttackOffsetRadius = 230.0f;
+
+	constexpr float kLerpT = 0.2f;
 
 	// アニメーション名
 	// 待機
@@ -115,9 +118,9 @@ Player::~Player()
 	MV1DeleteModel(m_charModel);
 }
 
-void Player::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale)
+void Player::Init(Vec3& pos, const Vec3& rot, const Vec3& scale)
 {
-	Collidable::Init(physics);
+	Collidable::Init();
 
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
@@ -136,10 +139,10 @@ void Player::Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, 
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kIdleAnimName, kIdleAnimSpeed, true);
 
 	m_rightWeapon = std::make_shared<PlayerRightWeapon>();
-	m_rightWeapon->Init(physics);
+	m_rightWeapon->Init();
 
 	m_leftWeapon = std::make_shared<PlayerLeftWeapon>();
-	m_leftWeapon->Init(physics);
+	m_leftWeapon->Init();
 }
 
 void Player::Update()
@@ -196,6 +199,11 @@ void Player::Update()
 	Vec3 colPos = m_rigidbody.GetPos();
 	colPos.y += kColScale;
 	colData->m_startPos = colPos;
+
+	VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
+	float angleY = -rotVec.y;
+	m_forward = Vec3(std::sin(angleY), 0.0f, -std::cos(angleY));
+	m_forward.Normalize();
 }
 
 void Player::Draw()
@@ -449,8 +457,7 @@ void Player::WalkUpdate()
 		Quaternion targetRot;
 		targetRot.AngleAxis(angle, axis);
 
-		constexpr float t = 0.25f;
-		m_currentRot = Quaternion::Slerp(m_currentRot, targetRot, t);
+		m_currentRot = Quaternion::Slerp(m_currentRot, targetRot, kLerpT);
 
 		float angleY = m_currentRot.ToEulerY();
 		MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
@@ -480,11 +487,11 @@ void Player::WalkUpdate()
 		ChangeState(PlayerState::Spin);
 	}
 
-	//// Bボタンの入力があれば回避状態に移行する
-	//if (Input::Instance().IsTrigger("B"))
-	//{
-	//	ChangeState(PlayerState::Dodge);
-	//}
+	// Bボタンの入力があれば回避状態に移行する
+	if (Input::Instance().IsTrigger("B"))
+	{
+		ChangeState(PlayerState::Dodge);
+	}
 }
 
 void Player::RunUpdate()
@@ -543,8 +550,7 @@ void Player::RunUpdate()
 		Quaternion targetRot;
 		targetRot.AngleAxis(angle, axis);
 
-		constexpr float t = 0.25f;
-		m_currentRot = Quaternion::Slerp(m_currentRot, targetRot, t);
+		m_currentRot = Quaternion::Slerp(m_currentRot, targetRot, kLerpT);
 
 		float angleY = m_currentRot.ToEulerY();
 		MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
@@ -568,17 +574,20 @@ void Player::RunUpdate()
 		ChangeState(PlayerState::Spin);
 	}
 
-	//// Bボタンの入力があれば回避状態に移行する
-	//if (Input::Instance().IsTrigger("B"))
-	//{
-	//	ChangeState(PlayerState::Dodge);
-	//}
+	// Bボタンの入力があれば回避状態に移行する
+	if (Input::Instance().IsTrigger("B"))
+	{
+		ChangeState(PlayerState::Dodge);
+	}
 }
 
 void Player::ChopUpdate()
 {
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
+
+	++m_attackFrame;
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Chop));
 
 	// 一番近い敵の方向に回転
 	RotateToNearestEnemy(kAttackOffsetRadius);
@@ -596,13 +605,13 @@ void Player::ChopUpdate()
 		MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	}
 
-	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Chop));
-
-	// 1ボタンの入力があれば攻撃状態に移行する
-	if (Input::Instance().IsTrigger("A"))
+	if (m_attackFrame > 16.0f && m_attackFrame < 32.0f)
 	{
-		m_isCombo = true;
+		// 1ボタンの入力があれば攻撃状態に移行する
+		if (Input::Instance().IsTrigger("A"))
+		{
+			m_isCombo = true;
+		}
 	}
 
 	// アニメーションが終了時
@@ -625,7 +634,10 @@ void Player::SliceUpdate()
 {
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
-
+	
+	++m_attackFrame;
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Slice));
+	
 	// 一番近い敵の方向に回転
 	RotateToNearestEnemy(kAttackOffsetRadius);
 
@@ -642,13 +654,13 @@ void Player::SliceUpdate()
 		MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	}
 
-	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Slice));
-
-	// 1ボタンの入力があれば攻撃状態に移行する
-	if (Input::Instance().IsTrigger("A"))
+	if (m_attackFrame > 15.0f && m_attackFrame < 30.0f)
 	{
-		m_isCombo = true;
+		// 1ボタンの入力があれば攻撃状態に移行する
+		if (Input::Instance().IsTrigger("A"))
+		{
+			m_isCombo = true;
+		}
 	}
 
 	// アニメーションが終了したら待機状態に戻る
@@ -671,6 +683,9 @@ void Player::StabUpdate()
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
 
+	++m_attackFrame;
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Stab));
+
 	// 一番近い敵の方向に回転
 	RotateToNearestEnemy(kAttackOffsetRadius);
 
@@ -687,27 +702,10 @@ void Player::StabUpdate()
 		MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	}
 
-	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Stab));
-
-	// 1ボタンの入力があれば攻撃状態に移行する
-	if (Input::Instance().IsTrigger("A"))
-	{
-		m_isCombo = true;
-	}
-
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
-		// 1ボタンの入力があれば攻撃状態に移行する
-		if (m_isCombo)
-		{
-			ChangeState(PlayerState::Chop);
-		}
-		else
-		{
-			ChangeState(PlayerState::Idle);
-		}
+		ChangeState(PlayerState::Idle);
 	}
 }
 
@@ -777,9 +775,8 @@ void Player::DodgeUpdate()
 	// m_forward に基づいて移動ベクトルを設定（前方向へ）
 	Vec3 dodgeDir = m_forward;
 	dodgeDir.Normalize();
-	constexpr float kDodgeSpeed = 50.0f; // 回避の移動速度（調整可能）
 
-	m_rigidbody.SetVelo(dodgeDir * kDodgeSpeed);
+	m_rigidbody.SetVelo(dodgeDir * kDodgeSpped);
 
 	// 現在位置にモデルを反映
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
@@ -846,9 +843,7 @@ void Player::RotateToNearestEnemy(float radius)
 				Quaternion targetRot;
 				targetRot.AngleAxis(targetAngle, axis);
 
-				// 補間開始（補間率は任意で調整可能）
-				float t = 0.25f;
-				currentRot = Quaternion::Slerp(currentRot, targetRot, t);
+				currentRot = Quaternion::Slerp(currentRot, targetRot, kLerpT);
 
 				// 回転を適用
 				float angleY = currentRot.ToEulerY();

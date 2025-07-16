@@ -24,9 +24,9 @@ PlayerRightWeapon::~PlayerRightWeapon()
 {
 }
 
-void PlayerRightWeapon::Init(std::shared_ptr<Physics> physics)
+void PlayerRightWeapon::Init()
 {
-	Collidable::Init(physics);
+	Collidable::Init();
 	m_rigidbody.Init();
 
 	m_model = MV1LoadModel("Data/Model/Player/Sword.mv1");

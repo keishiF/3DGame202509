@@ -37,7 +37,7 @@ public:
 	virtual ~Player();
 
 	// 初期化、更新、描画
-	void Init(std::shared_ptr<Physics> physics, Vec3& pos, const Vec3& rot, const Vec3& scale);
+	void Init(Vec3& pos, const Vec3& rot, const Vec3& scale);
 	void Update();
 	void Draw();
 

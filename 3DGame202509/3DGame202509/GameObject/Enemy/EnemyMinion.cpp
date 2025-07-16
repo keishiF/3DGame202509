@@ -68,9 +68,9 @@ EnemyMinion::~EnemyMinion()
 {
 }
 
-void EnemyMinion::Init(std::shared_ptr<Physics> physics, Vec3& pos, Vec3& rot, Vec3& scale)
+void EnemyMinion::Init(Vec3& pos, Vec3& rot, Vec3& scale)
 {
-	Collidable::Init(physics);
+	Collidable::Init();
 
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
@@ -97,7 +97,7 @@ void EnemyMinion::Init(std::shared_ptr<Physics> physics, Vec3& pos, Vec3& rot, V
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, kAnimSpeed, true);
 
 	m_weapon = std::make_shared<EnemyMinionBlade>();
-	m_weapon->Init(physics);
+	m_weapon->Init();
 }
 
 void EnemyMinion::Update(std::shared_ptr<Player> player)

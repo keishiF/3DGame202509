@@ -4,14 +4,13 @@
 #include <vector>
 
 class EnemyMageBullet;
-class Physics;
 class EnemyMage : public EnemyBase
 {
 public:
 	EnemyMage();
 	virtual ~EnemyMage();
 
-	void Init(std::shared_ptr<Physics> physics, Vec3& pos, Vec3& rot, Vec3& scale) override;
+	void Init(Vec3& pos, Vec3& rot, Vec3& scale) override;
 	void Update(std::shared_ptr<Player> player) override;
 	void Draw() override;
 
@@ -45,7 +44,5 @@ private:
 	Vec3 m_forward;
 
 	std::vector<std::shared_ptr<EnemyMageBullet>> m_bullets;
-
-	std::shared_ptr<Physics> m_physics;
 };
 

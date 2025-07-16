@@ -22,8 +22,6 @@ GameObjectManager::~GameObjectManager()
 
 void GameObjectManager::Init()
 {
-	m_physics = std::make_shared<Physics>();
-
 	TransformDataLoader loader;
 	auto transformDataList = loader.LoadDataCSV("Data/CSV/CharacterTransformData.csv");
 
@@ -35,7 +33,7 @@ void GameObjectManager::Init()
 			Vec3 pos   = { data.pos.x, data.pos.y, data.pos.z };
 			Vec3 rot   = { data.rot.x, data.rot.y, data.rot.z };
 			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
-			m_player->Init(m_physics, pos, rot, scale);
+			m_player->Init(pos, rot, scale);
 		}
 		else if (data.name == "Skeleton_Minion")
 		{
@@ -43,7 +41,7 @@ void GameObjectManager::Init()
 			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
 			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
-			minion->Init(m_physics, pos, rot, scale);
+			minion->Init(pos, rot, scale);
 			m_minions.emplace_back(minion);
 		}
 		else if (data.name == "Skeleton_Mage")
@@ -52,7 +50,7 @@ void GameObjectManager::Init()
 			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
 			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
-			mage->Init(m_physics, pos, rot, scale);
+			mage->Init(pos, rot, scale);
 			m_mages.emplace_back(mage);
 		}
 		else if (data.name == "Skeleton_Warrior")
@@ -61,7 +59,7 @@ void GameObjectManager::Init()
 			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
 			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
-			boss->Init(m_physics, pos, rot, scale);
+			boss->Init(pos, rot, scale);
 			m_boss.emplace_back(boss);
 		}
 	}
@@ -82,7 +80,7 @@ void GameObjectManager::Update()
 {
 	if (!m_player) return;
 
-	m_physics->Update();
+	Physics::Instance().Update();
 	m_player->Update();
 
 	for (auto& minion : m_minions)
@@ -109,7 +107,7 @@ void GameObjectManager::Update()
 void GameObjectManager::Draw()
 {
 #ifdef _DEBUG
-	m_physics->DebugDraw();
+	Physics::Instance().DebugDraw();
 #endif
 
 	m_skyDome->Draw();
@@ -153,6 +151,6 @@ std::vector<std::shared_ptr<EnemyBase>> GameObjectManager::GetEnemies()
 GameObjectManager& GameObjectManager::Instance()
 {
 	// TODO: return ステートメントをここに挿入します
-	static GameObjectManager gameObjectManager;
-	return gameObjectManager;
+	static GameObjectManager instance;
+	return instance;
 }

@@ -9,7 +9,7 @@ public:
 	EnemyMageBullet();
 	~EnemyMageBullet();
 
-	void Init(Vec3 myPos, Vec3 playerPos, std::shared_ptr<Physics> physics);
+	void Init(Vec3 myPos, Vec3 playerPos);
 	void Update();
 	void Draw();
 

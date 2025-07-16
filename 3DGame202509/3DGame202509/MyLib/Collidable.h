@@ -11,8 +11,8 @@ class Collidable abstract : public std::enable_shared_from_this<Collidable>
 public:
 	Collidable(ObjectTag tag, ObjectPriority priority, ColliderData::Kind colliderKind);
 	virtual ~Collidable();
-	virtual void Init(std::shared_ptr<Physics> physics);
-	virtual void Final(std::shared_ptr<Physics> physics);
+	virtual void Init();
+	virtual void Final();
 
 	ObjectTag GetTag() const { return m_tag; }
 	ObjectPriority GetPriority() const { return m_priority; }

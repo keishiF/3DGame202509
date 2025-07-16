@@ -7,6 +7,9 @@
 class Physics final
 {
 public:
+	Physics();
+	static Physics& Instance();
+
 	void Entry(std::shared_ptr<Collidable> collider);
 	void Exit(std::shared_ptr<Collidable> collider);
 	void Update();
@@ -38,5 +41,8 @@ private:
 	void SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,
 		Vec3& segBStart, Vec3& segBEnd, 
 		Vec3* closestPtA, Vec3* closestPtB) const;
+
+	Physics(const Physics&) = delete;
+	Physics& operator =(const Physics&) = delete;
 };
 

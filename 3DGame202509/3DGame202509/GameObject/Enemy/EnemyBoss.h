@@ -11,7 +11,7 @@ public:
 	~EnemyBoss();
 
 	// 初期化、更新、描画
-	void Init(std::shared_ptr<Physics> physics, Vec3& pos, Vec3& rot, Vec3& scale) override;
+	void Init(Vec3& pos, Vec3& rot, Vec3& scale) override;
 	void Update(std::shared_ptr<Player> player) override;
 	void Draw() override;
 
