@@ -193,18 +193,18 @@ void Physics::FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_p
 		// penetrationDepth > 0 の場合のみ押し出す
 		if (penetrationDepth > 0)
 		{
-			// primaryがボックスかカプセルかによって、押し出すオブジェクトを変える
 			if (isPrimaryBox)
 			{
-				// secondary (カプセル) を押し出す
-				secondary->m_nextPos += penetrationVec * penetrationDepth;
+				Vec3 pushback = penetrationVec * penetrationDepth;
+				pushback.y = 0.0f; // Y軸の押し戻しを無視
+				secondary->m_nextPos += pushback;
 			}
 		}
 		else
 		{
-			// secondary (ボックス) を押し出す
-			// ボックスの押し出しは単純ではないが、ここではカプセルとは逆方向に押し出す
-			primary->m_nextPos -= penetrationVec * penetrationDepth;
+			Vec3 pushback = penetrationVec * penetrationDepth;
+			pushback.y = 0.0f; // Y軸の押し戻しを無視
+			primary->m_nextPos -= pushback;
 		}
 	}
 	// カプセルとカプセルの位置補正

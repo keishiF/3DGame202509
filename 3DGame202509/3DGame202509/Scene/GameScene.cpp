@@ -109,7 +109,7 @@ void GameScene::DrawField()
 	Vec3 end;
 	start = { -kFieldSize, 0.0f,0.0f };
 	end = { kFieldSize, 0.0f,0.0f };
-	for (int z = -kFieldSize; z <= kFieldSize; z += 50)
+	for (float z = -kFieldSize; z <= kFieldSize; z += 50.0f)
 	{
 		start.z = z;
 		end.z = z;
@@ -118,7 +118,7 @@ void GameScene::DrawField()
 	}
 	start = { 0.0f, 0.0f, -kFieldSize };
 	end = { 0.0f, 0.0f, kFieldSize };
-	for (int x = -kFieldSize; x <= kFieldSize; x += 50)
+	for (float x = -kFieldSize; x <= kFieldSize; x += 50.0f)
 	{
 		start.x = x;
 		end.x = x;

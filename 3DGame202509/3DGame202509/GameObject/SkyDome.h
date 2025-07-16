@@ -15,6 +15,7 @@ public:
 
 private:
 	Vec3 m_pos;
+	float m_rotY;
 	int m_model;
 };
 
