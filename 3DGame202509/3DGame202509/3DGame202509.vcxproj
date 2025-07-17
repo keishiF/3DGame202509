@@ -170,9 +170,8 @@
     <ClCompile Include="GameObject\Stage\StageObjectBase.cpp" />
     <ClCompile Include="GameObject\Stage\StageObjectManager.cpp" />
     <ClCompile Include="General\Application.cpp" />
-    <ClCompile Include="General\TransformDataLoader.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MyLib\PlaneColliderData.cpp" />
+    <ClCompile Include="MyLib\BoxColliderData.cpp" />
     <ClCompile Include="MyLib\CapsuleColliderData.cpp" />
     <ClCompile Include="MyLib\Collidable.cpp" />
     <ClCompile Include="MyLib\Input.cpp" />
@@ -180,6 +179,7 @@
     <ClCompile Include="MyLib\Quaternion.cpp" />
     <ClCompile Include="MyLib\Rigidbody.cpp" />
     <ClCompile Include="MyLib\SphereColliderData.cpp" />
+    <ClCompile Include="MyLib\TransformDataLoader.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\ResultScene.cpp" />
     <ClCompile Include="Scene\SceneBase.cpp" />
@@ -211,8 +211,7 @@
     <ClInclude Include="GameObject\Stage\StageObjectBase.h" />
     <ClInclude Include="GameObject\Stage\StageObjectManager.h" />
     <ClInclude Include="General\Application.h" />
-    <ClInclude Include="General\TransformDataLoader.h" />
-    <ClInclude Include="MyLib\PlaneColliderData.h" />
+    <ClInclude Include="MyLib\BoxColliderData.h" />
     <ClInclude Include="MyLib\CapsuleColliderData.h" />
     <ClInclude Include="MyLib\Collidable.h" />
     <ClInclude Include="MyLib\ColliderData.h" />
@@ -223,6 +222,7 @@
     <ClInclude Include="MyLib\Quaternion.h" />
     <ClInclude Include="MyLib\Rigidbody.h" />
     <ClInclude Include="MyLib\SphereColliderData.h" />
+    <ClInclude Include="MyLib\TransformDataLoader.h" />
     <ClInclude Include="MyLib\Vec3.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\ResultScene.h" />

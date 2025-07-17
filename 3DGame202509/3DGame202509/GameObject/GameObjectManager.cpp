@@ -22,6 +22,19 @@ GameObjectManager::~GameObjectManager()
 
 void GameObjectManager::Init()
 {
+	if (m_player) m_player->Final();
+	for (auto& minion : m_minions) minion->Final();
+	for (auto& mage : m_mages)   mage->Final();
+	for (auto& boss : m_boss)    boss->Final();
+	m_minions.clear();
+	m_mages.clear();
+	m_boss.clear();
+	m_player = nullptr;
+	m_camera = nullptr;
+	m_skyDome = nullptr;
+	m_isClear = false;
+	m_isGameOver = false;
+
 	TransformDataLoader loader;
 	auto transformDataList = loader.LoadDataCSV("Data/CSV/CharacterTransformData.csv");
 

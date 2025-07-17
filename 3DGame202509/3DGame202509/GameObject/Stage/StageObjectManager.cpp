@@ -45,10 +45,10 @@ void StageObjectManager::Init()
 		}
 		else if (data.name == "Wall")
 		{
-			modelPath = "a";
-			auto wall = std::make_shared<CollisionWall>();
-			Vec3 pos = { data.pos.x, data.pos.y + 50.0f, data.pos.z };
-			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
+			modelPath  = "";
+			auto wall  = std::make_shared<CollisionWall>();
+			Vec3 pos   = { data.pos.x,   data.pos.y,   data.pos.z };
+			Vec3 rot   = { data.rot.x,   data.rot.y,   data.rot.z };
 			Vec3 scale = { data.scale.x, data.scale.y, data.scale.z };
 			wall->Init(modelPath, pos, rot, scale);
 			m_walls.emplace_back(wall);

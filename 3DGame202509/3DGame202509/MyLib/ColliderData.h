@@ -7,7 +7,7 @@ public:
 	{
 		Sphere,
 		Capsule,
-		Plane
+		Box
 	};
 
 	ColliderData(Kind kind) { m_kind = kind; }

@@ -1,4 +1,4 @@
-#include "PlaneColliderData.h"
+#include "BoxColliderData.h"
 #include "CapsuleColliderData.h"
 #include "Collidable.h"
 #include "Enemy/EnemyMage.h"
@@ -192,6 +192,66 @@ void Physics::FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_p
 			secondary->m_nextPos += fixedPos;
 		}
 	}
+	// ボックスとカプセルの位置補正
+	else if (primaryKind == ColliderData::Kind::Box && secondaryKind == ColliderData::Kind::Capsule)
+	{
+		auto boxObj = primary;
+		auto capsuleObj = secondary;
+
+		auto boxCol = std::dynamic_pointer_cast<BoxColliderData>(boxObj->m_colliderData);
+		auto capsuleCol = std::dynamic_pointer_cast<CapsuleColliderData>(capsuleObj->m_colliderData);
+
+		// AABB box
+		Vec3 boxCenter = boxCol->GetCenter();
+		Vec3 boxHalf = boxCol->GetSize() * 0.5f;
+		Vec3 boxMin = boxCenter - boxHalf;
+		Vec3 boxMax = boxCenter + boxHalf;
+
+		// カプセルのワールド線分
+		Vec3 capsuleStart = capsuleCol->m_startPos + capsuleObj->m_nextPos;
+		Vec3 capsuleEnd = capsuleObj->m_nextPos;
+
+		// サンプル点から最も深くめり込んだ点とその押し出しベクトルを求める
+		const int kSampleCount = 8;
+		float maxPenetration = 0.0f;
+		Vec3 bestPushVec = { 0, 0, 0 };
+
+		for (int i = 0; i <= kSampleCount; ++i)
+		{
+			float t = static_cast<float>(i) / kSampleCount;
+			Vec3 capsulePoint = capsuleStart + (capsuleEnd - capsuleStart) * t;
+
+			// AABB最近接点
+			Vec3 closestPoint;
+			closestPoint.x = std::clamp(capsulePoint.x, boxMin.x, boxMax.x);
+			closestPoint.y = std::clamp(capsulePoint.y, boxMin.y, boxMax.y);
+			closestPoint.z = std::clamp(capsulePoint.z, boxMin.z, boxMax.z);
+
+			Vec3 delta = capsulePoint - closestPoint;
+			float sqDist = delta.SqrLength();
+			float radius = capsuleCol->m_radius;
+
+			if (sqDist < radius * radius && sqDist > 0.000001f)
+			{
+				float penetration = radius - std::sqrt(sqDist);
+				Vec3 pushDir = delta.GetNormalize();  // めり込み方向
+				Vec3 pushVec = pushDir * penetration;
+
+				// 最も深くめり込んでいる点を採用
+				if (penetration > maxPenetration)
+				{
+					maxPenetration = penetration;
+					bestPushVec = pushVec;
+				}
+			}
+		}
+
+		if (maxPenetration > 0.0f)
+		{
+			bestPushVec.y = 0.0f; // y軸の押し戻しを無効化（任意）
+			capsuleObj->m_nextPos += bestPushVec;
+		}
+	}
 }
 
 std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
@@ -351,6 +411,47 @@ bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Colli
 			{
 				return false;
 			}
+		}
+		// ボックスとカプセルの当たり判定
+		else if (firstKind == ColliderData::Kind::Box && secondKind == ColliderData::Kind::Capsule ||
+			firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Box)
+		{
+			std::shared_ptr<Collidable> capsuleObj = (firstKind == ColliderData::Kind::Capsule) ? first : second;
+			std::shared_ptr<Collidable> boxObj = (firstKind == ColliderData::Kind::Box) ? first : second;
+
+			auto capsuleCol = std::dynamic_pointer_cast<CapsuleColliderData>(capsuleObj->m_colliderData);
+			auto boxCol = std::dynamic_pointer_cast<BoxColliderData>(boxObj->m_colliderData);
+
+			// カプセルの線分の始点と終点
+			Vec3 capsuleStart = capsuleCol->m_startPos + capsuleObj->m_nextPos;
+			Vec3 capsuleEnd = capsuleObj->m_nextPos;
+
+			// ボックスのAABB情報
+			Vec3 boxCenter = boxCol->GetCenter();
+			Vec3 boxHalf = boxCol->GetSize() * 0.5f;
+			Vec3 boxMin = boxCenter - boxHalf;
+			Vec3 boxMax = boxCenter + boxHalf;
+
+			// 線分を複数点に分割して、AABBとの最近接点を調べる
+			const int kSampleCount = 8;
+			for (int i = 0; i <= kSampleCount; ++i)
+			{
+				float t = static_cast<float>(i) / kSampleCount;
+				Vec3 capsulePoint = capsuleStart + (capsuleEnd - capsuleStart) * t;
+
+				// 最近接点（カプセルの点 → AABB）
+				Vec3 closestPoint;
+				closestPoint.x = std::clamp(capsulePoint.x, boxMin.x, boxMax.x);
+				closestPoint.y = std::clamp(capsulePoint.y, boxMin.y, boxMax.y);
+				closestPoint.z = std::clamp(capsulePoint.z, boxMin.z, boxMax.z);
+
+				Vec3 delta = capsulePoint - closestPoint;
+				if (delta.SqrLength() < capsuleCol->m_radius * capsuleCol->m_radius)
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 	return false;

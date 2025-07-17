@@ -3,7 +3,6 @@
 #include "StageObjectBase.h"
 #include "Vec3.h"
 
-class Physics;
 class CollisionWall : public StageObjectBase
 {
 public:

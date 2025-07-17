@@ -56,6 +56,12 @@ void GameScene::NormalUpdate()
 	++m_blinkFrame;
 
 	GameObjectManager::Instance().Update();
+	if (GameObjectManager::Instance().IsGameOver())
+	{
+		m_update = &GameScene::FadeOutUpdate;
+		m_draw = &GameScene::FadeDraw;
+		m_fadeFrame = 0;
+	}
 }
 
 void GameScene::FadeInUpdate()
