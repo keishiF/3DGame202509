@@ -11,10 +11,6 @@ public:
 	virtual void Draw() override;
 
 private:
-	Vec3 m_start;
-	Vec3 m_center;
-	Vec3 m_end;
 
-	static Quaternion QuaternionToEuler(float eulerX_rad, float eulerY_rad, float eulerZ_rad);
 };
 

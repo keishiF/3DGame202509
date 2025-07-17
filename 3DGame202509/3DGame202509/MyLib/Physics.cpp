@@ -1,4 +1,4 @@
-#include "BoxColliderData.h"
+#include "PlaneColliderData.h"
 #include "CapsuleColliderData.h"
 #include "Collidable.h"
 #include "Enemy/EnemyMage.h"
@@ -151,61 +151,6 @@ void Physics::FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_p
 		Vec3 primaryToNewSecondaryPos = primaryToSecondary * awayDist;
 		Vec3 fixedPos = primary->m_nextPos + primaryToNewSecondaryPos;
 		secondary->m_nextPos = fixedPos;
-	}
-	// ボックスとカプセルの位置補正
-	else if (primaryKind == ColliderData::Kind::Box && secondaryKind == ColliderData::Kind::Capsule ||
-		     primaryKind == ColliderData::Kind::Capsule && secondaryKind == ColliderData::Kind::Box)
-	{
-		std::shared_ptr<Collidable> boxCollider;
-		std::shared_ptr<Collidable> capsuleCollider;
-		bool isPrimaryBox = primaryKind == ColliderData::Kind::Box;
-		if (isPrimaryBox)
-		{
-			boxCollider = primary;
-			capsuleCollider = secondary;
-		}
-		else
-		{
-			boxCollider = secondary;
-			capsuleCollider = primary;
-		}
-		
-		auto boxData = std::dynamic_pointer_cast<BoxColliderData>(boxCollider->m_colliderData);
-		auto capsuleData = std::dynamic_pointer_cast
-		<CapsuleColliderData>(capsuleCollider->m_colliderData);
-		// --- 当たり判定とほぼ同じ計算 ---
-		Vec3 boxCenter = (boxData->m_min + boxData->m_max) * 0.5f;
-		Vec3 closestPointOnSegment;
-		Vec3 dummyClosestPoint;
-		SegmentClosestPoint(capsuleCollider->m_nextPos, capsuleData->m_startPos, boxCenter, boxCenter, &closestPointOnSegment, &dummyClosestPoint);
-		
-		Vec3 closestPointOnBox = closestPointOnSegment;
-		closestPointOnBox.x = std::clamp(closestPointOnBox.x, boxData->m_min.x, boxData->m_max.x);
-		closestPointOnBox.y = std::clamp(closestPointOnBox.y, boxData->m_min.y, boxData->m_max.y);
-		closestPointOnBox.z = std::clamp(closestPointOnBox.z, boxData->m_min.z, boxData->m_max.z);
-		
-		// --- 押し戻し計算 ---
-		Vec3 penetrationVec = closestPointOnSegment - closestPointOnBox;
-		float dist = penetrationVec.Length();
-		penetrationVec.Normalize();
-		
-		float penetrationDepth = capsuleData->m_radius - dist;
-		// penetrationDepth > 0 の場合のみ押し出す
-		if (penetrationDepth > 0)
-		{
-			if (isPrimaryBox)
-			{
-				Vec3 pushback = penetrationVec * penetrationDepth;
-				pushback.y = 0.0f; // Y軸の押し戻しを無視
-				secondary->m_nextPos += pushback;
-			}
-		}
-		else
-		{
-			Vec3 pushback = penetrationVec * penetrationDepth;
-			pushback.y = 0.0f; // Y軸の押し戻しを無視
-			primary->m_nextPos -= pushback;
-		}
 	}
 	// カプセルとカプセルの位置補正
 	else if (primaryKind == ColliderData::Kind::Capsule && secondaryKind == ColliderData::Kind::Capsule)
@@ -399,54 +344,6 @@ bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Colli
 
 			//円とカプセルの半径よりも円とカプセルの距離が近ければ当たっている
 			if (distance < sphereData->m_radius + capsuleData->m_radius)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-
-
-		}
-		// ボックスとカプセルの当たり判定
-		else if (firstKind == ColliderData::Kind::Box && secondKind == ColliderData::Kind::Capsule ||
-			firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Box)
-		{
-			std::shared_ptr<Collidable> boxCollider;
-			std::shared_ptr<Collidable> capsuleCollider;
-			if (firstKind == ColliderData::Kind::Box)
-			{
-				boxCollider = first;
-				capsuleCollider = second;
-			}
-			else
-			{
-				boxCollider = second;
-				capsuleCollider = first;
-			}
-			
-			auto boxData = std::dynamic_pointer_cast<BoxColliderData>(boxCollider->m_colliderData);
-			auto capsuleData = std::dynamic_pointer_cast
-			< CapsuleColliderData > (capsuleCollider->m_colliderData);
-			// 1. カプセルの中心線上で、ボックスの中心に最も近い点Pを求める
-			Vec3 boxCenter = (boxData->m_min + boxData->m_max) * 0.5f;
-			Vec3 closestPointOnSegment;
-			Vec3 dummyClosestPoint;
-			// (SegmentClosestPoint関数を点と線分の最短距離計算に流用)
-			// ※この関数は線分と線分の最短距離を求めるものなので、厳密には点と線分の最短距離関数を別途用意すべきですが、
-			// ここでは片方の線分を点として扱うことで代用します。
-			SegmentClosestPoint(capsuleCollider->m_nextPos, capsuleData->m_startPos, boxCenter, boxCenter,
-			&closestPointOnSegment, &dummyClosestPoint);
-			// 2. 点PをAABB内にクランプして、ボックス表面上の最近接点Qを求める
-			Vec3 closestPointOnBox = closestPointOnSegment;
-			closestPointOnBox.x = std::clamp(closestPointOnBox.x, boxData->m_min.x, boxData->m_max.x);
-			closestPointOnBox.y = std::clamp(closestPointOnBox.y, boxData->m_min.y, boxData->m_max.y);
-			closestPointOnBox.z = std::clamp(closestPointOnBox.z, boxData->m_min.z, boxData->m_max.z);
-			// 3. 2点間の距離を計算
-			float distSq = (closestPointOnSegment - closestPointOnBox).SqrLength();
-			// 4. 距離がカプセルの半径より小さいか判定
-			if (distSq < capsuleData->m_radius * capsuleData->m_radius)
 			{
 				return true;
 			}

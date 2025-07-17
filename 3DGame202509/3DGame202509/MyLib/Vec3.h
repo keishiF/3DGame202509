@@ -121,9 +121,13 @@ public:
 		return x * vec.x + y * vec.y + z * vec.z;
 	}
 	// 外積
-	float Cross(const Vec3& vec) const
+	Vec3 Cross(const Vec3& vec) const
 	{
-		return x * vec.x - y * vec.y - z * vec.z;
+		return Vec3
+		(	y * vec.z - z * vec.y,
+			z * vec.x - x * vec.z,
+			x * vec.y - y * vec.x
+		);
 	}
 
 	// 自身の長さを1にしたベクトルの取得
