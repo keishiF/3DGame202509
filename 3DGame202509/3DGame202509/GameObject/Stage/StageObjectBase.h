@@ -13,6 +13,8 @@ public:
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override {};
 
+	int GetModel() const { return m_modelHandle; }
+
 private:
 	int m_modelHandle;
 };

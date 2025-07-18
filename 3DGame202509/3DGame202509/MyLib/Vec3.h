@@ -155,7 +155,7 @@ public:
 	/// DxライブラリのVECTORにキャストする
 	/// </summary>
 	/// <returns></returns>
-	VECTOR ToDxVECTOR()
+	VECTOR ToDxVECTOR() const
 	{
 		VECTOR dxVec;
 

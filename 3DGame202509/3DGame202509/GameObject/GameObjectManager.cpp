@@ -6,7 +6,6 @@
 #include "Enemy/EnemyMage.h"
 #include "Enemy/EnemyBoss.h"
 #include "Camera.h"
-#include "Stage/Stage.h"
 #include "SkyDome.h"
 #include "TransformDataLoader.h"
 

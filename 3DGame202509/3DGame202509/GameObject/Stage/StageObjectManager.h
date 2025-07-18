@@ -2,7 +2,6 @@
 #include <memory>
 #include <vector>
 
-class CollisionWall;
 class Floor;
 class Mountain;
 class physics;
@@ -17,7 +16,6 @@ public:
 	void Draw();
 
 private:
-	std::vector<std::shared_ptr<CollisionWall>> m_walls;
 	std::vector<std::shared_ptr<Floor>> m_floors;
 	std::vector<std::shared_ptr<Mountain>> m_mountains;
 };

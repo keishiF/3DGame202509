@@ -4,6 +4,8 @@
 
 void Mountain::Init(const std::string& modelPath, Vec3 pos, Vec3 rot, Vec3 scale)
 {
+	Collidable::Init();
+
 	m_modelHandle = MV1LoadModel(modelPath.c_str());
 	assert(m_modelHandle >= 0);
 

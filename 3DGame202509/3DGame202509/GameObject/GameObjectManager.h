@@ -9,7 +9,6 @@ class EnemyMage;
 class EnemyBoss;
 class Camera;
 class SkyDome;
-class Stage;
 class GameObjectManager
 {
 public:
@@ -36,7 +35,6 @@ private:
 	std::vector<std::shared_ptr<EnemyBoss>>  m_boss;
 	std::shared_ptr<Camera> m_camera;
 	std::shared_ptr<SkyDome> m_skyDome;
-	std::shared_ptr<Stage> m_stage;
 
 	bool m_isClear;
 	bool m_isGameOver;
