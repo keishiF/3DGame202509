@@ -1,8 +1,10 @@
+#define NOMINMAX
 #include "CapsuleColliderData.h"
 #include "Collidable.h"
 #include "Enemy/EnemyMage.h"
 #include "Enemy/EnemyMinion.h"
 #include "Physics.h"
+#include "PolygonColliderData.h"
 #include "SphereColliderData.h"
 #include "Stage/StageObjectBase.h"
 #include "Vec3.h"
@@ -192,6 +194,62 @@ void Physics::FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_p
 			secondary->m_nextPos += fixedPos;
 		}
 	}
+	//else if (primaryKind == ColliderData::Kind::Polygon && secondaryKind == ColliderData::Kind::Capsule)
+	//{
+	//	// どちらがPolygonか判定
+	//	std::shared_ptr<PolygonColliderData> polyData;
+	//	std::shared_ptr<CapsuleColliderData> capsuleData;
+	//	Vec3 capsuleStart, capsuleEnd;
+	//	std::shared_ptr<Collidable> capsuleObj;
+
+	//	if (primaryKind == ColliderData::Kind::Polygon)
+	//	{
+	//		polyData = std::dynamic_pointer_cast<PolygonColliderData>(primary->m_colliderData);
+	//		capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(secondary->m_colliderData);
+	//		capsuleStart = secondary->m_nextPos;
+	//		capsuleEnd = capsuleData->m_startPos;
+	//		capsuleObj = secondary;
+	//	}
+	//	else
+	//	{
+	//		polyData = std::dynamic_pointer_cast<PolygonColliderData>(secondary->m_colliderData);
+	//		capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(primary->m_colliderData);
+	//		capsuleStart = primary->m_nextPos;
+	//		capsuleEnd = capsuleData->m_startPos;
+	//		capsuleObj = primary;
+	//	}
+
+	//	// 三角形ポリゴンのみ対応
+	//	if (polyData->m_vertices.size() >= 3)
+	//	{
+	//		Vec3 p0 = polyData->m_vertices[0];
+	//		Vec3 p1 = polyData->m_vertices[1];
+	//		Vec3 p2 = polyData->m_vertices[2];
+
+	//		// カプセル線分と三角形の最近接点を求める
+	//		Vec3 segClosest, triClosest;
+	//		Segment_Triangle_ClosestPoints(capsuleStart, capsuleEnd, p0, p1, p2, segClosest, triClosest);
+
+	//		Vec3 diff = segClosest - triClosest;
+	//		float dist = diff.Length();
+
+	//		if (dist < capsuleData->m_radius)
+	//		{
+	//			// 押し戻しベクトル
+	//			Vec3 pushDir = diff;
+	//			if (pushDir.Length() < 1e-6f)
+	//			{
+	//				// 法線方向に押し戻す
+	//				pushDir = polyData->m_normal;
+	//			}
+	//			pushDir.Normalize();
+	//			Vec3 fix = pushDir * (capsuleData->m_radius - dist);
+
+	//			// y方向の補正をしない場合はfix.y = 0.0f; なども可
+	//			capsuleObj->m_nextPos += fix;
+	//		}
+	//	}
+	//}
 }
 
 std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
@@ -265,7 +323,7 @@ bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Colli
 	if (first != second)
 	{
 		//当たり判定の種類を取得
-		ColliderData::Kind firstKind = first->m_colliderData->GetKind();
+		ColliderData::Kind firstKind  = first->m_colliderData->GetKind();
 		ColliderData::Kind secondKind = second->m_colliderData->GetKind();
 
 		//球どうしの当たり判定
@@ -309,8 +367,8 @@ bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Colli
 			}
 		}
 		//球とカプセルの当たり判定
-		else if (firstKind == ColliderData::Kind::Sphere && secondKind == ColliderData::Kind::Capsule ||
-			firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Sphere)
+		else if (firstKind == ColliderData::Kind::Sphere  && secondKind == ColliderData::Kind::Capsule ||
+				 firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Sphere)
 		{
 			//球とカプセルのコライダーデータ作成
 			std::shared_ptr<ColliderData> sphereDataBase;
@@ -352,6 +410,45 @@ bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Colli
 				return false;
 			}
 		}
+		//// ポリゴンとカプセルの当たり判定
+		//else if (firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Polygon ||
+		//		 firstKind == ColliderData::Kind::Polygon && secondKind == ColliderData::Kind::Capsule)
+		//{
+		//	std::shared_ptr<PolygonColliderData> polyData;
+		//	std::shared_ptr<CapsuleColliderData> capsuleData;
+		//	Vec3 capsuleStart, capsuleEnd;
+		//	if (firstKind == ColliderData::Kind::Polygon)
+		//	{
+		//		polyData = std::dynamic_pointer_cast<PolygonColliderData>(first->m_colliderData);
+		//		capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(second->m_colliderData);
+		//		capsuleStart = second->m_nextPos;
+		//		capsuleEnd = capsuleData->m_startPos;
+		//	}
+		//	else
+		//	{
+		//		polyData = std::dynamic_pointer_cast<PolygonColliderData>(second->m_colliderData);
+		//		capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(first->m_colliderData);
+		//		capsuleStart = first->m_nextPos;
+		//		capsuleEnd = capsuleData->m_startPos;
+		//	}
+		//	
+		//	// カプセル線分とポリゴン面の最近接点を求める
+		//	float minDist = std::numeric_limits<float>::max();
+		//	// 例：三角形ポリゴンの場合
+		//	if (polyData->m_vertices.size() >= 3)
+		//	{
+		//		// ここでは三角形のみ対応
+		//		Vec3 p0 = polyData->m_vertices[0];
+		//		Vec3 p1 = polyData->m_vertices[1];
+		//		Vec3 p2 = polyData->m_vertices[2];
+		//		// 線分と三角形の最近接点距離を求める関数を用意する
+		//		Segment_Triangle_MinLength(capsuleStart.ToDxVECTOR(), capsuleEnd.ToDxVECTOR(), p0.ToDxVECTOR(), p1.ToDxVECTOR(), p2.ToDxVECTOR());
+		//	}
+		//	if (minDist < capsuleData->m_radius)
+		//	{
+		//		return true;
+		//	}
+		//}
 	}
 	return false;
 }
@@ -496,3 +593,68 @@ void Physics::SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,
 	*closestPtA = segAStart + (segADir * paramA);
 	*closestPtB = segBStart + (segBDir * paramB);
 }
+
+//void Physics::Segment_Triangle_ClosestPoints(const Vec3& segA, const Vec3& segB, const Vec3& t0, const Vec3& t1, const Vec3& t2, Vec3& outSeg, Vec3& outTri) const
+//{
+//	// 線分上の点P(s) = segA + (segB - segA) * s, 0 <= s <= 1
+//	// 三角形上の点Q(u,v) = t0 + (t1-t0)*u + (t2-t0)*v, 0 <= u, v, u+v <= 1
+//
+//	// まず三角形の各辺と線分の最近接点を調べる
+//	float minDistSq = std::numeric_limits<float>::max();
+//
+//	// 三角形の3辺
+//	Vec3 triEdges[3][2] = {
+//		{t0, t1},
+//		{t1, t2},
+//		{t2, t0}
+//	};
+//
+//	// 線分と三角形の各辺の最近接点
+//	for (int i = 0; i < 3; ++i) {
+//		Vec3 edgeA = triEdges[i][0];
+//		Vec3 edgeB = triEdges[i][1];
+//		Vec3 c1, c2;
+//		// 線分同士の最近接点
+//		Physics::SegmentClosestPoint(const_cast<Vec3&>(segA), const_cast<Vec3&>(segB),
+//			const_cast<Vec3&>(edgeA), const_cast<Vec3&>(edgeB),
+//			&c1, &c2);
+//		float d2 = (c1 - c2).SqrLength();
+//		if (d2 < minDistSq) {
+//			minDistSq = d2;
+//			outSeg = c1;
+//			outTri = c2;
+//		}
+//	}
+//
+//	// 線分と三角形面の最近接点（線分の最近接点が三角形内にある場合）
+//	// 三角形面の法線
+//	Vec3 n = (t1 - t0).Cross(t2 - t0);
+//	n.Normalize();
+//	Vec3 segDir = segB - segA;
+//	float segLen = segDir.Length();
+//	if (segLen < 1e-6f) return; // 線分が点
+//
+//	segDir /= segLen;
+//	float denom = n.Dot(segDir);
+//	if (std::abs(denom) > 1e-6f) {
+//		// 線分と三角形面が平行でない場合
+//		float t = n.Dot(t0 - segA) / denom;
+//		if (t >= 0.0f && t <= segLen) {
+//			Vec3 p = segA + segDir * t;
+//			// pが三角形内か判定
+//			Vec3 c0 = (t1 - t0).Cross(p - t0);
+//			Vec3 c1 = (t2 - t1).Cross(p - t1);
+//			Vec3 c2 = (t0 - t2).Cross(p - t2);
+//			if (n.Dot(c0) >= 0 && n.Dot(c1) >= 0 && n.Dot(c2) >= 0) {
+//				// 三角形内
+//				float d2 = (p - (p - n * n.Dot(p - t0))).SqrLength();
+//				if (d2 < minDistSq) {
+//					minDistSq = d2;
+//					outSeg = p;
+//					// 三角形面上の最近接点
+//					outTri = p - n * n.Dot(p - t0);
+//				}
+//			}
+//		}
+//	}
+//}

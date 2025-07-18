@@ -7,7 +7,7 @@ public:
 	{
 		Sphere,
 		Capsule,
-		Mesh
+		Polygon
 	};
 
 	ColliderData(Kind kind) { m_kind = kind; }
