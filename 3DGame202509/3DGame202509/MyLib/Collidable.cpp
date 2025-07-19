@@ -1,7 +1,6 @@
 #include "Collidable.h"
 #include "SphereColliderData.h"
 #include "CapsuleColliderData.h"
-#include "PolygonColliderData.h"
 #include "Physics.h"
 #include <cassert>
 
@@ -44,11 +43,6 @@ std::shared_ptr<ColliderData> Collidable::CreateColliderData(ColliderData::Kind 
 	{
 		// スフィアコライダーの情報を入れる
 		return std::make_shared<SphereColliderData>();
-	}
-	else if (kind == ColliderData::Kind::Polygon)
-	{
-		// ポリゴンコライダーの情報を入れる
-		return std::make_shared<PolygonColliderData>();
 	}
 	else
 	{

@@ -42,8 +42,6 @@ private:
 		Vec3& segBStart, Vec3& segBEnd, 
 		Vec3* closestPtA, Vec3* closestPtB) const;
 
-	//void Segment_Triangle_ClosestPoints(const Vec3& segA, const Vec3& segB, const Vec3& t0, const Vec3& t1, const Vec3& t2, Vec3& outSeg, Vec3& outTri) const;
-
 	Physics(const Physics&) = delete;
 	Physics& operator =(const Physics&) = delete;
 };

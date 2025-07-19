@@ -172,7 +172,6 @@
     <ClCompile Include="MyLib\Collidable.cpp" />
     <ClCompile Include="MyLib\Input.cpp" />
     <ClCompile Include="MyLib\Physics.cpp" />
-    <ClCompile Include="MyLib\PolygonColliderData.cpp" />
     <ClCompile Include="MyLib\Quaternion.cpp" />
     <ClCompile Include="MyLib\Rigidbody.cpp" />
     <ClCompile Include="MyLib\SphereColliderData.cpp" />
@@ -212,7 +211,6 @@
     <ClInclude Include="MyLib\ObjectTag.h" />
     <ClInclude Include="MyLib\Input.h" />
     <ClInclude Include="MyLib\Physics.h" />
-    <ClInclude Include="MyLib\PolygonColliderData.h" />
     <ClInclude Include="MyLib\Quaternion.h" />
     <ClInclude Include="MyLib\Rigidbody.h" />
     <ClInclude Include="MyLib\SphereColliderData.h" />
