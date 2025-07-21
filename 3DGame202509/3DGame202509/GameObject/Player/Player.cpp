@@ -14,7 +14,7 @@
 namespace
 {
 	// HP‚Ì‰Šú’l
-	constexpr int kHp = 1;
+	constexpr int kHp = 15;
 
 	constexpr int kSpecialGaugeMax = 100;
 

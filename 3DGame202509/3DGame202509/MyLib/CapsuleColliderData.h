@@ -10,6 +10,10 @@ class CapsuleColliderData : public ColliderData
 public:
 	CapsuleColliderData();
 	~CapsuleColliderData();
+
+	//Ÿ‚ÌÀ•W
+	Vec3 GetNextStartPos(Vec3 vec) const { return m_startPos + vec; };
+
 	// n“_
 	Vec3 m_startPos;
 	// ”¼Œa

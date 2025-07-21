@@ -12,6 +12,6 @@ public:
     virtual void Draw() override;
 
 private:
-    int m_modelHandle = -1;
+    int m_model= -1;
 };
 

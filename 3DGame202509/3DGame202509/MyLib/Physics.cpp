@@ -3,6 +3,7 @@
 #include "Enemy/EnemyMage.h"
 #include "Enemy/EnemyMinion.h"
 #include "Physics.h"
+#include "PolygonColliderData.h"
 #include "SphereColliderData.h"
 #include "Stage/StageObjectBase.h"
 #include "Vec3.h"
@@ -10,7 +11,13 @@
 #include <cassert>
 #include <DxLib.h>
 
-Physics::Physics()
+namespace
+{
+	constexpr float kOverlapGap = 1.0f;
+}
+
+Physics::Physics() :
+	m_wall()
 {
 
 }
@@ -102,6 +109,26 @@ void Physics::DebugDraw()
 			DrawSphere3D(item->m_rigidbody.GetPos().ToDxVECTOR(), 
 				sphereData->m_radius, 16, 0xff00ff, 0xff00ff, false);
 		}
+		else if (item->m_colliderData->GetKind() == ColliderData::Kind::Polygon)
+		{
+			auto polygonData = std::dynamic_pointer_cast<PolygonColliderData>(item->m_colliderData);
+			auto & hitDim = polygonData->GetHitDim();
+			
+			// 衝突しているポリゴンがある場合のみ描画
+			if (hitDim.HitNum > 0)
+			{
+				for (int i = 0; i < hitDim.HitNum; ++i)
+				{
+					// 衝突しているポリゴンを黄色で描画
+					DrawTriangle3D(
+					hitDim.Dim[i].Position[0],
+					hitDim.Dim[i].Position[1],
+					hitDim.Dim[i].Position[2],
+					GetColor(255, 255, 0),
+					true);
+				}
+			}
+		}
 	}
 }
 
@@ -192,62 +219,141 @@ void Physics::FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_p
 			secondary->m_nextPos += fixedPos;
 		}
 	}
+	// カプセルとポリゴンの位置補正
+	else if (primaryKind == ColliderData::Kind::Polygon && secondaryKind == ColliderData::Kind::Capsule)
+	{
+		//コライダーデータ
+		auto collDataA = std::dynamic_pointer_cast<CapsuleColliderData>(secondary->m_colliderData);
+		auto collDataB = std::dynamic_pointer_cast<PolygonColliderData>(primary->m_colliderData);
+		//リジッドボディ
+		auto rbA = secondary->m_rigidbody;
+		auto rbB = primary->m_rigidbody;
+
+		//当たったポリゴンの情報
+		auto& hitDim = collDataB->GetHitDim();
+		//お互い動かないオブジェクトなら衝突しない(ポリゴンはスタティックなので片方がスタティックなら)
+		if (primary->m_priority == ObjectPriority::Static)
+		{
+			// 検出したプレイヤーの周囲のポリゴン情報を開放する
+			DxLib::MV1CollResultPolyDimTerminate(hitDim);
+			return;
+		}
+
+		//カプセルの頭座標と足座標
+		Vec3 headPos = collDataA->GetNextStartPos(rbA.GetVelo());//移動後
+		Vec3 legPos = rbA.GetNextPos();//移動後
+		//頭より足のほうが低い位置にあるなら入れ替える
+		if (headPos.y < legPos.y)
+		{
+			Vec3 temp = legPos;
+			legPos = headPos;
+			headPos = temp;
+		}
+
+		//壁と当たっているなら
+		if (m_wallNum > 0)
+		{
+			//補正するベクトルを返す
+			Vec3 overlapVec = HitWallCP(headPos, legPos, m_wallNum, *m_wall, collDataA->m_radius);
+
+			//ポリゴンは固定(static)なので球のみ動かす
+			rbB.SetVelo(overlapVec);
+		}
+
+		// 検出したプレイヤーの周囲のポリゴン情報を開放する
+		DxLib::MV1CollResultPolyDimTerminate(hitDim);
+	}
 }
 
 std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
 {
 	//当たっているものを入れる配列
 	std::vector<OnCollideInfo> onCollideInfo;
-	for (auto& first : m_collidables)
+	for (auto it1 = m_collidables.begin(); it1 != m_collidables.end(); ++it1)
 	{
-		for (auto& second : m_collidables)
+		auto it2 = it1;
+		++it2;
+		for (; it2 != m_collidables.end(); ++it2)
 		{
+			auto & first = *it1;
+			auto & second = *it2;
+			
 			//当たり判定チェック
 			if (IsCollide(first, second))
 			{
 				auto priority1 = first->GetPriority();
 				auto priority2 = second->GetPriority();
-				std::shared_ptr<Collidable> primary   = first;
+				std::shared_ptr<Collidable> primary = first;
 				std::shared_ptr<Collidable> secondary = second;
 				if (priority1 < priority2)
 				{
 					primary = second;
 					secondary = first;
 				}
-
 				if (!SkipFixPos(primary, secondary))
 				{
 					FixNextPosition(primary, secondary);
 				}
-
-				//一度入れたものを二度入れないようにチェック
-				bool hasFirstColData = false;
-				bool hasSecondColData = false;
-				for (auto& item : onCollideInfo)
-				{
-					//すでに入れていたら弾く
-					if (item.owner == primary)
-					{
-						hasFirstColData = true;
-					}
-					if (item.owner == secondary)
-					{
-						hasSecondColData = true;
-					}
-				}
-				//弾かれなかった場合当たったものリストに入れる
-				if (!hasFirstColData)
-				{
-					onCollideInfo.push_back({ first,second });
-				}
-				if (!hasSecondColData)
-				{
-					onCollideInfo.push_back({ second,first });
-				}
+				
+				onCollideInfo.push_back({ first, second });
+				onCollideInfo.push_back({ second, first });
 			}
 		}
 	}
 	return onCollideInfo;
+
+	////当たっているものを入れる配列
+	//std::vector<OnCollideInfo> onCollideInfo;
+	//for (auto& first : m_collidables)
+	//{
+	//	for (auto& second : m_collidables)
+	//	{
+	//		//当たり判定チェック
+	//		if (IsCollide(first, second))
+	//		{
+	//			auto priority1 = first->GetPriority();
+	//			auto priority2 = second->GetPriority();
+	//			std::shared_ptr<Collidable> primary   = first;
+	//			std::shared_ptr<Collidable> secondary = second;
+	//			if (priority1 < priority2)
+	//			{
+	//				primary = second;
+	//				secondary = first;
+	//			}
+
+	//			if (!SkipFixPos(primary, secondary))
+	//			{
+	//				FixNextPosition(primary, secondary);
+	//			}
+
+	//			//一度入れたものを二度入れないようにチェック
+	//			bool hasFirstColData = false;
+	//			bool hasSecondColData = false;
+	//			for (auto& item : onCollideInfo)
+	//			{
+	//				//すでに入れていたら弾く
+	//				if (item.owner == primary)
+	//				{
+	//					hasFirstColData = true;
+	//				}
+	//				if (item.owner == secondary)
+	//				{
+	//					hasSecondColData = true;
+	//				}
+	//			}
+	//			//弾かれなかった場合当たったものリストに入れる
+	//			if (!hasFirstColData)
+	//			{
+	//				onCollideInfo.push_back({ first,second });
+	//			}
+	//			if (!hasSecondColData)
+	//			{
+	//				onCollideInfo.push_back({ second,first });
+	//			}
+	//		}
+	//	}
+	//}
+	//return onCollideInfo;
 }
 
 bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Collidable> second) const
@@ -351,6 +457,50 @@ bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Colli
 			{
 				return false;
 			}
+		}
+		// カプセルとポリゴンの当たり判定
+		else if (firstKind == ColliderData::Kind::Polygon && secondKind == ColliderData::Kind::Capsule ||
+			firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Polygon)
+		{
+			std::shared_ptr<Collidable> capsuleCollidable;
+			std::shared_ptr<Collidable> polygonCollidable;
+			if (firstKind == ColliderData::Kind::Capsule)
+			{
+				capsuleCollidable = first;
+				polygonCollidable = second;
+			}
+			else
+			{
+				capsuleCollidable = second;
+				polygonCollidable = first;
+			}
+
+			//コライダーデータの取得
+			auto collDataA = std::dynamic_pointer_cast<CapsuleColliderData>(capsuleCollidable->m_colliderData);
+			auto collDataB = std::dynamic_pointer_cast<PolygonColliderData>(polygonCollidable->m_colliderData);
+			//リジッドボディ
+			auto rbA = first->m_rigidbody;
+
+			//当たってるポリゴンの数
+			auto hitDim = MV1CollCheck_Capsule(
+				collDataB->GetModelHandle(),
+				-1,
+				rbA.GetNextPos().ToDxVECTOR(),
+				collDataA->GetNextStartPos(rbA.GetVelo()).ToDxVECTOR(),
+				collDataA->m_radius,
+				-1);
+
+			//当たっていないならfalse
+			if (hitDim.HitNum <= 0)
+			{
+				// 検出したプレイヤーの周囲のポリゴン情報を開放する
+				MV1CollResultPolyDimTerminate(hitDim);
+				return false;
+			}
+			//当たり判定に使うので保存
+			collDataB->SetHitDim(hitDim);
+
+			return true;
 		}
 	}
 	return false;
@@ -495,4 +645,109 @@ void Physics::SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,
 	// 線分上の最近接点座標を代入
 	*closestPtA = segAStart + (segADir * paramA);
 	*closestPtB = segBStart + (segBDir * paramB);
+}
+
+void Physics::AnalyzeWallAndFloor(MV1_COLL_RESULT_POLY_DIM hitDim, const Vec3& nextPos)
+{
+	//壁ポリゴンと床ポリゴンの数を初期化する
+	m_wallNum = 0;
+
+	//検出されたポリゴンの数だけ繰り返す
+	for (int i = 0; i < hitDim.HitNum; ++i)
+	{
+		//XZ平面に垂直かどうかはポリゴンの法線のY成分が0に近いかどうかで判断する
+		if (hitDim.Dim[i].Normal.y < 0.1f && hitDim.Dim[i].Normal.y > -0.1f)
+		{
+			//壁ポリゴンと判断された場合でも、プレイヤーのY座標＋1.0fより高いポリゴンのみ当たり判定を行う
+			//段さで突っかかるのを防ぐため
+			if (hitDim.Dim[i].Position[0].y > nextPos.y + 1.0f ||
+				hitDim.Dim[i].Position[1].y > nextPos.y + 1.0f ||
+				hitDim.Dim[i].Position[2].y > nextPos.y + 1.0f)
+			{
+				//ポリゴンの数が列挙できる限界数に達していなかったらポリゴンを配列に保存する
+				if (m_wallNum < kMaxHitPolygon)
+				{
+					//ポリゴンの構造体のアドレスを壁ポリゴン配列に保存
+					m_wall[m_wallNum] = &hitDim.Dim[i];
+					++m_wallNum;
+				}
+			}
+		}
+	}
+}
+
+Vec3 Physics::HitWallCP(const Vec3& headPos, const Vec3& legPos, int hitNum, MV1_COLL_RESULT_POLY* dim, float shortDis) const
+{
+	float maxOverlap = -1.0f;
+	Vec3 pushBackVec = { 0.0f, 0.0f, 0.0f };
+	
+	// 衝突したすべての壁ポリゴンをチェック
+	for (int i = 0; i < hitNum; ++i)
+	{
+		// ポリゴンの3頂点
+		VECTOR p0 = dim[i].Position[0];
+		VECTOR p1 = dim[i].Position[1];
+		VECTOR p2 = dim[i].Position[2];
+		
+		// カプセルの線分とポリゴンの最短距離を計算
+		float distSq = Segment_Triangle_MinLength_Square(headPos.ToDxVECTOR(), legPos.ToDxVECTOR(), p0, p1, p2);
+		float dist = sqrtf(distSq);
+		
+		// どれだけめり込んでいるか
+		float overlap = shortDis - dist;
+		
+		// 今までで一番めり込んでいるポリゴンなら、押し戻しベクトルを更新
+		if (overlap > maxOverlap)
+		{
+			maxOverlap = overlap;
+			Vec3 normal = Vec3(dim[i].Normal.x, dim[i].Normal.y, dim[i].Normal.z);
+			normal.y = 0; // Y方向には押し出さない
+			normal.Normalize();
+			pushBackVec = normal * (overlap + kOverlapGap); 
+			// kOverlapGapは少し余分に押し出すための値
+		}
+	}
+	return pushBackVec;
+
+
+
+	////垂線を下して近い点を探して最短距離を求める
+	//float hitShortDis = shortDis;//最短距離
+	////法線
+	//Vec3 nom = {};
+	//for (int i = 0; i < hitNum; ++i)
+	//{
+	//	//最短距離の2乗を返す
+	//	float dis = Segment_Triangle_MinLength_Square(headPos.ToDxVECTOR(), legPos.ToDxVECTOR(), dim[i].Position[0], dim[i].Position[1], dim[i].Position[2]);
+	//	//平方根を返す
+	//	dis = sqrtf(dis);
+	//	//初回または前回より距離が短いなら
+	//	if (hitShortDis > dis)
+	//	{
+	//		//現状の最短
+	//		hitShortDis = dis;
+	//		//法線
+	//		nom = Vec3{ dim[i].Normal.x,0.0f ,dim[i].Normal.z };
+	//	}
+	//}
+	////押し戻し
+	////どれくらい押し戻すか
+	//float tempOverLap = shortDis - hitShortDis;
+
+	//if (tempOverLap < 0)
+	//{
+	//	tempOverLap = 0;
+	//}
+	//if (tempOverLap > shortDis)
+	//{
+	//	tempOverLap = shortDis;
+	//}
+	//float overlap = tempOverLap;
+	//overlap += kOverlapGap;
+	////正規化
+	//if (nom.Length() != 0.0f)
+	//{
+	//	nom = nom.GetNormalize();
+	//}
+	//return nom * overlap;
 }

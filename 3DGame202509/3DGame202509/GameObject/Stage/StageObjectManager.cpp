@@ -61,3 +61,18 @@ void StageObjectManager::Draw()
 		floor->Draw();
 	}
 }
+
+void StageObjectManager::Finalize()
+{
+	for (auto& floor : m_floors)
+	{
+		floor->Final();
+	}
+	m_floors.clear();
+	
+	for (auto& mountain : m_mountains)
+	{
+		mountain->Final();
+	}
+	m_mountains.clear();
+}

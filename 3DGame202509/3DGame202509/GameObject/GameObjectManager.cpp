@@ -142,6 +142,20 @@ void GameObjectManager::Draw()
 	}
 }
 
+void GameObjectManager::Finalize()
+{
+	if (m_player) m_player->Final();
+	for (auto& minion : m_minions) minion->Final();
+	for (auto& mage : m_mages)   mage->Final();
+	for (auto& boss : m_boss)    boss->Final();
+	m_minions.clear();
+	m_mages.clear();
+	m_boss.clear();
+	m_player = nullptr;
+	m_camera = nullptr;
+	m_skyDome = nullptr;
+}
+
 std::vector<std::shared_ptr<EnemyBase>> GameObjectManager::GetEnemies()
 {
 	std::vector<std::shared_ptr<EnemyBase>> result;

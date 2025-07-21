@@ -22,6 +22,7 @@ public:
 	void Init();
 	void Update();
 	void Draw();
+	void Finalize();
 
 	std::vector<std::shared_ptr<EnemyBase>> GetEnemies();
 

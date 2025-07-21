@@ -2,6 +2,7 @@
 #include "SphereColliderData.h"
 #include "CapsuleColliderData.h"
 #include "Physics.h"
+#include "PolygonColliderData.h"
 #include <cassert>
 
 Collidable::Collidable(ObjectTag tag, ObjectPriority priority, ColliderData::Kind colliderKind):
@@ -43,6 +44,11 @@ std::shared_ptr<ColliderData> Collidable::CreateColliderData(ColliderData::Kind 
 	{
 		// スフィアコライダーの情報を入れる
 		return std::make_shared<SphereColliderData>();
+	}
+	else if (kind == ColliderData::Kind::Polygon)
+	{
+		// ポリゴンコライダーの情報を入れる
+		return std::make_shared<PolygonColliderData>();
 	}
 	else
 	{

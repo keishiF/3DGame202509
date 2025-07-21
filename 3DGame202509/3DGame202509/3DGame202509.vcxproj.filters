@@ -161,6 +161,9 @@
     <ClCompile Include="MyLib\TransformDataLoader.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
+    <ClCompile Include="MyLib\PolygonColliderData.cpp">
+      <Filter>ソース ファイル\MyLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -275,6 +278,9 @@
       <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\TransformDataLoader.h">
+      <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\PolygonColliderData.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
   </ItemGroup>

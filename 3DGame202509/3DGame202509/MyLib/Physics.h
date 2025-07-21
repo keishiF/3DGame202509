@@ -4,6 +4,12 @@
 #include <memory>
 #include <vector>
 
+namespace
+{
+	//É|ÉäÉSÉìÇÃìñÇΩÇËîªíËÇÃîzóÒÇÃç≈ëÂêî
+	constexpr int kMaxHitPolygon = 2048;
+}
+
 class Physics final
 {
 public:
@@ -41,6 +47,11 @@ private:
 	void SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,
 		Vec3& segBStart, Vec3& segBEnd, 
 		Vec3* closestPtA, Vec3* closestPtB) const;
+
+	void AnalyzeWallAndFloor(MV1_COLL_RESULT_POLY_DIM hitDim, const Vec3& nextPos);
+	int m_wallNum = 0;
+	MV1_COLL_RESULT_POLY* m_wall[kMaxHitPolygon];
+	Vec3 HitWallCP(const Vec3& headPos, const Vec3& legPos, int hitNum, MV1_COLL_RESULT_POLY* dim, float shortDis) const;
 
 	Physics(const Physics&) = delete;
 	Physics& operator =(const Physics&) = delete;

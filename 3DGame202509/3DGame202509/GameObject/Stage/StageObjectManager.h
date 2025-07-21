@@ -14,6 +14,7 @@ public:
 	void Init();
 	void Update();
 	void Draw();
+	void Finalize();
 
 private:
 	std::vector<std::shared_ptr<Floor>> m_floors;

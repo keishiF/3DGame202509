@@ -38,6 +38,11 @@ GameScene::GameScene(SceneController& controller) :
 
 GameScene::~GameScene()
 {
+	GameObjectManager::Instance().Finalize();
+	if (m_stageObjectManager)
+	{
+		m_stageObjectManager->Finalize(); 
+	}
 }
 
 void GameScene::Update()
