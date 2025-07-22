@@ -1,17 +1,18 @@
+#include "Camera.h"
+#include "Enemy/EnemyMage.h"
+#include "Enemy/EnemyMinion.h"
+#include "game.h"
+#include "GameObjectManager.h"
 #include "GameScene.h"
-#include "TitleScene.h"
+#include "Input.h"
+#include "Physics.h"
+#include "Player/Player.h"
 #include "ResultScene.h"
 #include "SceneController.h"
-#include "Player/Player.h"
-#include "Enemy/EnemyMinion.h"
-#include "Enemy/EnemyMage.h"
-#include "Camera.h"
-#include "Physics.h"
-#include "GameObjectManager.h"
 #include "Stage/StageObjectManager.h"
-#include "game.h"
-#include "Input.h"
+#include "TitleScene.h"
 #include <cassert>
+#include <DxLib.h>
 
 namespace
 {

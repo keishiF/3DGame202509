@@ -164,6 +164,9 @@
     <ClCompile Include="MyLib\PolygonColliderData.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\ClearScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -282,6 +285,9 @@
     </ClInclude>
     <ClInclude Include="MyLib\PolygonColliderData.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\ClearScene.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
+#include "ClearScene.h"
 #include "game.h"
+#include "GameScene.h"
 #include "Input.h"
-#include "ResultScene.h"
 #include "SceneController.h"
 #include "TitleScene.h"
 #include <cassert>
@@ -14,56 +15,56 @@ namespace
 	constexpr float kSkyModelScale = 5.0f;
 }
 
-ResultScene::ResultScene(SceneController& controller) :
+ClearScene::ClearScene(SceneController& controller) :
 	SceneBase(controller),
 	m_skyModel(-1),
 	m_fadeFrame(kFadeInterval),
 	m_blinkFrame(0),
-	m_update(&ResultScene::FadeInUpdate),
-	m_draw(&ResultScene::FadeDraw)
+	m_update(&ClearScene::FadeInUpdate),
+	m_draw(&ClearScene::FadeDraw)
 {
 	m_skyModel = MV1LoadModel("Data/Model/Sky/Sky_Daylight01.mv1");
 	assert(m_skyModel >= 0);
 	MV1SetScale(m_skyModel, VGet(kSkyModelScale, kSkyModelScale, kSkyModelScale));
 }
 
-ResultScene::~ResultScene()
+ClearScene::~ClearScene()
 {
 	MV1DeleteModel(m_skyModel);
 }
 
-void ResultScene::Update()
+void ClearScene::Update()
 {
 	(this->*m_update)();
 }
 
-void ResultScene::Draw()
+void ClearScene::Draw()
 {
 	(this->*m_draw)();
 }
 
-void ResultScene::NormalUpdate()
+void ClearScene::NormalUpdate()
 {
 	++m_blinkFrame;
 
 	if (Input::Instance().IsPress("LB"))
 	{
-		m_update = &ResultScene::FadeOutUpdate;
-		m_draw = &ResultScene::FadeDraw;
+		m_update = &ClearScene::FadeOutUpdate;
+		m_draw = &ClearScene::FadeDraw;
 		m_fadeFrame = 0;
 	}
 }
 
-void ResultScene::FadeInUpdate()
+void ClearScene::FadeInUpdate()
 {
 	if (--m_fadeFrame <= 0)
 	{
-		m_update = &ResultScene::NormalUpdate;
-		m_draw = &ResultScene::NormalDraw;
+		m_update = &ClearScene::NormalUpdate;
+		m_draw = &ClearScene::NormalDraw;
 	}
 }
 
-void ResultScene::FadeOutUpdate()
+void ClearScene::FadeOutUpdate()
 {
 	if (m_fadeFrame++ >= kFadeInterval)
 	{
@@ -74,22 +75,22 @@ void ResultScene::FadeOutUpdate()
 	}
 }
 
-void ResultScene::NormalDraw()
+void ClearScene::NormalDraw()
 {
 	MV1DrawModel(m_skyModel);
 
 	// ì_ñ≈å¯â ÇÃÇΩÇﬂÇÃèåè
 	if ((m_blinkFrame / 30) % 2 == 0)
 	{
-		DrawString(0, 0, "Result Scene", 0x000000);
+		DrawString(0, 0, "Clear Scene", 0x000000);
 	}
 }
 
-void ResultScene::FadeDraw()
+void ClearScene::FadeDraw()
 {
 	MV1DrawModel(m_skyModel);
 
-	DrawString(0, 0, "Result Scene", 0x000000);
+	DrawString(0, 0, "Clear Scene", 0x000000);
 
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));

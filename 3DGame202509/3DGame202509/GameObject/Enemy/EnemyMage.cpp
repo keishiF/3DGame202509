@@ -225,7 +225,6 @@ void EnemyMage::Draw()
 		gaugeY + gaugeHeight,
 		0x000000, false);
 
-#ifdef _DEBUG
 	Vec3 pos = m_rigidbody.GetPos();
 	VECTOR base = pos.ToDxVECTOR();
 
@@ -296,7 +295,6 @@ void EnemyMage::Draw()
 
 		DrawLine3D(p1.ToDxVECTOR(), p2.ToDxVECTOR(), GetColor(255, 0, 255));
 	}
-#endif
 }
 
 void EnemyMage::OnDamage()
@@ -422,17 +420,19 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 
 	if (m_anim.GetNextAnim().isEnd)
 	{
-		float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
+		ChangeState(EnemyState::Find, kAnimSpeed);
+		m_attackFrame = 0;
+
+		/*float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
 		if (distance >= (m_findRadius + player->GetRadius()))
 		{
-			ChangeState(EnemyState::Find, kAnimSpeed);
-			m_attackFrame = 0;
+			
 		}
 		else
 		{
 			ChangeState(EnemyState::Chase, kAnimSpeed);
 			m_attackFrame = 0;
-		}
+		}*/
 	}
 }
 
