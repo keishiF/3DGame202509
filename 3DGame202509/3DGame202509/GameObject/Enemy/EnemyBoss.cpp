@@ -93,6 +93,7 @@ EnemyBoss::EnemyBoss() :
 
 EnemyBoss::~EnemyBoss()
 {
+	MV1DeleteModel(m_charModel);
 }
 
 void EnemyBoss::Init(Vec3& pos, Vec3& rot, Vec3& scale)

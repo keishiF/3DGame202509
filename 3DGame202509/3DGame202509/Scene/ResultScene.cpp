@@ -33,6 +33,7 @@ ResultScene::ResultScene(SceneController& controller):
 
 ResultScene::~ResultScene()
 {
+	MV1DeleteModel(m_skyModel);
 }
 
 void ResultScene::Update()

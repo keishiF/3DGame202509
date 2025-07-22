@@ -22,6 +22,7 @@ PlayerRightWeapon::PlayerRightWeapon() :
 
 PlayerRightWeapon::~PlayerRightWeapon()
 {
+	MV1DeleteModel(m_model);
 }
 
 void PlayerRightWeapon::Init()

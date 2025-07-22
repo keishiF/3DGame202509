@@ -10,6 +10,7 @@ Floor::Floor()
 
 Floor::~Floor()
 {
+	MV1DeleteModel(m_model);
 }
 
 void Floor::Init(const std::string& modelPath, Vec3 pos, Vec3 rot, Vec3 scale)

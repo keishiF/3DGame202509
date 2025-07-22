@@ -19,6 +19,7 @@ EnemyMinionBlade::EnemyMinionBlade() :
 
 EnemyMinionBlade::~EnemyMinionBlade()
 {
+	MV1DeleteModel(m_model);
 }
 
 void EnemyMinionBlade::Init()

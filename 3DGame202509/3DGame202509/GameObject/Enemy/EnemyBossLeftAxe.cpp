@@ -18,6 +18,7 @@ EnemyBossLeftAxe::EnemyBossLeftAxe() :
 
 EnemyBossLeftAxe::~EnemyBossLeftAxe()
 {
+	MV1DeleteModel(m_model);
 }
 
 void EnemyBossLeftAxe::Init()

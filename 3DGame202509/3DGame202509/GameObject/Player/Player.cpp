@@ -14,7 +14,7 @@
 namespace
 {
 	// HP‚Ì‰Šú’l
-	constexpr int kHp = 15;
+	constexpr int kHp = 1;
 
 	constexpr int kSpecialGaugeMax = 100;
 
@@ -768,7 +768,7 @@ void Player::SpecialUpdate()
 
 void Player::DodgeUpdate()
 {
-	SetActive(false);
+	SetActive(true);
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Dodge));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Dodge));
 

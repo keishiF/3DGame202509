@@ -66,6 +66,7 @@ EnemyMinion::EnemyMinion()
 
 EnemyMinion::~EnemyMinion()
 {
+	MV1DeleteModel(m_charModel);
 }
 
 void EnemyMinion::Init(Vec3& pos, Vec3& rot, Vec3& scale)

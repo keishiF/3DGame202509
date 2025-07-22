@@ -60,6 +60,8 @@ EnemyMage::EnemyMage() :
 
 EnemyMage::~EnemyMage()
 {
+	MV1DeleteModel(m_charModel);
+	MV1DeleteModel(m_weaponModel);
 }
 
 void EnemyMage::Init(Vec3& pos, Vec3& rot, Vec3& scale)
@@ -442,7 +444,7 @@ void EnemyMage::HitUpdate(std::shared_ptr<Player> player)
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
-		ChangeState(EnemyState::Find, kAnimSpeed);
+		ChangeState(EnemyState::Attack, kAnimSpeed);
 		m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	}
 }

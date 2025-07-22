@@ -1,10 +1,10 @@
-#include "TitleScene.h"
-#include "GameScene.h"
-#include "SceneController.h"
 #include "game.h"
+#include "GameScene.h"
 #include "Input.h"
-#include <DxLib.h>
+#include "SceneController.h"
+#include "TitleScene.h"
 #include <cassert>
+#include <DxLib.h>
 
 namespace
 {
@@ -29,6 +29,7 @@ TitleScene::TitleScene(SceneController& controller) :
 
 TitleScene::~TitleScene()
 {
+	MV1DeleteModel(m_skyModel);
 }
 
 void TitleScene::Update()

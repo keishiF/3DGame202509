@@ -9,6 +9,7 @@ Mountain::Mountain()
 
 Mountain::~Mountain()
 {
+	MV1DeleteModel(m_model);
 }
 
 void Mountain::Init(const std::string& modelPath, Vec3 pos, Vec3 rot, Vec3 scale)

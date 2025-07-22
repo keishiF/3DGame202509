@@ -17,6 +17,7 @@ SkyDome::SkyDome() :
 
 SkyDome::~SkyDome()
 {
+	MV1DeleteModel(m_model);
 }
 
 void SkyDome::Init(std::shared_ptr<Camera> camera)
