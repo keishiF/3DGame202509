@@ -5,7 +5,7 @@ class ClearScene final :
 	public SceneBase
 {
 public:
-	ClearScene(SceneController& controller);
+	explicit ClearScene(SceneController& controller);
 	~ClearScene();
 
 	virtual void Update() override;

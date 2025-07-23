@@ -5,7 +5,7 @@
 class TitleScene final : public SceneBase
 {
 public:
-	TitleScene(SceneController& controller);
+	explicit TitleScene(SceneController& controller);
 	~TitleScene();
 
 	virtual void Update() override;

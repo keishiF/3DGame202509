@@ -5,7 +5,7 @@ class ResultScene final:
     public SceneBase
 {
 public:
-    ResultScene(SceneController& controller);
+	explicit ResultScene(SceneController& controller);
     ~ResultScene();
 
     virtual void Update() override;

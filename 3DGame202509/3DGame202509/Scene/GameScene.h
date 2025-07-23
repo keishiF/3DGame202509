@@ -13,7 +13,7 @@ class GameScene final:
 	public SceneBase
 {
 public:
-	GameScene(SceneController& controller);
+	explicit GameScene(SceneController& controller);
 	~GameScene();
 
 	virtual void Update() override;
