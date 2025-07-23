@@ -14,12 +14,15 @@ public:
 	PlayerLeftWeapon();
 	~PlayerLeftWeapon();
 
+	// ‰Šú‰»
 	void Init();
+	// XV
 	void Update(int model, float currentFrame, const LeftAttackTiming& timing);
 	// ‘Ò‹@ó‘Ô
 	void IdleUpdate(int model);
-	// ŠeUŒ‚ó‘Ô
+	// UŒ‚ó‘Ô
 	void AttackUpdate(int model);
+	// •`‰æ
 	void Draw();
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;

@@ -25,12 +25,18 @@ public:
 	EnemyBase();
 	virtual ~EnemyBase();
 
+	// ‰Šú‰»
 	virtual void Init(Vec3& pos, Vec3& rot, Vec3& scale) abstract;
+	// XV
 	virtual void Update(std::shared_ptr<Player> player) abstract;
+	// •`‰æ
 	virtual void Draw() abstract;
 
+	// ˆÊ’u‚ğæ“¾
 	Vec3 GetPos() const;
+	// ƒ_ƒ[ƒW‚ğó‚¯‚½‚Ìˆ—
 	virtual void OnDamage() abstract;
+	// €‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©
 	bool IsDead() const { return m_isDead; }
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
@@ -42,10 +48,15 @@ protected:
 	virtual bool IsLoopAnim(EnemyState state) const abstract;
 	void ChangeState(EnemyState newState, float playSpeed);
 
+	// Player‚ğ’T‚µ‚Ä‚¢‚éó‘Ô
 	virtual void FindUpdate(std::shared_ptr<Player> player) abstract;
+	// Player‚ğŒ©‚Â‚¯‚Ä’Ç‚¢‚©‚¯‚Ä‚¢‚éó‘Ô
 	virtual void ChaseUpdate(std::shared_ptr<Player> player) abstract;
+	// UŒ‚ó‘Ô
 	virtual void AttackUpdate(std::shared_ptr<Player> player) abstract;
+	// ”í’eó‘Ô
 	virtual void HitUpdate(std::shared_ptr<Player> player) abstract;
+	// €–Só‘Ô
 	virtual void DeadUpdate(std::shared_ptr<Player> player) abstract;
 
 protected:

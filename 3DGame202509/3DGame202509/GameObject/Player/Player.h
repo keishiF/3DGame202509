@@ -34,9 +34,11 @@ public:
 	Player();
 	virtual ~Player();
 
-	// 初期化、更新、描画
+	// 初期化
 	void Init(Vec3& pos, const Vec3& rot, const Vec3& scale);
+	// 更新
 	void Update();
+	// 描画
 	void Draw();
 
 	// プレイヤーの位置を取得

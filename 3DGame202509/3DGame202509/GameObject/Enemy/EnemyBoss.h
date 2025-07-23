@@ -10,13 +10,17 @@ public:
 	EnemyBoss();
 	~EnemyBoss();
 
-	// 初期化、更新、描画
+	// 初期化
 	void Init(Vec3& pos, Vec3& rot, Vec3& scale) override;
+	// 更新
 	void Update(std::shared_ptr<Player> player) override;
+	// 描画
 	void Draw() override;
 
+	// ダメージを受けた時の処理
 	virtual void OnDamage() override;
 
+	// 死んでいるかどうか
 	bool IsDead() { return m_isDead; }
 
 	// 敵の状態
@@ -24,8 +28,9 @@ private:
 	const char* GetAnimName(EnemyState state) const override;
 	bool IsLoopAnim(EnemyState state) const override;
 
+	// 歩き状態
 	void WalkUpdate(std::shared_ptr<Player> player);
-	// 探索状態
+	// Playerを探している状態
 	void FindUpdate(std::shared_ptr<Player> player) override;
 	// 発見状態
 	void ChaseUpdate(std::shared_ptr<Player> player) override;
