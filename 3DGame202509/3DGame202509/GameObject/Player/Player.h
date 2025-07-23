@@ -4,9 +4,7 @@
 #include "Input.h"
 #include "Quaternion.h"
 #include "Vec3.h"
-#include <memory>
 #include <queue>
-#include <string>
 
 enum class PlayerState
 {

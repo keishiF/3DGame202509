@@ -1,7 +1,6 @@
 #pragma once
 #include "Collidable.h"
 #include <list>
-#include <memory>
 #include <vector>
 
 namespace

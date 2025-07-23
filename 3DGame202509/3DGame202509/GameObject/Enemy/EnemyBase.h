@@ -3,7 +3,6 @@
 #include "Collidable.h"
 #include "Physics.h"
 #include "Vec3.h"
-#include <memory>
 
 enum class EnemyState
 {
