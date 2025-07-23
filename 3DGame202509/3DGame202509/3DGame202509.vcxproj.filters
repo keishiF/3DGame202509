@@ -57,13 +57,13 @@
     <Filter Include="ヘッダー ファイル\GameObject\Stage">
       <UniqueIdentifier>{d025fa2c-db8c-40dd-b142-f14cde4c9ec4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Main">
-      <UniqueIdentifier>{0f3ff440-c232-47b0-aebf-35a59086a821}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Effect">
       <UniqueIdentifier>{7ae170d1-6463-4a75-9e1d-7390c5f600d2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Effect">
+    <Filter Include="ソース ファイル\Main">
+      <UniqueIdentifier>{0f3ff440-c232-47b0-aebf-35a59086a821}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Effect">
       <UniqueIdentifier>{ec841b84-c507-41dd-a649-4a3b0869c451}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -174,13 +174,13 @@
       <Filter>ソース ファイル\Animator</Filter>
     </ClCompile>
     <ClCompile Include="Main\main.cpp">
-      <Filter>Main</Filter>
+      <Filter>ソース ファイル\Main</Filter>
     </ClCompile>
     <ClCompile Include="Effect\Effect.cpp">
-      <Filter>Effect</Filter>
+      <Filter>ソース ファイル\Effect</Filter>
     </ClCompile>
     <ClCompile Include="Effect\EffectManager.cpp">
-      <Filter>Effect</Filter>
+      <Filter>ソース ファイル\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
