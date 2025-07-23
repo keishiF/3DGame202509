@@ -1,7 +1,8 @@
 #include "SphereColliderData.h"
 
 SphereColliderData::SphereColliderData() :
-	ColliderData(ColliderData::Kind::Sphere)
+	ColliderData(ColliderData::Kind::Sphere),
+	m_radius()
 {
 }
 

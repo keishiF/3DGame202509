@@ -32,10 +32,66 @@ private:
 		void OnCollide() { owner->OnCollide(collider); }
 	};
 
-	void FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const;
-	void FixPosition();
-	std::vector<OnCollideInfo> CheckCollide() const;
+	/// <summary>
+	/// オブジェクトが衝突しているかを判定する関数
+	/// </summary>
+	/// <param name="first"></param>
+	/// <param name="second"></param>
+	/// <returns></returns>
 	bool IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Collidable> second) const;
+	/// <summary>
+	/// スフィア同士の当たり判定
+	/// </summary>
+	/// <param name="first"></param>
+	/// <param name="second"></param>
+	/// <returns></returns>
+	bool IsCollideSS(std::shared_ptr<Collidable>& first, std::shared_ptr<Collidable>& second) const;
+	/// <summary>
+	/// カプセル同士の当たり判定
+	/// </summary>
+	/// <param name="first"></param>
+	/// <param name="second"></param>
+	/// <returns></returns>
+	bool IsCollideCC(std::shared_ptr<Collidable>& first, std::shared_ptr<Collidable>& second) const;
+	/// <summary>
+	/// カプセルとスフィアの当たり判定
+	/// </summary>
+	/// <param name="firstKind"></param>
+	/// <param name="first"></param>
+	/// <param name="second"></param>
+	/// <returns></returns>
+	bool IsCollideCS(ColliderData::Kind firstKind, std::shared_ptr<Collidable>& first, std::shared_ptr<Collidable>& second) const;
+	/// <summary>
+	/// カプセルとポリゴンの当たり判定
+	/// </summary>
+	/// <param name="firstKind"></param>
+	/// <param name="first"></param>
+	/// <param name="second"></param>
+	/// <returns></returns>
+	bool IsCollideCP(ColliderData::Kind firstKind, std::shared_ptr<Collidable>& first, std::shared_ptr<Collidable>& second) const;
+
+	void FixPosition();
+	void FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const;
+	/// <summary>
+	/// スフィア同士の位置補正
+	/// </summary>
+	/// <param name="secondary"></param>
+	/// <param name="primary"></param>
+	void FixNextPositionSS(std::shared_ptr<Collidable>& secondary, std::shared_ptr<Collidable>& primary) const;
+	/// <summary>
+	/// カプセル同士の位置補正
+	/// </summary>
+	/// <param name="primary"></param>
+	/// <param name="secondary"></param>
+	void FixNextPositionCC(std::shared_ptr<Collidable>& primary, std::shared_ptr<Collidable>& secondary) const;
+	/// <summary>
+	/// ポリゴンとカプセルの位置補正
+	/// </summary>
+	/// <param name="primary"></param>
+	/// <param name="secondary"></param>
+	void FixNextPositionCP(std::shared_ptr<Collidable>& primary, std::shared_ptr<Collidable>& secondary) const;
+
+	std::vector<OnCollideInfo> CheckCollide() const;
 
 	// 当たり判定をそもそも取らないようにする
 	bool SkipCheckCollide(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const;

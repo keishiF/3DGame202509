@@ -47,8 +47,5 @@ private:
 	void NormalDraw();
 	// フェード時の描画
 	void FadeDraw();
-
-	// グリッドを描画
-	void DrawField();
 };
 

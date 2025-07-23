@@ -108,6 +108,225 @@ void Physics::DebugDraw()
 	}
 }
 
+bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Collidable> second) const
+{
+	// 当たり判定がオフになっているものは無視する
+	if (!first->IsActive() || !second->IsActive()) return false;
+
+	// 特定のタグ同士では当たり判定を取らずにスキップ
+	if (SkipCheckCollide(first, second))
+	{
+		return false;
+	}
+
+	//第一の当たり判定と第二の当たり判定がおなじものでなければ
+	if (first != second)
+	{
+		//当たり判定の種類を取得
+		ColliderData::Kind firstKind = first->m_colliderData->GetKind();
+		ColliderData::Kind secondKind = second->m_colliderData->GetKind();
+
+		//球どうしの当たり判定
+		if (firstKind == ColliderData::Kind::Sphere && secondKind == ColliderData::Kind::Sphere)
+		{
+			return IsCollideSS(first, second);
+		}
+		//カプセル同士の当たり判定
+		else if (firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Capsule)
+		{
+			return IsCollideCC(first, second);
+		}
+		//球とカプセルの当たり判定
+		else if (firstKind == ColliderData::Kind::Sphere && secondKind == ColliderData::Kind::Capsule ||
+			firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Sphere)
+		{
+			return IsCollideCS(firstKind, first, second);
+		}
+		// カプセルとポリゴンの当たり判定
+		else if (firstKind == ColliderData::Kind::Polygon && secondKind == ColliderData::Kind::Capsule ||
+			firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Polygon)
+		{
+			return IsCollideCP(firstKind, first, second);
+		}
+	}
+	return false;
+}
+
+bool Physics::SkipCheckCollide(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const
+{
+	if ((primary->GetTag() == ObjectTag::Player && secondary->GetTag() == ObjectTag::PlayerWeapon) ||
+		(primary->GetTag() == ObjectTag::PlayerWeapon && secondary->GetTag() == ObjectTag::Player) ||
+		(primary->GetTag() == ObjectTag::Enemy && secondary->GetTag() == ObjectTag::EnemyWeapon) ||
+		(primary->GetTag() == ObjectTag::EnemyWeapon && secondary->GetTag() == ObjectTag::Enemy) ||
+		(primary->GetTag() == ObjectTag::Enemy && secondary->GetTag() == ObjectTag::Bullet) ||
+		(primary->GetTag() == ObjectTag::Bullet && secondary->GetTag() == ObjectTag::Enemy) ||
+		(primary->GetTag() == ObjectTag::Enemy && secondary->GetTag() == ObjectTag::Enemy))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool Physics::SkipFixPos(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const
+{
+	if (primary->GetTag() == ObjectTag::Player && secondary->GetTag() == ObjectTag::Bullet ||
+		primary->GetTag() == ObjectTag::Enemy && secondary->GetTag() == ObjectTag::Bullet ||
+		primary->GetTag() == ObjectTag::Boss && secondary->GetTag() == ObjectTag::Bullet ||
+		primary->GetTag() == ObjectTag::Enemy && secondary->GetTag() == ObjectTag::PlayerWeapon ||
+		primary->GetTag() == ObjectTag::Boss && secondary->GetTag() == ObjectTag::PlayerWeapon ||
+		primary->GetTag() == ObjectTag::PlayerWeapon && secondary->GetTag() == ObjectTag::Enemy ||
+		primary->GetTag() == ObjectTag::PlayerWeapon && secondary->GetTag() == ObjectTag::Boss ||
+		primary->GetTag() == ObjectTag::Player && secondary->GetTag() == ObjectTag::EnemyWeapon ||
+		primary->GetTag() == ObjectTag::EnemyWeapon && secondary->GetTag() == ObjectTag::Player)
+	{
+		return true;
+	}
+	return false;
+}
+
+bool Physics::ShouldCallOnCollide(ObjectTag tagA, ObjectTag tagB) const
+{
+	if ((tagA == ObjectTag::Player && tagB == ObjectTag::Enemy) ||
+		(tagA == ObjectTag::Enemy && tagB == ObjectTag::Player) ||
+		(tagA == ObjectTag::Player && tagB == ObjectTag::Boss) ||
+		(tagA == ObjectTag::Boss && tagB == ObjectTag::Player) ||
+		(tagA == ObjectTag::Stage && tagB == ObjectTag::Player) ||
+		(tagA == ObjectTag::Player && tagB == ObjectTag::Stage) ||
+		(tagA == ObjectTag::Stage && tagB == ObjectTag::Enemy) ||
+		(tagA == ObjectTag::Enemy && tagB == ObjectTag::Stage))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool Physics::IsCollideSS(std::shared_ptr<Collidable>& first, std::shared_ptr<Collidable>& second) const
+{
+	//当たり判定を球にダウンキャストする
+	auto firstCol = std::dynamic_pointer_cast<SphereColliderData>(first->m_colliderData);
+	auto secondCol = std::dynamic_pointer_cast<SphereColliderData>(second->m_colliderData);
+
+	//当たり判定の距離を求める
+	float distance = (first->m_nextPos - second->m_nextPos).Length();
+
+	//球の大きさを合わせたものよりも距離が短ければぶつかっている
+	if (distance < firstCol->m_radius + secondCol->m_radius)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Physics::IsCollideCC(std::shared_ptr<Collidable>& first, std::shared_ptr<Collidable>& second) const
+{
+	//当たり判定をカプセルにダウンキャストする
+	auto firstCol = std::dynamic_pointer_cast<CapsuleColliderData>(first->m_colliderData);
+	auto secondCol = std::dynamic_pointer_cast<CapsuleColliderData>(second->m_colliderData);
+
+	//カプセル同士の最短距離
+	float distance = Segment_Segment_MinLength(first->m_nextPos.ToDxVECTOR(), firstCol->m_startPos.ToDxVECTOR(),
+		second->m_nextPos.ToDxVECTOR(), secondCol->m_startPos.ToDxVECTOR());
+
+	if (distance < firstCol->m_radius + secondCol->m_radius)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Physics::IsCollideCS(ColliderData::Kind firstKind, std::shared_ptr<Collidable>& first, std::shared_ptr<Collidable>& second) const
+{
+	//球とカプセルのコライダーデータ作成
+	std::shared_ptr<ColliderData> sphereDataBase;
+	std::shared_ptr<ColliderData> capsuleDataBase;
+	float distance;
+	//どちらがカプセルなのか球なのか判別してからデータを入れる
+	if (firstKind == ColliderData::Kind::Sphere)
+	{
+		sphereDataBase = first->m_colliderData;
+		capsuleDataBase = second->m_colliderData;
+
+		//カプセルの線分のデータを使うためにダウンキャスト
+		auto capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(capsuleDataBase);
+		//線分と点の最近距離を求める
+		distance = Segment_Point_MinLength(second->m_nextPos.ToDxVECTOR(),
+			capsuleData->m_startPos.ToDxVECTOR(), first->m_nextPos.ToDxVECTOR());
+	}
+	else
+	{
+		capsuleDataBase = first->m_colliderData;
+		sphereDataBase = second->m_colliderData;
+		//カプセルの線分のデータを使うためにダウンキャスト
+		auto capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(capsuleDataBase);
+		//線分と点の最近距離を求める
+		distance = Segment_Point_MinLength(first->m_nextPos.ToDxVECTOR(),
+			capsuleData->m_startPos.ToDxVECTOR(), second->m_nextPos.ToDxVECTOR());
+	}
+	//ダウンキャスト
+	auto sphereData = std::dynamic_pointer_cast<SphereColliderData>(sphereDataBase);
+	auto capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(capsuleDataBase);
+
+	//円とカプセルの半径よりも円とカプセルの距離が近ければ当たっている
+	if (distance < sphereData->m_radius + capsuleData->m_radius)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Physics::IsCollideCP(ColliderData::Kind firstKind, std::shared_ptr<Collidable>& first, std::shared_ptr<Collidable>& second) const
+{
+	std::shared_ptr<Collidable> capsuleCollidable;
+	std::shared_ptr<Collidable> polygonCollidable;
+	if (firstKind == ColliderData::Kind::Capsule)
+	{
+		capsuleCollidable = first;
+		polygonCollidable = second;
+	}
+	else
+	{
+		capsuleCollidable = second;
+		polygonCollidable = first;
+	}
+
+	//コライダーデータの取得
+	auto collDataA = std::dynamic_pointer_cast<CapsuleColliderData>(capsuleCollidable->m_colliderData);
+	auto collDataB = std::dynamic_pointer_cast<PolygonColliderData>(polygonCollidable->m_colliderData);
+	//リジッドボディ
+	auto rbA = first->m_rigidbody;
+
+	//当たってるポリゴンの数
+	auto hitDim = MV1CollCheck_Capsule(
+		collDataB->GetModelHandle(),
+		-1,
+		rbA.GetNextPos().ToDxVECTOR(),
+		collDataA->GetNextStartPos(rbA.GetVelo()).ToDxVECTOR(),
+		collDataA->m_radius,
+		-1);
+
+	//当たっていないならfalse
+	if (hitDim.HitNum <= 0)
+	{
+		// 検出したプレイヤーの周囲のポリゴン情報を開放する
+		MV1CollResultPolyDimTerminate(hitDim);
+		return false;
+	}
+	//当たり判定に使うので保存
+	collDataB->SetHitDim(hitDim);
+
+	return true;
+}
+
 void Physics::FixPosition()
 {
 	for (auto& item : m_collidables)
@@ -145,126 +364,100 @@ void Physics::FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_p
 	// 球同士の位置補正
 	if (primaryKind == ColliderData::Kind::Sphere && secondaryKind == ColliderData::Kind::Sphere)
 	{
-		Vec3 primaryToSecondary = secondary->m_nextPos - primary->m_nextPos;
-		primaryToSecondary.Normalize();
-
-		auto primaryColliderData = dynamic_pointer_cast<SphereColliderData>(primary->m_colliderData);
-		auto secondaryColliderData = dynamic_pointer_cast<SphereColliderData>(secondary->m_colliderData);
-		float awayDist = primaryColliderData->m_radius + secondaryColliderData->m_radius;
-		Vec3 primaryToNewSecondaryPos = primaryToSecondary * awayDist;
-		Vec3 fixedPos = primary->m_nextPos + primaryToNewSecondaryPos;
-		secondary->m_nextPos = fixedPos;
+		FixNextPositionSS(secondary, primary);
 	}
 	// カプセルとカプセルの位置補正
 	else if (primaryKind == ColliderData::Kind::Capsule && secondaryKind == ColliderData::Kind::Capsule)
 	{
-		auto primaryColliderData = dynamic_pointer_cast<CapsuleColliderData>(primary->m_colliderData);
-		auto secondaryColliderData = dynamic_pointer_cast<CapsuleColliderData>(secondary->m_colliderData);
-
-		// カプセルの線分の始点と終点
-		Vec3 primaryStart   = primary->m_nextPos;
-		Vec3 primaryEnd     = primaryColliderData->m_startPos;
-
-		Vec3 secondaryStart = secondary->m_nextPos;
-		Vec3 secondaryEnd   = secondaryColliderData->m_startPos;
-
-		// 線分同士の最近接点を求める
-		Vec3 closestPointA, closestPointB;
-		SegmentClosestPoint(primaryStart, primaryEnd, secondaryStart, secondaryEnd, &closestPointA, &closestPointB);
-
-		// 最近接点間の距離と方向
-		Vec3 closestDir = closestPointB - closestPointA;
-		float dist = closestDir.Length();
-
-		float awayDist = primaryColliderData->m_radius + secondaryColliderData->m_radius;
-
-		if (dist == 0.0f)
-		{
-			closestDir = {1.0f, 0.0f, 0.0f};
-			dist = 0.000001f;
-		}
-		else
-		{
-			closestDir.Normalize();
-		}
-
-		if (dist < awayDist)
-		{
-			Vec3 fixedPos = closestDir * (awayDist - dist);
-			fixedPos.y = 0.0f;
-			secondary->m_nextPos += fixedPos;
-		}
+		FixNextPositionCC(primary, secondary);
 	}
 	// カプセルとポリゴンの位置補正
 	else if (primaryKind == ColliderData::Kind::Polygon && secondaryKind == ColliderData::Kind::Capsule ||
 		primaryKind == ColliderData::Kind::Capsule && secondaryKind == ColliderData::Kind::Polygon)
 	{
-		// primaryがポリゴン(高優先度/Static)、secondaryがカプセル(低優先度/Middle)のケース
-		auto polygonCollider = std::dynamic_pointer_cast<PolygonColliderData>(primary->m_colliderData);
-		auto capsuleCollider = std::dynamic_pointer_cast<CapsuleColliderData>(secondary->m_colliderData);
-		
-		// 衝突情報がなければ処理をしない
-		auto& hitDim = polygonCollider->GetHitDim();
-		if (hitDim.HitNum > 0)
-		{
-			// カプセルの移動後の頭と足の位置を計算
-			Vec3 headPos = capsuleCollider->GetNextStartPos(secondary->m_rigidbody.GetVelo());
-			Vec3 legPos = secondary->m_nextPos;
-			if (headPos.y < legPos.y)
-			{
-				std::swap(headPos, legPos);
-			}
-			
-			// ポリゴンからの押し出しベクトルを計算
-			Vec3 pushBackVec = HitWallCP(headPos, legPos, hitDim.HitNum, hitDim.Dim, capsuleCollider->m_radius);
-			// カプセル(secondary)の位置を押し出しベクトル分、補正する
-			secondary->m_nextPos += pushBackVec;
-		}
-		
-		// 衝突情報を解放する
-		MV1CollResultPolyDimTerminate(hitDim);
-
-		////コライダーデータ
-		//auto collDataA = std::dynamic_pointer_cast<CapsuleColliderData>(secondary->m_colliderData);
-		//auto collDataB = std::dynamic_pointer_cast<PolygonColliderData>(primary->m_colliderData);
-		////リジッドボディ
-		//auto rbA = secondary->m_rigidbody;
-		//auto rbB = primary->m_rigidbody;
-
-		////当たったポリゴンの情報
-		//auto& hitDim = collDataB->GetHitDim();
-		////お互い動かないオブジェクトなら衝突しない(ポリゴンはスタティックなので片方がスタティックなら)
-		//if (primary->m_priority == ObjectPriority::Static)
-		//{
-		//	// 検出したプレイヤーの周囲のポリゴン情報を開放する
-		//	DxLib::MV1CollResultPolyDimTerminate(hitDim);
-		//	return;
-		//}
-
-		////カプセルの頭座標と足座標
-		//Vec3 headPos = collDataA->GetNextStartPos(rbA.GetVelo());//移動後
-		//Vec3 legPos = rbA.GetNextPos();//移動後
-		////頭より足のほうが低い位置にあるなら入れ替える
-		//if (headPos.y < legPos.y)
-		//{
-		//	Vec3 temp = legPos;
-		//	legPos = headPos;
-		//	headPos = temp;
-		//}
-
-		////壁と当たっているなら
-		//if (m_wallNum > 0)
-		//{
-		//	//補正するベクトルを返す
-		//	Vec3 overlapVec = HitWallCP(headPos, legPos, hitDim.HitNum, *m_wall, collDataA->m_radius);
-
-		//	//ポリゴンは固定(static)なので球のみ動かす
-		//	rbB.SetVelo(overlapVec);
-		//}
-
-		//// 検出したプレイヤーの周囲のポリゴン情報を開放する
-		//DxLib::MV1CollResultPolyDimTerminate(hitDim);
+		FixNextPositionCP(primary, secondary);
 	}
+}
+
+void Physics::FixNextPositionSS(std::shared_ptr<Collidable>& secondary, std::shared_ptr<Collidable>& primary) const
+{
+	Vec3 primaryToSecondary = secondary->m_nextPos - primary->m_nextPos;
+	primaryToSecondary.Normalize();
+
+	auto primaryColliderData = dynamic_pointer_cast<SphereColliderData>(primary->m_colliderData);
+	auto secondaryColliderData = dynamic_pointer_cast<SphereColliderData>(secondary->m_colliderData);
+	float awayDist = primaryColliderData->m_radius + secondaryColliderData->m_radius;
+	Vec3 primaryToNewSecondaryPos = primaryToSecondary * awayDist;
+	Vec3 fixedPos = primary->m_nextPos + primaryToNewSecondaryPos;
+	secondary->m_nextPos = fixedPos;
+}
+
+void Physics::FixNextPositionCC(std::shared_ptr<Collidable>& primary, std::shared_ptr<Collidable>& secondary) const
+{
+	auto primaryColliderData = dynamic_pointer_cast<CapsuleColliderData>(primary->m_colliderData);
+	auto secondaryColliderData = dynamic_pointer_cast<CapsuleColliderData>(secondary->m_colliderData);
+
+	// カプセルの線分の始点と終点
+	Vec3 primaryStart = primary->m_nextPos;
+	Vec3 primaryEnd = primaryColliderData->m_startPos;
+
+	Vec3 secondaryStart = secondary->m_nextPos;
+	Vec3 secondaryEnd = secondaryColliderData->m_startPos;
+
+	// 線分同士の最近接点を求める
+	Vec3 closestPointA, closestPointB;
+	SegmentClosestPoint(primaryStart, primaryEnd, secondaryStart, secondaryEnd, &closestPointA, &closestPointB);
+
+	// 最近接点間の距離と方向
+	Vec3 closestDir = closestPointB - closestPointA;
+	float dist = closestDir.Length();
+
+	float awayDist = primaryColliderData->m_radius + secondaryColliderData->m_radius;
+
+	if (dist == 0.0f)
+	{
+		closestDir = { 1.0f, 0.0f, 0.0f };
+		dist = 0.000001f;
+	}
+	else
+	{
+		closestDir.Normalize();
+	}
+
+	if (dist < awayDist)
+	{
+		Vec3 fixedPos = closestDir * (awayDist - dist);
+		fixedPos.y = 0.0f;
+		secondary->m_nextPos += fixedPos;
+	}
+}
+
+void Physics::FixNextPositionCP(std::shared_ptr<Collidable>& primary, std::shared_ptr<Collidable>& secondary) const
+{
+	// primaryがポリゴン(高優先度/Static)、secondaryがカプセル(低優先度/Middle)のケース
+	auto polygonCollider = std::dynamic_pointer_cast<PolygonColliderData>(primary->m_colliderData);
+	auto capsuleCollider = std::dynamic_pointer_cast<CapsuleColliderData>(secondary->m_colliderData);
+
+	// 衝突情報がなければ処理をしない
+	auto& hitDim = polygonCollider->GetHitDim();
+	if (hitDim.HitNum > 0)
+	{
+		// カプセルの移動後の頭と足の位置を計算
+		Vec3 headPos = capsuleCollider->GetNextStartPos(secondary->m_rigidbody.GetVelo());
+		Vec3 legPos = secondary->m_nextPos;
+		if (headPos.y < legPos.y)
+		{
+			std::swap(headPos, legPos);
+		}
+
+		// ポリゴンからの押し出しベクトルを計算
+		Vec3 pushBackVec = HitWallCP(headPos, legPos, hitDim.HitNum, hitDim.Dim, capsuleCollider->m_radius);
+		// カプセル(secondary)の位置を押し出しベクトル分、補正する
+		secondary->m_nextPos += pushBackVec;
+	}
+
+	// 衝突情報を解放する
+	MV1CollResultPolyDimTerminate(hitDim);
 }
 
 std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
@@ -303,206 +496,6 @@ std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
 		}
 	}
 	return onCollideInfo;
-}
-
-bool Physics::IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Collidable> second) const
-{
-	// 当たり判定がオフになっているものは無視する
-	if (!first->IsActive() || !second->IsActive()) return false;
-
-	// 特定のタグ同士では当たり判定を取らずにスキップ
-	if (SkipCheckCollide(first, second))
-	{
-		return false;
-	}
-
-	//第一の当たり判定と第二の当たり判定がおなじものでなければ
-	if (first != second)
-	{
-		//当たり判定の種類を取得
-		ColliderData::Kind firstKind  = first->m_colliderData->GetKind();
-		ColliderData::Kind secondKind = second->m_colliderData->GetKind();
-
-		//球どうしの当たり判定
-		if (firstKind == ColliderData::Kind::Sphere && secondKind == ColliderData::Kind::Sphere)
-		{
-			//当たり判定を球にダウンキャストする
-			auto firstCol = std::dynamic_pointer_cast<SphereColliderData>(first->m_colliderData);
-			auto secondCol = std::dynamic_pointer_cast<SphereColliderData>(second->m_colliderData);
-
-			//当たり判定の距離を求める
-			float distance = (first->m_nextPos - second->m_nextPos).Length();
-
-			//球の大きさを合わせたものよりも距離が短ければぶつかっている
-			if (distance < firstCol->m_radius + secondCol->m_radius)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		//カプセル同士の当たり判定
-		else if (firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Capsule)
-		{
-			//当たり判定をカプセルにダウンキャストする
-			auto firstCol = std::dynamic_pointer_cast<CapsuleColliderData>(first->m_colliderData);
-			auto secondCol = std::dynamic_pointer_cast<CapsuleColliderData>(second->m_colliderData);
-
-			//カプセル同士の最短距離
-			float distance = Segment_Segment_MinLength(first->m_nextPos.ToDxVECTOR(), firstCol->m_startPos.ToDxVECTOR(),
-				second->m_nextPos.ToDxVECTOR(), secondCol->m_startPos.ToDxVECTOR());
-
-			if (distance < firstCol->m_radius + secondCol->m_radius)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		//球とカプセルの当たり判定
-		else if (firstKind == ColliderData::Kind::Sphere  && secondKind == ColliderData::Kind::Capsule ||
-				 firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Sphere)
-		{
-			//球とカプセルのコライダーデータ作成
-			std::shared_ptr<ColliderData> sphereDataBase;
-			std::shared_ptr<ColliderData> capsuleDataBase;
-			float distance;
-			//どちらがカプセルなのか球なのか判別してからデータを入れる
-			if (firstKind == ColliderData::Kind::Sphere)
-			{
-				sphereDataBase = first->m_colliderData;
-				capsuleDataBase = second->m_colliderData;
-
-				//カプセルの線分のデータを使うためにダウンキャスト
-				auto capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(capsuleDataBase);
-				//線分と点の最近距離を求める
-				distance = Segment_Point_MinLength(second->m_nextPos.ToDxVECTOR(),
-					capsuleData->m_startPos.ToDxVECTOR(), first->m_nextPos.ToDxVECTOR());
-			}
-			else
-			{
-				capsuleDataBase = first->m_colliderData;
-				sphereDataBase = second->m_colliderData;
-				//カプセルの線分のデータを使うためにダウンキャスト
-				auto capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(capsuleDataBase);
-				//線分と点の最近距離を求める
-				distance = Segment_Point_MinLength(first->m_nextPos.ToDxVECTOR(),
-					capsuleData->m_startPos.ToDxVECTOR(), second->m_nextPos.ToDxVECTOR());
-			}
-			//ダウンキャスト
-			auto sphereData = std::dynamic_pointer_cast<SphereColliderData>(sphereDataBase);
-			auto capsuleData = std::dynamic_pointer_cast<CapsuleColliderData>(capsuleDataBase);
-
-			//円とカプセルの半径よりも円とカプセルの距離が近ければ当たっている
-			if (distance < sphereData->m_radius + capsuleData->m_radius)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		// カプセルとポリゴンの当たり判定
-		else if (firstKind == ColliderData::Kind::Polygon && secondKind == ColliderData::Kind::Capsule ||
-			firstKind == ColliderData::Kind::Capsule && secondKind == ColliderData::Kind::Polygon)
-		{
-			std::shared_ptr<Collidable> capsuleCollidable;
-			std::shared_ptr<Collidable> polygonCollidable;
-			if (firstKind == ColliderData::Kind::Capsule)
-			{
-				capsuleCollidable = first;
-				polygonCollidable = second;
-			}
-			else
-			{
-				capsuleCollidable = second;
-				polygonCollidable = first;
-			}
-
-			//コライダーデータの取得
-			auto collDataA = std::dynamic_pointer_cast<CapsuleColliderData>(capsuleCollidable->m_colliderData);
-			auto collDataB = std::dynamic_pointer_cast<PolygonColliderData>(polygonCollidable->m_colliderData);
-			//リジッドボディ
-			auto rbA = first->m_rigidbody;
-
-			//当たってるポリゴンの数
-			auto hitDim = MV1CollCheck_Capsule(
-				collDataB->GetModelHandle(),
-				-1,
-				rbA.GetNextPos().ToDxVECTOR(),
-				collDataA->GetNextStartPos(rbA.GetVelo()).ToDxVECTOR(),
-				collDataA->m_radius,
-				-1);
-
-			//当たっていないならfalse
-			if (hitDim.HitNum <= 0)
-			{
-				// 検出したプレイヤーの周囲のポリゴン情報を開放する
-				MV1CollResultPolyDimTerminate(hitDim);
-				return false;
-			}
-			//当たり判定に使うので保存
-			collDataB->SetHitDim(hitDim);
-
-			return true;
-		}
-	}
-	return false;
-}
-
-bool Physics::SkipCheckCollide(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const
-{
-	if ((primary->GetTag() == ObjectTag::Player       && secondary->GetTag() == ObjectTag::PlayerWeapon) ||
-		(primary->GetTag() == ObjectTag::PlayerWeapon && secondary->GetTag() == ObjectTag::Player)       ||
-		(primary->GetTag() == ObjectTag::Enemy        && secondary->GetTag() == ObjectTag::EnemyWeapon)  ||
-		(primary->GetTag() == ObjectTag::EnemyWeapon  && secondary->GetTag() == ObjectTag::Enemy)        ||
-		(primary->GetTag() == ObjectTag::Enemy        && secondary->GetTag() == ObjectTag::Bullet)       ||
-		(primary->GetTag() == ObjectTag::Bullet       && secondary->GetTag() == ObjectTag::Enemy)        ||
-		(primary->GetTag() == ObjectTag::Enemy        && secondary->GetTag() == ObjectTag::Enemy))
-	{
-		return true;
-	}
-	return false;
-}
-
-bool Physics::SkipFixPos(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const
-{
-	if (primary->GetTag() == ObjectTag::Player       && secondary->GetTag() == ObjectTag::Bullet       ||
-		primary->GetTag() == ObjectTag::Enemy        && secondary->GetTag() == ObjectTag::Bullet       ||
-		primary->GetTag() == ObjectTag::Boss         && secondary->GetTag() == ObjectTag::Bullet       ||
-		primary->GetTag() == ObjectTag::Enemy        && secondary->GetTag() == ObjectTag::PlayerWeapon ||
-		primary->GetTag() == ObjectTag::Boss         && secondary->GetTag() == ObjectTag::PlayerWeapon ||
-		primary->GetTag() == ObjectTag::PlayerWeapon && secondary->GetTag() == ObjectTag::Enemy        ||
-		primary->GetTag() == ObjectTag::PlayerWeapon && secondary->GetTag() == ObjectTag::Boss         ||
-		primary->GetTag() == ObjectTag::Player       && secondary->GetTag() == ObjectTag::EnemyWeapon  ||
-		primary->GetTag() == ObjectTag::EnemyWeapon  && secondary->GetTag() == ObjectTag::Player)
-	{
-		return true;
-	}
-	return false;
-}
-
-bool Physics::ShouldCallOnCollide(ObjectTag tagA, ObjectTag tagB) const
-{
-	if ((tagA == ObjectTag::Player && tagB == ObjectTag::Enemy)  ||
-		(tagA == ObjectTag::Enemy  && tagB == ObjectTag::Player) ||
-		(tagA == ObjectTag::Player && tagB == ObjectTag::Boss)   ||
-		(tagA == ObjectTag::Boss   && tagB == ObjectTag::Player) ||
-		(tagA == ObjectTag::Stage  && tagB == ObjectTag::Player) ||
-		(tagA == ObjectTag::Player && tagB == ObjectTag::Stage)  ||
-		(tagA == ObjectTag::Stage  && tagB == ObjectTag::Enemy)  ||
-		(tagA == ObjectTag::Enemy  && tagB == ObjectTag::Stage))
-	{
-		// プレイヤーと敵は物理衝突（押し戻し）はするが、OnCollide は呼ばない
-		return false;
-	}
-
-	return true;
 }
 
 void Physics::SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,
@@ -657,46 +650,5 @@ Vec3 Physics::HitWallCP(const Vec3& headPos, const Vec3& legPos, int hitNum, MV1
 		}
 	}
 	return pushBackVec;
-
-
-
-	////垂線を下して近い点を探して最短距離を求める
-	//float hitShortDis = shortDis;//最短距離
-	////法線
-	//Vec3 nom = {};
-	//for (int i = 0; i < hitNum; ++i)
-	//{
-	//	//最短距離の2乗を返す
-	//	float dis = Segment_Triangle_MinLength_Square(headPos.ToDxVECTOR(), legPos.ToDxVECTOR(), dim[i].Position[0], dim[i].Position[1], dim[i].Position[2]);
-	//	//平方根を返す
-	//	dis = sqrtf(dis);
-	//	//初回または前回より距離が短いなら
-	//	if (hitShortDis > dis)
-	//	{
-	//		//現状の最短
-	//		hitShortDis = dis;
-	//		//法線
-	//		nom = Vec3{ dim[i].Normal.x,0.0f ,dim[i].Normal.z };
-	//	}
-	//}
-	////押し戻し
-	////どれくらい押し戻すか
-	//float tempOverLap = shortDis - hitShortDis;
-
-	//if (tempOverLap < 0)
-	//{
-	//	tempOverLap = 0;
-	//}
-	//if (tempOverLap > shortDis)
-	//{
-	//	tempOverLap = shortDis;
-	//}
-	//float overlap = tempOverLap;
-	//overlap += kOverlapGap;
-	////正規化
-	//if (nom.Length() != 0.0f)
-	//{
-	//	nom = nom.GetNormalize();
-	//}
-	//return nom * overlap;
 }
+

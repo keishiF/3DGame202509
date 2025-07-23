@@ -6,9 +6,9 @@
 struct ObjectData
 {
 	std::string name; // オブジェクト名
-	VECTOR pos;		  // 位置
-	VECTOR rot;		  // 回転
-	VECTOR scale;	  // 拡大量
+	VECTOR pos = VGet(0.0f, 0.0f, 0.0f);	  // 位置
+	VECTOR rot = VGet(0.0f, 0.0f, 0.0f);      // 回転
+	VECTOR scale = VGet(0.0f, 0.0f, 0.0f);	  // 拡大量
 };
 
 class TransformDataLoader

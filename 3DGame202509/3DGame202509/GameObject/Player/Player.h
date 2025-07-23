@@ -49,6 +49,7 @@ public:
 	// ダメージを受けた時の処理をまとめる関数
 	void OnDamage();
 
+	// 死んでいるかどうか
 	bool IsDead() const { return m_isDead; }
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
@@ -90,6 +91,7 @@ private:
 	std::shared_ptr<EnemyBase> FindNearestEnemy(float radius);
 
 private:
+	// 正面ベクトル
 	Vec3 m_forward;
 
 	// プレイヤーのモデル

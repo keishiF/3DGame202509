@@ -68,6 +68,12 @@ void GameScene::NormalUpdate()
 		m_draw = &GameScene::FadeDraw;
 		m_fadeFrame = 0;
 	}
+	else if (GameObjectManager::Instance().IsClear())
+	{
+		m_update = &GameScene::FadeOutUpdate;
+		m_draw = &GameScene::FadeDraw;
+		m_fadeFrame = 0;
+	}
 }
 
 void GameScene::FadeInUpdate()
@@ -112,29 +118,4 @@ void GameScene::FadeDraw()
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-}
-
-void GameScene::DrawField()
-{
-	// ƒOƒŠƒbƒh
-	Vec3 start;
-	Vec3 end;
-	start = { -kFieldSize, 0.0f,0.0f };
-	end = { kFieldSize, 0.0f,0.0f };
-	for (float z = -kFieldSize; z <= kFieldSize; z += 50.0f)
-	{
-		start.z = z;
-		end.z = z;
-
-		DrawLine3D(VGet(start.x, start.y, start.z), VGet(end.x, end.y, end.z), 0xff0000);
-	}
-	start = { 0.0f, 0.0f, -kFieldSize };
-	end = { 0.0f, 0.0f, kFieldSize };
-	for (float x = -kFieldSize; x <= kFieldSize; x += 50.0f)
-	{
-		start.x = x;
-		end.x = x;
-
-		DrawLine3D(VGet(start.x, start.y, start.z), VGet(end.x, end.y, end.z), 0x00ff00);
-	}
 }

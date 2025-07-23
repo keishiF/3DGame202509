@@ -21,34 +21,25 @@ GameObjectManager::~GameObjectManager()
 
 void GameObjectManager::Init()
 {
-	if (m_player) m_player->Final();
-	for (auto& minion : m_minions) minion->Final();
-	for (auto& mage : m_mages)   mage->Final();
-	for (auto& boss : m_boss)    boss->Final();
-	m_minions.clear();
-	m_mages.clear();
-	m_boss.clear();
-	m_player = nullptr;
-	m_camera = nullptr;
-	m_skyDome = nullptr;
-	m_isClear = false;
-	m_isGameOver = false;
-
 	TransformDataLoader loader;
 	auto transformDataList = loader.LoadDataCSV("Data/CSV/CharacterTransformData.csv");
 
 	for (const auto& data : transformDataList)
 	{
+		// オブジェクト名がKnightだったら
 		if (data.name == "Knight")
 		{
+			// Playerに配置データを渡して初期化
 			m_player   = std::make_shared<Player>();
 			Vec3 pos   = { data.pos.x, data.pos.y, data.pos.z };
 			Vec3 rot   = { data.rot.x, data.rot.y, data.rot.z };
 			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			m_player->Init(pos, rot, scale);
 		}
+		// オブジェクト名がSkeleton_Minionだったら
 		else if (data.name == "Skeleton_Minion")
 		{
+			// EnemyMinionに配置データを渡して初期化
 			auto minion = std::make_shared<EnemyMinion>();
 			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
@@ -56,8 +47,10 @@ void GameObjectManager::Init()
 			minion->Init(pos, rot, scale);
 			m_minions.emplace_back(minion);
 		}
+		// オブジェクト名がSkeleton_Mageだったら
 		else if (data.name == "Skeleton_Mage")
 		{
+			// EnemyMageに配置データを渡して初期化
 			auto mage = std::make_shared<EnemyMage>();
 			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
@@ -65,14 +58,15 @@ void GameObjectManager::Init()
 			mage->Init(pos, rot, scale);
 			m_mages.emplace_back(mage);
 		}
+		// オブジェクト名がSkeleton_Warriorだったら
 		else if (data.name == "Skeleton_Warrior")
 		{
-			auto boss = std::make_shared<EnemyBoss>();
+			// EnemyBossに配置データを渡して初期化
+			m_boss = std::make_shared<EnemyBoss>();
 			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
 			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
-			boss->Init(pos, rot, scale);
-			m_boss.emplace_back(boss);
+			m_boss->Init(pos, rot, scale);
 		}
 	}
 
@@ -105,15 +99,13 @@ void GameObjectManager::Update()
 		mage->Update(m_player);
 	}
 
-	for (auto& boss: m_boss)
-	{
-		boss->Update(m_player);
-	}
+	m_boss->Update(m_player);
 
 	if (m_camera) m_camera->Update(m_player);
 	if (m_skyDome) m_skyDome->Update(m_camera);
 
 	m_isGameOver = m_player->IsDead();
+	m_isClear = m_boss->IsDead();
 }
 
 void GameObjectManager::Draw()
@@ -136,42 +128,38 @@ void GameObjectManager::Draw()
 		mage->Draw();
 	}
 
-	for (auto& boss : m_boss)
-	{
-		boss->Draw();
-	}
+	m_boss->Draw();
 }
 
 void GameObjectManager::Finalize()
 {
 	if (m_player) m_player->Final();
+	if (m_boss) m_boss->Final();
 	for (auto& minion : m_minions) minion->Final();
 	for (auto& mage : m_mages)   mage->Final();
-	for (auto& boss : m_boss)    boss->Final();
 	m_minions.clear();
 	m_mages.clear();
-	m_boss.clear();
 	m_player = nullptr;
 	m_camera = nullptr;
 	m_skyDome = nullptr;
 }
 
-std::vector<std::shared_ptr<EnemyBase>> GameObjectManager::GetEnemies()
-{
-	std::vector<std::shared_ptr<EnemyBase>> result;
-	for (const auto& minion : m_minions) 
-	{
-		if (minion) result.push_back(minion);
-	}
-	for (const auto& mage : m_mages) 
-	{
-		if (mage) result.push_back(mage);
-	}
-	for (const auto& boss : m_boss) 
-	{
-		if (boss) result.push_back(boss);
-	}
-	return result;
+std::vector<std::shared_ptr<EnemyBase>> GameObjectManager::GetEnemies()  
+{  
+    std::vector<std::shared_ptr<EnemyBase>> result;  
+    for (const auto& minion : m_minions)   
+    {  
+        if (minion) result.push_back(minion);  
+    }  
+    for (const auto& mage : m_mages)   
+    {  
+        if (mage) result.push_back(mage);  
+    }  
+    if (m_boss)
+	{  
+        result.push_back(m_boss);  
+    }  
+    return result;  
 }
 
 GameObjectManager& GameObjectManager::Instance()

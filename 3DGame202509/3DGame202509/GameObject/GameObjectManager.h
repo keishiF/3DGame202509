@@ -33,7 +33,7 @@ private:
 	std::shared_ptr<Player> m_player;
 	std::vector<std::shared_ptr<EnemyMinion>>  m_minions;
 	std::vector<std::shared_ptr<EnemyMage>>  m_mages;
-	std::vector<std::shared_ptr<EnemyBoss>>  m_boss;
+	std::shared_ptr<EnemyBoss> m_boss;
 	std::shared_ptr<Camera> m_camera;
 	std::shared_ptr<SkyDome> m_skyDome;
 

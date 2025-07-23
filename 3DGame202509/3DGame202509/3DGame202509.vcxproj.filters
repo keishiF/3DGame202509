@@ -165,7 +165,7 @@
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
     <ClCompile Include="Scene\ClearScene.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -287,7 +287,7 @@
       <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
     <ClInclude Include="Scene\ClearScene.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

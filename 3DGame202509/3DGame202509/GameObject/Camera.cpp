@@ -14,6 +14,7 @@ namespace
 	constexpr float kCameraPosZ = -600.0f;
 	/*constexpr float kCameraPosY = 300.0f;
 	constexpr float kCameraPosZ = -600.0f;*/
+	constexpr float kCameraOffsetY = 150.0f;
 }
 
 Camera::Camera() :
@@ -38,7 +39,7 @@ void Camera::Update(std::shared_ptr<Player> player)
 	m_pos = playerPos + cameraPos;
 
 	// カメラの注視点をプレイヤーの位置に合わせる
-	m_lookAtPos = { playerPos.x, playerPos.y + 150.0f, playerPos.z };
+	m_lookAtPos = { playerPos.x, playerPos.y + kCameraOffsetY, playerPos.z };
 
 	Vec3 offset = { kCameraPosX, kCameraPosY, kCameraPosZ };
 
@@ -81,7 +82,7 @@ void Camera::SetCamera(std::shared_ptr<Player> player)
 	m_pos = playerPos + cameraPos;
 
 	// カメラの注視点をプレイヤーの位置に合わせる
-	m_lookAtPos = { playerPos.x, playerPos.y + 150.0f, playerPos.z };
+	m_lookAtPos = { playerPos.x, playerPos.y + kCameraOffsetY, playerPos.z };
 
 	SetupCamera_Perspective(m_fov);
 	DxLib::SetCameraPositionAndTarget_UpVecY(
