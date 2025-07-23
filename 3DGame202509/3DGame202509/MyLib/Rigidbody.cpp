@@ -10,12 +10,12 @@ Rigidbody::Rigidbody() :
 
 void Rigidbody::Init()
 {
-	m_pos  = Vec3(0, 0, 0);
-	m_dir  = Vec3(0, 0, 0);
-	m_velo = Vec3(0, 0, 0);
+	m_pos  = Vector3(0, 0, 0);
+	m_dir  = Vector3(0, 0, 0);
+	m_velo = Vector3(0, 0, 0);
 }
 
-void Rigidbody::SetVelo(Vec3 velo)
+void Rigidbody::SetVelo(Vector3 velo)
 {
 	m_velo = velo;
 	//ˆÚ“®—Ê‚ª‚ ‚Á‚½‚ç

@@ -64,7 +64,7 @@ EnemyMage::~EnemyMage()
 	MV1DeleteModel(m_weaponModel);
 }
 
-void EnemyMage::Init(Vec3& pos, Vec3& rot, Vec3& scale)
+void EnemyMage::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 {
 	Collidable::Init();
 
@@ -150,7 +150,7 @@ void EnemyMage::Update(std::shared_ptr<Player> player)
 
 	//当たり判定
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
-	Vec3 colPos = m_rigidbody.GetPos();
+	Vector3 colPos = m_rigidbody.GetPos();
 	colPos.y += kColScale;
 	colData->m_startPos = colPos;
 
@@ -192,7 +192,7 @@ void EnemyMage::Draw()
 		bullet->Draw();
 	}
 
-	Vec3 worldPos = m_rigidbody.GetPos();
+	Vector3 worldPos = m_rigidbody.GetPos();
 	worldPos.y += 120.0f; // 頭上の高さ調整
 
 	VECTOR worldVec = worldPos.ToDxVECTOR();
@@ -225,22 +225,22 @@ void EnemyMage::Draw()
 		gaugeY + gaugeHeight,
 		0x000000, false);
 
-	Vec3 pos = m_rigidbody.GetPos();
+	Vector3 pos = m_rigidbody.GetPos();
 	VECTOR base = pos.ToDxVECTOR();
 
 	// 首振り角度
 	float offsetAngle = std::sin(m_angle * m_rotSpeed) * m_angleMax;
 
 	// 前方向（または Rigidbody に保存されてる向き）
-	Vec3 forward = m_rigidbody.GetDir();
+	Vector3 forward = m_rigidbody.GetDir();
 	if (forward.Length() == 0.0f)
 	{
-		forward = Vec3(0, 0, -1);
+		forward = Vector3(0, 0, -1);
 	}
 	forward.Normalize();
 
 	// スイングした方向（Y軸回転）
-	Vec3 swingDir{
+	Vector3 swingDir{
 		forward.x * std::cos(offsetAngle) - forward.z * std::sin(offsetAngle),
 		0.0f,
 		forward.x * std::sin(offsetAngle) + forward.z * std::cos(offsetAngle)
@@ -250,12 +250,12 @@ void EnemyMage::Draw()
 	// 左右端方向を計算
 	float halfAngle = kViewAngleRad * 0.5f;
 
-	Vec3 left{
+	Vector3 left{
 		swingDir.x * std::cos(halfAngle) - swingDir.z * std::sin(halfAngle),
 		0.0f,
 		swingDir.x * std::sin(halfAngle) + swingDir.z * std::cos(halfAngle)
 	};
-	Vec3 right{
+	Vector3 right{
 		swingDir.x * std::cos(-halfAngle) - swingDir.z * std::sin(-halfAngle),
 		0.0f,
 		swingDir.x * std::sin(-halfAngle) + swingDir.z * std::cos(-halfAngle)
@@ -264,9 +264,9 @@ void EnemyMage::Draw()
 	left.Normalize();
 	right.Normalize();
 
-	Vec3 frontEnd = pos + swingDir * kViewDistance;
-	Vec3 leftEnd = pos + left * kViewDistance;
-	Vec3 rightEnd = pos + right * kViewDistance;
+	Vector3 frontEnd = pos + swingDir * kViewDistance;
+	Vector3 leftEnd = pos + left * kViewDistance;
+	Vector3 rightEnd = pos + right * kViewDistance;
 
 	DrawLine3D(base, frontEnd.ToDxVECTOR(), GetColor(255, 255, 0)); // 正面
 	DrawLine3D(base, leftEnd.ToDxVECTOR(), GetColor(0, 255, 255));  // 左端
@@ -279,19 +279,19 @@ void EnemyMage::Draw()
 		float t1 = -halfAngle + (kViewAngleRad * i / kSegments);
 		float t2 = -halfAngle + (kViewAngleRad * (i + 1) / kSegments);
 
-		Vec3 d1{
+		Vector3 d1{
 			swingDir.x * std::cos(t1) - swingDir.z * std::sin(t1),
 			0.0f,
 			swingDir.x * std::sin(t1) + swingDir.z * std::cos(t1)
 		};
-		Vec3 d2{
+		Vector3 d2{
 			swingDir.x * std::cos(t2) - swingDir.z * std::sin(t2),
 			0.0f,
 			swingDir.x * std::sin(t2) + swingDir.z * std::cos(t2)
 		};
 
-		Vec3 p1 = pos + d1 * kViewDistance;
-		Vec3 p2 = pos + d2 * kViewDistance;
+		Vector3 p1 = pos + d1 * kViewDistance;
+		Vector3 p2 = pos + d2 * kViewDistance;
 
 		DrawLine3D(p1.ToDxVECTOR(), p2.ToDxVECTOR(), GetColor(255, 0, 255));
 	}
@@ -321,15 +321,15 @@ void EnemyMage::FindUpdate(std::shared_ptr<Player> player)
 	float offsetAngle = std::sin(m_angle * m_rotSpeed) * m_angleMax;
 
 	// 基本の向きベクトル（前方向）
-	Vec3 forward = m_rigidbody.GetDir();
+	Vector3 forward = m_rigidbody.GetDir();
 	if (forward.Length() == 0.0f)
 	{
-		forward = Vec3(0, 0, -1);
+		forward = Vector3(0, 0, -1);
 	}
 	forward.Normalize();
 
 	// 探知中心方向（スイングで回転）
-	Vec3 dir
+	Vector3 dir
 	{
 		forward.x * std::cos(offsetAngle) - forward.z * std::sin(offsetAngle),
 		0.0f,
@@ -353,8 +353,8 @@ void EnemyMage::ChaseUpdate(std::shared_ptr<Player> player)
 	SetActive(true);
 
 	// プレイヤーへの方向ベクトル
-	Vec3 myPos = m_rigidbody.GetPos();
-	Vec3 toPlayerDir = player->GetPos() - myPos;
+	Vector3 myPos = m_rigidbody.GetPos();
+	Vector3 toPlayerDir = player->GetPos() - myPos;
 	toPlayerDir.y = 0.0f;
 
 	// 距離が十分にある場合のみ移動
@@ -395,8 +395,8 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 	{
 		++m_attackFrame;
 		// プレイヤーへの方向ベクトル
-		Vec3 myPos = m_rigidbody.GetPos();
-		Vec3 toPlayerDir = player->GetPos() - myPos;
+		Vector3 myPos = m_rigidbody.GetPos();
+		Vector3 toPlayerDir = player->GetPos() - myPos;
 		toPlayerDir.y = 0.0f;
 		if (toPlayerDir.x != 0.0f || toPlayerDir.z != 0.0f)
 		{
@@ -409,9 +409,9 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 	if (m_attackFrame == kAttackFrame)
 	{
 		// 弾を生成
-		Vec3 myPos = m_rigidbody.GetPos();
+		Vector3 myPos = m_rigidbody.GetPos();
 		myPos.y += 50.0f;
-		Vec3 playerPos = player->GetPos();
+		Vector3 playerPos = player->GetPos();
 
 		auto bullet = std::make_shared<EnemyMageBullet>();
 		bullet->Init(myPos, playerPos);
@@ -471,20 +471,20 @@ void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)
 	m_bullets.clear();
 }
 
-bool EnemyMage::IsPlayerFind(const std::shared_ptr<Player>& player, const Vec3& centerDir, float viewAngleRad, float viewDistance)
+bool EnemyMage::IsPlayerFind(const std::shared_ptr<Player>& player, const Vector3& centerDir, float viewAngleRad, float viewDistance)
 {
 	// 現在位置を取得
-	Vec3 myPos = m_rigidbody.GetPos();
+	Vector3 myPos = m_rigidbody.GetPos();
 	// 自分からPlayerに向かうベクトルを生成
-	Vec3 toPlayer = player->GetPos() - myPos;
+	Vector3 toPlayer = player->GetPos() - myPos;
 
 	// Playerに向かうベクトルの長さが視界距離より長ければ見えないのでfalse
 	if (toPlayer.Length() > viewDistance)
 		return false;
 
 	// Playerに向かうベクトルと自分の視線方向ベクトルを正規化
-	Vec3 toPlayerNorm = toPlayer.GetNormalize();
-	Vec3 centerNorm = centerDir.GetNormalize();
+	Vector3 toPlayerNorm = toPlayer.GetNormalize();
+	Vector3 centerNorm = centerDir.GetNormalize();
 
 	float dot = centerNorm.Dot(toPlayerNorm);
 	float cosHalfView = std::cos(viewAngleRad * 0.5f);

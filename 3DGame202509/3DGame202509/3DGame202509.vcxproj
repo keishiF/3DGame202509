@@ -76,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);$(ProjectDir)Animator;$(ProjectDir)Main;$(ProjectDir)Effect;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -95,7 +95,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);$(ProjectDir)Animator;$(ProjectDir)Main;$(ProjectDir)Effect;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -114,7 +114,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);$(ProjectDir)Animator;$(ProjectDir)Main;$(ProjectDir)Effect;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);$(ProjectDir)Animator;$(ProjectDir)Main;$(ProjectDir)Effect;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -147,7 +147,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="Animator\Animator.cpp" />
+    <ClCompile Include="Effect\Effect.cpp" />
+    <ClCompile Include="Effect\EffectManager.cpp" />
     <ClCompile Include="GameObject\Camera.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyBase.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyBoss.cpp" />
@@ -167,7 +169,7 @@
     <ClCompile Include="GameObject\Stage\StageObjectBase.cpp" />
     <ClCompile Include="GameObject\Stage\StageObjectManager.cpp" />
     <ClCompile Include="General\Application.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Main\main.cpp" />
     <ClCompile Include="MyLib\CapsuleColliderData.cpp" />
     <ClCompile Include="MyLib\Collidable.cpp" />
     <ClCompile Include="MyLib\Input.cpp" />
@@ -185,7 +187,9 @@
     <ClCompile Include="Scene\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Animator.h" />
+    <ClInclude Include="Animator\Animator.h" />
+    <ClInclude Include="Effect\Effect.h" />
+    <ClInclude Include="Effect\EffectManager.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="GameObject\Camera.h" />
     <ClInclude Include="GameObject\Enemy\EnemyBase.h" />
@@ -218,7 +222,7 @@
     <ClInclude Include="MyLib\Rigidbody.h" />
     <ClInclude Include="MyLib\SphereColliderData.h" />
     <ClInclude Include="MyLib\TransformDataLoader.h" />
-    <ClInclude Include="MyLib\Vec3.h" />
+    <ClInclude Include="MyLib\Vector3.h" />
     <ClInclude Include="Scene\ClearScene.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\ResultScene.h" />

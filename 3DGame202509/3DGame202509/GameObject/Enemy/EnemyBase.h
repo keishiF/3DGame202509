@@ -2,7 +2,7 @@
 #include "Animator.h"
 #include "Collidable.h"
 #include "Physics.h"
-#include "Vec3.h"
+#include "Vector3.h"
 
 enum class EnemyState
 {
@@ -26,14 +26,14 @@ public:
 	virtual ~EnemyBase();
 
 	// 初期化
-	virtual void Init(Vec3& pos, Vec3& rot, Vec3& scale) abstract;
+	virtual void Init(Vector3& pos, Vector3& rot, Vector3& scale) abstract;
 	// 更新
 	virtual void Update(std::shared_ptr<Player> player) abstract;
 	// 描画
 	virtual void Draw() abstract;
 
 	// 位置を取得
-	Vec3 GetPos() const;
+	Vector3 GetPos() const;
 	// ダメージを受けた時の処理
 	virtual void OnDamage() abstract;
 	// 死んでいるかどうか

@@ -26,9 +26,9 @@ void StageObjectManager::Init()
 		{
 			modelPath = "Data/Model/Stage/Mountain/Mountain.mv1";
 			auto mountain = std::make_shared<Mountain>();
-			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
-			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
-			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
+			Vector3 pos = { data.pos.x, data.pos.y, data.pos.z };
+			Vector3 rot = { data.rot.x, data.rot.y, data.rot.z };
+			Vector3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			mountain->Init(modelPath, pos, rot, scale);
 			m_mountains.emplace_back(mountain);
 		}
@@ -36,9 +36,9 @@ void StageObjectManager::Init()
 		{
 			modelPath = "Data/Model/Stage/Floor/Plane.mv1";
 			auto floor = std::make_shared<Floor>();
-			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
-			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
-			Vec3 scale = { data.scale.x, data.scale.y, data.scale.z};
+			Vector3 pos = { data.pos.x, data.pos.y, data.pos.z };
+			Vector3 rot = { data.rot.x, data.rot.y, data.rot.z };
+			Vector3 scale = { data.scale.x, data.scale.y, data.scale.z};
 			floor->Init(modelPath, pos, rot, scale);
 			m_floors.emplace_back(floor);
 		}

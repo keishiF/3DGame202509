@@ -22,7 +22,7 @@ EnemyMageBullet::~EnemyMageBullet()
 {
 }
 
-void EnemyMageBullet::Init(Vec3 myPos, Vec3 playerPos)
+void EnemyMageBullet::Init(Vector3 myPos, Vector3 playerPos)
 {
 	Collidable::Init();
 	m_rigidbody.Init();

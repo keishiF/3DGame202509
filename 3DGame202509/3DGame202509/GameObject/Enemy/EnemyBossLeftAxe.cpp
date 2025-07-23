@@ -100,8 +100,8 @@ void EnemyBossLeftAxe::AttackUpdate(int model)
 	colData->m_radius = kRadius;
 	VECTOR start = MV1GetFramePosition(m_model, 2);
 	VECTOR end = MV1GetFramePosition(m_model, 1);
-	Vec3 startPos = { start.x, start.y, start.z };
-	Vec3 endPos = { end.x, end.y, end.z };
+	Vector3 startPos = { start.x, start.y, start.z };
+	Vector3 endPos = { end.x, end.y, end.z };
 	m_rigidbody.SetPos(endPos);
 	colData->m_startPos = startPos;
 }

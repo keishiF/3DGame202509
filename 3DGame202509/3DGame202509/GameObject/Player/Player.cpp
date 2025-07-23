@@ -118,7 +118,7 @@ Player::~Player()
 	MV1DeleteModel(m_charModel);
 }
 
-void Player::Init(Vec3& pos, const Vec3& rot, const Vec3& scale)
+void Player::Init(Vector3& pos, const Vector3& rot, const Vector3& scale)
 {
 	Collidable::Init();
 
@@ -196,13 +196,13 @@ void Player::Update()
 
 	//当たり判定
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
-	Vec3 colPos = m_rigidbody.GetPos();
+	Vector3 colPos = m_rigidbody.GetPos();
 	colPos.y += kColScale;
 	colData->m_startPos = colPos;
 
 	VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
 	float angleY = -rotVec.y;
-	m_forward = Vec3(std::sin(angleY), 0.0f, -std::cos(angleY));
+	m_forward = Vector3(std::sin(angleY), 0.0f, -std::cos(angleY));
 	m_forward.Normalize();
 }
 
@@ -301,7 +301,7 @@ void Player::ChangeState(PlayerState newState)
 
 	VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
 	float angleY = -rotVec.y;
-	Vec3 axis(0.0f, 1.0f, 0.0f);
+	Vector3 axis(0.0f, 1.0f, 0.0f);
 	m_currentRot.AngleAxis(angleY, axis);
 
 	switch (m_state)
@@ -380,20 +380,20 @@ void Player::IdleUpdate()
 		ChangeState(PlayerState::Spin);
 	}
 
-	// RBボタンの入力があれば必殺技状態に移行する
-	if (Input::Instance().IsTrigger("RB"))
-	{
-#ifdef _DEBUG
-		if (m_specialGauge < kSpecialGaugeMax)
-		{
-			m_specialGauge = kSpecialGaugeMax;
-		}
-#endif
-		if (m_specialGauge >= kSpecialGaugeMax)
-		{
-			ChangeState(PlayerState::Special);
-		}
-	}
+//	// RBボタンの入力があれば必殺技状態に移行する
+//	if (Input::Instance().IsTrigger("RB"))
+//	{
+//#ifdef _DEBUG
+//		if (m_specialGauge < kSpecialGaugeMax)
+//		{
+//			m_specialGauge = kSpecialGaugeMax;
+//		}
+//#endif
+//		if (m_specialGauge >= kSpecialGaugeMax)
+//		{
+//			ChangeState(PlayerState::Special);
+//		}
+//	}
 }
 
 void Player::WalkUpdate()
@@ -409,7 +409,7 @@ void Player::WalkUpdate()
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Walk));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Walk));
 
-	Vec3 dir = { 0.0f, 0.0f,0.0f };
+	Vector3 dir = { 0.0f, 0.0f,0.0f };
 	// 左スティックで移動
 	// 左入力
 	if (Input::Instance().IsPress("LEFT"))
@@ -448,10 +448,10 @@ void Player::WalkUpdate()
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 
 	// 進行方向にモデルを回転させる
-	Vec3 velocity = m_rigidbody.GetVelo();
+	Vector3 velocity = m_rigidbody.GetVelo();
 	if (velocity.x != 0.0f || velocity.z != 0.0f)
 	{
-		Vec3 axis(0.0f, 1.0f, 0.0f);
+		Vector3 axis(0.0f, 1.0f, 0.0f);
 		float angle = std::atan2(velocity.x, -velocity.z);
 
 		Quaternion targetRot;
@@ -502,7 +502,7 @@ void Player::RunUpdate()
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Run));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Run));
 
-	Vec3 dir = { 0.0f, 0.0f, 0.0f };
+	Vector3 dir = { 0.0f, 0.0f, 0.0f };
 	// 左スティックで移動
 	// 左入力
 	if (Input::Instance().IsPress("LEFT"))
@@ -541,10 +541,10 @@ void Player::RunUpdate()
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 
 	// 進行方向にモデルを回転させる
-	Vec3 velocity = m_rigidbody.GetVelo();
+	Vector3 velocity = m_rigidbody.GetVelo();
 	if (velocity.x != 0.0f || velocity.z != 0.0f)
 	{
-		Vec3 axis(0.0f, 1.0f, 0.0f);
+		Vector3 axis(0.0f, 1.0f, 0.0f);
 		float angle = std::atan2(velocity.x, -velocity.z);
 
 		Quaternion targetRot;
@@ -598,7 +598,7 @@ void Player::ChopUpdate()
 		// 攻撃中に前進する処理（現在の回転方向に進む）
 		VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
 		float angleY = -rotVec.y; // モデル回転と一致させるため-が必要
-		Vec3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
+		Vector3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
 		forward.Normalize();
 		m_rigidbody.SetVelo(forward * kAttackMoveSpeed); // 攻撃中の速度（定数）
 
@@ -647,7 +647,7 @@ void Player::SliceUpdate()
 		// 攻撃中に前進する処理（現在の回転方向に進む）
 		VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
 		float angleY = -rotVec.y; // モデル回転と一致させるため-が必要
-		Vec3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
+		Vector3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
 		forward.Normalize();
 		m_rigidbody.SetVelo(forward * kAttackMoveSpeed); // 攻撃中の速度（定数）
 
@@ -695,7 +695,7 @@ void Player::StabUpdate()
 		// 攻撃中に前進する処理（現在の回転方向に進む）
 		VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
 		float angleY = -rotVec.y; // モデル回転と一致させるため-が必要
-		Vec3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
+		Vector3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
 		forward.Normalize();
 		m_rigidbody.SetVelo(forward * kAttackMoveSpeed); // 攻撃中の速度（定数）
 
@@ -773,7 +773,7 @@ void Player::DodgeUpdate()
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Dodge));
 
 	// m_forward に基づいて移動ベクトルを設定（前方向へ）
-	Vec3 dodgeDir = m_forward;
+	Vector3 dodgeDir = m_forward;
 	dodgeDir.Normalize();
 
 	m_rigidbody.SetVelo(dodgeDir * kDodgeSpped);
@@ -830,7 +830,7 @@ void Player::RotateToNearestEnemy(float radius)
 		if (nearestEnemy)
 		{
 			// 一番近い敵へのベクトル
-			Vec3 toEnemy = nearestEnemy->GetPos() - m_rigidbody.GetPos();
+			Vector3 toEnemy = nearestEnemy->GetPos() - m_rigidbody.GetPos();
 			toEnemy.y = 0.0f;
 
 			// 一番近い敵の方向に回転
@@ -839,7 +839,7 @@ void Player::RotateToNearestEnemy(float radius)
 			{
 				// 敵方向への目標回転
 				float targetAngle = std::atan2(toEnemy.x, -toEnemy.z);
-				Vec3 axis(0.0f, 1.0f, 0.0f);
+				Vector3 axis(0.0f, 1.0f, 0.0f);
 				Quaternion targetRot;
 				targetRot.AngleAxis(targetAngle, axis);
 
@@ -859,7 +859,7 @@ std::shared_ptr<EnemyBase> Player::FindNearestEnemy(float radius)
 	float minDist = radius;
 
 	auto enemies = GameObjectManager::Instance().GetEnemies();
-	Vec3 myPos = m_rigidbody.GetPos();
+	Vector3 myPos = m_rigidbody.GetPos();
 
 	for (auto& enemy : enemies) 
 	{

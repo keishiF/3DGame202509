@@ -1,5 +1,5 @@
 #pragma once
-#include "Vec3.h"
+#include "Vector3.h"
 #include <memory>
 
 class Camera;
@@ -14,7 +14,7 @@ public:
 	void Draw();
 
 private:
-	Vec3 m_pos;
+	Vector3 m_pos;
 	float m_rotY;
 	int m_model;
 };

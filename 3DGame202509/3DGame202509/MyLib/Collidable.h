@@ -34,7 +34,7 @@ private:
 	ObjectTag m_tag;
 	ObjectPriority m_priority;
 
-	Vec3 m_nextPos;
+	Vector3 m_nextPos;
 
 	bool m_isActive = true;
 

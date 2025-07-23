@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vec3.h"
+#include "Vector3.h"
 #include "Collidable.h"
 
 class EnemyMageBullet : public Collidable
@@ -9,7 +9,7 @@ public:
 	EnemyMageBullet();
 	~EnemyMageBullet();
 
-	void Init(Vec3 myPos, Vec3 playerPos);
+	void Init(Vector3 myPos, Vector3 playerPos);
 	void Update();
 	void Draw();
 
@@ -18,7 +18,7 @@ public:
 	bool IsDead() const { return m_isDead; }
 
 private:
-	Vec3 m_dir;
+	Vector3 m_dir;
 	float m_frame;
 	bool m_isDead;
 };

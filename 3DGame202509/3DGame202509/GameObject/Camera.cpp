@@ -34,14 +34,14 @@ Camera::~Camera()
 void Camera::Update(std::shared_ptr<Player> player)
 {
 	// プレイヤーの位置を取得し、カメラをプレイヤーの位置に合わせる
-	Vec3 playerPos = player->GetPos();
-	Vec3 cameraPos = { kCameraPosX, kCameraPosY, kCameraPosZ };
+	Vector3 playerPos = player->GetPos();
+	Vector3 cameraPos = { kCameraPosX, kCameraPosY, kCameraPosZ };
 	m_pos = playerPos + cameraPos;
 
 	// カメラの注視点をプレイヤーの位置に合わせる
 	m_lookAtPos = { playerPos.x, playerPos.y + kCameraOffsetY, playerPos.z };
 
-	Vec3 offset = { kCameraPosX, kCameraPosY, kCameraPosZ };
+	Vector3 offset = { kCameraPosX, kCameraPosY, kCameraPosZ };
 
 #ifdef _DEBUG
 	//int inputX, inputY;
@@ -62,7 +62,7 @@ void Camera::Update(std::shared_ptr<Player> player)
 #endif
 
 	// カメラの位置を回転に基づいて更新
-	Vec3 rotatedOffset = {
+	Vector3 rotatedOffset = {
 		offset.x * cos(m_cameraRotX) - offset.z * sin(m_cameraRotX),
 		offset.y * cos(m_cameraRotY) - offset.z * sin(m_cameraRotY),
 		offset.x * sin(m_cameraRotX) + offset.z * cos(m_cameraRotX)
@@ -77,8 +77,8 @@ void Camera::Update(std::shared_ptr<Player> player)
 void Camera::SetCamera(std::shared_ptr<Player> player)
 {
 	// プレイヤーの位置を取得し、カメラをプレイヤーの位置に合わせる
-	Vec3 playerPos = player->GetPos();
-	Vec3 cameraPos = { kCameraPosX, kCameraPosY, kCameraPosZ };
+	Vector3 playerPos = player->GetPos();
+	Vector3 cameraPos = { kCameraPosX, kCameraPosY, kCameraPosZ };
 	m_pos = playerPos + cameraPos;
 
 	// カメラの注視点をプレイヤーの位置に合わせる

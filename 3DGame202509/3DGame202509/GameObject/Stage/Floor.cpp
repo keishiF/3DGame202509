@@ -13,7 +13,7 @@ Floor::~Floor()
 	MV1DeleteModel(m_model);
 }
 
-void Floor::Init(const std::string& modelPath, Vec3 pos, Vec3 rot, Vec3 scale)
+void Floor::Init(const std::string& modelPath, Vector3 pos, Vector3 rot, Vector3 scale)
 {
 	m_model = MV1LoadModel(modelPath.c_str());
 	assert(m_model>= 0);

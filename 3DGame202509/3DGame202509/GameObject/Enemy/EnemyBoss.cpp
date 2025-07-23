@@ -16,7 +16,7 @@ namespace
 	constexpr float kAttackRadius = 600.0f;
 
 	// 初期HP
-	constexpr int kHp = 5;
+	constexpr int kHp = 10;
 
 	// エネミーの速度
 	constexpr float kWalkSpeed = 2.0f;
@@ -96,7 +96,7 @@ EnemyBoss::~EnemyBoss()
 	MV1DeleteModel(m_charModel);
 }
 
-void EnemyBoss::Init(Vec3& pos, Vec3& rot, Vec3& scale)
+void EnemyBoss::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 {
 	Collidable::Init();
 
@@ -180,7 +180,7 @@ void EnemyBoss::Update(std::shared_ptr<Player> player)
 
 	//当たり判定
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
-	Vec3 colPos = m_rigidbody.GetPos();
+	Vector3 colPos = m_rigidbody.GetPos();
 	colPos.y += kColScale;
 	colData->m_startPos = colPos;
 
@@ -204,7 +204,7 @@ void EnemyBoss::Draw()
 	m_rightWeapon->Draw();
 	m_leftWeapon->Draw();
 
-	Vec3 worldPos = m_rigidbody.GetPos();
+	Vector3 worldPos = m_rigidbody.GetPos();
 	worldPos.y += 120.0f; // 頭上の高さ調整
 
 	VECTOR worldVec = worldPos.ToDxVECTOR();
@@ -261,8 +261,8 @@ void EnemyBoss::WalkUpdate(std::shared_ptr<Player> player)
 	++m_walkFrame;
 
 	// プレイヤーへの方向ベクトル
-	Vec3 myPos = m_rigidbody.GetPos();
-	Vec3 toPlayerDir = player->GetPos() - myPos;
+	Vector3 myPos = m_rigidbody.GetPos();
+	Vector3 toPlayerDir = player->GetPos() - myPos;
 	toPlayerDir.y = 0.0f;
 	toPlayerDir.Normalize();
 	m_rigidbody.SetVelo(toPlayerDir * kWalkSpeed);
@@ -330,8 +330,8 @@ void EnemyBoss::ChaseUpdate(std::shared_ptr<Player> player)
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Chase));
 
 	// プレイヤーへの方向ベクトル
-	Vec3 myPos = m_rigidbody.GetPos();
-	Vec3 toPlayerDir = player->GetPos() - myPos;
+	Vector3 myPos = m_rigidbody.GetPos();
+	Vector3 toPlayerDir = player->GetPos() - myPos;
 	toPlayerDir.y = 0.0f;
 
 	// 距離が十分にある場合のみ移動
@@ -389,8 +389,8 @@ void EnemyBoss::AttackUpdate(std::shared_ptr<Player> player)
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Attack));
 
 	// プレイヤーへの方向ベクトル
-	Vec3 myPos = m_rigidbody.GetPos();
-	Vec3 dir = player->GetPos() - myPos;
+	Vector3 myPos = m_rigidbody.GetPos();
+	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
 
 	if (m_attackFrame <= kAttackFrame)
@@ -426,8 +426,8 @@ void EnemyBoss::ChopUpdate(std::shared_ptr<Player> player)
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Chop));
 
 	// プレイヤーへの方向ベクトル
-	Vec3 myPos = m_rigidbody.GetPos();
-	Vec3 dir = player->GetPos() - myPos;
+	Vector3 myPos = m_rigidbody.GetPos();
+	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
 
 	if (m_attackFrame <= kAttackFrame)
@@ -463,8 +463,8 @@ void EnemyBoss::SliceUpdate(std::shared_ptr<Player> player)
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Slice));
 
 	// プレイヤーへの方向ベクトル
-	Vec3 myPos = m_rigidbody.GetPos();
-	Vec3 dir = player->GetPos() - myPos;
+	Vector3 myPos = m_rigidbody.GetPos();
+	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
 
 	if (m_attackFrame <= kAttackFrame)
@@ -500,8 +500,8 @@ void EnemyBoss::StabUpdate(std::shared_ptr<Player> player)
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Stab));
 
 	// プレイヤーへの方向ベクトル
-	Vec3 myPos = m_rigidbody.GetPos();
-	Vec3 dir = player->GetPos() - myPos;
+	Vector3 myPos = m_rigidbody.GetPos();
+	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
 
 	if (m_attackFrame <= kAttackFrame)
@@ -537,8 +537,8 @@ void EnemyBoss::SpinUpdate(std::shared_ptr<Player> player)
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Spin));
 
 	// プレイヤーへの方向ベクトル
-	Vec3 myPos = m_rigidbody.GetPos();
-	Vec3 dir = player->GetPos() - myPos;
+	Vector3 myPos = m_rigidbody.GetPos();
+	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
 
 	if (m_attackFrame <= kAttackFrame)

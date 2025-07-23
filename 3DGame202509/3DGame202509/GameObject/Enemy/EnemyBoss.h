@@ -11,7 +11,7 @@ public:
 	~EnemyBoss();
 
 	// ‰Šú‰»
-	void Init(Vec3& pos, Vec3& rot, Vec3& scale) override;
+	void Init(Vector3& pos, Vector3& rot, Vector3& scale) override;
 	// XV
 	void Update(std::shared_ptr<Player> player) override;
 	// •`‰æ

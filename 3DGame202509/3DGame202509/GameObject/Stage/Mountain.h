@@ -8,7 +8,7 @@ public:
     Mountain();
     ~Mountain();
 
-    virtual void Init(const std::string& modelPath, Vec3 pos, Vec3 rot, Vec3 scale) override;
+    virtual void Init(const std::string& modelPath, Vector3 pos, Vector3 rot, Vector3 scale) override;
     virtual void Draw() override;
 
 private:

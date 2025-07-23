@@ -31,9 +31,9 @@ void GameObjectManager::Init()
 		{
 			// Playerに配置データを渡して初期化
 			m_player   = std::make_shared<Player>();
-			Vec3 pos   = { data.pos.x, data.pos.y, data.pos.z };
-			Vec3 rot   = { data.rot.x, data.rot.y, data.rot.z };
-			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
+			Vector3 pos   = { data.pos.x, data.pos.y, data.pos.z };
+			Vector3 rot   = { data.rot.x, data.rot.y, data.rot.z };
+			Vector3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			m_player->Init(pos, rot, scale);
 		}
 		// オブジェクト名がSkeleton_Minionだったら
@@ -41,9 +41,9 @@ void GameObjectManager::Init()
 		{
 			// EnemyMinionに配置データを渡して初期化
 			auto minion = std::make_shared<EnemyMinion>();
-			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
-			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
-			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
+			Vector3 pos = { data.pos.x, data.pos.y, data.pos.z };
+			Vector3 rot = { data.rot.x, data.rot.y, data.rot.z };
+			Vector3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			minion->Init(pos, rot, scale);
 			m_minions.emplace_back(minion);
 		}
@@ -52,9 +52,9 @@ void GameObjectManager::Init()
 		{
 			// EnemyMageに配置データを渡して初期化
 			auto mage = std::make_shared<EnemyMage>();
-			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
-			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
-			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
+			Vector3 pos = { data.pos.x, data.pos.y, data.pos.z };
+			Vector3 rot = { data.rot.x, data.rot.y, data.rot.z };
+			Vector3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			mage->Init(pos, rot, scale);
 			m_mages.emplace_back(mage);
 		}
@@ -63,9 +63,9 @@ void GameObjectManager::Init()
 		{
 			// EnemyBossに配置データを渡して初期化
 			m_boss = std::make_shared<EnemyBoss>();
-			Vec3 pos = { data.pos.x, data.pos.y, data.pos.z };
-			Vec3 rot = { data.rot.x, data.rot.y, data.rot.z };
-			Vec3 scale = { data.scale.x, data.scale.y , data.scale.z };
+			Vector3 pos = { data.pos.x, data.pos.y, data.pos.z };
+			Vector3 rot = { data.rot.x, data.rot.y, data.rot.z };
+			Vector3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			m_boss->Init(pos, rot, scale);
 		}
 	}

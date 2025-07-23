@@ -10,7 +10,7 @@ public:
 	virtual ~EnemyMinion();
 
 	// 初期化、更新、描画
-	void Init(Vec3& pos, Vec3& rot, Vec3& scale) override;
+	void Init(Vector3& pos, Vector3& rot, Vector3& scale) override;
 	void Update(std::shared_ptr<Player> player) override;
 	void Draw() override;
 

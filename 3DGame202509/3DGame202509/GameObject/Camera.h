@@ -1,5 +1,5 @@
 #pragma once
-#include "Vec3.h"
+#include "Vector3.h"
 #include <DxLib.h>
 #include <memory>
 
@@ -14,13 +14,13 @@ public:
 	// カメラの初期化
 	void SetCamera(std::shared_ptr<Player> player);
 
-	Vec3 GetPos() const { return m_pos; }
+	Vector3 GetPos() const { return m_pos; }
 
 private:
 	// カメラの位置
-	Vec3 m_pos;
+	Vector3 m_pos;
 	// カメラの注視点
-	Vec3 m_lookAtPos;
+	Vector3 m_lookAtPos;
 	// カメラの視野角
 	float m_fov;
 	// ロックオンフラグ

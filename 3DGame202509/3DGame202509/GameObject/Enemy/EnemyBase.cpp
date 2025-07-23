@@ -44,7 +44,7 @@ void EnemyBase::ChangeState(EnemyState newState, float playSpeed)
     }
 }
 
-Vec3 EnemyBase::GetPos() const
+Vector3 EnemyBase::GetPos() const
 {
     return m_rigidbody.GetPos();
 }

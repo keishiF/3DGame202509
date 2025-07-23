@@ -6,7 +6,7 @@
 #include "PolygonColliderData.h"
 #include "SphereColliderData.h"
 #include "Stage/StageObjectBase.h"
-#include "Vec3.h"
+#include "Vector3.h"
 #include <algorithm>
 #include <cassert>
 #include <DxLib.h>
@@ -332,8 +332,8 @@ void Physics::FixPosition()
 	for (auto& item : m_collidables)
 	{
 		// Posを更新するので、velocityもそこに移動するvelocityに修正
-		Vec3 toFixedPos = item->m_nextPos - item->m_rigidbody.GetPos();
-		Vec3 nextPos = item->m_rigidbody.GetPos() + toFixedPos;
+		Vector3 toFixedPos = item->m_nextPos - item->m_rigidbody.GetPos();
+		Vector3 nextPos = item->m_rigidbody.GetPos() + toFixedPos;
 
 		item->m_rigidbody.SetVelo(toFixedPos);
 		// 位置確定
@@ -381,14 +381,14 @@ void Physics::FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_p
 
 void Physics::FixNextPositionSS(std::shared_ptr<Collidable>& secondary, std::shared_ptr<Collidable>& primary) const
 {
-	Vec3 primaryToSecondary = secondary->m_nextPos - primary->m_nextPos;
+	Vector3 primaryToSecondary = secondary->m_nextPos - primary->m_nextPos;
 	primaryToSecondary.Normalize();
 
 	auto primaryColliderData = dynamic_pointer_cast<SphereColliderData>(primary->m_colliderData);
 	auto secondaryColliderData = dynamic_pointer_cast<SphereColliderData>(secondary->m_colliderData);
 	float awayDist = primaryColliderData->m_radius + secondaryColliderData->m_radius;
-	Vec3 primaryToNewSecondaryPos = primaryToSecondary * awayDist;
-	Vec3 fixedPos = primary->m_nextPos + primaryToNewSecondaryPos;
+	Vector3 primaryToNewSecondaryPos = primaryToSecondary * awayDist;
+	Vector3 fixedPos = primary->m_nextPos + primaryToNewSecondaryPos;
 	secondary->m_nextPos = fixedPos;
 }
 
@@ -398,18 +398,18 @@ void Physics::FixNextPositionCC(std::shared_ptr<Collidable>& primary, std::share
 	auto secondaryColliderData = dynamic_pointer_cast<CapsuleColliderData>(secondary->m_colliderData);
 
 	// カプセルの線分の始点と終点
-	Vec3 primaryStart = primary->m_nextPos;
-	Vec3 primaryEnd = primaryColliderData->m_startPos;
+	Vector3 primaryStart = primary->m_nextPos;
+	Vector3 primaryEnd = primaryColliderData->m_startPos;
 
-	Vec3 secondaryStart = secondary->m_nextPos;
-	Vec3 secondaryEnd = secondaryColliderData->m_startPos;
+	Vector3 secondaryStart = secondary->m_nextPos;
+	Vector3 secondaryEnd = secondaryColliderData->m_startPos;
 
 	// 線分同士の最近接点を求める
-	Vec3 closestPointA, closestPointB;
+	Vector3 closestPointA, closestPointB;
 	SegmentClosestPoint(primaryStart, primaryEnd, secondaryStart, secondaryEnd, &closestPointA, &closestPointB);
 
 	// 最近接点間の距離と方向
-	Vec3 closestDir = closestPointB - closestPointA;
+	Vector3 closestDir = closestPointB - closestPointA;
 	float dist = closestDir.Length();
 
 	float awayDist = primaryColliderData->m_radius + secondaryColliderData->m_radius;
@@ -426,7 +426,7 @@ void Physics::FixNextPositionCC(std::shared_ptr<Collidable>& primary, std::share
 
 	if (dist < awayDist)
 	{
-		Vec3 fixedPos = closestDir * (awayDist - dist);
+		Vector3 fixedPos = closestDir * (awayDist - dist);
 		fixedPos.y = 0.0f;
 		secondary->m_nextPos += fixedPos;
 	}
@@ -443,15 +443,15 @@ void Physics::FixNextPositionCP(std::shared_ptr<Collidable>& primary, std::share
 	if (hitDim.HitNum > 0)
 	{
 		// カプセルの移動後の頭と足の位置を計算
-		Vec3 headPos = capsuleCollider->GetNextStartPos(secondary->m_rigidbody.GetVelo());
-		Vec3 legPos = secondary->m_nextPos;
+		Vector3 headPos = capsuleCollider->GetNextStartPos(secondary->m_rigidbody.GetVelo());
+		Vector3 legPos = secondary->m_nextPos;
 		if (headPos.y < legPos.y)
 		{
 			std::swap(headPos, legPos);
 		}
 
 		// ポリゴンからの押し出しベクトルを計算
-		Vec3 pushBackVec = HitWallCP(headPos, legPos, hitDim.HitNum, hitDim.Dim, capsuleCollider->m_radius);
+		Vector3 pushBackVec = HitWallCP(headPos, legPos, hitDim.HitNum, hitDim.Dim, capsuleCollider->m_radius);
 		// カプセル(secondary)の位置を押し出しベクトル分、補正する
 		secondary->m_nextPos += pushBackVec;
 	}
@@ -498,16 +498,16 @@ std::vector<Physics::OnCollideInfo> Physics::CheckCollide() const
 	return onCollideInfo;
 }
 
-void Physics::SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,
-	Vec3& segBStart, Vec3& segBEnd,
-	Vec3* closestPtA, Vec3* closestPtB) const
+void Physics::SegmentClosestPoint(Vector3& segAStart, Vector3& segAEnd,
+	Vector3& segBStart, Vector3& segBEnd,
+	Vector3* closestPtA, Vector3* closestPtB) const
 {
 	// 線分Aの方向ベクトル
-	Vec3 segADir = segAEnd - segAStart;
+	Vector3 segADir = segAEnd - segAStart;
 	// 線分Bの方向ベクトル
-	Vec3 segBDir = segBEnd - segBStart;
+	Vector3 segBDir = segBEnd - segBStart;
 	// 線分Aの始点から線分Bの始点
-	Vec3 startDiff = segAStart -segBStart;
+	Vector3 startDiff = segAStart -segBStart;
 
 	// 線分Aの長さ2乗
 	float segASqLen = segADir.Dot(segADir);
@@ -589,7 +589,7 @@ void Physics::SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,
 	*closestPtB = segBStart + (segBDir * paramB);
 }
 
-void Physics::AnalyzeWallAndFloor(MV1_COLL_RESULT_POLY_DIM hitDim, const Vec3& nextPos)
+void Physics::AnalyzeWallAndFloor(MV1_COLL_RESULT_POLY_DIM hitDim, const Vector3& nextPos)
 {
 	//壁ポリゴンと床ポリゴンの数を初期化する
 	m_wallNum = 0;
@@ -618,10 +618,10 @@ void Physics::AnalyzeWallAndFloor(MV1_COLL_RESULT_POLY_DIM hitDim, const Vec3& n
 	}
 }
 
-Vec3 Physics::HitWallCP(const Vec3& headPos, const Vec3& legPos, int hitNum, MV1_COLL_RESULT_POLY* dim, float shortDis) const
+Vector3 Physics::HitWallCP(const Vector3& headPos, const Vector3& legPos, int hitNum, MV1_COLL_RESULT_POLY* dim, float shortDis) const
 {
 	float maxOverlap = -1.0f;
-	Vec3 pushBackVec = { 0.0f, 0.0f, 0.0f };
+	Vector3 pushBackVec = { 0.0f, 0.0f, 0.0f };
 	
 	// 衝突したすべての壁ポリゴンをチェック
 	for (int i = 0; i < hitNum; ++i)
@@ -642,7 +642,7 @@ Vec3 Physics::HitWallCP(const Vec3& headPos, const Vec3& legPos, int hitNum, MV1
 		if (overlap > maxOverlap)
 		{
 			maxOverlap = overlap;
-			Vec3 normal = Vec3(dim[i].Normal.x, dim[i].Normal.y, dim[i].Normal.z);
+			Vector3 normal = Vector3(dim[i].Normal.x, dim[i].Normal.y, dim[i].Normal.z);
 			normal.y = 0; // Y方向には押し出さない
 			normal.Normalize();
 			pushBackVec = normal * (overlap + kOverlapGap); 

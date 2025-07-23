@@ -1,5 +1,5 @@
 #pragma once
-#include "Vec3.h"
+#include "Vector3.h"
 #include <cmath>
 
 class Quaternion
@@ -12,7 +12,7 @@ public:
 	float w, x, y, z;
 
 public:
-	void AngleAxis(float& _angle, Vec3& _axis);
+	void AngleAxis(float& _angle, Vector3& _axis);
 
 	static Quaternion Slerp(const Quaternion& a, const Quaternion& b, float t);
 
@@ -21,5 +21,5 @@ public:
 
 Quaternion operator*(const Quaternion& leftQ, const Quaternion& rightQ);
 
-Vec3 operator* (const Quaternion& qRot, const Vec3& rightVec);
+Vector3 operator* (const Quaternion& qRot, const Vector3& rightVec);
 

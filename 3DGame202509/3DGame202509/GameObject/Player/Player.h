@@ -3,7 +3,7 @@
 #include "Collidable.h"
 #include "Input.h"
 #include "Quaternion.h"
-#include "Vec3.h"
+#include "Vector3.h"
 #include <queue>
 
 enum class PlayerState
@@ -35,14 +35,14 @@ public:
 	virtual ~Player();
 
 	// 初期化
-	void Init(Vec3& pos, const Vec3& rot, const Vec3& scale);
+	void Init(Vector3& pos, const Vector3& rot, const Vector3& scale);
 	// 更新
 	void Update();
 	// 描画
 	void Draw();
 
 	// プレイヤーの位置を取得
-	Vec3 GetPos() const { return m_rigidbody.GetPos(); }
+	Vector3 GetPos() const { return m_rigidbody.GetPos(); }
 	float GetRadius() const { return m_radius; }
 	int GetModel() const { return m_charModel; }
 
@@ -92,7 +92,7 @@ private:
 
 private:
 	// 正面ベクトル
-	Vec3 m_forward;
+	Vector3 m_forward;
 
 	// プレイヤーのモデル
 	int m_charModel;

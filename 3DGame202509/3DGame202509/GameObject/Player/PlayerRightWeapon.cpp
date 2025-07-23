@@ -108,11 +108,11 @@ void PlayerRightWeapon::AttackUpdate(int model)
 	float angleY = -rotVec.y;
 
 	// 前方ベクトルを計算
-	Vec3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
+	Vector3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
 	forward.Normalize();
 
 	// プレイヤー位置から前方へオフセット
-	Vec3 weaponPos(playerPos.x, playerPos.y, playerPos.z);
+	Vector3 weaponPos(playerPos.x, playerPos.y, playerPos.z);
 	weaponPos += forward * kColOffsetScale;
 
 	// 当たり判定のセット

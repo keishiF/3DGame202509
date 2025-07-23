@@ -99,14 +99,14 @@ private:
 	// 位置補正はするがそれ以外の処理(ダメージを受けるなど)はしないようにする
 	bool ShouldCallOnCollide(ObjectTag tagA, ObjectTag tagB) const;
 
-	void SegmentClosestPoint(Vec3& segAStart, Vec3& segAEnd,
-		Vec3& segBStart, Vec3& segBEnd, 
-		Vec3* closestPtA, Vec3* closestPtB) const;
+	void SegmentClosestPoint(Vector3& segAStart, Vector3& segAEnd,
+		Vector3& segBStart, Vector3& segBEnd, 
+		Vector3* closestPtA, Vector3* closestPtB) const;
 
-	void AnalyzeWallAndFloor(MV1_COLL_RESULT_POLY_DIM hitDim, const Vec3& nextPos);
+	void AnalyzeWallAndFloor(MV1_COLL_RESULT_POLY_DIM hitDim, const Vector3& nextPos);
 	int m_wallNum = 0;
 	MV1_COLL_RESULT_POLY* m_wall[kMaxHitPolygon];
-	Vec3 HitWallCP(const Vec3& headPos, const Vec3& legPos, int hitNum, MV1_COLL_RESULT_POLY* dim, float shortDis) const;
+	Vector3 HitWallCP(const Vector3& headPos, const Vector3& legPos, int hitNum, MV1_COLL_RESULT_POLY* dim, float shortDis) const;
 
 	Physics(const Physics&) = delete;
 	Physics& operator =(const Physics&) = delete;

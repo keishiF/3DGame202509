@@ -16,7 +16,7 @@ Quaternion::Quaternion(float _w, float _x, float _y, float _z)
 	z = _z;
 }
 
-void Quaternion::AngleAxis(float& _angle, Vec3& _axis)
+void Quaternion::AngleAxis(float& _angle, Vector3& _axis)
 {
 	_axis = _axis.GetNormalize();
 	w = cos(_angle / 2.0f);
@@ -87,10 +87,10 @@ Quaternion operator*(const Quaternion& leftQ, const Quaternion& rightQ)
 	return resultQ;
 }
 
-Vec3 operator*(const Quaternion& qRot, const Vec3& rightVec)
+Vector3 operator*(const Quaternion& qRot, const Vector3& rightVec)
 {
 	Quaternion qPos, qInv;
-	Vec3 vPos;
+	Vector3 vPos;
 
 	// 3次元座標をクォータニオンに変換
 	qPos.w = 1.0f;

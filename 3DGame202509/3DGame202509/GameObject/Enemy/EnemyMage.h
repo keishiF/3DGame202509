@@ -10,7 +10,7 @@ public:
 	EnemyMage();
 	virtual ~EnemyMage();
 
-	void Init(Vec3& pos, Vec3& rot, Vec3& scale) override;
+	void Init(Vector3& pos, Vector3& rot, Vector3& scale) override;
 	void Update(std::shared_ptr<Player> player) override;
 	void Draw() override;
 
@@ -35,13 +35,13 @@ private:
 	// éÄñSèÛë‘
 	void DeadUpdate(std::shared_ptr<Player> player) override;
 
-	bool IsPlayerFind(const std::shared_ptr<Player>& player, const Vec3& centerDir, float viewAngleRad, float viewDistance);
+	bool IsPlayerFind(const std::shared_ptr<Player>& player, const Vector3& centerDir, float viewAngleRad, float viewDistance);
 
 	float m_angle;
 	float m_rotSpeed;
 	float m_angleMax;
 
-	Vec3 m_forward;
+	Vector3 m_forward;
 
 	std::vector<std::shared_ptr<EnemyMageBullet>> m_bullets;
 };
