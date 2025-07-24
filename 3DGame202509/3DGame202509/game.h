@@ -12,5 +12,5 @@ namespace Game
 	constexpr int kScreenWidth = 1280;
 	constexpr int kScreenHeight = 720;
 
-	constexpr int kColorBItNum = 32;
+	constexpr int kColorBitNum = 32;
 }
