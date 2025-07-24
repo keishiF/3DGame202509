@@ -1,5 +1,6 @@
 #pragma once
 #include "Collidable.h"
+
 struct LeftAttackTiming
 {
 	float start;
