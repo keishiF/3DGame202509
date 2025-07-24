@@ -19,7 +19,7 @@ bool Application::Init()
 	// ウィンドウ名設定
 	SetMainWindowText(Game::kTitleText);
 	// 画面のサイズを変更する
-	SetGraphMode(Game::kScreenWidth, Game::kScreenHeight, Game::kColorBItNum);
+	SetGraphMode(Game::kScreenWidth, Game::kScreenHeight, Game::kColorBitNum);
 
 	if (DxLib_Init() == -1)		// ＤＸライブラリ初期化処理
 	{
