@@ -9,8 +9,7 @@ class EnemyMinion;
 class EnemyMage;
 class Camera;
 class StageObjectManager;
-class GameScene final:
-	public SceneBase
+class GameScene final : public SceneBase
 {
 public:
 	explicit GameScene(SceneController& controller);

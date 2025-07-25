@@ -1,8 +1,7 @@
 #pragma once
 #include "SceneBase.h"
 
-class ResultScene final:
-    public SceneBase
+class ResultScene final : public SceneBase
 {
 public:
 	explicit ResultScene(SceneController& controller);
