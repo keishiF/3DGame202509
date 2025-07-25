@@ -301,14 +301,14 @@
     <ClInclude Include="Animator\Animator.h">
       <Filter>ヘッダー ファイル\Animator</Filter>
     </ClInclude>
-    <ClInclude Include="game.h">
-      <Filter>ヘッダー ファイル\General</Filter>
-    </ClInclude>
     <ClInclude Include="Effect\Effect.h">
       <Filter>ヘッダー ファイル\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Effect\EffectManager.h">
       <Filter>ヘッダー ファイル\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="General\game.h">
+      <Filter>ヘッダー ファイル\General</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
