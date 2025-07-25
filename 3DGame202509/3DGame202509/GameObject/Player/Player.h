@@ -16,9 +16,6 @@ enum class PlayerState
 	Stab,       // UŒ‚3’i–Ú
 	Spin,       // ‹­UŒ‚
 	Special,    // •KE‹Z
-	DualChop,   // •KE‹Z
-	DualSlice,  // •KE‹Z
-	DualStab,   // •KE‹Z
 	Dodge,      // ‰ñ”ğ
 	Hit,        // ”í’e
 	Dead        // €–S
@@ -83,9 +80,6 @@ private:
 
 	// €–Só‘Ô
 	void DeadUpdate();
-
-	std::queue<const char*> m_ultimateAnimQueue;
-	std::string m_currentSpecialAnim;
 
 	void RotateToNearestEnemy(float radius);
 	std::shared_ptr<EnemyBase> FindNearestEnemy(float radius);

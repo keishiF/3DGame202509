@@ -1,5 +1,6 @@
 #include "Animator.h"
 #include "CapsuleColliderData.h"
+#include "EffectManager.h"
 #include "Enemy/EnemyBase.h"
 #include "GameObjectManager.h"
 #include "Physics.h"
@@ -44,9 +45,7 @@ namespace
 	const char* kSliceAnimName     = "1H_Melee_Attack_Slice_Diagonal";
 	const char* kStabAnimName      = "1H_Melee_Attack_Stab";
 	const char* kSpinAnimName      = "2H_Melee_Attack_Spin";
-	const char* kUltimateAnimName1 = "Dualwield_Melee_Attack_Chop";
-	const char* kUltimateAnimName2 = "Dualwield_Melee_Attack_Slice";
-	const char* kUltimateAnimName3 = "Dualwield_Melee_Attack_Stab";
+	const char* kSpecialAnimName   = "2H_Melee_Attack_Stab";
 	// 回避
 	const char* kDodgeAnimName	   = "Dodge_Forward";
 	// 被弾
@@ -70,9 +69,6 @@ namespace
 		{PlayerState::Stab,		 {16, 28}},
 		{PlayerState::Spin,      {16, 36}},
 		{PlayerState::Special,   {16, 36}},
-		{PlayerState::DualChop,  {12, 48}},
-		{PlayerState::DualSlice, {16, 36}},
-		{PlayerState::DualStab,  {16, 36}},
 		{PlayerState::Dodge,	 { 0,  0}},
 		{PlayerState::Hit,		 { 0,  0}},
 		{PlayerState::Dead,		 { 0,  0}}
@@ -88,9 +84,6 @@ namespace
 		{PlayerState::Stab,		 {16, 28}},
 		{PlayerState::Spin,      {16, 36}},
 		{PlayerState::Special,   {16, 36}},
-		{PlayerState::DualChop,  {12, 48}},
-		{PlayerState::DualSlice, {16, 36}},
-		{PlayerState::DualStab,  {16, 36}},
 		{PlayerState::Dodge,	 { 0,  0}},
 		{PlayerState::Hit,		 { 0,  0}},
 		{PlayerState::Dead,		 { 0,  0}}
@@ -328,18 +321,7 @@ void Player::ChangeState(PlayerState newState)
 		m_anim.ChangeAnim(kSpinAnimName, kAnimSpeed, false);
 		break;
 	case PlayerState::Special:
-		// アニメーション順を登録
-		while (!m_ultimateAnimQueue.empty()) m_ultimateAnimQueue.pop(); // 念のためクリア
-		m_ultimateAnimQueue.push(kUltimateAnimName1);
-		m_ultimateAnimQueue.push(kUltimateAnimName2);
-		m_ultimateAnimQueue.push(kUltimateAnimName3);
-		// 最初のアニメーションを設定
-		if (!m_ultimateAnimQueue.empty()) 
-		{
-			m_currentSpecialAnim = m_ultimateAnimQueue.front();
-			m_ultimateAnimQueue.pop();
-			m_anim.ChangeAnim(m_currentSpecialAnim.c_str(), kDualAnimSpeed, false);
-		}
+		m_anim.ChangeAnim(kSpecialAnimName, kAnimSpeed, false);
 		break;
 	case PlayerState::Dodge:
 		m_anim.ChangeAnim(kDodgeAnimName, kAnimSpeed, false);
@@ -380,20 +362,20 @@ void Player::IdleUpdate()
 		ChangeState(PlayerState::Spin);
 	}
 
-//	// RBボタンの入力があれば必殺技状態に移行する
-//	if (Input::Instance().IsTrigger("RB"))
-//	{
-//#ifdef _DEBUG
-//		if (m_specialGauge < kSpecialGaugeMax)
-//		{
-//			m_specialGauge = kSpecialGaugeMax;
-//		}
-//#endif
-//		if (m_specialGauge >= kSpecialGaugeMax)
-//		{
-//			ChangeState(PlayerState::Special);
-//		}
-//	}
+	// RBボタンの入力があれば必殺技状態に移行する
+	if (Input::Instance().IsTrigger("RB"))
+	{
+#ifdef _DEBUG
+		if (m_specialGauge < kSpecialGaugeMax)
+		{
+			m_specialGauge = kSpecialGaugeMax;
+		}
+#endif
+		if (m_specialGauge >= kSpecialGaugeMax)
+		{
+			ChangeState(PlayerState::Special);
+		}
+	}
 }
 
 void Player::WalkUpdate()
@@ -725,44 +707,15 @@ void Player::SpinUpdate()
 
 void Player::SpecialUpdate()
 {
-	// プレイヤー自身の当たり判定をオフにする
 	SetActive(false);
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Special));
+	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Special));
 
-	// 一番近い敵の方向に回転
-	RotateToNearestEnemy(kAttackOffsetRadius);
-
-	++m_attackFrame;
-
-	if (m_currentSpecialAnim == kUltimateAnimName1)
-	{
-		m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::DualChop));
-		m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::DualChop));
-	}
-	else if (m_currentSpecialAnim == kUltimateAnimName2)
-	{
-		m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::DualSlice));
-		m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::DualSlice));
-	}
-	else if (m_currentSpecialAnim == kUltimateAnimName3)
-	{
-		m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::DualStab));
-		m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::DualStab));
-	}
-
-	// アニメーションが終了したら次のアニメーションを再生
+	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
-		if (!m_ultimateAnimQueue.empty())
-		{
-			m_currentSpecialAnim = m_ultimateAnimQueue.front();
-			m_ultimateAnimQueue.pop();
-			m_anim.ChangeAnim(m_currentSpecialAnim.c_str(), kDualAnimSpeed, false);
-			m_attackFrame = 0.0f;
-		}
-		else
-		{
-			ChangeState(PlayerState::Idle);
-		}
+		ChangeState(PlayerState::Idle);
 	}
 }
 
