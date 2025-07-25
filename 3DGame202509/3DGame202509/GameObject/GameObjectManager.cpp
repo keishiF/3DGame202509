@@ -5,8 +5,8 @@
 #include "Enemy/EnemyMinion.h"
 #include "Enemy/EnemyMage.h"
 #include "Enemy/EnemyBoss.h"
-#include "Camera.h"
-#include "SkyDome.h"
+#include "Camera/Camera.h"
+#include "SkyDome/SkyDome.h"
 #include "TransformDataLoader.h"
 
 GameObjectManager::GameObjectManager() :

@@ -1,5 +1,5 @@
-#include "Camera.h"
-#include "SkyDome.h"
+#include "Camera/Camera.h"
+#include "SkyDome/SkyDome.h"
 #include <cassert>
 #include <DxLib.h>
 

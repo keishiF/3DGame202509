@@ -1,4 +1,4 @@
-#include "Camera.h"
+#include "Camera/Camera.h"
 #include "Enemy/EnemyMage.h"
 #include "Enemy/EnemyMinion.h"
 #include "game.h"
