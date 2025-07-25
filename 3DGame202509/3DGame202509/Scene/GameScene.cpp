@@ -32,7 +32,8 @@ GameScene::GameScene(SceneController& controller) :
 	m_update(&GameScene::FadeInUpdate),
 	m_draw(&GameScene::FadeDraw)
 {
-	Effekseer_Init(8192);
+	Effekseer_Init(20000);
+	Effekseer_InitDistortion();
 
 	GameObjectManager::Instance().Init();
 
