@@ -1,6 +1,5 @@
 #include "Animator.h"
 #include "CapsuleColliderData.h"
-#include "EffectManager.h"
 #include "Enemy/EnemyBase.h"
 #include "GameObjectManager.h"
 #include "Physics.h"
@@ -9,6 +8,7 @@
 #include "PlayerRightWeapon.h"
 #include <algorithm>
 #include <cassert>
+#include <EffekseerForDxLib.h>
 #include <DxLib.h>
 #include <unordered_map>
 
@@ -21,7 +21,7 @@ namespace
 
 	// 移動速度
 	constexpr float kWalkSpeed = 8.5f;
-	constexpr float kRunSpeed  = 17.5f;
+	constexpr float kRunSpeed  = 170.5f;
 	constexpr float kAttackMoveSpeed = 1.0f;
 	constexpr float kDodgeSpped = 40.0f;
 	// プレイヤーのモデルの拡大値
@@ -57,7 +57,7 @@ namespace
 	constexpr float kIdleAnimSpeed = 0.5f;
 	constexpr float kWalkAnimSpeed = 0.75f;
 	constexpr float kChopAnimSpeed = 1.0f;
-	constexpr float kDualAnimSpeed = 1.25f;
+	constexpr float kSpecialAttackAnimSpeed = 0.5f;
 
 	const std::unordered_map<PlayerState, RightAttackTiming> kRightColTimingTable =
 	{
@@ -93,6 +93,8 @@ namespace
 Player::Player() :
 	m_forward(0.0f, 0.0f, 1.0f),
 	m_charModel(-1),
+	m_specialAttackEffect(-1),
+	m_isEffect(false),
 	m_radius(kRadius),
 	m_hp(kHp),
 	m_specialGauge(0),
@@ -109,6 +111,7 @@ Player::Player() :
 Player::~Player()
 {
 	MV1DeleteModel(m_charModel);
+	DeleteEffekseerEffect(m_specialAttackEffect);
 }
 
 void Player::Init(Vector3& pos, const Vector3& rot, const Vector3& scale)
@@ -124,6 +127,9 @@ void Player::Init(Vector3& pos, const Vector3& rot, const Vector3& scale)
 
 	m_charModel = MV1LoadModel("Data/Model/Player/Player.mv1");
 	assert(m_charModel >= 0);
+
+	m_specialAttackEffect = LoadEffekseerEffect("Data/Effect/PlayerSpecialAttack2.efkefc", 100.0f);
+	assert(m_specialAttackEffect >= 0);
 
 	MV1SetScale(m_charModel, VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
@@ -212,11 +218,6 @@ void Player::Draw()
 #endif
 	MV1DrawModel(m_charModel);
 	m_rightWeapon->Draw();
-
-	if (m_state == PlayerState::Special)
-	{
-		m_leftWeapon->Draw();
-	}
 
 	const int gaugeWidth = 200;
 	const int gaugeHeight = 20;
@@ -321,7 +322,7 @@ void Player::ChangeState(PlayerState newState)
 		m_anim.ChangeAnim(kSpinAnimName, kAnimSpeed, false);
 		break;
 	case PlayerState::Special:
-		m_anim.ChangeAnim(kSpecialAnimName, kAnimSpeed, false);
+		m_anim.ChangeAnim(kSpecialAnimName, kSpecialAttackAnimSpeed, false);
 		break;
 	case PlayerState::Dodge:
 		m_anim.ChangeAnim(kDodgeAnimName, kAnimSpeed, false);
@@ -337,6 +338,7 @@ void Player::ChangeState(PlayerState newState)
 
 void Player::IdleUpdate()
 {
+	auto& input = Input::GetInstance();
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
 
@@ -344,26 +346,26 @@ void Player::IdleUpdate()
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Idle));
 
 	// 左スティックの入力があれば歩き状態に移行する
-	if (Input::Instance().IsPress("LEFT") || Input::Instance().IsPress("RIGHT") ||
-		Input::Instance().IsPress("UP")   || Input::Instance().IsPress("DOWN"))
+	if (input.IsPress("LEFT") || input.IsPress("RIGHT") ||
+		input.IsPress("UP")   || input.IsPress("DOWN"))
 	{
 		ChangeState(PlayerState::Walk);
 	}
 
 	// Aボタンの入力があれば攻撃状態に移行する
-	if (Input::Instance().IsTrigger("A"))
+	if (input.IsTrigger("A"))
 	{
 		ChangeState(PlayerState::Chop);
 	}
 
 	// Xボタンの入力があれば強攻撃状態に移行するためのフラグを立てる
-	if (Input::Instance().IsTrigger("X"))
+	if (input.IsTrigger("X"))
 	{
 		ChangeState(PlayerState::Spin);
 	}
 
 	// RBボタンの入力があれば必殺技状態に移行する
-	if (Input::Instance().IsTrigger("RB"))
+	if (input.IsTrigger("RB"))
 	{
 #ifdef _DEBUG
 		if (m_specialGauge < kSpecialGaugeMax)
@@ -380,11 +382,7 @@ void Player::IdleUpdate()
 
 void Player::WalkUpdate()
 {
-	if (++m_walkFrame >= 60)
-	{
-		ChangeState(PlayerState::Run);
-	}
-
+	auto& input = Input::GetInstance();
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
 
@@ -394,12 +392,12 @@ void Player::WalkUpdate()
 	Vector3 dir = { 0.0f, 0.0f,0.0f };
 	// 左スティックで移動
 	// 左入力
-	if (Input::Instance().IsPress("LEFT"))
+	if (input.IsPress("LEFT"))
 	{
 		dir.x = -kWalkSpeed;
 	}
 	// 右入力
-	else if (Input::Instance().IsPress("RIGHT"))
+	else if (input.IsPress("RIGHT"))
 	{
 		dir.x = kWalkSpeed;
 	}
@@ -409,12 +407,12 @@ void Player::WalkUpdate()
 		dir.x = 0.0f;
 	}
 	// 上入力
-	if (Input::Instance().IsPress("UP"))
+	if (input.IsPress("UP"))
 	{
 		dir.z = kWalkSpeed;
 	}
 	// 下入力
-	else if (Input::Instance().IsPress("DOWN"))
+	else if (input.IsPress("DOWN"))
 	{
 		dir.z = -kWalkSpeed;
 	}
@@ -452,25 +450,25 @@ void Player::WalkUpdate()
 	}
 
 	// LBの入力があればダッシュ状態に移行する
-	if (Input::Instance().IsTrigger("LB"))
+	if (input.IsTrigger("LB"))
 	{
 		ChangeState(PlayerState::Run);
 	}
 
 	// Aボタンの入力があれば攻撃状態に移行する
-	if (Input::Instance().IsTrigger("A"))
+	if (input.IsTrigger("A"))
 	{
 		ChangeState(PlayerState::Chop);
 	}
 
 	// Xボタンの入力があれば強攻撃状態に移行する
-	if (Input::Instance().IsTrigger("X"))
+	if (input.IsTrigger("X"))
 	{
 		ChangeState(PlayerState::Spin);
 	}
 
 	// Bボタンの入力があれば回避状態に移行する
-	if (Input::Instance().IsTrigger("B"))
+	if (input.IsTrigger("B"))
 	{
 		ChangeState(PlayerState::Dodge);
 	}
@@ -478,6 +476,8 @@ void Player::WalkUpdate()
 
 void Player::RunUpdate()
 {
+	auto& input = Input::GetInstance();
+
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
 
@@ -487,12 +487,12 @@ void Player::RunUpdate()
 	Vector3 dir = { 0.0f, 0.0f, 0.0f };
 	// 左スティックで移動
 	// 左入力
-	if (Input::Instance().IsPress("LEFT"))
+	if (input.IsPress("LEFT"))
 	{
 		dir.x = -kRunSpeed;
 	}
 	// 右入力
-	else if (Input::Instance().IsPress("RIGHT"))
+	else if (input.IsPress("RIGHT"))
 	{
 		dir.x = kRunSpeed;
 	}
@@ -502,12 +502,12 @@ void Player::RunUpdate()
 		dir.x = 0.0f;
 	}
 	// 上入力
-	if (Input::Instance().IsPress("UP"))
+	if (input.IsPress("UP"))
 	{
 		dir.z = kRunSpeed;
 	}
 	// 下入力
-	else if (Input::Instance().IsPress("DOWN"))
+	else if (input.IsPress("DOWN"))
 	{
 		dir.z = -kRunSpeed;
 	}
@@ -544,20 +544,25 @@ void Player::RunUpdate()
 		ChangeState(PlayerState::Idle);
 	}
 
+	if (input.IsTrigger("LB"))
+	{
+		ChangeState(PlayerState::Walk);
+	}
+
 	// Aボタンの入力があれば攻撃状態に移行する
-	if (Input::Instance().IsTrigger("A"))
+	if (input.IsTrigger("A"))
 	{
 		ChangeState(PlayerState::Chop);
 	}
 
 	// Xボタンの入力があれば強攻撃状態に移行する
-	if (Input::Instance().IsTrigger("X"))
+	if (input.IsTrigger("X"))
 	{
 		ChangeState(PlayerState::Spin);
 	}
 
 	// Bボタンの入力があれば回避状態に移行する
-	if (Input::Instance().IsTrigger("B"))
+	if (input.IsTrigger("B"))
 	{
 		ChangeState(PlayerState::Dodge);
 	}
@@ -565,6 +570,7 @@ void Player::RunUpdate()
 
 void Player::ChopUpdate()
 {
+	auto& input = Input::GetInstance();
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
 
@@ -590,7 +596,7 @@ void Player::ChopUpdate()
 	if (m_attackFrame > 16.0f && m_attackFrame < 32.0f)
 	{
 		// 1ボタンの入力があれば攻撃状態に移行する
-		if (Input::Instance().IsTrigger("A"))
+		if (input.IsTrigger("A"))
 		{
 			m_isCombo = true;
 		}
@@ -614,6 +620,7 @@ void Player::ChopUpdate()
 
 void Player::SliceUpdate()
 {
+	auto& input = Input::GetInstance();
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
 	
@@ -639,7 +646,7 @@ void Player::SliceUpdate()
 	if (m_attackFrame > 15.0f && m_attackFrame < 30.0f)
 	{
 		// 1ボタンの入力があれば攻撃状態に移行する
-		if (Input::Instance().IsTrigger("A"))
+		if (input.IsTrigger("A"))
 		{
 			m_isCombo = true;
 		}
@@ -707,16 +714,22 @@ void Player::SpinUpdate()
 
 void Player::SpecialUpdate()
 {
-	auto& effectManager = EffectManager::GetInstance();
-	effectManager.GenerateEffect("PlayerSpecialAttack.efkefc", m_rigidbody.GetPos());
-
 	SetActive(false);
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Special));
+
+	if (!m_isEffect)
+	{
+		PlayEffekseer3DEffect(m_specialAttackEffect);
+		SetPosPlayingEffekseer3DEffect(m_specialAttackEffect, m_rigidbody.GetPos().x, m_rigidbody.GetPos().y, m_rigidbody.GetPos().z);
+		m_isEffect = true;
+	}
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
+		//StopEffekseer3DEffect(m_specialAttackEffect);
+		m_isEffect = false;
 		ChangeState(PlayerState::Idle);
 	}
 }

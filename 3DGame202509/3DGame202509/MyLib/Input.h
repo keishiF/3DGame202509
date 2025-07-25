@@ -12,7 +12,7 @@ public:
 
 	bool IsTrigger(const char* key) const;
 
-	static Input& Instance();
+	static Input& GetInstance();
 
 private:
 	Input();

@@ -90,6 +90,9 @@ private:
 
 	// プレイヤーのモデル
 	int m_charModel;
+	// 必殺技エフェクト
+	int m_specialAttackEffect;
+	bool m_isEffect;
 	// プレイヤーの当たり判定
 	float m_radius;
 	// プレイヤーのHP

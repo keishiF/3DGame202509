@@ -90,7 +90,7 @@ bool Input::IsTrigger(const char* key) const
 	return (m_currentInput.at(key) && !m_lastInput.at(key));
 }
 
-Input& Input::Instance()
+Input& Input::GetInstance()
 {
 	// TODO: return ステートメントをここに挿入します
 	static Input instance;

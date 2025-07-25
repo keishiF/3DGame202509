@@ -46,7 +46,7 @@ void ResultScene::NormalUpdate()
 {
 	++m_blinkFrame;
 
-	if (Input::Instance().IsPress("LB"))
+	if (Input::GetInstance().IsPress("LB"))
 	{
 		m_update = &ResultScene::FadeOutUpdate;
 		m_draw = &ResultScene::FadeDraw;

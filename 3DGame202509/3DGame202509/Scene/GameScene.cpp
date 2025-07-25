@@ -12,6 +12,7 @@
 #include "Stage/StageObjectManager.h"
 #include "TitleScene.h"
 #include <cassert>
+#include <EffekseerForDxLib.h>
 #include <DxLib.h>
 
 namespace
@@ -31,6 +32,8 @@ GameScene::GameScene(SceneController& controller) :
 	m_update(&GameScene::FadeInUpdate),
 	m_draw(&GameScene::FadeDraw)
 {
+	Effekseer_Init(8192);
+
 	GameObjectManager::Instance().Init();
 
 	m_stageObjectManager = std::make_shared<StageObjectManager>();
@@ -61,6 +64,7 @@ void GameScene::NormalUpdate()
 	++m_frame;
 	++m_blinkFrame;
 
+	UpdateEffekseer3D();
 	GameObjectManager::Instance().Update();
 	if (GameObjectManager::Instance().IsGameOver())
 	{
@@ -105,6 +109,8 @@ void GameScene::NormalDraw()
 	}
 	printf("frame %d\n", m_frame);
 
+	Effekseer_Sync3DSetting();
+	DrawEffekseer3D();
 	m_stageObjectManager->Draw();
 	GameObjectManager::Instance().Draw();
 }
