@@ -707,9 +707,11 @@ void Player::SpinUpdate()
 
 void Player::SpecialUpdate()
 {
+	auto& effectManager = EffectManager::GetInstance();
+	effectManager.GenerateEffect("PlayerSpecialAttack.efkefc", m_rigidbody.GetPos());
+
 	SetActive(false);
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Special));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Special));
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
