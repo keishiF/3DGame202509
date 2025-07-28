@@ -1,5 +1,7 @@
 #include "Animator.h"
 #include "CapsuleColliderData.h"
+#include "Effect.h"
+#include "EffectManager.h"
 #include "Enemy/EnemyBase.h"
 #include "GameObjectManager.h"
 #include "Physics.h"
@@ -8,8 +10,8 @@
 #include "PlayerRightWeapon.h"
 #include <algorithm>
 #include <cassert>
-#include <EffekseerForDxLib.h>
 #include <DxLib.h>
+#include <EffekseerForDxLib.h>
 #include <unordered_map>
 
 namespace
@@ -21,7 +23,7 @@ namespace
 
 	// 移動速度
 	constexpr float kWalkSpeed = 8.5f;
-	constexpr float kRunSpeed  = 170.5f;
+	constexpr float kRunSpeed  = 17.5f;
 	constexpr float kAttackMoveSpeed = 1.0f;
 	constexpr float kDodgeSpped = 40.0f;
 	// プレイヤーのモデルの拡大値
@@ -32,6 +34,8 @@ namespace
 	constexpr float kAttackOffsetRadius = 230.0f;
 
 	constexpr float kLerpT = 0.2f;
+
+	const std::string kSpecialAttackEffectName = "SpecialAttackEffect.efkefc";
 
 	// アニメーション名
 	// 待機
@@ -93,8 +97,6 @@ namespace
 Player::Player() :
 	m_forward(0.0f, 0.0f, 1.0f),
 	m_charModel(-1),
-	m_specialAttackEffect(-1),
-	m_isEffect(false),
 	m_radius(kRadius),
 	m_hp(kHp),
 	m_specialGauge(0),
@@ -111,7 +113,6 @@ Player::Player() :
 Player::~Player()
 {
 	MV1DeleteModel(m_charModel);
-	DeleteEffekseerEffect(m_specialAttackEffect);
 }
 
 void Player::Init(Vector3& pos, const Vector3& rot, const Vector3& scale)
@@ -128,9 +129,6 @@ void Player::Init(Vector3& pos, const Vector3& rot, const Vector3& scale)
 	m_charModel = MV1LoadModel("Data/Model/Player/Player.mv1");
 	assert(m_charModel >= 0);
 
-	m_specialAttackEffect = LoadEffekseerEffect("Data/Effect/PlayerSpecialAttack2.efkefc", 100.0f);
-	assert(m_specialAttackEffect >= 0);
-
 	MV1SetScale(m_charModel, VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
 
@@ -142,6 +140,8 @@ void Player::Init(Vector3& pos, const Vector3& rot, const Vector3& scale)
 
 	m_leftWeapon = std::make_shared<PlayerLeftWeapon>();
 	m_leftWeapon->Init();
+
+	m_effect = EffectManager::GetInstance().GenerateEffect(kSpecialAttackEffectName, m_rigidbody.GetPos());
 }
 
 void Player::Update()
@@ -155,6 +155,12 @@ void Player::Update()
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
 	m_anim.UpdateAnimBlend();
+
+	// エフェクトも
+	if (!m_effect.expired())
+	{
+		m_effect.lock()->SetPos(m_rigidbody.GetPos());
+	}
 
 	switch (m_state)
 	{
@@ -717,19 +723,10 @@ void Player::SpecialUpdate()
 	SetActive(false);
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Special));
 
-	if (!m_isEffect)
-	{
-		PlayEffekseer3DEffect(m_specialAttackEffect);
-		SetPosPlayingEffekseer3DEffect(m_specialAttackEffect, m_rigidbody.GetPos().x, m_rigidbody.GetPos().y, m_rigidbody.GetPos().z);
-		m_isEffect = true;
-	}
-
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
-		//StopEffekseer3DEffect(m_specialAttackEffect);
-		m_isEffect = false;
 		ChangeState(PlayerState::Idle);
 	}
 }

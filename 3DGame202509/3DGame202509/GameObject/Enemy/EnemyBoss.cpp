@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <cassert>
 #include <DxLib.h>
+#include <EffekseerForDxLib.h>
 #include <unordered_map>
 
 namespace
@@ -16,7 +17,7 @@ namespace
 	constexpr float kAttackRadius = 600.0f;
 
 	// 初期HP
-	constexpr int kHp = 10;
+	constexpr int kHp = 1;
 
 	// エネミーの速度
 	constexpr float kWalkSpeed = 2.0f;
@@ -86,8 +87,8 @@ namespace
 }
 
 EnemyBoss::EnemyBoss() :
-	m_isDead(false),
-	m_walkFrame(0.0f)
+	m_walkFrame(0.0f),
+	m_isDead(false)
 {
 }
 

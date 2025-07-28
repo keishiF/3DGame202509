@@ -17,6 +17,7 @@ namespace
 TitleScene::TitleScene(SceneController& controller) :
 	SceneBase(controller),
 	m_skyModel(-1),
+	m_titleHandle(-1),
 	m_fadeFrame(kFadeInterval),
 	m_blinkFrame(0),
 	m_update(&TitleScene::FadeInUpdate),
@@ -24,6 +25,10 @@ TitleScene::TitleScene(SceneController& controller) :
 {
 	m_skyModel = MV1LoadModel("Data/Model/Sky/Sky_Daylight01.mv1");
 	assert(m_skyModel >= 0);
+
+	m_titleHandle = LoadGraph("Data/UI/Title2.png");
+	assert(m_titleHandle >= 0);
+
 	MV1SetScale(m_skyModel, VGet(kSkyModelScale, kSkyModelScale, kSkyModelScale));
 }
 
@@ -77,6 +82,7 @@ void TitleScene::FadeOutUpdate()
 void TitleScene::NormalDraw()
 {
 	MV1DrawModel(m_skyModel);
+	DrawGraph(0, 0, m_titleHandle, true);
 
 	// ì_ñ≈å¯â ÇÃÇΩÇﬂÇÃèåè
 	if ((m_blinkFrame / 30) % 2 == 0)
@@ -88,6 +94,7 @@ void TitleScene::NormalDraw()
 void TitleScene::FadeDraw()
 {
 	MV1DrawModel(m_skyModel);
+	DrawGraph(0, 0, m_titleHandle, true);
 
 	DrawString(0, 0, "Title Scene", 0x000000);
 

@@ -148,6 +148,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animator\Animator.cpp" />
+    <ClCompile Include="Effect\Effect.cpp" />
+    <ClCompile Include="Effect\EffectManager.cpp" />
     <ClCompile Include="GameObject\Camera\Camera.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyBase.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyBoss.cpp" />
@@ -186,6 +188,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animator\Animator.h" />
+    <ClInclude Include="Effect\Effect.h" />
+    <ClInclude Include="Effect\EffectManager.h" />
     <ClInclude Include="GameObject\Camera\Camera.h" />
     <ClInclude Include="GameObject\Enemy\EnemyBase.h" />
     <ClInclude Include="GameObject\Enemy\EnemyBoss.h" />

@@ -21,6 +21,7 @@ enum class PlayerState
 	Dead        // 死亡
 };
 
+class Effect;
 class EnemyBase;
 class PlayerRightWeapon;
 class PlayerLeftWeapon;
@@ -90,9 +91,6 @@ private:
 
 	// プレイヤーのモデル
 	int m_charModel;
-	// 必殺技エフェクト
-	int m_specialAttackEffect;
-	bool m_isEffect;
 	// プレイヤーの当たり判定
 	float m_radius;
 	// プレイヤーのHP
@@ -116,5 +114,7 @@ private:
 
 	std::shared_ptr<PlayerRightWeapon> m_rightWeapon;
 	std::shared_ptr<PlayerLeftWeapon> m_leftWeapon;
+
+	std::weak_ptr<Effect> m_effect;
 };
 
