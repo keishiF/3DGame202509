@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <cassert>
 #include <DxLib.h>
-#include <EffekseerForDxLib.h>
 #include <unordered_map>
 
 namespace
@@ -35,7 +34,7 @@ namespace
 
 	constexpr float kLerpT = 0.2f;
 
-	const std::string kSpecialAttackEffectName = "SpecialAttackEffect.efkefc";
+	const std::string kSpecialAttackEffectName = "PlayerSpecialAttack2.efkefc";
 
 	// アニメーション名
 	// 待機
@@ -113,6 +112,9 @@ Player::Player() :
 Player::~Player()
 {
 	MV1DeleteModel(m_charModel);
+
+	if (m_effect.expired()) return;
+	m_effect.lock()->Kill();
 }
 
 void Player::Init(Vector3& pos, const Vector3& rot, const Vector3& scale)
@@ -724,6 +726,12 @@ void Player::SpecialUpdate()
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Special));
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+
+	if (!m_effect.expired())
+	{
+		m_effect.lock()->SetPos(m_rigidbody.GetPos());
+	}
+
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
