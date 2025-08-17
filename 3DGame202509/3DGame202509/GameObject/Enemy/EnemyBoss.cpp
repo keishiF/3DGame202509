@@ -239,7 +239,7 @@ void EnemyBoss::Draw()
 		0x000000, false);
 }
 
-void EnemyBoss::OnDamage()
+void EnemyBoss::OnDamage(int damage)
 {
 	m_hp -= 1;
 

@@ -297,7 +297,7 @@ void EnemyMage::Draw()
 	}
 }
 
-void EnemyMage::OnDamage()
+void EnemyMage::OnDamage(int damage)
 {
 	m_hp -= 1;
 

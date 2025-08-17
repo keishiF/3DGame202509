@@ -35,7 +35,7 @@ public:
 	// 位置を取得
 	Vector3 GetPos() const;
 	// ダメージを受けた時の処理
-	virtual void OnDamage() abstract;
+	virtual void OnDamage(int damage) abstract;
 	// 死んでいるかどうか
 	bool IsDead() const { return m_isDead; }
 

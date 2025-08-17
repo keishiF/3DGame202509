@@ -195,7 +195,7 @@ void EnemyMinion::Draw()
 		0x000000, false);
 }
 
-void EnemyMinion::OnDamage()
+void EnemyMinion::OnDamage(int damage)
 {
 	m_hp -= 1;
 

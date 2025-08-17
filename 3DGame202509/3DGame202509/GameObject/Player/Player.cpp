@@ -32,6 +32,12 @@ namespace
 	constexpr float kColScale = 140.0f;
 	constexpr float kAttackOffsetRadius = 230.0f;
 
+	// 各攻撃のダメージ量
+	constexpr int kNormalAttackDamage  = 1;
+	constexpr int kStabAttackDamage    = 2;
+	constexpr int kSpinAttackDamage    = 3;
+	constexpr int kSpecialAttackDamage = 10;
+
 	constexpr float kLerpT = 0.2f;
 
 	const std::string kSpecialAttackEffectName = "PlayerSpecialAttack2.efkefc";
