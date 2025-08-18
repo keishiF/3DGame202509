@@ -44,6 +44,8 @@ public:
 	float GetRadius() const { return m_radius; }
 	int GetModel() const { return m_charModel; }
 
+	void SetSpecialGauge(int specialGaugePoint);
+
 	// ダメージを受けた時の処理をまとめる関数
 	void OnDamage();
 
@@ -59,28 +61,31 @@ private:
 
 	// 待機状態
 	void IdleUpdate();
-
 	// 移動
 	// 歩き
 	void WalkUpdate();
 	// 走り
 	void RunUpdate();
-
 	// 各攻撃状態
 	void ChopUpdate();
 	void SliceUpdate();
 	void StabUpdate();
 	void SpinUpdate();
 	void SpecialUpdate();
-
 	// 回避状態
 	void DodgeUpdate();
-
 	// 被弾状態
 	void HitUpdate();
-
 	// 死亡状態
 	void DeadUpdate();
+
+private:
+	// HPの描画
+	void DrawHPGauge();
+	// スタミナの描画
+	void DrawStaminaGauge();
+	// 必殺技ゲージの描画
+	void DrawSpecialGauge();
 
 	void RotateToNearestEnemy(float radius);
 	std::shared_ptr<EnemyBase> FindNearestEnemy(float radius);
@@ -95,6 +100,8 @@ private:
 	float m_radius;
 	// プレイヤーのHP
 	int m_hp;
+	// プレイヤーのスタミナ
+	float m_stamina;
 	// 必殺技ゲージ
 	int m_specialGauge;
 	// プレイヤーのフラグ
@@ -104,7 +111,7 @@ private:
 	int m_attackPower;
 
 	// 経過フレームを測る
-	float m_walkFrame;
+	float m_frame;
 	float m_attackFrame;
 
 	// プレイヤーのアニメーション

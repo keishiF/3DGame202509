@@ -49,6 +49,9 @@ namespace
 	constexpr float kViewAngleRad = DX_PI_F / 2.0f;  // 90度
 	// 見える距離
 	constexpr float kViewDistance = 750.0f;
+
+	// 倒されたときにプレイヤーの必殺技ゲージを溜める量
+	constexpr int kSpecialGaugePoint = 10;
 }
 
 EnemyMage::EnemyMage() :
@@ -297,7 +300,7 @@ void EnemyMage::Draw()
 	}
 }
 
-void EnemyMage::OnDamage(int damage)
+void EnemyMage::OnDamage()
 {
 	m_hp -= 1;
 
@@ -453,6 +456,12 @@ void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
 
+	for (auto& bullet : m_bullets)
+	{
+		bullet->Final();
+	}
+	m_bullets.clear();
+
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
@@ -461,14 +470,10 @@ void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)
 			MV1DeleteModel(m_charModel);
 			m_charModel = -1;
 		}
+		player->SetSpecialGauge(kSpecialGaugePoint);
 		m_isDead = true;
+		return;
 	}
-
-	for (auto& bullet : m_bullets)
-	{
-		bullet->Final();
-	}
-	m_bullets.clear();
 }
 
 bool EnemyMage::IsPlayerFind(const std::shared_ptr<Player>& player, const Vector3& centerDir, float viewAngleRad, float viewDistance)

@@ -16,7 +16,6 @@ namespace
 
 PlayerLeftWeapon::PlayerLeftWeapon() :
 	m_model(-1),
-	m_attackPower(1),
 	Collidable(ObjectTag::PlayerWeapon, ObjectPriority::Low, ColliderData::Kind::Sphere)
 {
 }

@@ -1,9 +1,8 @@
 #include "Animator.h"
 #include "CapsuleColliderData.h"
-#include "Effect.h"
-#include "EffectManager.h"
 #include "Enemy/EnemyBase.h"
 #include "GameObjectManager.h"
+#include "game.h"
 #include "Physics.h"
 #include "Player.h"
 #include "PlayerLeftWeapon.h"
@@ -11,18 +10,21 @@
 #include <algorithm>
 #include <cassert>
 #include <DxLib.h>
+#include <EffekseerForDxLib.h>
 #include <unordered_map>
 
 namespace
 {
 	// HPの初期値
 	constexpr int kHp = 20;
-
-	constexpr int kSpecialGaugeMax = 100;
+	// スタミナの最大値
+	constexpr float kMaxStamina = 100.0f;
+	// 必殺技ゲージの最大値
+	constexpr int kMaxSpecialGauge = 100;
 
 	// 移動速度
 	constexpr float kWalkSpeed = 8.5f;
-	constexpr float kRunSpeed  = 17.5f;
+	constexpr float kRunSpeed = 17.5f;
 	constexpr float kAttackMoveSpeed = 1.0f;
 	constexpr float kDodgeSpped = 40.0f;
 	// プレイヤーのモデルの拡大値
@@ -32,37 +34,29 @@ namespace
 	constexpr float kColScale = 140.0f;
 	constexpr float kAttackOffsetRadius = 230.0f;
 
-	// 各攻撃のダメージ量
-	constexpr int kNormalAttackDamage  = 1;
-	constexpr int kStabAttackDamage    = 2;
-	constexpr int kSpinAttackDamage    = 3;
-	constexpr int kSpecialAttackDamage = 10;
-
 	constexpr float kLerpT = 0.2f;
-
-	const std::string kSpecialAttackEffectName = "PlayerSpecialAttack2.efkefc";
 
 	// アニメーション名
 	// 待機
-	const char* kIdleAnimName      = "Idle";
+	const char* kIdleAnimName = "Idle";
 	// 歩き
-	const char* kWalkAnimName      = "Walking_B";
+	const char* kWalkAnimName = "Walking_B";
 	// 走り
-	const char* kRunAnimName       = "Running_A";
+	const char* kRunAnimName = "Running_A";
 	// 攻撃
-	const char* kChopAnimName	   = "1H_Melee_Attack_Chop";
-	const char* kSliceAnimName     = "1H_Melee_Attack_Slice_Diagonal";
-	const char* kStabAnimName      = "1H_Melee_Attack_Stab";
-	const char* kSpinAnimName      = "2H_Melee_Attack_Spin";
-	const char* kSpecialAnimName   = "2H_Melee_Attack_Stab";
+	const char* kChopAnimName = "1H_Melee_Attack_Chop";
+	const char* kSliceAnimName = "1H_Melee_Attack_Slice_Diagonal";
+	const char* kStabAnimName = "1H_Melee_Attack_Stab";
+	const char* kSpinAnimName = "2H_Melee_Attack_Spin";
+	const char* kSpecialAnimName = "2H_Melee_Attack_Stab";
 	// 回避
-	const char* kDodgeAnimName	   = "Dodge_Forward";
+	const char* kDodgeAnimName = "Dodge_Forward";
 	// 被弾
-	const char* kHitAnimName	   = "Hit_B";
+	const char* kHitAnimName = "Hit_B";
 	// 死亡
-	const char* kDeadAnimName      = "Death_B";
+	const char* kDeadAnimName = "Death_B";
 	// アニメーションの再生速度
-	constexpr float kAnimSpeed	   = 1.0f;
+	constexpr float kAnimSpeed = 1.0f;
 	constexpr float kIdleAnimSpeed = 0.5f;
 	constexpr float kWalkAnimSpeed = 0.75f;
 	constexpr float kChopAnimSpeed = 1.0f;
@@ -83,7 +77,7 @@ namespace
 		{PlayerState::Dead,		 { 0,  0}}
 	};
 
-	const std::unordered_map<PlayerState,LeftAttackTiming> kLeftColTimingTable =
+	const std::unordered_map<PlayerState, LeftAttackTiming> kLeftColTimingTable =
 	{
 		{PlayerState::Idle,		 { 0,  0}},
 		{PlayerState::Walk,		 { 0,  0}},
@@ -104,12 +98,14 @@ Player::Player() :
 	m_charModel(-1),
 	m_radius(kRadius),
 	m_hp(kHp),
+	m_stamina(kMaxStamina),
 	m_specialGauge(0),
 	m_isCombo(false),
 	m_isDead(false),
 	m_attackPower(1),
-	m_walkFrame(0.0f),
+	m_frame(0.0),
 	m_attackFrame(0.0f),
+	//m_specialEffect(-1),
 	m_state(PlayerState::Idle),
 	Collidable(ObjectTag::Player, ObjectPriority::High, ColliderData::Kind::Capsule)
 {
@@ -118,9 +114,6 @@ Player::Player() :
 Player::~Player()
 {
 	MV1DeleteModel(m_charModel);
-
-	if (m_effect.expired()) return;
-	m_effect.lock()->Kill();
 }
 
 void Player::Init(Vector3& pos, const Vector3& rot, const Vector3& scale)
@@ -140,6 +133,9 @@ void Player::Init(Vector3& pos, const Vector3& rot, const Vector3& scale)
 	MV1SetScale(m_charModel, VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
 
+	/*m_specialEffect = LoadEffekseerEffect("Data/Effect/PlayerSpecialAttack3.efkefc", 100.0f);
+	assert(m_specialEffect >= 0);*/
+
 	m_anim.Init(m_charModel);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kIdleAnimName, kIdleAnimSpeed, true);
 
@@ -148,27 +144,29 @@ void Player::Init(Vector3& pos, const Vector3& rot, const Vector3& scale)
 
 	m_leftWeapon = std::make_shared<PlayerLeftWeapon>();
 	m_leftWeapon->Init();
-
-	m_effect = EffectManager::GetInstance().GenerateEffect(kSpecialAttackEffectName, m_rigidbody.GetPos());
 }
 
 void Player::Update()
-{	
+{
 	if (m_isDead && m_charModel < 0)
 	{
 		return;
+	}
+
+	// 必殺技ゲージが最大でないとき
+	if (m_specialGauge < kMaxSpecialGauge)
+	{
+		if (++m_frame >= 60)
+		{
+			m_specialGauge += 2;
+			m_frame = 0.0f;
+		}
 	}
 
 	// アニメーションの更新
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
 	m_anim.UpdateAnimBlend();
-
-	// エフェクトも
-	if (!m_effect.expired())
-	{
-		m_effect.lock()->SetPos(m_rigidbody.GetPos());
-	}
 
 	switch (m_state)
 	{
@@ -233,46 +231,14 @@ void Player::Draw()
 	MV1DrawModel(m_charModel);
 	m_rightWeapon->Draw();
 
-	const int gaugeWidth = 200;
-	const int gaugeHeight = 20;
-	const int gaugeX = 50;
-	const int gaugeY = 50;
+	DrawHPGauge();
+	DrawStaminaGauge();
+	DrawSpecialGauge();
+}
 
-	// HPの割合
-	float hpRate = static_cast<float>(m_hp) / kHp;
-	hpRate = std::clamp(hpRate, 0.0f, 1.0f);
-
-	// ゲージ色の決定
-	int color;
-	if (hpRate > 0.5f) 
-	{
-		color = 0x00ff00;
-	}
-	else if (hpRate > 0.25f) 
-	{
-		color = 0xffff00;
-	}
-	else 
-	{
-		color = 0xff0000;
-	}
-
-	// ゲージ背景（灰色）
-	DrawBox(gaugeX, gaugeY,
-		gaugeX + gaugeWidth,
-		gaugeY + gaugeHeight,
-		0x808080, true);
-	// 現在のHP分の長さのゲージ
-	int hpBarWidth = static_cast<int>(gaugeWidth * hpRate);
-	DrawBox(gaugeX, gaugeY,
-		gaugeX + hpBarWidth,
-		gaugeY + gaugeHeight,
-		color, true);
-	// 枠線（黒）
-	DrawBox(gaugeX, gaugeY,
-		gaugeX + gaugeWidth,
-		gaugeY + gaugeHeight,
-		0x000000, false);
+void Player::SetSpecialGauge(int specialGaugePoint)
+{
+	m_specialGauge += specialGaugePoint;
 }
 
 void Player::OnDamage()
@@ -303,7 +269,6 @@ void Player::ChangeState(PlayerState newState)
 	m_state = newState;
 
 	m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
-	m_walkFrame = 0.0f;
 	m_attackFrame = 0.0f;
 	m_isCombo = false;
 
@@ -359,9 +324,15 @@ void Player::IdleUpdate()
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Idle));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Idle));
 
+	// スタミナが最大じゃないときは徐々に回復する
+	if (m_stamina < kMaxStamina)
+	{
+		m_stamina += 0.34;
+	}
+
 	// 左スティックの入力があれば歩き状態に移行する
 	if (input.IsPress("LEFT") || input.IsPress("RIGHT") ||
-		input.IsPress("UP")   || input.IsPress("DOWN"))
+		input.IsPress("UP") || input.IsPress("DOWN"))
 	{
 		ChangeState(PlayerState::Walk);
 	}
@@ -375,20 +346,33 @@ void Player::IdleUpdate()
 	// Xボタンの入力があれば強攻撃状態に移行するためのフラグを立てる
 	if (input.IsTrigger("X"))
 	{
-		ChangeState(PlayerState::Spin);
+		if (m_stamina >= 15.0f)
+		{
+			m_stamina -= 15.0f;
+			ChangeState(PlayerState::Spin);
+		}
 	}
 
+#ifdef _DEBUG
+	// 左スティックを押し込んだ時に必殺技ゲージが最大でなければ最大にする
+	if (input.IsPress("LPush"))
+	{
+		if (m_specialGauge < kMaxSpecialGauge)
+		{
+			m_specialGauge = kMaxSpecialGauge;
+		}
+	}
+#endif
 	// RBボタンの入力があれば必殺技状態に移行する
 	if (input.IsTrigger("RB"))
 	{
-#ifdef _DEBUG
-		if (m_specialGauge < kSpecialGaugeMax)
+		if (m_specialGauge < kMaxSpecialGauge)
 		{
-			m_specialGauge = kSpecialGaugeMax;
+			printfDx("必殺技打てないよ！\n");
 		}
-#endif
-		if (m_specialGauge >= kSpecialGaugeMax)
+		if (m_specialGauge >= kMaxSpecialGauge)
 		{
+			printfDx("必殺技発動！\n");
 			ChangeState(PlayerState::Special);
 		}
 	}
@@ -402,6 +386,12 @@ void Player::WalkUpdate()
 
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Walk));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Walk));
+
+	// スタミナが最大じゃないときは徐々に回復する
+	if (m_stamina < kMaxStamina)
+	{
+		m_stamina += 0.34;
+	}
 
 	Vector3 dir = { 0.0f, 0.0f,0.0f };
 	// 左スティックで移動
@@ -466,7 +456,10 @@ void Player::WalkUpdate()
 	// LBの入力があればダッシュ状態に移行する
 	if (input.IsTrigger("LB"))
 	{
-		ChangeState(PlayerState::Run);
+		if (m_stamina >= 1.0f)
+		{
+			ChangeState(PlayerState::Run);
+		}
 	}
 
 	// Aボタンの入力があれば攻撃状態に移行する
@@ -478,7 +471,11 @@ void Player::WalkUpdate()
 	// Xボタンの入力があれば強攻撃状態に移行する
 	if (input.IsTrigger("X"))
 	{
-		ChangeState(PlayerState::Spin);
+		if (m_stamina >= 15.0f)
+		{
+			m_stamina -= 15.0f;
+			ChangeState(PlayerState::Spin);
+		}
 	}
 
 	// Bボタンの入力があれば回避状態に移行する
@@ -497,6 +494,8 @@ void Player::RunUpdate()
 
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Run));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Run));
+
+	m_stamina -= 0.34;
 
 	Vector3 dir = { 0.0f, 0.0f, 0.0f };
 	// 左スティックで移動
@@ -572,7 +571,11 @@ void Player::RunUpdate()
 	// Xボタンの入力があれば強攻撃状態に移行する
 	if (input.IsTrigger("X"))
 	{
-		ChangeState(PlayerState::Spin);
+		if (m_stamina >= 15.0f)
+		{
+			m_stamina -= 15.0f;
+			ChangeState(PlayerState::Spin);
+		}
 	}
 
 	// Bボタンの入力があれば回避状態に移行する
@@ -637,10 +640,10 @@ void Player::SliceUpdate()
 	auto& input = Input::GetInstance();
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
-	
+
 	++m_attackFrame;
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Slice));
-	
+
 	// 一番近い敵の方向に回転
 	RotateToNearestEnemy(kAttackOffsetRadius);
 
@@ -728,19 +731,20 @@ void Player::SpinUpdate()
 
 void Player::SpecialUpdate()
 {
+	++m_attackFrame;
 	SetActive(false);
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Special));
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 
-	if (!m_effect.expired())
-	{
-		m_effect.lock()->SetPos(m_rigidbody.GetPos());
-	}
+	/*PlayEffekseer3DEffect(m_specialEffect);
+	SetPosPlayingEffekseer3DEffect(m_specialEffect,
+		m_rigidbody.GetPos().x, m_rigidbody.GetPos().y, m_rigidbody.GetPos().z);*/
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
+		m_specialGauge = 0;
 		ChangeState(PlayerState::Idle);
 	}
 }
@@ -799,6 +803,128 @@ void Player::DeadUpdate()
 	}
 }
 
+void Player::DrawHPGauge()
+{
+	// HPゲージの横幅、縦幅
+	int hpGaugeWidth = 200;
+	int hpGaugeHeight = 20;
+
+	// HPゲージの描画位置
+	int hpGaugePosX = 50;
+	int hpGaugePosY = 50;
+
+	// HPの割合
+	float hpRate = static_cast<float>(m_hp) / kHp;
+	hpRate = std::clamp(hpRate, 0.0f, 1.0f);
+
+	// ゲージ色の設定
+	int hpGaugeColor;
+	// HPが25%以上あれば
+	if (hpRate > 0.25f)
+	{
+		// 緑色にする
+		hpGaugeColor = 0xff0000;
+	}
+	//// HPが25%以上あれば
+	//else if (hpRate > 0.25f)
+	//{
+	//	// 黄色にする
+	//	hpGaugeColor = 0xffff00;
+	//}
+	else
+	{
+		// 赤色にする
+		hpGaugeColor = 0xff0000;
+	}
+
+	// ゲージ背景（灰色）
+	DrawBox(hpGaugePosX, hpGaugePosY,
+		hpGaugePosX + hpGaugeWidth,
+		hpGaugePosY + hpGaugeHeight,
+		0x808080, true);
+	// 現在のHP分の長さのゲージ
+	int hpBarWidth = static_cast<int>(hpGaugeWidth * hpRate);
+	DrawBox(hpGaugePosX, hpGaugePosY,
+		hpGaugePosX + hpBarWidth,
+		hpGaugePosY + hpGaugeHeight,
+		hpGaugeColor, true);
+	// 枠線（黒）
+	DrawBoxAA(hpGaugePosX, hpGaugePosY,
+		hpGaugePosX + hpGaugeWidth,
+		hpGaugePosY + hpGaugeHeight,
+		0x000000, false);
+}
+
+void Player::DrawStaminaGauge()
+{
+	// スタミナゲージの横幅、縦幅
+	int staminaGaugeWidth = 200;
+	int staminaGaugeHeight = 20;
+
+	// スタミナゲージの描画位置
+	int staminaGaugePosX = 50;
+	int staminaGaugePosY = 70;
+
+	// スタミナの割合
+	float staminaRate = static_cast<float>(m_stamina / kMaxStamina);
+	staminaRate = std::clamp(staminaRate, 0.0f, 1.0f);
+
+	// ゲージの色の設定
+	int staminaGaugeColor = 0xffff00;
+
+	// ゲージ背景（灰色）
+	DrawBox(staminaGaugePosX, staminaGaugePosY,
+		staminaGaugePosX + staminaGaugeWidth,
+		staminaGaugePosY + staminaGaugeHeight,
+		0x808080, true);
+	// 現在のHP分の長さのゲージ
+	int staminaBarWidth = static_cast<int>(staminaGaugeWidth * staminaRate);
+	DrawBox(staminaGaugePosX, staminaGaugePosY,
+		staminaGaugePosX + staminaBarWidth,
+		staminaGaugePosY + staminaGaugeHeight,
+		staminaGaugeColor, true);
+	// 枠線（黒）
+	DrawBoxAA(staminaGaugePosX, staminaGaugePosY,
+		staminaGaugePosX + staminaGaugeWidth,
+		staminaGaugePosY + staminaGaugeHeight,
+		0x000000, false);
+}
+
+void Player::DrawSpecialGauge()
+{
+	// 必殺技ゲージの横幅、縦幅
+	int specialGaugeWidth = 200;
+	int specialGaugeHeight = 20;
+
+	// 必殺技ゲージの描画位置
+	int specialGaugePosX = (Game::kScreenWidth - specialGaugeWidth) / 2;
+	int specialGaugePosY = Game::kScreenHeight - specialGaugeHeight - 100;
+
+	// 必殺技ゲージの割合
+	float specialGaugeRate = static_cast<float>(m_specialGauge) / kMaxSpecialGauge;
+	specialGaugeRate = std::clamp(specialGaugeRate, 0.0f, 1.0f);
+
+	// 必殺技ゲージを青色に設定
+	int specialGaugeColor = 0x0000ff;
+
+	// ゲージ背景（灰色）
+	DrawBox(specialGaugePosX, specialGaugePosY,
+		specialGaugePosX + specialGaugeWidth,
+		specialGaugePosY + specialGaugeHeight,
+		0x808080, true);
+	// 現在のHP分の長さのゲージ
+	int specialBarWidth = static_cast<int>(specialGaugeWidth * specialGaugeRate);
+	DrawBox(specialGaugePosX, specialGaugePosY,
+		specialGaugePosX + specialBarWidth,
+		specialGaugePosY + specialGaugeHeight,
+		specialGaugeColor, true);
+	// 枠線（黒）
+	DrawBoxAA(specialGaugePosX, specialGaugePosY,
+		specialGaugePosX + specialGaugeWidth,
+		specialGaugePosY + specialGaugeHeight,
+		0x000000, false);
+}
+
 void Player::RotateToNearestEnemy(float radius)
 {
 	// 攻撃開始から一定フレームで敵の方向に回転補間を始める
@@ -840,7 +966,7 @@ std::shared_ptr<EnemyBase> Player::FindNearestEnemy(float radius)
 	auto enemies = GameObjectManager::Instance().GetEnemies();
 	Vector3 myPos = m_rigidbody.GetPos();
 
-	for (auto& enemy : enemies) 
+	for (auto& enemy : enemies)
 	{
 		if (enemy->IsDead()) continue;
 		float dist = (enemy->GetPos() - myPos).Length();

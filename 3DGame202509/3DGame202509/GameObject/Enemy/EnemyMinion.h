@@ -14,7 +14,7 @@ public:
 	void Update(std::shared_ptr<Player> player) override;
 	void Draw() override;
 
-	virtual void OnDamage(int damage) override;
+	virtual void OnDamage() override;
 
 	// “G‚Ìó‘Ô
 private:

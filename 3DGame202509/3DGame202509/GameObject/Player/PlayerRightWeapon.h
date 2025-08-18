@@ -27,10 +27,6 @@ public:
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 
-	void SetAttackPower(int power) { m_attackPower = power; }
-	int GetAttackPower() const { return m_attackPower; }
-
 	int m_model;
-	int m_attackPower;
 };
 

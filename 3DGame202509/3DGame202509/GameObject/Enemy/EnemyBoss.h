@@ -18,7 +18,7 @@ public:
 	void Draw() override;
 
 	// ƒ_ƒ[ƒW‚ğó‚¯‚½‚Ìˆ—
-	virtual void OnDamage(int damage) override;
+	virtual void OnDamage() override;
 
 	// €‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©
 	bool IsDead() { return m_isDead; }

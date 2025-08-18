@@ -58,6 +58,9 @@ namespace
 		{EnemyState::Hit,	 { 0,  0}},
 		{EnemyState::Dead,	 { 0,  0}}
 	};
+
+	// “|‚³‚ê‚½‚Æ‚«‚ÉƒvƒŒƒCƒ„[‚Ì•KE‹ZƒQ[ƒW‚ğ—­‚ß‚é—Ê
+	constexpr int kSpecialGaugePoint = 10;
 }
 
 EnemyMinion::EnemyMinion()
@@ -195,7 +198,7 @@ void EnemyMinion::Draw()
 		0x000000, false);
 }
 
-void EnemyMinion::OnDamage(int damage)
+void EnemyMinion::OnDamage()
 {
 	m_hp -= 1;
 
@@ -362,7 +365,9 @@ void EnemyMinion::DeadUpdate(std::shared_ptr<Player> player)
 			MV1DeleteModel(m_charModel);
 			m_charModel = -1;
 		}
+		player->SetSpecialGauge(kSpecialGaugePoint);
 		m_isDead = true;
+		return;
 	}
 }
 
