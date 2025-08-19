@@ -84,22 +84,31 @@ void GameObjectManager::Init()
 
 void GameObjectManager::Update()
 {
-	if (!m_player.get()) return;
+	if (!m_player) return;
 
 	Physics::Instance().Update();
 	m_player->Update();
 
 	for (auto& minion : m_minions)
 	{
-		minion->Update(m_player);
+		if (minion.get())
+		{
+			minion->Update(m_player);
+		}
 	}
 
 	for (auto& mage : m_mages)
 	{
-		mage->Update(m_player);
+		if (mage.get())
+		{
+			mage->Update(m_player);
+		}
 	}
 
-	m_boss->Update(m_player);
+	if (m_boss.get())
+	{
+		m_boss->Update(m_player);
+	}
 
 	if (m_camera) m_camera->Update(m_player);
 	if (m_skyDome) m_skyDome->Update(m_camera);
