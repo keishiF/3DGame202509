@@ -24,14 +24,17 @@ namespace
 	// スタミナ消費量
 	// 待機状態、歩き状態で毎フレーム回復するスタミナ
 	constexpr float kRegeneStamina = 0.34f;
+	// 疲れ状態で毎フレーム回復するスタミナ
+	constexpr float kTiredRegeneStamina = 0.17f;
 	// 走っている際に消費するスタミナ
-	constexpr float kRunStamina = 0.34f;
+	constexpr float kRunStamina = 0.25f;
 	// 強攻撃をした際に消費するスタミナ
 	constexpr float kSpinStamina = 15.0f;
 
 	// 移動速度
 	constexpr float kWalkSpeed = 8.5f;
-	constexpr float kRunSpeed = 17.5f;
+	constexpr float kNormalRunSpeed = 17.5f;
+	constexpr float kTiredRunSpeed = 5.0f;
 	constexpr float kAttackMoveSpeed = 1.0f;
 	constexpr float kDodgeSpped = 40.0f;
 	// プレイヤーのモデルの拡大値
@@ -50,6 +53,8 @@ namespace
 	const char* kWalkAnimName = "Walking_B";
 	// 走り
 	const char* kRunAnimName = "Running_A";
+	// 疲れ
+	const char* kTiredAnimName = "Sit_Floor_Idle";
 	// 攻撃
 	const char* kChopAnimName = "1H_Melee_Attack_Chop";
 	const char* kSliceAnimName = "1H_Melee_Attack_Slice_Diagonal";
@@ -74,6 +79,7 @@ namespace
 		{PlayerState::Idle,		 { 0,  0}},
 		{PlayerState::Walk,		 { 0,  0}},
 		{PlayerState::Run,		 { 0,  0}},
+		{PlayerState::Tired,	 { 0,  0}},
 		{PlayerState::Chop,		 {16, 28}},
 		{PlayerState::Slice,	 {16, 28}},
 		{PlayerState::Stab,		 {16, 28}},
@@ -89,6 +95,7 @@ namespace
 		{PlayerState::Idle,		 { 0,  0}},
 		{PlayerState::Walk,		 { 0,  0}},
 		{PlayerState::Run,		 { 0,  0}},
+		{PlayerState::Tired,	 { 0,  0}},
 		{PlayerState::Chop,		 {16, 28}},
 		{PlayerState::Slice,	 {16, 28}},
 		{PlayerState::Stab,		 {16, 28}},
@@ -140,7 +147,7 @@ void Player::Init(Vector3& pos, const Vector3& rot, const Vector3& scale)
 	MV1SetScale(m_charModel, VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
 
-	m_specialEffect = LoadEffekseerEffect("Data/Effect/PlayerSpecialAttack3.efkefc", 100.0f);
+	m_specialEffect = LoadEffekseerEffect("Data/Effect/PlayerSpecialAttack.efkefc", 100.0f);
 	assert(m_specialEffect >= 0);
 
 	m_anim.Init(m_charModel);
@@ -149,8 +156,8 @@ void Player::Init(Vector3& pos, const Vector3& rot, const Vector3& scale)
 	m_rightWeapon = std::make_shared<PlayerRightWeapon>();
 	m_rightWeapon->Init();
 
-	m_leftWeapon = std::make_shared<PlayerLeftWeapon>();
-	m_leftWeapon->Init();
+	/*m_leftWeapon = std::make_shared<PlayerLeftWeapon>();
+	m_leftWeapon->Init();*/
 }
 
 void Player::Update()
@@ -185,6 +192,9 @@ void Player::Update()
 		break;
 	case PlayerState::Run:
 		RunUpdate();
+		break;
+	case PlayerState::Tired:
+		TiredUpdate();
 		break;
 	case PlayerState::Chop:
 		ChopUpdate();
@@ -295,6 +305,9 @@ void Player::ChangeState(PlayerState newState)
 	case PlayerState::Run:
 		m_anim.ChangeAnim(kRunAnimName, kAnimSpeed, true);
 		break;
+	case PlayerState::Tired:
+		m_anim.ChangeAnim(kTiredAnimName, kAnimSpeed, true);
+		break;
 	case PlayerState::Chop:
 		m_anim.ChangeAnim(kChopAnimName, kChopAnimSpeed, false);
 		break;
@@ -329,7 +342,6 @@ void Player::IdleUpdate()
 	SetActive(true);
 
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Idle));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Idle));
 
 	// スタミナが最大じゃないときは徐々に回復する
 	if (m_stamina < kMaxStamina)
@@ -392,7 +404,6 @@ void Player::WalkUpdate()
 	SetActive(true);
 
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Walk));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Walk));
 
 	// スタミナが最大じゃないときは徐々に回復する
 	if (m_stamina < kMaxStamina)
@@ -495,26 +506,32 @@ void Player::WalkUpdate()
 void Player::RunUpdate()
 {
 	auto& input = Input::GetInstance();
-
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
-
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Run));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Run));
-
-	m_stamina -= kRunStamina;
-
 	Vector3 dir = { 0.0f, 0.0f, 0.0f };
+
+	float speed = 0.0f;
+	m_stamina -= kRunStamina;
+	if (m_stamina > 35)
+	{
+		speed = kNormalRunSpeed;
+	}
+	else
+	{
+		speed = kTiredRunSpeed;
+	}
+
 	// 左スティックで移動
 	// 左入力
 	if (input.IsPress("LEFT"))
 	{
-		dir.x = -kRunSpeed;
+		dir.x = -speed;
 	}
 	// 右入力
 	else if (input.IsPress("RIGHT"))
 	{
-		dir.x = kRunSpeed;
+		dir.x = speed;
 	}
 	// 横方向の入力なし
 	else
@@ -524,12 +541,12 @@ void Player::RunUpdate()
 	// 上入力
 	if (input.IsPress("UP"))
 	{
-		dir.z = kRunSpeed;
+		dir.z = speed;
 	}
 	// 下入力
 	else if (input.IsPress("DOWN"))
 	{
-		dir.z = -kRunSpeed;
+		dir.z = -speed;
 	}
 	// 縦方向の入力なし
 	else
@@ -539,7 +556,7 @@ void Player::RunUpdate()
 
 	// ベクトルを正規化し移動速度をかけポジションに加算
 	dir.Normalize();
-	m_rigidbody.SetVelo(dir * kRunSpeed);
+	m_rigidbody.SetVelo(dir * speed);
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 
 	// 進行方向にモデルを回転させる
@@ -564,9 +581,16 @@ void Player::RunUpdate()
 		ChangeState(PlayerState::Idle);
 	}
 
+	// LBの入力があれば歩き状態に移行する
 	if (input.IsTrigger("LB"))
 	{
 		ChangeState(PlayerState::Walk);
+	}
+
+	// スタミナがなくなったら疲れ状態に移行する
+	if (m_stamina <= 0)
+	{
+		ChangeState(PlayerState::Tired);
 	}
 
 	// Aボタンの入力があれば攻撃状態に移行する
@@ -589,6 +613,21 @@ void Player::RunUpdate()
 	if (input.IsTrigger("B"))
 	{
 		ChangeState(PlayerState::Dodge);
+	}
+}
+
+void Player::TiredUpdate()
+{
+	auto& input = Input::GetInstance();
+	// 当たり判定をオンにする
+	SetActive(true);
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Tired));
+
+	m_stamina += kTiredRegeneStamina;
+	// スタミナが一定値まで回復したら待機状態に移行
+	if (m_stamina >= kMaxStamina * 0.5f)
+	{
+		ChangeState(PlayerState::Idle);
 	}
 }
 
@@ -760,7 +799,6 @@ void Player::DodgeUpdate()
 {
 	SetActive(true);
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Dodge));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Dodge));
 
 	// m_forward に基づいて移動ベクトルを設定（前方向へ）
 	Vector3 dodgeDir = m_forward;
@@ -782,7 +820,6 @@ void Player::HitUpdate()
 {
 	SetActive(false);
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Hit));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Hit));
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
@@ -796,7 +833,6 @@ void Player::DeadUpdate()
 {
 	SetActive(false);
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Dead));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Dead));
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)

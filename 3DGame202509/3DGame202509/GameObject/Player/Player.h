@@ -11,6 +11,7 @@ enum class PlayerState
 	Idle,       // ‘Ò‹@
 	Walk,       // •à‚«
 	Run,        // ‘–‚è
+	Tired,		// ”æ‚ê
 	Chop,       // UŒ‚1’i–Ú
 	Slice,      // UŒ‚2’i–Ú
 	Stab,       // UŒ‚3’i–Ú
@@ -66,6 +67,8 @@ private:
 	void WalkUpdate();
 	// ‘–‚è
 	void RunUpdate();
+	// ”æ‚ê
+	void TiredUpdate();
 	// ŠeUŒ‚ó‘Ô
 	void ChopUpdate();
 	void SliceUpdate();
@@ -123,7 +126,7 @@ private:
 	Quaternion m_currentRot;
 
 	std::shared_ptr<PlayerRightWeapon> m_rightWeapon;
-	std::shared_ptr<PlayerLeftWeapon> m_leftWeapon;
+	//std::shared_ptr<PlayerLeftWeapon> m_leftWeapon;
 
 	std::weak_ptr<Effect> m_effect;
 };
