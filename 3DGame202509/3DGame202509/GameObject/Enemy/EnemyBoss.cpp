@@ -205,38 +205,38 @@ void EnemyBoss::Draw()
 	m_rightWeapon->Draw();
 	m_leftWeapon->Draw();
 
-	Vector3 worldPos = m_rigidbody.GetPos();
-	worldPos.y += 120.0f; // 頭上の高さ調整
+	//Vector3 worldPos = m_rigidbody.GetPos();
+	//worldPos.y += 120.0f; // 頭上の高さ調整
 
-	VECTOR worldVec = worldPos.ToDxVECTOR();
+	//VECTOR worldVec = worldPos.ToDxVECTOR();
 
-	// 3D→2D座標変換（戻り値がスクリーン座標）
-	VECTOR screenVec = ConvWorldPosToScreenPos(worldVec);
+	//// 3D→2D座標変換（戻り値がスクリーン座標）
+	//VECTOR screenVec = ConvWorldPosToScreenPos(worldVec);
 
-	const int gaugeWidth = 100;
-	const int gaugeHeight = 10;
+	//const int gaugeWidth = 100;
+	//const int gaugeHeight = 10;
 
-	int gaugeX = static_cast<int>(screenVec.x - gaugeWidth / 2);
-	int gaugeY = static_cast<int>(screenVec.y - gaugeHeight / 2);
+	//int gaugeX = static_cast<int>(screenVec.x - gaugeWidth / 2);
+	//int gaugeY = static_cast<int>(screenVec.y - gaugeHeight / 2);
 
-	float hpRate = static_cast<float>(m_hp) / kHp;
-	hpRate = std::clamp(hpRate, 0.0f, 1.0f);
+	//float hpRate = static_cast<float>(m_hp) / kHp;
+	//hpRate = std::clamp(hpRate, 0.0f, 1.0f);
 
-	DrawBox(gaugeX, gaugeY,
-		gaugeX + gaugeWidth,
-		gaugeY + gaugeHeight,
-		0x808080, true);
+	//DrawBox(gaugeX, gaugeY,
+	//	gaugeX + gaugeWidth,
+	//	gaugeY + gaugeHeight,
+	//	0x808080, true);
 
-	int hpBarWidth = static_cast<int>(gaugeWidth * hpRate);
-	DrawBox(gaugeX, gaugeY,
-		gaugeX + hpBarWidth,
-		gaugeY + gaugeHeight,
-		0xff0000, true);
+	//int hpBarWidth = static_cast<int>(gaugeWidth * hpRate);
+	//DrawBox(gaugeX, gaugeY,
+	//	gaugeX + hpBarWidth,
+	//	gaugeY + gaugeHeight,
+	//	0xff0000, true);
 
-	DrawBox(gaugeX, gaugeY,
-		gaugeX + gaugeWidth,
-		gaugeY + gaugeHeight,
-		0x000000, false);
+	//DrawBox(gaugeX, gaugeY,
+	//	gaugeX + gaugeWidth,
+	//	gaugeY + gaugeHeight,
+	//	0x000000, false);
 }
 
 void EnemyBoss::OnDamage()
@@ -597,6 +597,30 @@ void EnemyBoss::DeadUpdate(std::shared_ptr<Player> player)
 		}
 		m_isDead = true;
 	}
+}
+
+Vector3 EnemyBoss::GetScreenPos() const
+{
+	Vector3 worldPos = m_rigidbody.GetPos();
+	worldPos.y += 120.0f; // 頭上の高さ調整
+
+	VECTOR worldPosDx = worldPos.ToDxVECTOR();
+
+	// 3D→2D座標変換（戻り値がスクリーン座標）
+	VECTOR screenPosDx = ConvWorldPosToScreenPos(worldPosDx);
+
+	const int gaugeWidth = 100;
+	const int gaugeHeight = 10;
+
+	screenPosDx.x = screenPosDx.x - gaugeWidth * 0.5f;
+	screenPosDx.y = screenPosDx.y - gaugeHeight * 0.5f;
+
+	Vector3 screenPos =
+	{
+		screenPosDx.x, screenPosDx.y, screenPosDx.z
+	};
+
+	return screenPos;
 }
 
 const char* EnemyBoss::GetAnimName(EnemyState state) const

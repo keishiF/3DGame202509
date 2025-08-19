@@ -84,19 +84,19 @@ void TitleScene::NormalDraw()
 	MV1DrawModel(m_skyModel);
 	DrawGraph(0, 0, m_titleHandle, true);
 
+#ifdef _DEBUG
 	// ì_ñ≈å¯â ÇÃÇΩÇﬂÇÃèåè
 	if ((m_blinkFrame / 30) % 2 == 0)
 	{
 		DrawString(0, 0, "Title Scene", 0x000000);
 	}
+#endif
 }
 
 void TitleScene::FadeDraw()
 {
 	MV1DrawModel(m_skyModel);
 	DrawGraph(0, 0, m_titleHandle, true);
-
-	DrawString(0, 0, "Title Scene", 0x000000);
 
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));

@@ -84,7 +84,7 @@ void GameObjectManager::Init()
 
 void GameObjectManager::Update()
 {
-	if (!m_player) return;
+	if (!m_player.get()) return;
 
 	Physics::Instance().Update();
 	m_player->Update();

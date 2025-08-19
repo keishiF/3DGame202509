@@ -16,11 +16,11 @@
 namespace
 {
 	// HPの初期値
-	constexpr int kHp = 20;
+	constexpr float kHp = 20.0f;
 	// スタミナの最大値
 	constexpr float kMaxStamina = 100.0f;
 	// 必殺技ゲージの最大値
-	constexpr int kMaxSpecialGauge = 100;
+	constexpr float kMaxSpecialGauge = 100.0f;
 	// スタミナ消費量
 	// 待機状態、歩き状態で毎フレーム回復するスタミナ
 	constexpr float kRegeneStamina = 0.34f;
@@ -30,6 +30,8 @@ namespace
 	constexpr float kRunStamina = 0.25f;
 	// 強攻撃をした際に消費するスタミナ
 	constexpr float kSpinStamina = 15.0f;
+
+	constexpr float kStamina = 35.0f;
 
 	// 移動速度
 	constexpr float kWalkSpeed = 8.5f;
@@ -112,8 +114,11 @@ Player::Player() :
 	m_charModel(-1),
 	m_radius(kRadius),
 	m_hp(kHp),
+	m_hpRate(m_hp / kHp),
 	m_stamina(kMaxStamina),
+	m_staminaRate(m_stamina / kMaxStamina),
 	m_specialGauge(0),
+	m_specialGaugeRate(m_specialGauge / kMaxSpecialGauge),
 	m_isCombo(false),
 	m_isDead(false),
 	m_attackPower(1),
@@ -172,7 +177,10 @@ void Player::Update()
 	{
 		if (++m_frame >= 60)
 		{
-			m_specialGauge += 2;
+			m_specialGauge += 2.0f;
+			m_specialGaugeRate = m_specialGauge / kMaxSpecialGauge;
+			m_specialGaugeRate = std::clamp(m_specialGaugeRate, 0.0f, 1.0f);
+
 			m_frame = 0.0f;
 		}
 	}
@@ -248,19 +256,25 @@ void Player::Draw()
 	MV1DrawModel(m_charModel);
 	m_rightWeapon->Draw();
 
-	DrawHPGauge();
-	DrawStaminaGauge();
-	DrawSpecialGauge();
+	//DrawHPGauge();
+	//DrawStaminaGauge();
+	//DrawSpecialGauge();
 }
 
 void Player::SetSpecialGauge(int specialGaugePoint)
 {
 	m_specialGauge += specialGaugePoint;
+
+	m_specialGaugeRate = m_specialGauge / kMaxSpecialGauge;
+	m_specialGaugeRate = std::clamp(m_specialGaugeRate, 0.0f, 1.0f);
 }
 
 void Player::OnDamage()
 {
-	m_hp -= 1;
+	m_hp -= 1.0f;
+
+	m_hpRate = m_hp / kHp;
+	m_hpRate = std::clamp(m_hpRate, 0.0f, 1.0f);
 
 	if (m_hp <= 0 && !m_isDead)
 	{
@@ -347,6 +361,8 @@ void Player::IdleUpdate()
 	if (m_stamina < kMaxStamina)
 	{
 		m_stamina += kRegeneStamina;
+		m_staminaRate = m_stamina / kMaxStamina;
+		m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
 	}
 
 	// 左スティックの入力があれば歩き状態に移行する
@@ -368,6 +384,8 @@ void Player::IdleUpdate()
 		if (m_stamina >= kSpinStamina)
 		{
 			m_stamina -= kSpinStamina;
+			m_staminaRate = m_stamina / kMaxStamina;
+			m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
 			ChangeState(PlayerState::Spin);
 		}
 	}
@@ -378,20 +396,27 @@ void Player::IdleUpdate()
 	{
 		if (m_specialGauge < kMaxSpecialGauge)
 		{
-			m_specialGauge = kMaxSpecialGauge;
+			m_specialGauge += kMaxSpecialGauge;
+			m_specialGaugeRate = m_specialGauge / kMaxSpecialGauge;
+			m_specialGaugeRate = std::clamp(m_specialGaugeRate, 0.0f, 1.0f);
 		}
 	}
 #endif
+
 	// RBボタンの入力があれば必殺技状態に移行する
 	if (input.IsTrigger("RB"))
 	{
 		if (m_specialGauge < kMaxSpecialGauge)
 		{
+#ifdef _DEBUG
 			printfDx("必殺技打てないよ！\n");
+#endif
 		}
 		if (m_specialGauge >= kMaxSpecialGauge)
 		{
+#ifdef _DEBUG
 			printfDx("必殺技発動！\n");
+#endif
 			ChangeState(PlayerState::Special);
 		}
 	}
@@ -409,6 +434,8 @@ void Player::WalkUpdate()
 	if (m_stamina < kMaxStamina)
 	{
 		m_stamina += kRegeneStamina;
+		m_staminaRate = m_stamina / kMaxStamina;
+		m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
 	}
 
 	Vector3 dir = { 0.0f, 0.0f,0.0f };
@@ -492,6 +519,8 @@ void Player::WalkUpdate()
 		if (m_stamina >= kSpinStamina)
 		{
 			m_stamina -= kSpinStamina;
+			m_staminaRate = m_stamina / kMaxStamina;
+			m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
 			ChangeState(PlayerState::Spin);
 		}
 	}
@@ -513,7 +542,9 @@ void Player::RunUpdate()
 
 	float speed = 0.0f;
 	m_stamina -= kRunStamina;
-	if (m_stamina > 35)
+	m_staminaRate = m_stamina / kMaxStamina;
+	m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
+	if (m_stamina > kStamina)
 	{
 		speed = kNormalRunSpeed;
 	}
@@ -624,6 +655,8 @@ void Player::TiredUpdate()
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Tired));
 
 	m_stamina += kTiredRegeneStamina;
+	m_staminaRate = m_stamina / kMaxStamina;
+	m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
 	// スタミナが一定値まで回復したら待機状態に移行
 	if (m_stamina >= kMaxStamina * 0.5f)
 	{
@@ -783,14 +816,16 @@ void Player::SpecialUpdate()
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 
-	PlayEffekseer3DEffect(m_specialEffect);
+	/*PlayEffekseer3DEffect(m_specialEffect);
 	SetPosPlayingEffekseer3DEffect(m_specialEffect,
-		m_rigidbody.GetPos().x, m_rigidbody.GetPos().y, m_rigidbody.GetPos().z);
+		m_rigidbody.GetPos().x, m_rigidbody.GetPos().y, m_rigidbody.GetPos().z);*/
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		m_specialGauge = 0;
+		m_specialGaugeRate = m_specialGauge / kMaxSpecialGauge;
+		m_specialGaugeRate = std::clamp(m_specialGaugeRate, 0.0f, 1.0f);
 		ChangeState(PlayerState::Idle);
 	}
 }
@@ -856,17 +891,13 @@ void Player::DrawHPGauge()
 	int hpGaugePosX = 50;
 	int hpGaugePosY = 50;
 
-	// HPの割合
-	float hpRate = static_cast<float>(m_hp) / kHp;
-	hpRate = std::clamp(hpRate, 0.0f, 1.0f);
-
 	// ゲージ色の設定
 	int hpGaugeColor;
 	// HPが25%以上あれば
-	if (hpRate > 0.25f)
+	if (m_hpRate > 0.25f)
 	{
 		// 緑色にする
-		hpGaugeColor = 0xff0000;
+		hpGaugeColor = 0x00ff00;
 	}
 	//// HPが25%以上あれば
 	//else if (hpRate > 0.25f)
@@ -886,7 +917,7 @@ void Player::DrawHPGauge()
 		hpGaugePosY + hpGaugeHeight,
 		0x808080, true);
 	// 現在のHP分の長さのゲージ
-	int hpBarWidth = static_cast<int>(hpGaugeWidth * hpRate);
+	int hpBarWidth = static_cast<int>(hpGaugeWidth * m_hpRate);
 	DrawBox(hpGaugePosX, hpGaugePosY,
 		hpGaugePosX + hpBarWidth,
 		hpGaugePosY + hpGaugeHeight,
@@ -908,10 +939,6 @@ void Player::DrawStaminaGauge()
 	int staminaGaugePosX = 50;
 	int staminaGaugePosY = 70;
 
-	// スタミナの割合
-	float staminaRate = static_cast<float>(m_stamina / kMaxStamina);
-	staminaRate = std::clamp(staminaRate, 0.0f, 1.0f);
-
 	// ゲージの色の設定
 	int staminaGaugeColor = 0xffff00;
 
@@ -921,7 +948,7 @@ void Player::DrawStaminaGauge()
 		staminaGaugePosY + staminaGaugeHeight,
 		0x808080, true);
 	// 現在のHP分の長さのゲージ
-	int staminaBarWidth = static_cast<int>(staminaGaugeWidth * staminaRate);
+	int staminaBarWidth = static_cast<int>(staminaGaugeWidth * m_staminaRate);
 	DrawBox(staminaGaugePosX, staminaGaugePosY,
 		staminaGaugePosX + staminaBarWidth,
 		staminaGaugePosY + staminaGaugeHeight,
@@ -943,12 +970,8 @@ void Player::DrawSpecialGauge()
 	int specialGaugePosX = (Game::kScreenWidth - specialGaugeWidth) / 2;
 	int specialGaugePosY = Game::kScreenHeight - specialGaugeHeight - 100;
 
-	// 必殺技ゲージの割合
-	float specialGaugeRate = static_cast<float>(m_specialGauge) / kMaxSpecialGauge;
-	specialGaugeRate = std::clamp(specialGaugeRate, 0.0f, 1.0f);
-
 	// 必殺技ゲージを青色に設定
-	int specialGaugeColor = 0x0000ff;
+	int specialGaugeColor = 0x66ffff;
 
 	// ゲージ背景（灰色）
 	DrawBox(specialGaugePosX, specialGaugePosY,
@@ -956,7 +979,7 @@ void Player::DrawSpecialGauge()
 		specialGaugePosY + specialGaugeHeight,
 		0x808080, true);
 	// 現在のHP分の長さのゲージ
-	int specialBarWidth = static_cast<int>(specialGaugeWidth * specialGaugeRate);
+	int specialBarWidth = static_cast<int>(specialGaugeWidth * m_specialGaugeRate);
 	DrawBox(specialGaugePosX, specialGaugePosY,
 		specialGaugePosX + specialBarWidth,
 		specialGaugePosY + specialGaugeHeight,

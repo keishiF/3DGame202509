@@ -40,11 +40,24 @@ public:
 	// 描画
 	void Draw();
 
-	// プレイヤーの位置を取得
+	// ゲッター
+	// 位置取得
 	Vector3 GetPos() const { return m_rigidbody.GetPos(); }
+	// 半径取得
 	float GetRadius() const { return m_radius; }
+	// モデル取得
 	int GetModel() const { return m_charModel; }
+	// HP取得
+	float GetHP() const { return m_hp; }
+	float GetHPRate() const { return m_hpRate; }
+	// スタミナ取得
+	float GetStamina() const { return m_stamina; }
+	float GetStaminaRate() const { return m_staminaRate; }
+	// 必殺技ゲージ取得
+	float GetSpecialGauge() const { return m_specialGauge; }
+	float GetSpecialGaugeRate() const { return m_specialGaugeRate; }
 
+	// 必殺技ゲージを加算する関数
 	void SetSpecialGauge(int specialGaugePoint);
 
 	// ダメージを受けた時の処理をまとめる関数
@@ -53,6 +66,7 @@ public:
 	// 死んでいるかどうか
 	bool IsDead() const { return m_isDead; }
 
+	// 当たった時の処理
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 
 	// プレイヤーの状態
@@ -102,11 +116,14 @@ private:
 	// プレイヤーの当たり判定
 	float m_radius;
 	// プレイヤーのHP
-	int m_hp;
+	float m_hp;
+	float m_hpRate;
 	// プレイヤーのスタミナ
 	float m_stamina;
+	float m_staminaRate;
 	// 必殺技ゲージ
-	int m_specialGauge;
+	float m_specialGauge;
+	float m_specialGaugeRate;
 	// プレイヤーのフラグ
 	bool m_isCombo;
 	bool m_isDead;

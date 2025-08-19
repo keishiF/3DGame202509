@@ -69,7 +69,8 @@ protected:
 	// UŒ‚ó‘Ô‚ÉˆÚs‚Å‚«‚é”ÍˆÍ
 	float m_attackRadius;
 	// HP
-	int m_hp;
+	float m_hp;
+	float m_hpRate;
 	// €‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©
 	bool m_isDead;
 	// UŒ‚ƒtƒŒ[ƒ€

@@ -114,7 +114,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);$(ProjectDir)Animator;$(ProjectDir)Main;$(ProjectDir)Effect;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../DxLib_VC;$(ProjectDir)Scene;$(ProjectDir)GameObject;$(ProjectDir)General;$(ProjectDir)MyLib;$(ProjectDir);$(ProjectDir)Animator;$(ProjectDir)Main;$(ProjectDir)Effect;$(ProjectDir)UI;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -187,6 +187,9 @@
     <ClCompile Include="Scene\SceneBase.cpp" />
     <ClCompile Include="Scene\SceneController.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
+    <ClCompile Include="UI\HPGauge.cpp" />
+    <ClCompile Include="UI\SpecialGauge.cpp" />
+    <ClCompile Include="UI\StaminaGauge.cpp" />
     <ClCompile Include="UI\UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -234,6 +237,9 @@
     <ClInclude Include="Scene\SceneBase.h" />
     <ClInclude Include="Scene\SceneController.h" />
     <ClInclude Include="Scene\TitleScene.h" />
+    <ClInclude Include="UI\HPGauge.h" />
+    <ClInclude Include="UI\SpecialGauge.h" />
+    <ClInclude Include="UI\StaminaGauge.h" />
     <ClInclude Include="UI\UIManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

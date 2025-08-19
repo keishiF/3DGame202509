@@ -7,7 +7,8 @@ EnemyBase::EnemyBase() :
     m_weaponModel(-1),
     m_findRadius(0.0f),
     m_attackRadius(0.0f),
-    m_hp(0),
+    m_hp(0.0f),
+    m_hpRate(0.0f),
     m_isDead(false),
     m_attackFrame(0),
     Collidable(ObjectTag::Enemy, ObjectPriority::Low, ColliderData::Kind::Capsule)

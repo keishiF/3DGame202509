@@ -16,6 +16,9 @@ public:
 
 	virtual void OnDamage() override;
 
+	// 3D空間における位置座標をスクリーン座標に変換したものを取得
+	Vector3 GetScreenPos() const;
+
 private:
 	const char* GetAnimName(EnemyState state) const override;
 	bool IsLoopAnim(EnemyState state) const override;

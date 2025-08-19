@@ -16,7 +16,7 @@ namespace
 	constexpr float kAttackRadius = 100.0f;
 
 	// 初期HP
-	constexpr int kHp = 5;
+	constexpr int kHp = 5.0f;
 
 	// エネミーの速度
 	constexpr float kWalkSpeed = 2.5f;
@@ -87,6 +87,7 @@ void EnemyMinion::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_findRadius = kFindRadius;
 	m_attackRadius = kAttackRadius;
 	m_hp = kHp;
+	m_hpRate = m_hp / kHp;
 	m_isDead = false;
 	m_attackFrame = 0.0f;
 
@@ -164,43 +165,45 @@ void EnemyMinion::Draw()
 	MV1DrawModel(m_charModel);
 	m_weapon->Draw();
 
-	Vector3 worldPos = m_rigidbody.GetPos();
-	worldPos.y += 120.0f; // 頭上の高さ調整
+	//Vector3 worldPos = m_rigidbody.GetPos();
+	//worldPos.y += 120.0f; // 頭上の高さ調整
 
-	VECTOR worldVec = worldPos.ToDxVECTOR();
+	//VECTOR worldVec = worldPos.ToDxVECTOR();
 
-	// 3D→2D座標変換（戻り値がスクリーン座標）
-	VECTOR screenVec = ConvWorldPosToScreenPos(worldVec);
+	//// 3D→2D座標変換（戻り値がスクリーン座標）
+	//VECTOR screenVec = ConvWorldPosToScreenPos(worldVec);
 
-	const int gaugeWidth = 100;
-	const int gaugeHeight = 10;
+	//const int gaugeWidth = 100;
+	//const int gaugeHeight = 10;
 
-	int gaugeX = static_cast<int>(screenVec.x - gaugeWidth / 2);
-	int gaugeY = static_cast<int>(screenVec.y - gaugeHeight / 2);
+	//int gaugeX = static_cast<int>(screenVec.x - gaugeWidth / 2);
+	//int gaugeY = static_cast<int>(screenVec.y - gaugeHeight / 2);
 
-	float hpRate = static_cast<float>(m_hp) / kHp;
-	hpRate = std::clamp(hpRate, 0.0f, 1.0f);
+	//float hpRate = static_cast<float>(m_hp) / kHp;
+	//hpRate = std::clamp(hpRate, 0.0f, 1.0f);
 
-	DrawBox(gaugeX, gaugeY,
-		gaugeX + gaugeWidth,
-		gaugeY + gaugeHeight,
-		0x808080, true);
+	//DrawBox(gaugeX, gaugeY,
+	//	gaugeX + gaugeWidth,
+	//	gaugeY + gaugeHeight,
+	//	0x808080, true);
 
-	int hpBarWidth = static_cast<int>(gaugeWidth * hpRate);
-	DrawBox(gaugeX, gaugeY,
-		gaugeX + hpBarWidth,
-		gaugeY + gaugeHeight,
-		0xff0000, true);
+	//int hpBarWidth = static_cast<int>(gaugeWidth * hpRate);
+	//DrawBox(gaugeX, gaugeY,
+	//	gaugeX + hpBarWidth,
+	//	gaugeY + gaugeHeight,
+	//	0xff0000, true);
 
-	DrawBox(gaugeX, gaugeY,
-		gaugeX + gaugeWidth,
-		gaugeY + gaugeHeight,
-		0x000000, false);
+	//DrawBox(gaugeX, gaugeY,
+	//	gaugeX + gaugeWidth,
+	//	gaugeY + gaugeHeight,
+	//	0x000000, false);
 }
 
 void EnemyMinion::OnDamage()
 {
-	m_hp -= 1;
+	m_hp -= 1.0f;
+	m_hpRate = static_cast<float>(m_hp) / kHp;
+	m_hpRate = std::clamp(m_hpRate, 0.0f, 1.0f);
 
 	if (m_hp <= 0 && !m_isDead)
 	{
@@ -210,6 +213,30 @@ void EnemyMinion::OnDamage()
 	{
 		ChangeState(EnemyState::Hit, kHitAnimSpeed);
 	}
+}
+
+Vector3 EnemyMinion::GetScreenPos() const
+{
+	Vector3 worldPos = m_rigidbody.GetPos();
+	worldPos.y += 120.0f; // 頭上の高さ調整
+
+	VECTOR worldPosDx = worldPos.ToDxVECTOR();
+
+	// 3D→2D座標変換（戻り値がスクリーン座標）
+	VECTOR screenPosDx = ConvWorldPosToScreenPos(worldPosDx);
+
+	const int gaugeWidth = 100;
+	const int gaugeHeight = 10;
+
+	screenPosDx.x = screenPosDx.x - gaugeWidth * 0.5f;
+	screenPosDx.y = screenPosDx.y - gaugeHeight * 0.5f;
+
+	Vector3 screenPos =
+	{
+		screenPosDx.x, screenPosDx.y, screenPosDx.z
+	};
+
+	return screenPos;
 }
 
 void EnemyMinion::FindUpdate(std::shared_ptr<Player> player)

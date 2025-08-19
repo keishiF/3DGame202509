@@ -11,6 +11,7 @@
 #include "SceneController.h"
 #include "Stage/StageObjectManager.h"
 #include "TitleScene.h"
+#include "UIManager.h"
 #include <cassert>
 #include <EffekseerForDxLib.h>
 #include <DxLib.h>
@@ -29,21 +30,24 @@ GameScene::GameScene(SceneController& controller) :
 	m_frame(0),
 	m_fadeFrame(kFadeInterval),
 	m_blinkFrame(0),
+	m_gameObjectManager(GameObjectManager::Instance()),
 	m_update(&GameScene::FadeInUpdate),
 	m_draw(&GameScene::FadeDraw)
 {
 	Effekseer_Init(20000);
 	Effekseer_InitDistortion();
 
-	GameObjectManager::Instance().Init();
+	m_gameObjectManager.Init();
 
 	m_stageObjectManager = std::make_shared<StageObjectManager>();
 	m_stageObjectManager->Init();
+
+	m_uiManager = std::make_shared<UIManager>();
 }
 
 GameScene::~GameScene()
 {
-	GameObjectManager::Instance().Finalize();
+	m_gameObjectManager.Finalize();
 	if (m_stageObjectManager)
 	{
 		m_stageObjectManager->Finalize(); 
@@ -66,14 +70,14 @@ void GameScene::NormalUpdate()
 	++m_blinkFrame;
 
 	UpdateEffekseer3D();
-	GameObjectManager::Instance().Update();
-	if (GameObjectManager::Instance().IsGameOver())
+	m_gameObjectManager.Update();
+	if (m_gameObjectManager.IsGameOver())
 	{
 		m_update = &GameScene::FadeOutUpdate;
 		m_draw = &GameScene::FadeDraw;
 		m_fadeFrame = 0;
 	}
-	else if (GameObjectManager::Instance().IsClear())
+	else if (m_gameObjectManager.IsClear())
 	{
 		m_update = &GameScene::FadeOutUpdate;
 		m_draw = &GameScene::FadeDraw;
@@ -103,23 +107,34 @@ void GameScene::FadeOutUpdate()
 
 void GameScene::NormalDraw()
 {
+#ifdef _DEBUG
 	// “_–ÅŒø‰Ê‚Ì‚½‚ß‚ÌðŒ
 	if ((m_blinkFrame / 30) % 2 == 0)
 	{
 		DrawString(0, 0, "Game Scene", 0xffffff);
 	}
+#endif
 	printf("frame %d\n", m_frame);
 
 	Effekseer_Sync3DSetting();
 	DrawEffekseer3D();
 	m_stageObjectManager->Draw();
-	GameObjectManager::Instance().Draw();
+
+	m_gameObjectManager.Draw();
+	m_uiManager->Draw(m_gameObjectManager.GetPlayer(), 
+		m_gameObjectManager.GetEnemyBoss(),
+		m_gameObjectManager.GetEnemyMinions(), 
+		m_gameObjectManager.GetEnemyMages());
 }
 
 void GameScene::FadeDraw()
 {
 	m_stageObjectManager->Draw();
-	GameObjectManager::Instance().Draw();
+	m_gameObjectManager.Draw();
+	m_uiManager->Draw(m_gameObjectManager.GetPlayer(), 
+		m_gameObjectManager.GetEnemyBoss(),
+		m_gameObjectManager.GetEnemyMinions(), 
+		m_gameObjectManager.GetEnemyMages());
 
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));

@@ -3,12 +3,14 @@
 #include "Vector3.h"
 #include <memory>
 
+class GameObjectManager;
 class Physics;
 class Player;
 class EnemyMinion;
 class EnemyMage;
 class Camera;
 class StageObjectManager;
+class UIManager;
 class GameScene final : public SceneBase
 {
 public:
@@ -34,6 +36,9 @@ private:
 	std::shared_ptr<EnemyMage>  m_mage;
 	std::shared_ptr<Camera> m_camera;
 	std::shared_ptr<StageObjectManager> m_stageObjectManager;
+	std::shared_ptr<UIManager> m_uiManager;
+
+	GameObjectManager& m_gameObjectManager;
 
 	// ’ÊíXVˆ—
 	void NormalUpdate();

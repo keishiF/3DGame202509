@@ -79,18 +79,18 @@ void ClearScene::NormalDraw()
 {
 	MV1DrawModel(m_skyModel);
 
+#ifdef _DEBUG
 	// ì_ñ≈å¯â ÇÃÇΩÇﬂÇÃèåè
 	if ((m_blinkFrame / 30) % 2 == 0)
 	{
 		DrawString(0, 0, "Clear Scene", 0x000000);
 	}
+#endif
 }
 
 void ClearScene::FadeDraw()
 {
 	MV1DrawModel(m_skyModel);
-
-	DrawString(0, 0, "Clear Scene", 0x000000);
 
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));
