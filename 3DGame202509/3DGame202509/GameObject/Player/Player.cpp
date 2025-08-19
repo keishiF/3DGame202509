@@ -31,7 +31,7 @@ namespace
 	// 強攻撃をした際に消費するスタミナ
 	constexpr float kSpinStamina = 15.0f;
 
-	constexpr float kStamina = 35.0f;
+	constexpr float kRunSpeedDownStaminaRate = 35.0f;
 
 	// 移動速度
 	constexpr float kWalkSpeed = 8.5f;
@@ -73,6 +73,7 @@ namespace
 	constexpr float kAnimSpeed = 1.0f;
 	constexpr float kIdleAnimSpeed = 0.5f;
 	constexpr float kWalkAnimSpeed = 0.75f;
+	constexpr float kSlowRunAnimSpeed = 0.5f;
 	constexpr float kChopAnimSpeed = 1.0f;
 	constexpr float kSpecialAttackAnimSpeed = 0.5f;
 
@@ -80,7 +81,7 @@ namespace
 	{
 		{PlayerState::Idle,		 { 0,  0}},
 		{PlayerState::Walk,		 { 0,  0}},
-		{PlayerState::Run,		 { 0,  0}},
+		{PlayerState::NormalRun,		 { 0,  0}},
 		{PlayerState::Tired,	 { 0,  0}},
 		{PlayerState::Chop,		 {16, 28}},
 		{PlayerState::Slice,	 {16, 28}},
@@ -96,7 +97,7 @@ namespace
 	{
 		{PlayerState::Idle,		 { 0,  0}},
 		{PlayerState::Walk,		 { 0,  0}},
-		{PlayerState::Run,		 { 0,  0}},
+		{PlayerState::NormalRun,		 { 0,  0}},
 		{PlayerState::Tired,	 { 0,  0}},
 		{PlayerState::Chop,		 {16, 28}},
 		{PlayerState::Slice,	 {16, 28}},
@@ -198,8 +199,11 @@ void Player::Update()
 	case PlayerState::Walk:
 		WalkUpdate();
 		break;
-	case PlayerState::Run:
+	case PlayerState::NormalRun:
 		RunUpdate();
+		break;
+	case PlayerState::TiredRun:
+		TiredRunUpdate();
 		break;
 	case PlayerState::Tired:
 		TiredUpdate();
@@ -255,10 +259,6 @@ void Player::Draw()
 #endif
 	MV1DrawModel(m_charModel);
 	m_rightWeapon->Draw();
-
-	//DrawHPGauge();
-	//DrawStaminaGauge();
-	//DrawSpecialGauge();
 }
 
 void Player::SetSpecialGauge(int specialGaugePoint)
@@ -271,15 +271,18 @@ void Player::SetSpecialGauge(int specialGaugePoint)
 
 void Player::OnDamage()
 {
+	// ダメージを受ける
 	m_hp -= 1.0f;
-
+	// HP割合を計算する
 	m_hpRate = m_hp / kHp;
 	m_hpRate = std::clamp(m_hpRate, 0.0f, 1.0f);
 
+	// HPが0になったのなら死亡状態に移行する
 	if (m_hp <= 0 && !m_isDead)
 	{
 		ChangeState(PlayerState::Dead);
 	}
+	// そうでないなら被弾状態に移行する
 	else
 	{
 		ChangeState(PlayerState::Hit);
@@ -316,8 +319,11 @@ void Player::ChangeState(PlayerState newState)
 	case PlayerState::Walk:
 		m_anim.ChangeAnim(kWalkAnimName, kWalkAnimSpeed, true);
 		break;
-	case PlayerState::Run:
+	case PlayerState::NormalRun:
 		m_anim.ChangeAnim(kRunAnimName, kAnimSpeed, true);
+		break;
+	case PlayerState::TiredRun:
+		m_anim.ChangeAnim(kRunAnimName, kSlowRunAnimSpeed, true);
 		break;
 	case PlayerState::Tired:
 		m_anim.ChangeAnim(kTiredAnimName, kAnimSpeed, true);
@@ -501,9 +507,13 @@ void Player::WalkUpdate()
 	// LBの入力があればダッシュ状態に移行する
 	if (input.IsTrigger("LB"))
 	{
-		if (m_stamina >= 1.0f)
+		if (m_stamina >= kRunSpeedDownStaminaRate)
 		{
-			ChangeState(PlayerState::Run);
+			ChangeState(PlayerState::NormalRun);
+		}
+		else
+		{
+			ChangeState(PlayerState::TiredRun);
 		}
 	}
 
@@ -537,32 +547,23 @@ void Player::RunUpdate()
 	auto& input = Input::GetInstance();
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Run));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::NormalRun));
 	Vector3 dir = { 0.0f, 0.0f, 0.0f };
 
-	float speed = 0.0f;
 	m_stamina -= kRunStamina;
 	m_staminaRate = m_stamina / kMaxStamina;
 	m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
-	if (m_stamina > kStamina)
-	{
-		speed = kNormalRunSpeed;
-	}
-	else
-	{
-		speed = kTiredRunSpeed;
-	}
 
 	// 左スティックで移動
 	// 左入力
 	if (input.IsPress("LEFT"))
 	{
-		dir.x = -speed;
+		dir.x = -kNormalRunSpeed;
 	}
 	// 右入力
 	else if (input.IsPress("RIGHT"))
 	{
-		dir.x = speed;
+		dir.x = kNormalRunSpeed;
 	}
 	// 横方向の入力なし
 	else
@@ -572,12 +573,12 @@ void Player::RunUpdate()
 	// 上入力
 	if (input.IsPress("UP"))
 	{
-		dir.z = speed;
+		dir.z = kNormalRunSpeed;
 	}
 	// 下入力
 	else if (input.IsPress("DOWN"))
 	{
-		dir.z = -speed;
+		dir.z = -kNormalRunSpeed;
 	}
 	// 縦方向の入力なし
 	else
@@ -587,7 +588,118 @@ void Player::RunUpdate()
 
 	// ベクトルを正規化し移動速度をかけポジションに加算
 	dir.Normalize();
-	m_rigidbody.SetVelo(dir * speed);
+	m_rigidbody.SetVelo(dir * kNormalRunSpeed);
+	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+
+	// 進行方向にモデルを回転させる
+	Vector3 velocity = m_rigidbody.GetVelo();
+	if (velocity.x != 0.0f || velocity.z != 0.0f)
+	{
+		Vector3 axis(0.0f, 1.0f, 0.0f);
+		float angle = std::atan2(velocity.x, -velocity.z);
+
+		Quaternion targetRot;
+		targetRot.AngleAxis(angle, axis);
+
+		m_currentRot = Quaternion::Slerp(m_currentRot, targetRot, kLerpT);
+
+		float angleY = m_currentRot.ToEulerY();
+		MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+	}
+
+	// 左スティックの入力がない場合待機状態に移行する
+	if (m_rigidbody.GetVelo().x == 0.0f && m_rigidbody.GetVelo().z == 0.0f)
+	{
+		ChangeState(PlayerState::Idle);
+	}
+
+	// LBの入力があれば歩き状態に移行する
+	if (input.IsTrigger("LB"))
+	{
+		ChangeState(PlayerState::Walk);
+	}
+
+	// スタミナが減ってきたら遅い走り状態に移行する
+	if (m_stamina < kRunSpeedDownStaminaRate)
+	{
+		ChangeState(PlayerState::TiredRun);
+	}
+	// スタミナがなくなったら疲れ状態に移行する
+	if (m_stamina <= 0)
+	{
+		ChangeState(PlayerState::Tired);
+	}
+
+	// Aボタンの入力があれば攻撃状態に移行する
+	if (input.IsTrigger("A"))
+	{
+		ChangeState(PlayerState::Chop);
+	}
+
+	// Xボタンの入力があれば強攻撃状態に移行する
+	if (input.IsTrigger("X"))
+	{
+		if (m_stamina >= kSpinStamina)
+		{
+			m_stamina -= kSpinStamina;
+			ChangeState(PlayerState::Spin);
+		}
+	}
+
+	// Bボタンの入力があれば回避状態に移行する
+	if (input.IsTrigger("B"))
+	{
+		ChangeState(PlayerState::Dodge);
+	}
+}
+
+void Player::TiredRunUpdate()
+{
+	auto& input = Input::GetInstance();
+	// プレイヤー自身の当たり判定をオンにする
+	SetActive(true);
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::NormalRun));
+	Vector3 dir = { 0.0f, 0.0f, 0.0f };
+
+	m_stamina -= kRunStamina;
+	m_staminaRate = m_stamina / kMaxStamina;
+	m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
+
+	// 左スティックで移動
+	// 左入力
+	if (input.IsPress("LEFT"))
+	{
+		dir.x = -kTiredRunSpeed;
+	}
+	// 右入力
+	else if (input.IsPress("RIGHT"))
+	{
+		dir.x = kTiredRunSpeed;
+	}
+	// 横方向の入力なし
+	else
+	{
+		dir.x = 0.0f;
+	}
+	// 上入力
+	if (input.IsPress("UP"))
+	{
+		dir.z = kTiredRunSpeed;
+	}
+	// 下入力
+	else if (input.IsPress("DOWN"))
+	{
+		dir.z = -kTiredRunSpeed;
+	}
+	// 縦方向の入力なし
+	else
+	{
+		dir.z = 0.0f;
+	}
+
+	// ベクトルを正規化し移動速度をかけポジションに加算
+	dir.Normalize();
+	m_rigidbody.SetVelo(dir * kTiredRunSpeed);
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 
 	// 進行方向にモデルを回転させる
@@ -879,116 +991,6 @@ void Player::DeadUpdate()
 		}
 		m_isDead = true;
 	}
-}
-
-void Player::DrawHPGauge()
-{
-	// HPゲージの横幅、縦幅
-	int hpGaugeWidth = 200;
-	int hpGaugeHeight = 20;
-
-	// HPゲージの描画位置
-	int hpGaugePosX = 50;
-	int hpGaugePosY = 50;
-
-	// ゲージ色の設定
-	int hpGaugeColor;
-	// HPが25%以上あれば
-	if (m_hpRate > 0.25f)
-	{
-		// 緑色にする
-		hpGaugeColor = 0x00ff00;
-	}
-	//// HPが25%以上あれば
-	//else if (hpRate > 0.25f)
-	//{
-	//	// 黄色にする
-	//	hpGaugeColor = 0xffff00;
-	//}
-	else
-	{
-		// 赤色にする
-		hpGaugeColor = 0xff0000;
-	}
-
-	// ゲージ背景（灰色）
-	DrawBox(hpGaugePosX, hpGaugePosY,
-		hpGaugePosX + hpGaugeWidth,
-		hpGaugePosY + hpGaugeHeight,
-		0x808080, true);
-	// 現在のHP分の長さのゲージ
-	int hpBarWidth = static_cast<int>(hpGaugeWidth * m_hpRate);
-	DrawBox(hpGaugePosX, hpGaugePosY,
-		hpGaugePosX + hpBarWidth,
-		hpGaugePosY + hpGaugeHeight,
-		hpGaugeColor, true);
-	// 枠線（黒）
-	DrawBoxAA(hpGaugePosX, hpGaugePosY,
-		hpGaugePosX + hpGaugeWidth,
-		hpGaugePosY + hpGaugeHeight,
-		0x000000, false);
-}
-
-void Player::DrawStaminaGauge()
-{
-	// スタミナゲージの横幅、縦幅
-	int staminaGaugeWidth = 200;
-	int staminaGaugeHeight = 20;
-
-	// スタミナゲージの描画位置
-	int staminaGaugePosX = 50;
-	int staminaGaugePosY = 70;
-
-	// ゲージの色の設定
-	int staminaGaugeColor = 0xffff00;
-
-	// ゲージ背景（灰色）
-	DrawBox(staminaGaugePosX, staminaGaugePosY,
-		staminaGaugePosX + staminaGaugeWidth,
-		staminaGaugePosY + staminaGaugeHeight,
-		0x808080, true);
-	// 現在のHP分の長さのゲージ
-	int staminaBarWidth = static_cast<int>(staminaGaugeWidth * m_staminaRate);
-	DrawBox(staminaGaugePosX, staminaGaugePosY,
-		staminaGaugePosX + staminaBarWidth,
-		staminaGaugePosY + staminaGaugeHeight,
-		staminaGaugeColor, true);
-	// 枠線（黒）
-	DrawBoxAA(staminaGaugePosX, staminaGaugePosY,
-		staminaGaugePosX + staminaGaugeWidth,
-		staminaGaugePosY + staminaGaugeHeight,
-		0x000000, false);
-}
-
-void Player::DrawSpecialGauge()
-{
-	// 必殺技ゲージの横幅、縦幅
-	int specialGaugeWidth = 200;
-	int specialGaugeHeight = 20;
-
-	// 必殺技ゲージの描画位置
-	int specialGaugePosX = (Game::kScreenWidth - specialGaugeWidth) / 2;
-	int specialGaugePosY = Game::kScreenHeight - specialGaugeHeight - 100;
-
-	// 必殺技ゲージを青色に設定
-	int specialGaugeColor = 0x66ffff;
-
-	// ゲージ背景（灰色）
-	DrawBox(specialGaugePosX, specialGaugePosY,
-		specialGaugePosX + specialGaugeWidth,
-		specialGaugePosY + specialGaugeHeight,
-		0x808080, true);
-	// 現在のHP分の長さのゲージ
-	int specialBarWidth = static_cast<int>(specialGaugeWidth * m_specialGaugeRate);
-	DrawBox(specialGaugePosX, specialGaugePosY,
-		specialGaugePosX + specialBarWidth,
-		specialGaugePosY + specialGaugeHeight,
-		specialGaugeColor, true);
-	// 枠線（黒）
-	DrawBoxAA(specialGaugePosX, specialGaugePosY,
-		specialGaugePosX + specialGaugeWidth,
-		specialGaugePosY + specialGaugeHeight,
-		0x000000, false);
 }
 
 void Player::RotateToNearestEnemy(float radius)

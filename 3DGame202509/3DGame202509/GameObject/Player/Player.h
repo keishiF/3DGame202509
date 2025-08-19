@@ -10,7 +10,8 @@ enum class PlayerState
 {
 	Idle,       // ‘Ò‹@
 	Walk,       // •à‚«
-	Run,        // ‘–‚è
+	NormalRun,  // ‘–‚è
+	TiredRun,   // ’x‚¢‘–‚è
 	Tired,		// ”æ‚ê
 	Chop,       // UŒ‚1’i–Ú
 	Slice,      // UŒ‚2’i–Ú
@@ -81,6 +82,8 @@ private:
 	void WalkUpdate();
 	// ‘–‚è
 	void RunUpdate();
+	// ’x‚¢‘–‚è
+	void TiredRunUpdate();
 	// ”æ‚ê
 	void TiredUpdate();
 	// ŠeUŒ‚ó‘Ô
@@ -97,13 +100,6 @@ private:
 	void DeadUpdate();
 
 private:
-	// HP‚Ì•`‰æ
-	void DrawHPGauge();
-	// ƒXƒ^ƒ~ƒi‚Ì•`‰æ
-	void DrawStaminaGauge();
-	// •KE‹ZƒQ[ƒW‚Ì•`‰æ
-	void DrawSpecialGauge();
-
 	void RotateToNearestEnemy(float radius);
 	std::shared_ptr<EnemyBase> FindNearestEnemy(float radius);
 
