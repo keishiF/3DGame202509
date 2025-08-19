@@ -194,6 +194,12 @@
     <ClCompile Include="Effect\EffectManager.cpp">
       <Filter>ソース ファイル\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="MyLib\Utility.cpp">
+      <Filter>ソース ファイル\MyLib</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\CharacterBase.cpp">
+      <Filter>ソース ファイル\GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="General\Application.h">
@@ -321,6 +327,12 @@
     </ClInclude>
     <ClInclude Include="Effect\EffectManager.h">
       <Filter>ヘッダー ファイル\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Utility.h">
+      <Filter>ヘッダー ファイル\MyLib</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\CharacterBase.h">
+      <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

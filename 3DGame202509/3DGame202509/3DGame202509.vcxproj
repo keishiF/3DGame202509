@@ -151,6 +151,7 @@
     <ClCompile Include="Effect\Effect.cpp" />
     <ClCompile Include="Effect\EffectManager.cpp" />
     <ClCompile Include="GameObject\Camera\Camera.cpp" />
+    <ClCompile Include="GameObject\CharacterBase.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyBase.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyBoss.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyBossLeftAxe.cpp" />
@@ -179,6 +180,7 @@
     <ClCompile Include="MyLib\Rigidbody.cpp" />
     <ClCompile Include="MyLib\SphereColliderData.cpp" />
     <ClCompile Include="MyLib\TransformDataLoader.cpp" />
+    <ClCompile Include="MyLib\Utility.cpp" />
     <ClCompile Include="Scene\ClearScene.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\ResultScene.cpp" />
@@ -191,6 +193,7 @@
     <ClInclude Include="Effect\Effect.h" />
     <ClInclude Include="Effect\EffectManager.h" />
     <ClInclude Include="GameObject\Camera\Camera.h" />
+    <ClInclude Include="GameObject\CharacterBase.h" />
     <ClInclude Include="GameObject\Enemy\EnemyBase.h" />
     <ClInclude Include="GameObject\Enemy\EnemyBoss.h" />
     <ClInclude Include="GameObject\Enemy\EnemyBossLeftAxe.h" />
@@ -222,6 +225,7 @@
     <ClInclude Include="MyLib\Rigidbody.h" />
     <ClInclude Include="MyLib\SphereColliderData.h" />
     <ClInclude Include="MyLib\TransformDataLoader.h" />
+    <ClInclude Include="MyLib\Utility.h" />
     <ClInclude Include="MyLib\Vector3.h" />
     <ClInclude Include="Scene\ClearScene.h" />
     <ClInclude Include="Scene\GameScene.h" />

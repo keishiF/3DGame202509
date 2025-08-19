@@ -21,6 +21,13 @@ namespace
 	constexpr float kMaxStamina = 100.0f;
 	// 必殺技ゲージの最大値
 	constexpr int kMaxSpecialGauge = 100;
+	// スタミナ消費量
+	// 待機状態、歩き状態で毎フレーム回復するスタミナ
+	constexpr float kRegeneStamina = 0.34f;
+	// 走っている際に消費するスタミナ
+	constexpr float kRunStamina = 0.34f;
+	// 強攻撃をした際に消費するスタミナ
+	constexpr float kSpinStamina = 15.0f;
 
 	// 移動速度
 	constexpr float kWalkSpeed = 8.5f;
@@ -327,7 +334,7 @@ void Player::IdleUpdate()
 	// スタミナが最大じゃないときは徐々に回復する
 	if (m_stamina < kMaxStamina)
 	{
-		m_stamina += 0.34;
+		m_stamina += kRegeneStamina;
 	}
 
 	// 左スティックの入力があれば歩き状態に移行する
@@ -346,9 +353,9 @@ void Player::IdleUpdate()
 	// Xボタンの入力があれば強攻撃状態に移行するためのフラグを立てる
 	if (input.IsTrigger("X"))
 	{
-		if (m_stamina >= 15.0f)
+		if (m_stamina >= kSpinStamina)
 		{
-			m_stamina -= 15.0f;
+			m_stamina -= kSpinStamina;
 			ChangeState(PlayerState::Spin);
 		}
 	}
@@ -390,7 +397,7 @@ void Player::WalkUpdate()
 	// スタミナが最大じゃないときは徐々に回復する
 	if (m_stamina < kMaxStamina)
 	{
-		m_stamina += 0.34;
+		m_stamina += kRegeneStamina;
 	}
 
 	Vector3 dir = { 0.0f, 0.0f,0.0f };
@@ -471,9 +478,9 @@ void Player::WalkUpdate()
 	// Xボタンの入力があれば強攻撃状態に移行する
 	if (input.IsTrigger("X"))
 	{
-		if (m_stamina >= 15.0f)
+		if (m_stamina >= kSpinStamina)
 		{
-			m_stamina -= 15.0f;
+			m_stamina -= kSpinStamina;
 			ChangeState(PlayerState::Spin);
 		}
 	}
@@ -495,7 +502,7 @@ void Player::RunUpdate()
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Run));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(PlayerState::Run));
 
-	m_stamina -= 0.34;
+	m_stamina -= kRunStamina;
 
 	Vector3 dir = { 0.0f, 0.0f, 0.0f };
 	// 左スティックで移動
@@ -571,9 +578,9 @@ void Player::RunUpdate()
 	// Xボタンの入力があれば強攻撃状態に移行する
 	if (input.IsTrigger("X"))
 	{
-		if (m_stamina >= 15.0f)
+		if (m_stamina >= kSpinStamina)
 		{
-			m_stamina -= 15.0f;
+			m_stamina -= kSpinStamina;
 			ChangeState(PlayerState::Spin);
 		}
 	}
