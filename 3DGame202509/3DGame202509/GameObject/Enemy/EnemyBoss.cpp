@@ -17,7 +17,7 @@ namespace
 	constexpr float kAttackRadius = 600.0f;
 
 	// 初期HP
-	constexpr int kHp = 1;
+	constexpr int kHp = 15;
 
 	// エネミーの速度
 	constexpr float kWalkSpeed = 2.0f;
