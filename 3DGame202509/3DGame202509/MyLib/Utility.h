@@ -1,6 +1,6 @@
 #pragma once
 
-class Utility
+static class Utility
 {
 public:
 	struct ColorCode

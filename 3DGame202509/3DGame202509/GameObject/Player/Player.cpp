@@ -112,7 +112,7 @@ Player::Player() :
 	m_attackPower(1),
 	m_frame(0.0),
 	m_attackFrame(0.0f),
-	//m_specialEffect(-1),
+	m_specialEffect(-1),
 	m_state(PlayerState::Idle),
 	Collidable(ObjectTag::Player, ObjectPriority::High, ColliderData::Kind::Capsule)
 {
@@ -140,8 +140,8 @@ void Player::Init(Vector3& pos, const Vector3& rot, const Vector3& scale)
 	MV1SetScale(m_charModel, VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale));
 	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
 
-	/*m_specialEffect = LoadEffekseerEffect("Data/Effect/PlayerSpecialAttack3.efkefc", 100.0f);
-	assert(m_specialEffect >= 0);*/
+	m_specialEffect = LoadEffekseerEffect("Data/Effect/PlayerSpecialAttack3.efkefc", 100.0f);
+	assert(m_specialEffect >= 0);
 
 	m_anim.Init(m_charModel);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kIdleAnimName, kIdleAnimSpeed, true);
@@ -744,9 +744,9 @@ void Player::SpecialUpdate()
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 
-	/*PlayEffekseer3DEffect(m_specialEffect);
+	PlayEffekseer3DEffect(m_specialEffect);
 	SetPosPlayingEffekseer3DEffect(m_specialEffect,
-		m_rigidbody.GetPos().x, m_rigidbody.GetPos().y, m_rigidbody.GetPos().z);*/
+		m_rigidbody.GetPos().x, m_rigidbody.GetPos().y, m_rigidbody.GetPos().z);
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)

@@ -78,6 +78,24 @@
     <Filter Include="ヘッダー ファイル\Effect">
       <UniqueIdentifier>{114504e1-b439-4810-85f3-876d73abcf39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\MyLib\UI">
+      <UniqueIdentifier>{e0cadd37-f9d0-4871-b65c-e2ba92659140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\MyLib\Collision">
+      <UniqueIdentifier>{9c44db98-4749-4bb3-bab0-e150cd444191}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\MyLib\Math">
+      <UniqueIdentifier>{65dac9f3-d3d0-403b-8557-38e9621990ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\MyLib\Collision">
+      <UniqueIdentifier>{b6811e37-5c59-4586-9196-4d176ab8a5e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\MyLib\Math">
+      <UniqueIdentifier>{50f75ade-85b1-4651-ad10-1703b0779953}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\MyLib\UI">
+      <UniqueIdentifier>{81c6e46a-b7d6-4075-b8c9-b530a67ad5a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="General\Application.cpp">
@@ -101,12 +119,6 @@
     <ClCompile Include="MyLib\Input.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
-    <ClCompile Include="MyLib\Quaternion.cpp">
-      <Filter>ソース ファイル\MyLib</Filter>
-    </ClCompile>
-    <ClCompile Include="MyLib\Collidable.cpp">
-      <Filter>ソース ファイル\MyLib</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject\Enemy\EnemyMinion.cpp">
       <Filter>ソース ファイル\GameObject\Enemy</Filter>
     </ClCompile>
@@ -126,12 +138,6 @@
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\Rigidbody.cpp">
-      <Filter>ソース ファイル\MyLib</Filter>
-    </ClCompile>
-    <ClCompile Include="MyLib\SphereColliderData.cpp">
-      <Filter>ソース ファイル\MyLib</Filter>
-    </ClCompile>
-    <ClCompile Include="MyLib\CapsuleColliderData.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
     <ClCompile Include="GameObject\Player\PlayerRightWeapon.cpp">
@@ -170,9 +176,6 @@
     <ClCompile Include="MyLib\TransformDataLoader.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
-    <ClCompile Include="MyLib\PolygonColliderData.cpp">
-      <Filter>ソース ファイル\MyLib</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\ClearScene.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
@@ -200,6 +203,24 @@
     <ClCompile Include="GameObject\CharacterBase.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="UI\UIManager.cpp">
+      <Filter>ソース ファイル\MyLib\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\CapsuleColliderData.cpp">
+      <Filter>ソース ファイル\MyLib\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Collidable.cpp">
+      <Filter>ソース ファイル\MyLib\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\PolygonColliderData.cpp">
+      <Filter>ソース ファイル\MyLib\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\SphereColliderData.cpp">
+      <Filter>ソース ファイル\MyLib\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLib\Quaternion.cpp">
+      <Filter>ソース ファイル\MyLib\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="General\Application.h">
@@ -220,16 +241,7 @@
     <ClInclude Include="Scene\ResultScene.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="MyLib\Vector3.h">
-      <Filter>ヘッダー ファイル\MyLib</Filter>
-    </ClInclude>
     <ClInclude Include="MyLib\Input.h">
-      <Filter>ヘッダー ファイル\MyLib</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\Quaternion.h">
-      <Filter>ヘッダー ファイル\MyLib</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\Collidable.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\Enemy\EnemyMinion.h">
@@ -253,18 +265,6 @@
     <ClInclude Include="MyLib\Rigidbody.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
-    <ClInclude Include="MyLib\ColliderData.h">
-      <Filter>ヘッダー ファイル\MyLib</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\SphereColliderData.h">
-      <Filter>ヘッダー ファイル\MyLib</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\ObjectTag.h">
-      <Filter>ヘッダー ファイル\MyLib</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\CapsuleColliderData.h">
-      <Filter>ヘッダー ファイル\MyLib</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject\Player\PlayerRightWeapon.h">
       <Filter>ヘッダー ファイル\GameObject\Player</Filter>
     </ClInclude>
@@ -273,9 +273,6 @@
     </ClInclude>
     <ClInclude Include="GameObject\GameObjectManager.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="MyLib\ObjectPriority.h">
-      <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\Player\PlayerLeftWeapon.h">
       <Filter>ヘッダー ファイル\GameObject\Player</Filter>
@@ -304,9 +301,6 @@
     <ClInclude Include="MyLib\TransformDataLoader.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
-    <ClInclude Include="MyLib\PolygonColliderData.h">
-      <Filter>ヘッダー ファイル\MyLib</Filter>
-    </ClInclude>
     <ClInclude Include="Scene\ClearScene.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
@@ -333,6 +327,36 @@
     </ClInclude>
     <ClInclude Include="GameObject\CharacterBase.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\CapsuleColliderData.h">
+      <Filter>ヘッダー ファイル\MyLib\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Collidable.h">
+      <Filter>ヘッダー ファイル\MyLib\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\ColliderData.h">
+      <Filter>ヘッダー ファイル\MyLib\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\ObjectPriority.h">
+      <Filter>ヘッダー ファイル\MyLib\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\ObjectTag.h">
+      <Filter>ヘッダー ファイル\MyLib\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\PolygonColliderData.h">
+      <Filter>ヘッダー ファイル\MyLib\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\SphereColliderData.h">
+      <Filter>ヘッダー ファイル\MyLib\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIManager.h">
+      <Filter>ヘッダー ファイル\MyLib\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Quaternion.h">
+      <Filter>ヘッダー ファイル\MyLib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLib\Vector3.h">
+      <Filter>ヘッダー ファイル\MyLib\Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

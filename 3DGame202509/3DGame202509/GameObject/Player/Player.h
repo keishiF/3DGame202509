@@ -114,6 +114,9 @@ private:
 	float m_frame;
 	float m_attackFrame;
 
+	// エフェクトハンドル
+	int m_specialEffect;
+
 	// プレイヤーのアニメーション
 	Animator m_anim;
 
