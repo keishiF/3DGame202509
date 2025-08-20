@@ -28,10 +28,7 @@ UIManager::~UIManager()
 {
 }
 
-void UIManager::Draw(std::shared_ptr<Player> player,
-	std::shared_ptr<EnemyBoss> boss,
-	std::vector<std::shared_ptr<EnemyMinion>> minions,
-	std::vector<std::shared_ptr<EnemyMage>> mages)
+void UIManager::Draw()
 {
 	// プレイヤーのゲージ描画
 	m_hpGauge->Draw();

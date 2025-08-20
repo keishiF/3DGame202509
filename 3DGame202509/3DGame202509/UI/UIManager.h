@@ -10,10 +10,7 @@ class UIManager
 public:
 	UIManager();
 	~UIManager();
-	void Draw(std::shared_ptr<Player> player,
-		std::shared_ptr<EnemyBoss> boss,
-		std::vector<std::shared_ptr<EnemyMinion>> minions,
-		std::vector<std::shared_ptr<EnemyMage>> mages);
+	void Draw();
 
 private:
 	std::shared_ptr<HPGauge> m_hpGauge;

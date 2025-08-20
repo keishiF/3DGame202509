@@ -121,20 +121,14 @@ void GameScene::NormalDraw()
 	m_stageObjectManager->Draw();
 
 	m_gameObjectManager.Draw();
-	m_uiManager->Draw(m_gameObjectManager.GetPlayer(), 
-		m_gameObjectManager.GetEnemyBoss(),
-		m_gameObjectManager.GetEnemyMinions(), 
-		m_gameObjectManager.GetEnemyMages());
+	m_uiManager->Draw();
 }
 
 void GameScene::FadeDraw()
 {
 	m_stageObjectManager->Draw();
 	m_gameObjectManager.Draw();
-	m_uiManager->Draw(m_gameObjectManager.GetPlayer(), 
-		m_gameObjectManager.GetEnemyBoss(),
-		m_gameObjectManager.GetEnemyMinions(), 
-		m_gameObjectManager.GetEnemyMages());
+	m_uiManager->Draw();
 
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));
