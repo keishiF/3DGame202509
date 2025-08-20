@@ -165,6 +165,7 @@
     <ClCompile Include="GameObject\Player\PlayerBullet.cpp" />
     <ClCompile Include="GameObject\Player\PlayerLeftWeapon.cpp" />
     <ClCompile Include="GameObject\Player\PlayerRightWeapon.cpp" />
+    <ClCompile Include="GameObject\Player\SubPlayer.cpp" />
     <ClCompile Include="GameObject\SkyDome\SkyDome.cpp" />
     <ClCompile Include="GameObject\Stage\Floor.cpp" />
     <ClCompile Include="GameObject\Stage\Mountain.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="GameObject\Player\PlayerBullet.h" />
     <ClInclude Include="GameObject\Player\PlayerLeftWeapon.h" />
     <ClInclude Include="GameObject\Player\PlayerRightWeapon.h" />
+    <ClInclude Include="GameObject\Player\SubPlayer.h" />
     <ClInclude Include="GameObject\SkyDome\SkyDome.h" />
     <ClInclude Include="GameObject\Stage\Floor.h" />
     <ClInclude Include="GameObject\Stage\Mountain.h" />

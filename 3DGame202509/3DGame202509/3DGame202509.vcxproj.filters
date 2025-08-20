@@ -221,6 +221,9 @@
     <ClCompile Include="GameObject\Player\PlayerBullet.cpp">
       <Filter>ソース ファイル\GameObject\Player</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject\Player\SubPlayer.cpp">
+      <Filter>ソース ファイル\GameObject\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="General\Application.h">
@@ -368,6 +371,9 @@
       <Filter>ヘッダー ファイル\UI</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\Player\PlayerBullet.h">
+      <Filter>ヘッダー ファイル\GameObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Player\SubPlayer.h">
       <Filter>ヘッダー ファイル\GameObject\Player</Filter>
     </ClInclude>
   </ItemGroup>
