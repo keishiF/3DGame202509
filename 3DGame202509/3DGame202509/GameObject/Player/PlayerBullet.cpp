@@ -4,9 +4,9 @@
 
 namespace
 {
-	constexpr float kRunSpeed = 7.5f;
+	constexpr float kRunSpeed = 15.0f;
 	constexpr float kLifeFrame = 300.0f;
-	constexpr float kColRadius = 20.0f;
+	constexpr float kColRadius = 50.0f;
 }
 
 PlayerBullet::PlayerBullet() :

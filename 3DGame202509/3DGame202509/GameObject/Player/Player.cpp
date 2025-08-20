@@ -92,7 +92,7 @@ namespace
 		{PlayerState::Stab,		 {16, 28}},
 		{PlayerState::Spin,      {16, 36}},
 		{PlayerState::Shot,      { 0,  0}},
-		{PlayerState::Special,   {16, 36}},
+		{PlayerState::Special,   { 0, 36}},
 		{PlayerState::Dodge,	 { 0,  0}},
 		{PlayerState::Hit,		 { 0,  0}},
 		{PlayerState::Dead,		 { 0,  0}}
@@ -389,7 +389,7 @@ void Player::IdleUpdate()
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
 
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Idle));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Idle), false);
 
 	// スタミナが最大じゃないときは徐々に回復する
 	if (m_stamina < kMaxStamina)
@@ -412,7 +412,7 @@ void Player::IdleUpdate()
 		ChangeState(PlayerState::Chop);
 	}
 
-	// Xボタンの入力があれば強攻撃状態に移行するためのフラグを立てる
+	// Xボタンの入力があれば強攻撃状態に移行する
 	if (input.IsTrigger("X"))
 	{
 		if (m_stamina >= kSpinStamina)
@@ -424,6 +424,7 @@ void Player::IdleUpdate()
 		}
 	}
 
+	// Yボタンの入力があれば射撃状態に移行する
 	if (input.IsTrigger("Y"))
 	{
 		ChangeState(PlayerState::Shot);
@@ -467,7 +468,7 @@ void Player::WalkUpdate()
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
 
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Walk));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Walk), false);
 
 	// スタミナが最大じゃないときは徐々に回復する
 	if (m_stamina < kMaxStamina)
@@ -568,6 +569,12 @@ void Player::WalkUpdate()
 		}
 	}
 
+	// Yボタンの入力があれば射撃状態に移行する
+	if (input.IsTrigger("Y"))
+	{
+		ChangeState(PlayerState::Shot);
+	}
+
 	// Bボタンの入力があれば回避状態に移行する
 	if (input.IsTrigger("B"))
 	{
@@ -580,7 +587,7 @@ void Player::RunUpdate()
 	auto& input = Input::GetInstance();
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::NormalRun));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::NormalRun), false);
 	Vector3 dir = { 0.0f, 0.0f, 0.0f };
 
 	m_stamina -= kRunStamina;
@@ -679,6 +686,12 @@ void Player::RunUpdate()
 		}
 	}
 
+	// Yボタンの入力があれば射撃状態に移行する
+	if (input.IsTrigger("Y"))
+	{
+		ChangeState(PlayerState::Shot);
+	}
+
 	// Bボタンの入力があれば回避状態に移行する
 	if (input.IsTrigger("B"))
 	{
@@ -691,7 +704,7 @@ void Player::TiredRunUpdate()
 	auto& input = Input::GetInstance();
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::NormalRun));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::NormalRun), false);
 	Vector3 dir = { 0.0f, 0.0f, 0.0f };
 
 	m_stamina -= kRunStamina;
@@ -797,7 +810,7 @@ void Player::TiredUpdate()
 	auto& input = Input::GetInstance();
 	// 当たり判定をオンにする
 	SetActive(true);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Tired));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Tired), false);
 
 	m_stamina += kTiredRegeneStamina;
 	m_staminaRate = m_stamina / kMaxStamina;
@@ -816,7 +829,7 @@ void Player::ChopUpdate()
 	SetActive(true);
 
 	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Chop));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Chop), false);
 
 	// 一番近い敵の方向に回転
 	RotateToNearestEnemy(kAttackOffsetRadius);
@@ -866,7 +879,7 @@ void Player::SliceUpdate()
 	SetActive(true);
 
 	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Slice));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Slice), false);
 
 	// 一番近い敵の方向に回転
 	RotateToNearestEnemy(kAttackOffsetRadius);
@@ -914,7 +927,7 @@ void Player::StabUpdate()
 	SetActive(true);
 
 	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Stab));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Stab), false);
 
 	// 一番近い敵の方向に回転
 	RotateToNearestEnemy(kAttackOffsetRadius);
@@ -945,7 +958,7 @@ void Player::SpinUpdate()
 	SetActive(true);
 
 	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Spin));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Spin), false);
 
 	if (m_anim.GetNextAnim().isEnd)
 	{
@@ -958,7 +971,7 @@ void Player::ShotUpdate()
 	// 当たり判定をオンにする
 	SetActive(true);
 	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Shot));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Shot), false);
 
 	if (m_attackFrame == kShotTiming)
 	{
@@ -981,7 +994,7 @@ void Player::SpecialUpdate()
 {
 	++m_attackFrame;
 	SetActive(false);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Special));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Special), true);
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 
@@ -1002,7 +1015,7 @@ void Player::SpecialUpdate()
 void Player::DodgeUpdate()
 {
 	SetActive(true);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Dodge));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Dodge), false);
 
 	// m_forward に基づいて移動ベクトルを設定（前方向へ）
 	Vector3 dodgeDir = m_forward;
@@ -1023,7 +1036,7 @@ void Player::DodgeUpdate()
 void Player::HitUpdate()
 {
 	SetActive(false);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Hit));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Hit), false);
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
@@ -1036,7 +1049,7 @@ void Player::HitUpdate()
 void Player::DeadUpdate()
 {
 	SetActive(false);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Dead));
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Dead), false);
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)

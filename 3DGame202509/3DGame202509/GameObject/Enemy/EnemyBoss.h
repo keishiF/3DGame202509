@@ -20,6 +20,9 @@ public:
 	// ƒ_ƒ[ƒW‚ğó‚¯‚½‚Ìˆ—
 	virtual void OnDamage() override;
 
+	// HPŠ„‡‚Ìæ“¾
+	float GetHpRate() const { return m_hpRate; }
+
 	// €‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©
 	bool IsDead() { return m_isDead; }
 

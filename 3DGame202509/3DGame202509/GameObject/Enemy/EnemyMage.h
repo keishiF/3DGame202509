@@ -16,6 +16,9 @@ public:
 
 	virtual void OnDamage() override;
 
+	// HP割合の取得
+	float GetHpRate() const { return m_hpRate; }
+
 	// 3D空間における位置座標をスクリーン座標に変換したものを取得
 	Vector3 GetScreenPos() const;
 

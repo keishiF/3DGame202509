@@ -242,6 +242,8 @@ void EnemyBoss::Draw()
 void EnemyBoss::OnDamage()
 {
 	m_hp -= 1;
+	m_hpRate = static_cast<float>(m_hp) / kHp;
+	m_hpRate = std::clamp(m_hpRate, 0.0f, 1.0f);
 
 	if (m_hp <= 0 && !m_isDead)
 	{

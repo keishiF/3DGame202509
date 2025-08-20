@@ -164,39 +164,6 @@ void EnemyMinion::Draw()
 #endif
 	MV1DrawModel(m_charModel);
 	m_weapon->Draw();
-
-	//Vector3 worldPos = m_rigidbody.GetPos();
-	//worldPos.y += 120.0f; // 頭上の高さ調整
-
-	//VECTOR worldVec = worldPos.ToDxVECTOR();
-
-	//// 3D→2D座標変換（戻り値がスクリーン座標）
-	//VECTOR screenVec = ConvWorldPosToScreenPos(worldVec);
-
-	//const int gaugeWidth = 100;
-	//const int gaugeHeight = 10;
-
-	//int gaugeX = static_cast<int>(screenVec.x - gaugeWidth / 2);
-	//int gaugeY = static_cast<int>(screenVec.y - gaugeHeight / 2);
-
-	//float hpRate = static_cast<float>(m_hp) / kHp;
-	//hpRate = std::clamp(hpRate, 0.0f, 1.0f);
-
-	//DrawBox(gaugeX, gaugeY,
-	//	gaugeX + gaugeWidth,
-	//	gaugeY + gaugeHeight,
-	//	0x808080, true);
-
-	//int hpBarWidth = static_cast<int>(gaugeWidth * hpRate);
-	//DrawBox(gaugeX, gaugeY,
-	//	gaugeX + hpBarWidth,
-	//	gaugeY + gaugeHeight,
-	//	0xff0000, true);
-
-	//DrawBox(gaugeX, gaugeY,
-	//	gaugeX + gaugeWidth,
-	//	gaugeY + gaugeHeight,
-	//	0x000000, false);
 }
 
 void EnemyMinion::OnDamage()

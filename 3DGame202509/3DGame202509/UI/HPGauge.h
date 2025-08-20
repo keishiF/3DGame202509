@@ -10,5 +10,8 @@ public:
 
 private:
 	void DrawPlayerHP();
+	void DrawBossHP();
+	void DrawMageHP();
+	void DrawMinionHP();
 };
 
