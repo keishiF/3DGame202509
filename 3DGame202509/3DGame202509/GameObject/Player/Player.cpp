@@ -5,6 +5,7 @@
 #include "game.h"
 #include "Physics.h"
 #include "Player.h"
+#include "PlayerBullet.h"
 #include "PlayerLeftWeapon.h"
 #include "PlayerRightWeapon.h"
 #include <algorithm>
@@ -30,7 +31,7 @@ namespace
 	constexpr float kRunStamina = 0.25f;
 	// 強攻撃をした際に消費するスタミナ
 	constexpr float kSpinStamina = 15.0f;
-
+	// スタミナがこの値を下回ったら走るのが遅くなるライン
 	constexpr float kRunSpeedDownStaminaRate = 35.0f;
 
 	// 移動速度
@@ -50,25 +51,26 @@ namespace
 
 	// アニメーション名
 	// 待機
-	const char* kIdleAnimName = "Idle";
+	const char* kIdleAnimName    = "Idle";
 	// 歩き
-	const char* kWalkAnimName = "Walking_B";
+	const char* kWalkAnimName    = "Walking_B";
 	// 走り
-	const char* kRunAnimName = "Running_A";
+	const char* kRunAnimName     = "Running_A";
 	// 疲れ
-	const char* kTiredAnimName = "Sit_Floor_Idle";
+	const char* kTiredAnimName   = "Sit_Floor_Idle";
 	// 攻撃
-	const char* kChopAnimName = "1H_Melee_Attack_Chop";
-	const char* kSliceAnimName = "1H_Melee_Attack_Slice_Diagonal";
-	const char* kStabAnimName = "1H_Melee_Attack_Stab";
-	const char* kSpinAnimName = "2H_Melee_Attack_Spin";
+	const char* kChopAnimName    = "1H_Melee_Attack_Chop";
+	const char* kSliceAnimName   = "1H_Melee_Attack_Slice_Diagonal";
+	const char* kStabAnimName    = "1H_Melee_Attack_Stab";
+	const char* kSpinAnimName    = "2H_Melee_Attack_Spin";
+	const char* kShotAnimName    = "2H_Melee_Attack_Stab";
 	const char* kSpecialAnimName = "2H_Melee_Attack_Stab";
 	// 回避
-	const char* kDodgeAnimName = "Dodge_Forward";
+	const char* kDodgeAnimName   = "Dodge_Forward";
 	// 被弾
-	const char* kHitAnimName = "Hit_B";
+	const char* kHitAnimName     = "Hit_B";
 	// 死亡
-	const char* kDeadAnimName = "Death_B";
+	const char* kDeadAnimName    = "Death_B";
 	// アニメーションの再生速度
 	constexpr float kAnimSpeed = 1.0f;
 	constexpr float kIdleAnimSpeed = 0.5f;
@@ -77,16 +79,19 @@ namespace
 	constexpr float kChopAnimSpeed = 1.0f;
 	constexpr float kSpecialAttackAnimSpeed = 0.5f;
 
+	constexpr float kShotTiming = 10.0f;
+
 	const std::unordered_map<PlayerState, RightAttackTiming> kRightColTimingTable =
 	{
 		{PlayerState::Idle,		 { 0,  0}},
 		{PlayerState::Walk,		 { 0,  0}},
-		{PlayerState::NormalRun,		 { 0,  0}},
+		{PlayerState::NormalRun, { 0,  0}},
 		{PlayerState::Tired,	 { 0,  0}},
 		{PlayerState::Chop,		 {16, 28}},
 		{PlayerState::Slice,	 {16, 28}},
 		{PlayerState::Stab,		 {16, 28}},
 		{PlayerState::Spin,      {16, 36}},
+		{PlayerState::Shot,      { 0,  0}},
 		{PlayerState::Special,   {16, 36}},
 		{PlayerState::Dodge,	 { 0,  0}},
 		{PlayerState::Hit,		 { 0,  0}},
@@ -97,12 +102,13 @@ namespace
 	{
 		{PlayerState::Idle,		 { 0,  0}},
 		{PlayerState::Walk,		 { 0,  0}},
-		{PlayerState::NormalRun,		 { 0,  0}},
+		{PlayerState::NormalRun, { 0,  0}},
 		{PlayerState::Tired,	 { 0,  0}},
 		{PlayerState::Chop,		 {16, 28}},
 		{PlayerState::Slice,	 {16, 28}},
 		{PlayerState::Stab,		 {16, 28}},
 		{PlayerState::Spin,      {16, 36}},
+		{PlayerState::Shot,      { 0,  0}},
 		{PlayerState::Special,   {16, 36}},
 		{PlayerState::Dodge,	 { 0,  0}},
 		{PlayerState::Hit,		 { 0,  0}},
@@ -219,6 +225,9 @@ void Player::Update()
 		break;
 	case PlayerState::Spin:
 		SpinUpdate();
+		break;
+	case PlayerState::Shot:
+		ShotUpdate();
 		break;
 	case PlayerState::Special:
 		SpecialUpdate();
@@ -340,6 +349,9 @@ void Player::ChangeState(PlayerState newState)
 	case PlayerState::Spin:
 		m_anim.ChangeAnim(kSpinAnimName, kAnimSpeed, false);
 		break;
+	case PlayerState::Shot:
+		m_anim.ChangeAnim(kStabAnimName, kAnimSpeed, false);
+		break;
 	case PlayerState::Special:
 		m_anim.ChangeAnim(kSpecialAnimName, kSpecialAttackAnimSpeed, false);
 		break;
@@ -396,6 +408,11 @@ void Player::IdleUpdate()
 		}
 	}
 
+	if (input.IsTrigger("Y"))
+	{
+		ChangeState(PlayerState::Shot);
+	}
+
 #ifdef _DEBUG
 	// 左スティックを押し込んだ時に必殺技ゲージが最大でなければ最大にする
 	if (input.IsPress("LPush"))
@@ -409,8 +426,8 @@ void Player::IdleUpdate()
 	}
 #endif
 
-	// RBボタンの入力があれば必殺技状態に移行する
-	if (input.IsTrigger("RB"))
+	// LBボタンの入力があれば必殺技状態に移行する
+	if (input.IsTrigger("Special"))
 	{
 		if (m_specialGauge < kMaxSpecialGauge)
 		{
@@ -504,8 +521,8 @@ void Player::WalkUpdate()
 		ChangeState(PlayerState::Idle);
 	}
 
-	// LBの入力があればダッシュ状態に移行する
-	if (input.IsTrigger("LB"))
+	// RBの入力があればダッシュ状態に移行する
+	if (input.IsTrigger("RB"))
 	{
 		if (m_stamina >= kRunSpeedDownStaminaRate)
 		{
@@ -613,8 +630,8 @@ void Player::RunUpdate()
 		ChangeState(PlayerState::Idle);
 	}
 
-	// LBの入力があれば歩き状態に移行する
-	if (input.IsTrigger("LB"))
+	// RBの入力があれば歩き状態に移行する
+	if (input.IsTrigger("RB"))
 	{
 		ChangeState(PlayerState::Walk);
 	}
@@ -724,8 +741,8 @@ void Player::TiredRunUpdate()
 		ChangeState(PlayerState::Idle);
 	}
 
-	// LBの入力があれば歩き状態に移行する
-	if (input.IsTrigger("LB"))
+	// RBの入力があれば歩き状態に移行する
+	if (input.IsTrigger("RB"))
 	{
 		ChangeState(PlayerState::Walk);
 	}
@@ -913,6 +930,30 @@ void Player::SpinUpdate()
 
 	++m_attackFrame;
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Spin));
+
+	if (m_anim.GetNextAnim().isEnd)
+	{
+		ChangeState(PlayerState::Idle);
+	}
+}
+
+void Player::ShotUpdate()
+{
+	// 当たり判定をオンにする
+	SetActive(true);
+	++m_attackFrame;
+	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Shot));
+
+	if (m_attackFrame == kShotTiming)
+	{
+		// 弾を生成
+		Vector3 myPos = m_rigidbody.GetPos();
+		myPos.y += 50.0f;
+
+		auto bullet = std::make_shared<PlayerBullet>();
+		bullet->Init(myPos, m_forward);
+		m_bullets.push_back(bullet);
+	}
 
 	if (m_anim.GetNextAnim().isEnd)
 	{

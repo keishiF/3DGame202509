@@ -17,6 +17,7 @@ enum class PlayerState
 	Slice,      // UŒ‚2’i–Ú
 	Stab,       // UŒ‚3’i–Ú
 	Spin,       // ‹­UŒ‚
+	Shot,       // ËŒ‚
 	Special,    // •KE‹Z
 	Dodge,      // ‰ñ”ğ
 	Hit,        // ”í’e
@@ -25,8 +26,9 @@ enum class PlayerState
 
 class Effect;
 class EnemyBase;
-class PlayerRightWeapon;
+class PlayerBullet;
 class PlayerLeftWeapon;
+class PlayerRightWeapon;
 class Player : public Collidable
 {
 public:
@@ -57,6 +59,8 @@ public:
 	// •KE‹ZƒQ[ƒWæ“¾
 	float GetSpecialGauge() const { return m_specialGauge; }
 	float GetSpecialGaugeRate() const { return m_specialGaugeRate; }
+	// Œ»İ‚Ìó‘Ô‚ğæ“¾
+	PlayerState GetPlayerState() const { return m_state; }
 
 	// •KE‹ZƒQ[ƒW‚ğ‰ÁZ‚·‚éŠÖ”
 	void SetSpecialGauge(int specialGaugePoint);
@@ -91,6 +95,7 @@ private:
 	void SliceUpdate();
 	void StabUpdate();
 	void SpinUpdate();
+	void ShotUpdate();
 	void SpecialUpdate();
 	// ‰ñ”ğó‘Ô
 	void DodgeUpdate();
@@ -137,6 +142,8 @@ private:
 	Animator m_anim;
 
 	Quaternion m_currentRot;
+
+	std::vector<std::shared_ptr<PlayerBullet>> m_bullets;
 
 	std::shared_ptr<PlayerRightWeapon> m_rightWeapon;
 	//std::shared_ptr<PlayerLeftWeapon> m_leftWeapon;

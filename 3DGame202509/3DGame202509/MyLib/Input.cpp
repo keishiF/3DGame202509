@@ -12,6 +12,9 @@ Input::Input()
 	m_inputActionMap["X"]     = { {InputType::keyboard, KEY_INPUT_9},
 								  {InputType::pad,      PAD_INPUT_4} };
 
+	m_inputActionMap["Y"]     = { {InputType::keyboard, KEY_INPUT_9},
+								  {InputType::pad,      PAD_INPUT_3} };
+
 	m_inputActionMap["OK"]    = { {InputType::keyboard, KEY_INPUT_RETURN},
 							      {InputType::pad,      PAD_INPUT_2} };
 
@@ -27,7 +30,7 @@ Input::Input()
 	m_inputActionMap["RIGHT"] = { {InputType::keyboard, KEY_INPUT_D},
 							      {InputType::pad,      PAD_INPUT_RIGHT} };
 
-	m_inputActionMap["LB"]    = { {InputType::keyboard, KEY_INPUT_1},
+	m_inputActionMap["Special"]    = { {InputType::keyboard, KEY_INPUT_1},
 								  {InputType::pad,      PAD_INPUT_5} };
 
 	m_inputActionMap["RB"]    = { {InputType::keyboard, KEY_INPUT_2},

@@ -1,7 +1,6 @@
 #pragma once
-
-#include "Vector3.h"
 #include "Collidable.h"
+#include "Vector3.h"
 
 class EnemyMageBullet : public Collidable
 {
