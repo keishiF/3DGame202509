@@ -133,6 +133,7 @@ private:
 
 	// 経過フレームを測る
 	float m_frame;
+	int m_blinkFrame;
 	float m_attackFrame;
 
 	// エフェクトハンドル

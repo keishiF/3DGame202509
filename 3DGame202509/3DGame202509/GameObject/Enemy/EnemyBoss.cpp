@@ -112,6 +112,7 @@ void EnemyBoss::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_findRadius = kFindRadius;
 	m_attackRadius = kAttackRadius;
 	m_hp = kHp;
+	m_hpRate = m_hp / kHp;
 	m_isDead = false;
 	m_attackFrame = 0.0f;
 	m_walkFrame = 0.0f;

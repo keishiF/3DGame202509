@@ -51,7 +51,7 @@ void TitleScene::NormalUpdate()
 {
 	++m_blinkFrame;
 
-	if (Input::GetInstance().IsPress("LB"))
+	if (Input::GetInstance().IsPress("OK"))
 	{
 		m_update = &TitleScene::FadeOutUpdate;
 		m_draw = &TitleScene::FadeDraw;

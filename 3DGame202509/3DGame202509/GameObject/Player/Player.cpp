@@ -130,6 +130,7 @@ Player::Player() :
 	m_isDead(false),
 	m_attackPower(1),
 	m_frame(0.0),
+	m_blinkFrame(0.0f),
 	m_attackFrame(0.0f),
 	m_specialEffect(-1),
 	m_state(PlayerState::Idle),
@@ -278,12 +279,16 @@ void Player::Draw()
 		return;
 	}
 
+	// 点滅効果のための条件
+	if ((m_blinkFrame / 3) % 2 == 0)
+	{
 #if _DEBUG
-	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_radius, 16, 0x00ff00, 0x00ff00, false);
-	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kAttackOffsetRadius, 16, 0xff0000, 0xff0000, false);
+		DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_radius, 16, 0x00ff00, 0x00ff00, false);
+		DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kAttackOffsetRadius, 16, 0xff0000, 0xff0000, false);
 #endif
-	MV1DrawModel(m_charModel);
-	m_rightWeapon->Draw();
+		MV1DrawModel(m_charModel);
+		m_rightWeapon->Draw();
+	}
 }
 
 void Player::SetSpecialGauge(int specialGaugePoint)
@@ -329,6 +334,7 @@ void Player::ChangeState(PlayerState newState)
 
 	m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	m_attackFrame = 0.0f;
+	m_blinkFrame = 0;
 	m_isCombo = false;
 
 	VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
@@ -1037,6 +1043,8 @@ void Player::HitUpdate()
 {
 	SetActive(false);
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Hit), false);
+
+	++m_blinkFrame;
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
