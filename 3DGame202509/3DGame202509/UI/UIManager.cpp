@@ -35,6 +35,6 @@ void UIManager::Draw(std::shared_ptr<Player> player,
 {
 	// プレイヤーのゲージ描画
 	m_hpGauge->Draw();
-	m_staminaGauge->Draw(player->GetStaminaRate(), kPlayerStaminaGaugePosX, kPlayerStaminaGaugePosY);
+	m_staminaGauge->Draw();
 	m_specialGauge->Draw();
 }

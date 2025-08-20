@@ -35,16 +35,22 @@ void SpecialGauge::Draw()
 	// •KŽE‹ZƒQ[ƒW—Ê
 	float specialGaugeRate = player->GetSpecialGaugeRate();
 
-	DrawBox(specialGaugePosX, specialGaugePosY,
-		specialGaugePosX + kSpecialGaugeWidth, specialGaugePosY + kSpecialGaugeHeight,
+	DrawBox(specialGaugePosX, 
+		specialGaugePosY,
+		specialGaugePosX + kSpecialGaugeWidth, 
+		specialGaugePosY + kSpecialGaugeHeight,
 		0x808080, true);
 
 	int hpBarWidth = static_cast<int>(kSpecialGaugeWidth * specialGaugeRate);
-	DrawBox(specialGaugePosX, specialGaugePosY,
-		specialGaugePosX + hpBarWidth, specialGaugePosY + kSpecialGaugeHeight,
+	DrawBox(specialGaugePosX, 
+		specialGaugePosY,
+		specialGaugePosX + hpBarWidth, 
+		specialGaugePosY + kSpecialGaugeHeight,
 		0x66ffff, true);
 
-	DrawBox(specialGaugePosX, specialGaugePosY,
-		specialGaugePosX + kSpecialGaugeWidth, specialGaugePosY + kSpecialGaugeHeight,
+	DrawBox(specialGaugePosX, 
+		specialGaugePosY,
+		specialGaugePosX + kSpecialGaugeWidth, 
+		specialGaugePosY + kSpecialGaugeHeight,
 		0x000000, false);
 }

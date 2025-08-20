@@ -6,6 +6,6 @@ public:
 	StaminaGauge();
 	~StaminaGauge();
 
-	void Draw(float staminaRate, float posX, float posY);
+	void Draw();
 };
 
