@@ -243,6 +243,22 @@ void Player::Update()
 		break;
 	}
 
+	for (auto& bullet : m_bullets)
+	{
+		bullet->Update();
+	}
+	m_bullets.erase(std::remove_if(m_bullets.begin(), m_bullets.end(), [this](const std::shared_ptr<PlayerBullet>& b)
+		{
+			if (b->IsDead())
+			{
+				b->Final();
+				return true;
+			}
+			return false;
+		}),
+		m_bullets.end()
+	);
+
 	//“–‚½‚è”»’è
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	Vector3 colPos = m_rigidbody.GetPos();

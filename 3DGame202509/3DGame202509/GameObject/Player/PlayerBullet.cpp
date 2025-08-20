@@ -10,7 +10,7 @@ namespace
 }
 
 PlayerBullet::PlayerBullet() :
-	Collidable(ObjectTag::Bullet, ObjectPriority::Low, ColliderData::Kind::Sphere),
+	Collidable(ObjectTag::PlayerWeapon, ObjectPriority::Low, ColliderData::Kind::Sphere),
 	m_dir(0.0f, 0.0f, 0.0f),
 	m_frame(0),
 	m_isDead(false)
@@ -27,6 +27,7 @@ void PlayerBullet::Init(Vector3 myPos, Vector3 dir)
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(myPos);
 
+	m_dir = dir;
 	m_dir.y = 0.0f;
 
 	auto colData = std::dynamic_pointer_cast<SphereColliderData>(m_colliderData);
