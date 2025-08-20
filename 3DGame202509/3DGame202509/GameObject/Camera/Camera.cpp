@@ -15,6 +15,9 @@ namespace
 	/*constexpr float kCameraPosY = 300.0f;
 	constexpr float kCameraPosZ = -600.0f;*/
 	constexpr float kCameraOffsetY = 150.0f;
+
+	constexpr float kShakeStrength = 0.2f;
+	constexpr float kShakeDuration = 0.5f;
 }
 
 Camera::Camera() :
@@ -23,7 +26,11 @@ Camera::Camera() :
 	m_fov(DX_PI_F / 2.5f),
 	m_isLockOn(false),
 	m_cameraRotX(0.0f),
-	m_cameraRotY(0.0f)
+	m_cameraRotY(0.0f),
+	m_shakeStrength(0.0f),
+	m_shakeDuration(0.0f),
+	m_shakeTime(0.0f),
+	m_shakeOffset(0.0f, 0.0f, 0.0f)
 {
 }
 
@@ -42,6 +49,35 @@ void Camera::Update(std::shared_ptr<Player> player)
 	m_lookAtPos = { playerPos.x, playerPos.y + kCameraOffsetY, playerPos.z };
 
 	Vector3 offset = { kCameraPosX, kCameraPosY, kCameraPosZ };
+
+	// もしプレイヤーが被弾したら
+	if (player->GetPlayerState() == PlayerState::Hit)
+	{
+		m_shakeStrength = kShakeStrength;
+		m_shakeDuration = kShakeDuration;
+		m_shakeTime = 0.0f;
+		m_shakeOffset = Vector3(0.0f, 0.0f, 0.0f);
+
+		// 揺れている時間が、設定した揺れの持続時間経過していないなら
+		if (m_shakeTime < m_shakeDuration)
+		{
+			// 揺れている時間をカウント
+			m_shakeTime += 1.0f;
+
+			// 縦横にランダムに揺らす
+			m_shakeOffset.x = (rand() % 100 - 50) * m_shakeStrength;
+			m_shakeOffset.y = (rand() % 100 - 50) * m_shakeStrength;
+			m_shakeOffset.z = 0.0f; // z方向の振動は無効
+		}
+		else
+		{
+			// 振動が終了したらリセット
+			m_shakeStrength = 0.0f;
+			m_shakeDuration = 0.0f;
+			m_shakeTime = 0.0f;
+			m_shakeOffset = Vector3(0.0f, 0.0f, 0.0f); // 振動終了
+		}
+	}
 
 #ifdef _DEBUG
 	int inputX, inputY;
@@ -67,7 +103,8 @@ void Camera::Update(std::shared_ptr<Player> player)
 		offset.y * cos(m_cameraRotY) - offset.z * sin(m_cameraRotY),
 		offset.x * sin(m_cameraRotX) + offset.z * cos(m_cameraRotX)
 	};
-	m_pos = playerPos + rotatedOffset;
+
+	m_pos = playerPos + rotatedOffset + m_shakeOffset;
 
 	DxLib::SetCameraPositionAndTarget_UpVecY(
 		VGet(m_pos.x, m_pos.y, m_pos.z),

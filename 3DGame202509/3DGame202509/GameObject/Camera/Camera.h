@@ -28,5 +28,14 @@ private:
 
 	float m_cameraRotX;
 	float m_cameraRotY;
+
+	// —h‚ê‚Ì‹­‚³
+	float m_shakeStrength;
+	// —h‚ê‚éŠÔ
+	float m_shakeDuration;
+	// —h‚ê‚ÌŒo‰ßŠÔ
+	float m_shakeTime;
+	// —h‚ê‚É‚æ‚éˆÊ’u•â³’l
+	Vector3 m_shakeOffset;
 };
 
