@@ -6,6 +6,6 @@ public:
 	SpecialGauge();
 	~SpecialGauge();
 
-	void Draw(float specialGaugeRate);
+	void Draw();
 };
 

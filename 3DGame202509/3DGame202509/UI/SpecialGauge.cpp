@@ -1,4 +1,6 @@
 #include "game.h"
+#include "GameObjectManager.h"
+#include "Player/Player.h"
 #include "SpecialGauge.h"
 #include <DxLib.h>
 
@@ -20,11 +22,18 @@ SpecialGauge::~SpecialGauge()
 {
 }
 
-void SpecialGauge::Draw(float specialGaugeRate)
+void SpecialGauge::Draw()
 {
+	auto& gameObjectManager = GameObjectManager::Instance();
+	auto player = gameObjectManager.GetPlayer();
+	if (!player) return;
+
 	// •KŽE‹ZƒQ[ƒW‚Ì•`‰æˆÊ’u
 	int specialGaugePosX = (Game::kScreenWidth - kSpecialGaugeWidth) * 0.5f;
 	int specialGaugePosY = Game::kScreenHeight - kSpecialGaugeHeight - kGaugeOffset;
+
+	// •KŽE‹ZƒQ[ƒW—Ê
+	float specialGaugeRate = player->GetSpecialGaugeRate();
 
 	DrawBox(specialGaugePosX, specialGaugePosY,
 		specialGaugePosX + kSpecialGaugeWidth, specialGaugePosY + kSpecialGaugeHeight,
