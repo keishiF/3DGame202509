@@ -34,12 +34,7 @@ void UIManager::Draw(std::shared_ptr<Player> player,
 	std::vector<std::shared_ptr<EnemyMage>> mages)
 {
 	// プレイヤーのゲージ描画
-	m_hpGauge->Draw(player->GetHPRate(), kPlayerHPGaugePosX, kPlayerHPGaugePosY);
+	m_hpGauge->Draw();
 	m_staminaGauge->Draw(player->GetStaminaRate(), kPlayerStaminaGaugePosX, kPlayerStaminaGaugePosY);
 	m_specialGauge->Draw(player->GetSpecialGaugeRate());
-
-	for (const auto& minion : minions)
-	{
-		m_hpGauge->Draw(minion->GetHpRate(), minion->GetScreenPos().x, minion->GetScreenPos().y);
-	}
 }

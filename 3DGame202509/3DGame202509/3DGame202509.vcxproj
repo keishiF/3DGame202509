@@ -162,6 +162,7 @@
     <ClCompile Include="GameObject\Enemy\EnemyMinionBlade.cpp" />
     <ClCompile Include="GameObject\GameObjectManager.cpp" />
     <ClCompile Include="GameObject\Player\Player.cpp" />
+    <ClCompile Include="GameObject\Player\PlayerBullet.cpp" />
     <ClCompile Include="GameObject\Player\PlayerLeftWeapon.cpp" />
     <ClCompile Include="GameObject\Player\PlayerRightWeapon.cpp" />
     <ClCompile Include="GameObject\SkyDome\SkyDome.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="GameObject\Enemy\EnemyMinionBlade.h" />
     <ClInclude Include="GameObject\GameObjectManager.h" />
     <ClInclude Include="GameObject\Player\Player.h" />
+    <ClInclude Include="GameObject\Player\PlayerBullet.h" />
     <ClInclude Include="GameObject\Player\PlayerLeftWeapon.h" />
     <ClInclude Include="GameObject\Player\PlayerRightWeapon.h" />
     <ClInclude Include="GameObject\SkyDome\SkyDome.h" />

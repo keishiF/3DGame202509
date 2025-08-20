@@ -218,6 +218,9 @@
     <ClCompile Include="UI\SpecialGauge.cpp">
       <Filter>ソース ファイル\UI</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject\Player\PlayerBullet.cpp">
+      <Filter>ソース ファイル\GameObject\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="General\Application.h">
@@ -363,6 +366,9 @@
     </ClInclude>
     <ClInclude Include="UI\SpecialGauge.h">
       <Filter>ヘッダー ファイル\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Player\PlayerBullet.h">
+      <Filter>ヘッダー ファイル\GameObject\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
