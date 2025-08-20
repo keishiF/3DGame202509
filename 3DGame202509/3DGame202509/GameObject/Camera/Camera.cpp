@@ -16,7 +16,9 @@ namespace
 	constexpr float kCameraPosZ = -600.0f;*/
 	constexpr float kCameraOffsetY = 150.0f;
 
+	// —h‚ê‚Ì‹­‚³
 	constexpr float kShakeStrength = 0.2f;
+	// —h‚ê‚éŽžŠÔ
 	constexpr float kShakeDuration = 0.5f;
 }
 

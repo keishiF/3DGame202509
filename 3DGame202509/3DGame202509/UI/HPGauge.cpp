@@ -93,9 +93,13 @@ void HPGauge::DrawMageHP()
 
 	for (auto& mage : mages)
 	{
-		if (!mage) return;
+		// null‚Ì‚Ícontinue
+		if (!mage) continue;
 
 		float mageHPRate = mage->GetHpRate();
+
+		// null‚¶‚á‚È‚­‚ÄHP‚ª‚È‚¢‚Æ‚«‚àcontinue
+		if (mageHPRate <= 0.0f) continue;
 
 		float magePosX = mage->GetScreenPos().x;
 		float magePosY = mage->GetScreenPos().y;
@@ -122,9 +126,13 @@ void HPGauge::DrawMinionHP()
 
 	for (auto& minion : minions)
 	{
-		if (!minion) return;
+		// null‚Ì‚Ícontinue
+		if (!minion) continue;
 
 		float minionHPRate = minion->GetHpRate();
+
+		// HP‚ª‚È‚¢ê‡‚Ícontinue
+		if (minionHPRate <= 0.0f) continue;
 
 		float minionPosX = minion->GetScreenPos().x;
 		float minionPosY = minion->GetScreenPos().y;
