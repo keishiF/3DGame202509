@@ -173,6 +173,9 @@
     <ClCompile Include="GameObject\StatusComponent.cpp" />
     <ClCompile Include="GameObject\SubEnemy\EnemyMinionWeapon.cpp" />
     <ClCompile Include="GameObject\SubEnemy\SubEnemyBase.cpp" />
+    <ClCompile Include="GameObject\SubEnemy\SubEnemyBoss.cpp" />
+    <ClCompile Include="GameObject\SubEnemy\SubEnemyBossLeftWeapon.cpp" />
+    <ClCompile Include="GameObject\SubEnemy\SubEnemyBossRightWeapon.cpp" />
     <ClCompile Include="GameObject\SubEnemy\SubEnemyMage.cpp" />
     <ClCompile Include="GameObject\SubEnemy\SubEnemyMinion.cpp" />
     <ClCompile Include="GameObject\SubPlayer\PlayerWeapon.cpp" />
@@ -225,9 +228,13 @@
     <ClInclude Include="GameObject\Stage\StageObjectBase.h" />
     <ClInclude Include="GameObject\Stage\StageObjectManager.h" />
     <ClInclude Include="GameObject\StatusComponent.h" />
-    <ClInclude Include="GameObject\SubEnemy\EnemyAtkColTiming.h" />
+    <ClInclude Include="GameObject\SubEnemy\EnemyBossAtkColTiming.h" />
+    <ClInclude Include="GameObject\SubEnemy\EnemyMinionAtkColTiming.h" />
     <ClInclude Include="GameObject\SubEnemy\EnemyMinionWeapon.h" />
     <ClInclude Include="GameObject\SubEnemy\SubEnemyBase.h" />
+    <ClInclude Include="GameObject\SubEnemy\SubEnemyBoss.h" />
+    <ClInclude Include="GameObject\SubEnemy\SubEnemyBossLeftWeapon.h" />
+    <ClInclude Include="GameObject\SubEnemy\SubEnemyBossRightWeapon.h" />
     <ClInclude Include="GameObject\SubEnemy\SubEnemyMage.h" />
     <ClInclude Include="GameObject\SubEnemy\SubEnemyMinion.h" />
     <ClInclude Include="GameObject\SubPlayer\PlayerAtkColTiming.h" />

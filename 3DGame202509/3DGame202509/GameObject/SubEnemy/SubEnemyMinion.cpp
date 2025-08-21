@@ -169,7 +169,7 @@ void SubEnemyMinion::Update(std::shared_ptr<SubPlayer> player)
 void SubEnemyMinion::FindUpdate(std::shared_ptr<SubPlayer> player)
 {
 	SetActive(true);
-	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubEnemyState::Find));
+	m_weapon->Update(m_model, m_atkFrame, MinionAtk::kColTimingTable.at(SubEnemyState::Find));
 
 	float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
 	if (distance <= (m_playerFindRadius + player->GetRadius()))
@@ -181,7 +181,7 @@ void SubEnemyMinion::FindUpdate(std::shared_ptr<SubPlayer> player)
 void SubEnemyMinion::WalkUpdate(std::shared_ptr<SubPlayer> player)
 {
 	SetActive(true);
-	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubEnemyState::Chase));
+	m_weapon->Update(m_model, m_atkFrame, MinionAtk::kColTimingTable.at(SubEnemyState::Chase));
 
 	// プレイヤーへの方向ベクトル
 	Vector3 myPos = m_rigidbody.GetPos();
@@ -222,7 +222,7 @@ void SubEnemyMinion::WalkUpdate(std::shared_ptr<SubPlayer> player)
 void SubEnemyMinion::ChaseUpdate(std::shared_ptr<SubPlayer> player)
 {
 	SetActive(true);
-	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubEnemyState::Chase));
+	m_weapon->Update(m_model, m_atkFrame, MinionAtk::kColTimingTable.at(SubEnemyState::Chase));
 
 	// プレイヤーへの方向ベクトル
 	Vector3 myPos = m_rigidbody.GetPos();
@@ -261,7 +261,7 @@ void SubEnemyMinion::AttackUpdate(std::shared_ptr<SubPlayer> player)
 {
 	SetActive(true);
 	++m_atkFrame;
-	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubEnemyState::Attack));
+	m_weapon->Update(m_model, m_atkFrame, MinionAtk::kColTimingTable.at(SubEnemyState::Attack));
 
 	// プレイヤーへの方向ベクトル
 	Vector3 myPos = m_rigidbody.GetPos();
@@ -296,7 +296,7 @@ void SubEnemyMinion::AttackUpdate(std::shared_ptr<SubPlayer> player)
 void SubEnemyMinion::HitUpdate(std::shared_ptr<SubPlayer> player)
 {
 	SetActive(false);
-	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubEnemyState::Hit));
+	m_weapon->Update(m_model, m_atkFrame, MinionAtk::kColTimingTable.at(SubEnemyState::Hit));
 
 	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
@@ -309,7 +309,7 @@ void SubEnemyMinion::HitUpdate(std::shared_ptr<SubPlayer> player)
 void SubEnemyMinion::DeadUpdate(std::shared_ptr<SubPlayer> player)
 {
 	SetActive(false);
-	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubEnemyState::Dead));
+	m_weapon->Update(m_model, m_atkFrame, MinionAtk::kColTimingTable.at(SubEnemyState::Dead));
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)

@@ -1,5 +1,5 @@
 ﻿#include "CapsuleColliderData.h"
-#include "Enemy/EnemyBase.h"
+#include "SubEnemy/SubEnemyBase.h"
 #include "GameObjectManager.h"
 #include "Input.h"
 #include "PlayerAtkColTiming.h"
@@ -1039,12 +1039,12 @@ void SubPlayer::RotateToNearestEnemy(float radius)
 	}
 }
 
-std::shared_ptr<EnemyBase> SubPlayer::FindNearestEnemy(float radius)
+std::shared_ptr<SubEnemyBase> SubPlayer::FindNearestEnemy(float radius)
 {
-	std::shared_ptr<EnemyBase> nearest = nullptr;
+	std::shared_ptr<SubEnemyBase> nearest = nullptr;
 	float minDist = radius;
 
-	auto enemies = GameObjectManager::Instance().GetEnemies();
+	auto enemies = GameObjectManager::Instance().GetSubEnemies();
 	Vector3 myPos = m_rigidbody.GetPos();
 
 	for (auto& enemy : enemies)

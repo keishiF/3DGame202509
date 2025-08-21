@@ -22,7 +22,7 @@ enum class SubPlayerState
 	Dead        // 死亡
 };
 
-class EnemyBase;
+class SubEnemyBase;
 class PlayerWeapon;
 class SubPlayer : public CharacterBase
 {
@@ -81,7 +81,7 @@ private:
 
 private:
 	void RotateToNearestEnemy(float radius);
-	std::shared_ptr<EnemyBase> FindNearestEnemy(float radius);
+	std::shared_ptr<SubEnemyBase> FindNearestEnemy(float radius);
 
 private:
 	// スタミナ

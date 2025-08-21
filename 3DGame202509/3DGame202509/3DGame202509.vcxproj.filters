@@ -254,6 +254,15 @@
     <ClCompile Include="GameObject\SubEnemy\SubEnemyMage.cpp">
       <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject\SubEnemy\SubEnemyBoss.cpp">
+      <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\SubEnemy\SubEnemyBossLeftWeapon.cpp">
+      <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\SubEnemy\SubEnemyBossRightWeapon.cpp">
+      <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="General\Application.h">
@@ -415,7 +424,7 @@
     <ClInclude Include="GameObject\SubPlayer\SubPlayer.h">
       <Filter>ヘッダー ファイル\GameObject\SubPlayer</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\SubEnemy\EnemyAtkColTiming.h">
+    <ClInclude Include="GameObject\SubEnemy\EnemyMinionAtkColTiming.h">
       <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\SubEnemy\EnemyMinionWeapon.h">
@@ -428,6 +437,18 @@
       <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\SubEnemy\SubEnemyMage.h">
+      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\SubEnemy\SubEnemyBoss.h">
+      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\SubEnemy\EnemyBossAtkColTiming.h">
+      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\SubEnemy\SubEnemyBossLeftWeapon.h">
+      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\SubEnemy\SubEnemyBossRightWeapon.h">
       <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
     </ClInclude>
   </ItemGroup>

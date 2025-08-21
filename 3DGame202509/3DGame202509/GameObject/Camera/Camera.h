@@ -4,6 +4,7 @@
 #include <memory>
 
 class Player;
+class SubPlayer;
 class Camera
 {
 public:
@@ -13,6 +14,11 @@ public:
 	void Update(std::shared_ptr<Player> player);
 	// カメラの初期化
 	void SetCamera(std::shared_ptr<Player> player);
+
+	// 更新処理
+	void Update(std::shared_ptr<SubPlayer> player);
+	// カメラの初期化
+	void SetCamera(std::shared_ptr<SubPlayer> player);
 
 	// カメラの位置取得
 	Vector3 GetPos() const { return m_pos; }

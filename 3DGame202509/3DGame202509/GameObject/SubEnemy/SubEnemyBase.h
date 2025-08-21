@@ -28,6 +28,7 @@ public:
 
 	virtual void Update(std::shared_ptr<SubPlayer> player) abstract;
 
+	Vector3 GetPos() const { return m_rigidbody.GetPos(); }
 	Vector3 GetScreenPos() const;
 
 protected:
@@ -40,6 +41,8 @@ protected:
 
 	// Playerを探している状態
 	virtual void FindUpdate(std::shared_ptr<SubPlayer> player) abstract;
+	// 歩き状態
+	virtual void WalkUpdate(std::shared_ptr<SubPlayer> player) abstract;
 	// Playerを見つけて追いかけている状態
 	virtual void ChaseUpdate(std::shared_ptr<SubPlayer> player) abstract;
 	// 攻撃状態

@@ -20,18 +20,14 @@ private:
 
 	// 待機状態
 	void FindUpdate(std::shared_ptr<SubPlayer> player) override;
-
-	void WalkUpdate(std::shared_ptr<SubPlayer> player);
-
+	// 歩き状態
+	void WalkUpdate(std::shared_ptr<SubPlayer> player) override;
 	// 発見状態
 	void ChaseUpdate(std::shared_ptr<SubPlayer> player) override;
-
 	// 攻撃状態
 	void AttackUpdate(std::shared_ptr<SubPlayer> player) override;
-
 	// 被弾状態
 	void HitUpdate(std::shared_ptr<SubPlayer> player) override;
-
 	// 死亡状態
 	void DeadUpdate(std::shared_ptr<SubPlayer> player) override;
 

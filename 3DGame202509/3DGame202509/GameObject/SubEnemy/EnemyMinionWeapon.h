@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Collidable.h"
-#include "EnemyAtkColTiming.h"
+#include "EnemyMinionAtkColTiming.h"
 
 class EnemyMinionWeapon : public Collidable
 {
@@ -9,7 +9,7 @@ public:
 	~EnemyMinionWeapon();
 
 	void Init();
-	void Update(int model, float currentFrame, const AtkTiming& timing);
+	void Update(int model, float currentFrame, const MinionAtk::AtkTiming& timing);
 	// 待機状態
 	void IdleUpdate(int model);
 	// 各攻撃状態

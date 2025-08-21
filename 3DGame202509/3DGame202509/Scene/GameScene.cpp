@@ -1,19 +1,13 @@
-﻿#include "Camera/Camera.h"
-#include "Enemy/EnemyMage.h"
-#include "Enemy/EnemyMinion.h"
-#include "game.h"
+﻿#include "game.h"
 #include "GameObjectManager.h"
 #include "GameScene.h"
 #include "Input.h"
 #include "Physics.h"
-#include "Player/Player.h"
 #include "ResultScene.h"
 #include "SceneController.h"
 #include "Stage/StageObjectManager.h"
 #include "TitleScene.h"
-#include "UIManager.h"
 #include <cassert>
-#include <EffekseerForDxLib.h>
 #include <DxLib.h>
 
 namespace
@@ -34,15 +28,10 @@ GameScene::GameScene(SceneController& controller) :
 	m_update(&GameScene::FadeInUpdate),
 	m_draw(&GameScene::FadeDraw)
 {
-	Effekseer_Init(20000);
-	Effekseer_InitDistortion();
-
 	m_gameObjectManager.Init();
 
 	m_stageObjectManager = std::make_shared<StageObjectManager>();
 	m_stageObjectManager->Init();
-
-	m_uiManager = std::make_shared<UIManager>();
 }
 
 GameScene::~GameScene()
@@ -69,7 +58,6 @@ void GameScene::NormalUpdate()
 	++m_frame;
 	++m_blinkFrame;
 
-	UpdateEffekseer3D();
 	m_gameObjectManager.Update();
 	if (m_gameObjectManager.IsGameOver())
 	{
@@ -116,19 +104,15 @@ void GameScene::NormalDraw()
 #endif
 	printf("frame %d\n", m_frame);
 
-	Effekseer_Sync3DSetting();
-	DrawEffekseer3D();
 	m_stageObjectManager->Draw();
 
 	m_gameObjectManager.Draw();
-	m_uiManager->Draw();
 }
 
 void GameScene::FadeDraw()
 {
 	m_stageObjectManager->Draw();
 	m_gameObjectManager.Draw();
-	m_uiManager->Draw();
 
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));

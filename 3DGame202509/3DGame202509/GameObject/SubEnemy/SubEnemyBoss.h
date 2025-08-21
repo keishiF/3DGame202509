@@ -1,37 +1,45 @@
-ï»¿#pragma once
+#pragma once
 #include "SubEnemyBase.h"
 
-class EnemyMinionWeapon;
-class SubEnemyMinion : public SubEnemyBase
+class SubEnemyBossLeftWeapon;
+class SubEnemyBossRightWeapon;
+class SubEnemyBoss : public SubEnemyBase
 {
 public:
-	SubEnemyMinion();
-	~SubEnemyMinion();
+	SubEnemyBoss();
+	~SubEnemyBoss();
 
 	virtual void Init(Vector3& pos, Vector3& rot, Vector3& scale) override;
 	virtual void Draw() override;
 
 	virtual void Update(std::shared_ptr<SubPlayer> player) override;
 
-	// æ•µã®çŠ¶æ…‹
+	// “G‚Ìó‘Ô
 private:
 	const char* GetAnimName(SubEnemyState state) const override;
 	virtual float GetAnimPlaySpeed(SubEnemyState state) const override;
 	bool IsLoopAnim(SubEnemyState state) const override;
 
-	// å¾…æ©ŸçŠ¶æ…‹
+	// ‘Ò‹@ó‘Ô
 	void FindUpdate(std::shared_ptr<SubPlayer> player) override;
-	// æ­©ãçŠ¶æ…‹
+	// •à‚«ó‘Ô
 	void WalkUpdate(std::shared_ptr<SubPlayer> player) override;
-	// ç™ºè¦‹çŠ¶æ…‹
+	// ”­Œ©ó‘Ô
 	void ChaseUpdate(std::shared_ptr<SubPlayer> player) override;
-	// æ”»æ’ƒçŠ¶æ…‹
+	// UŒ‚ó‘Ô
 	void AttackUpdate(std::shared_ptr<SubPlayer> player) override;
-	// è¢«å¼¾çŠ¶æ…‹
+	void ChopUpdate(std::shared_ptr<SubPlayer> player);
+	void SliceUpdate(std::shared_ptr<SubPlayer> player);
+	void StabUpdate(std::shared_ptr<SubPlayer> player);
+	void SpinUpdate(std::shared_ptr<SubPlayer> player);
+	// ”í’eó‘Ô
 	void HitUpdate(std::shared_ptr<SubPlayer> player) override;
-	// æ­»äº¡çŠ¶æ…‹
+	// €–Só‘Ô
 	void DeadUpdate(std::shared_ptr<SubPlayer> player) override;
 
-	std::shared_ptr<EnemyMinionWeapon> m_weapon;
+	float m_walkFrame = 0.0f;
+
+	std::shared_ptr<SubEnemyBossLeftWeapon> m_leftWeapon;
+	std::shared_ptr<SubEnemyBossRightWeapon> m_rightWeapon;
 };
 
