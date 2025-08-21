@@ -30,12 +30,8 @@ public:
 	// ゲッター
 	// モデル取得
 	int GetModel() const { return m_model; }
-	// HP取得
-	float GetHP() const { return m_status.m_hp; }
-	// 最大HP取得
-	float GetMaxHP() const { return m_status.m_maxHP; }
-	// 攻撃力取得
-	float GetAtk() const { return m_status.m_atk; }
+	// 各ステータスを見るためのStatusComponentを取得
+	StatusComponent GetStatusComp() const { return m_status; }
 	// 半径取得
 	float GetRadius() const { return m_radius; }
 	// 死んでいるかどうか
