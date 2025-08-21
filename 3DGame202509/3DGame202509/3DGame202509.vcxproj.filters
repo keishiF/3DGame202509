@@ -90,12 +90,6 @@
     <Filter Include="ヘッダー ファイル\GameObject\SubPlayer">
       <UniqueIdentifier>{b76ae1e0-958f-4d9f-a83d-8f5e06d8a399}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\GameObject\SubEnemy">
-      <UniqueIdentifier>{b24b2306-c76a-4d3e-9e9a-b753dc531d56}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\GameObject\SubEnemy">
-      <UniqueIdentifier>{c3ea4753-a740-47c3-8be1-1e7c5e3ac112}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="General\Application.cpp">
@@ -241,18 +235,6 @@
     </ClCompile>
     <ClCompile Include="GameObject\SubPlayer\SubPlayer.cpp">
       <Filter>ソース ファイル\GameObject\SubPlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\SubEnemy\SubEnemyBase.cpp">
-      <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\SubEnemy\SubEnemyMinion.cpp">
-      <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\SubEnemy\EnemyWeapon.cpp">
-      <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\SubEnemy\EnemyMinionWeapon.cpp">
-      <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -414,18 +396,6 @@
     </ClInclude>
     <ClInclude Include="GameObject\SubPlayer\SubPlayer.h">
       <Filter>ヘッダー ファイル\GameObject\SubPlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubEnemy\SubEnemyBase.h">
-      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubEnemy\SubEnemyMinion.h">
-      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubEnemy\EnemyMinionWeapon.h">
-      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubEnemy\EnemyAtkColTiming.h">
-      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
