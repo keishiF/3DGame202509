@@ -15,7 +15,7 @@
 
 namespace
 {
-	// HPの初期値
+	// HPの初期値、最大値
 	constexpr float kHp = 20.0f;
 	// スタミナの最大値
 	constexpr float kMaxStamina = 100.0f;

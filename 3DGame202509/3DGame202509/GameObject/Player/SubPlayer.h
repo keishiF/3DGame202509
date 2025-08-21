@@ -32,10 +32,8 @@ public:
 	~SubPlayer();
 
 	virtual void Init(Vector3& pos, Vector3& rot, Vector3& scale) override;
-	virtual void Draw() abstract;
-	virtual void OnDamage(float atk) abstract;
-
-	void Update();
+	virtual void Draw() override;
+	virtual void OnDamage(float atk) override;
 
 	// ゲッター
 	// スタミナ取得
@@ -47,6 +45,7 @@ public:
 	// 必殺技ゲージ割合取得
 	float GetSpecialGauge() const { return m_specialGaugeRate; }
 
+	void Update();
 private:
 	PlayerState m_state;
 	void ChangeState(PlayerState newState);
@@ -82,19 +81,17 @@ private:
 
 private:
 	// スタミナ
-	float m_stamina;
+	float m_stamina = 0.0f;
 	// スタミナ割合
-	float m_staminaRate;
+	float m_staminaRate = 0.0f;
 	// 必殺技ゲージ
-	float m_specialGauge;
+	float m_specialGauge = 0.0f;
 	// 必殺技ゲージ割合
-	float m_specialGaugeRate;
+	float m_specialGaugeRate = 0.0f;
 	// コンボフラグ
-	bool m_isCombo;
+	bool m_isCombo = false;
 	// 回転
-	Quaternion m_currentRot;
-	// 弾を持つ
-	std::vector<std::shared_ptr<PlayerBullet>> m_bullets;
+	Quaternion m_currentRot = { 1.0f, 0.0f, 0.0, 0.0f };
 	// 武器を持つ
 	std::shared_ptr<PlayerRightWeapon> m_rightWeapon;
 };
