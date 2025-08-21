@@ -1,7 +1,5 @@
 #include "EnemyMinionBlade.h"
-
 #include "CapsuleColliderData.h"
-
 #include <cassert>
 
 namespace

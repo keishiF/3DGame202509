@@ -47,6 +47,8 @@ protected:
 	float m_hp = 0.0f;
 	// HP‚ÌŠ„‡
 	float m_hpRate = 0.0f;
+	// Å‘åHP
+	float m_maxHP = 0.0f;
 	// UŒ‚—Í
 	float m_atk = 0.0f;
 	// ”¼Œa

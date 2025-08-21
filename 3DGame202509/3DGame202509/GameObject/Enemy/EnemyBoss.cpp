@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <cassert>
 #include <DxLib.h>
-#include <EffekseerForDxLib.h>
 #include <unordered_map>
 
 namespace

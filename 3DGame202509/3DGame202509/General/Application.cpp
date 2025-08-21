@@ -1,5 +1,4 @@
 #include "Application.h"
-#include "EffectManager.h"
 #include "SceneController.h"
 #include "Input.h"
 #include <DxLib.h>
@@ -43,8 +42,6 @@ void Application::Run()
 
 	// メモリの確保
 	SceneController sceneController;
-	EffectManager& effect = EffectManager::GetInstance();
-	effect.Init();
 
 	// ゲームループ
 	while (ProcessMessage() == 0)	// Windowsが行う処理を待つ必要がある
@@ -61,9 +58,6 @@ void Application::Run()
 
 		sceneController.Update();
 		sceneController.Draw();
-
-		effect.Update();
-		effect.Draw();
 
 		// 画面の切り替わりを待つ必要がある
 		ScreenFlip();	// 1/60秒経過するまで待つ
