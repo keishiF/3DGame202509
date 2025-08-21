@@ -1,6 +1,7 @@
 #include "CapsuleColliderData.h"
-#include "SubPlayer.h"
+#include "Input.h"
 #include "PlayerRightWeapon.h"
+#include "SubPlayer.h"
 
 namespace
 {
@@ -14,6 +15,8 @@ namespace
 	constexpr float kMaxSpecialGauge = 100.0f;
 	// 時間経過で増える必殺技ゲージの量
 	constexpr float kTimeSpecialGauge = 2.0f;
+	// 必殺技ゲージが増えるまでの時間
+	constexpr float kSpecialGaugeTime = 60.0f;
 	
 	// モデルの拡大値
 	constexpr float kModelScale = 70.0f;
@@ -21,6 +24,8 @@ namespace
 	// 当たり判定
 	// カプセルの半径
 	constexpr float kCapsuleColRadius = 45.0f;
+	// カプセルの長さ
+	constexpr float kColScale = 140.0f;
 	// 攻撃をある程度敵の方向に向かせれる範囲
 	constexpr float kAttackOffsetRadius = 230.0f;
 
@@ -216,6 +221,7 @@ void SubPlayer::ChangeState(PlayerState newState)
 
 void SubPlayer::Update()
 {
+	// 死んでいたらreturn
 	if (m_isDead && m_model < 0)
 	{
 		return;
@@ -224,9 +230,9 @@ void SubPlayer::Update()
 	// 必殺技ゲージが最大でないとき
 	if (m_specialGauge < kMaxSpecialGauge)
 	{
-		if (++m_frame >= 60)
+		if (++m_frame >= kSpecialGaugeTime)
 		{
-			m_specialGauge += 2.0f;
+			m_specialGauge += kTimeSpecialGauge;
 			m_specialGaugeRate = m_specialGauge / kMaxSpecialGauge;
 			m_specialGaugeRate = std::clamp(m_specialGaugeRate, 0.0f, 1.0f);
 
@@ -291,7 +297,7 @@ void SubPlayer::Update()
 	colPos.y += kColScale;
 	colData->m_startPos = colPos;
 
-	VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
+	VECTOR rotVec = MV1GetRotationXYZ(m_model);
 	float angleY = -rotVec.y;
 	m_forward = Vector3(std::sin(angleY), 0.0f, -std::cos(angleY));
 	m_forward.Normalize();

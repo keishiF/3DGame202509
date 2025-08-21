@@ -59,6 +59,8 @@ protected:
 	int m_atkFrame = 0.0f;
 	// 点滅フレーム
 	int m_blinkFrame = 0.0f;
+	// 正面ベクトル
+	Vector3 m_forward = { 0.0f, 0.0f, 1.0f };
 	// アニメーション
 	Animator m_anim;
 };

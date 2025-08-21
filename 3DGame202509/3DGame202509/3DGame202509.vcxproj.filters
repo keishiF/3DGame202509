@@ -84,6 +84,12 @@
     <Filter Include="ヘッダー ファイル\UI">
       <UniqueIdentifier>{223cc11c-7680-4b08-94e5-97780fbb34c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\GameObject\Player2">
+      <UniqueIdentifier>{b610c982-243c-4c58-9523-858f187625d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\GameObject\Player2">
+      <UniqueIdentifier>{b343db2b-728e-4fd6-bd46-52317399e009}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="General\Application.cpp">
@@ -221,8 +227,11 @@
     <ClCompile Include="GameObject\Player\PlayerBullet.cpp">
       <Filter>ソース ファイル\GameObject\Player</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject\StatusComponent.cpp">
+      <Filter>ソース ファイル\GameObject</Filter>
+    </ClCompile>
     <ClCompile Include="GameObject\Player\SubPlayer.cpp">
-      <Filter>ソース ファイル\GameObject\Player</Filter>
+      <Filter>ソース ファイル\GameObject\Player2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -373,8 +382,14 @@
     <ClInclude Include="GameObject\Player\PlayerBullet.h">
       <Filter>ヘッダー ファイル\GameObject\Player</Filter>
     </ClInclude>
+    <ClInclude Include="GameObject\StatusComponent.h">
+      <Filter>ヘッダー ファイル\GameObject</Filter>
+    </ClInclude>
     <ClInclude Include="GameObject\Player\SubPlayer.h">
-      <Filter>ヘッダー ファイル\GameObject\Player</Filter>
+      <Filter>ヘッダー ファイル\GameObject\Player2</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Player\PlayerAtkColTiming.h">
+      <Filter>ヘッダー ファイル\GameObject\Player2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -43,7 +43,7 @@ public:
 	// •KE‹ZƒQ[ƒWæ“¾
 	float GetSpecialGauge() const { return m_specialGauge; }
 	// •KE‹ZƒQ[ƒWŠ„‡æ“¾
-	float GetSpecialGauge() const { return m_specialGaugeRate; }
+	float GetSpecialGaugeRate() const { return m_specialGaugeRate; }
 
 	void Update();
 private:
