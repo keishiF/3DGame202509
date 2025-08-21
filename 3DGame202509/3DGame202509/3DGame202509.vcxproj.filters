@@ -90,6 +90,12 @@
     <Filter Include="ヘッダー ファイル\GameObject\SubPlayer">
       <UniqueIdentifier>{b76ae1e0-958f-4d9f-a83d-8f5e06d8a399}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\SubEnemy">
+      <UniqueIdentifier>{9953ebd7-c413-4773-ab6e-64e475949e47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\SubEnemy">
+      <UniqueIdentifier>{386e3be2-42c3-4b22-aeb5-abefb845121c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="General\Application.cpp">
@@ -235,6 +241,9 @@
     </ClCompile>
     <ClCompile Include="GameObject\SubPlayer\SubPlayer.cpp">
       <Filter>ソース ファイル\GameObject\SubPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Desktop\避難\SubEnemy\SubEnemyBase.cpp">
+      <Filter>ソース ファイル\SubEnemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -396,6 +405,9 @@
     </ClInclude>
     <ClInclude Include="GameObject\SubPlayer\SubPlayer.h">
       <Filter>ヘッダー ファイル\GameObject\SubPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Desktop\避難\SubEnemy\SubEnemyBase.h">
+      <Filter>ヘッダー ファイル\SubEnemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
