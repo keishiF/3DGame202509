@@ -5,6 +5,7 @@
 #include "ObjectPriority.h"
 #include "ObjectTag.h"
 #include "Quaternion.h"
+#include "StatusComponent.h"
 #include "Vector3.h"
 #include <algorithm>
 #include <cassert>
@@ -30,11 +31,11 @@ public:
 	// ƒ‚ƒfƒ‹æ“¾
 	int GetModel() const { return m_model; }
 	// HPæ“¾
-	float GetHP() const { return m_hp; }
-	// HPŠ„‡æ“¾
-	float GetHPRate() const { return m_hpRate; }
+	float GetHP() const { return m_status.m_hp; }
+	// Å‘åHPæ“¾
+	float GetMaxHP() const { return m_status.m_maxHP; }
 	// UŒ‚—Íæ“¾
-	float GetAtk() const { return m_atk; }
+	float GetAtk() const { return m_status.m_atk; }
 	// ”¼Œaæ“¾
 	float GetRadius() const { return m_radius; }
 	// €‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©
@@ -43,14 +44,7 @@ public:
 protected:
 	// ƒ‚ƒfƒ‹ƒnƒ“ƒhƒ‹
 	int m_model = -1;
-	// HP
-	float m_hp = 0.0f;
-	// HP‚ÌŠ„‡
-	float m_hpRate = 0.0f;
-	// Å‘åHP
-	float m_maxHP = 0.0f;
-	// UŒ‚—Í
-	float m_atk = 0.0f;
+	StatusComponent m_status;
 	// ”¼Œa
 	float m_radius = 0.0f;
 	// €‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©

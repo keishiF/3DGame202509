@@ -81,9 +81,9 @@ void SubEnemyMinion::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_atkRadius = kAtkRadius;
 
 	// 各ステータスの初期化
-	m_hp = kHP;
-	m_maxHP = kHP;
-	m_atk = kDefaultAtk;
+	m_status.m_hp = kHP;
+	m_status.m_maxHP = kHP;
+	m_status.m_atk = kDefaultAtk;
 	m_atkFrame = 0.0f;
 	m_isDead = false;
 

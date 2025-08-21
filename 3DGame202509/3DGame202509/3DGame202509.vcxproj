@@ -147,7 +147,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\Desktop\避難\SubEnemy\SubEnemyBase.cpp" />
     <ClCompile Include="Animator\Animator.cpp" />
     <ClCompile Include="Effect\Effect.cpp" />
     <ClCompile Include="Effect\EffectManager.cpp" />
@@ -172,6 +171,9 @@
     <ClCompile Include="GameObject\Stage\StageObjectBase.cpp" />
     <ClCompile Include="GameObject\Stage\StageObjectManager.cpp" />
     <ClCompile Include="GameObject\StatusComponent.cpp" />
+    <ClCompile Include="GameObject\SubEnemy\EnemyMinionWeapon.cpp" />
+    <ClCompile Include="GameObject\SubEnemy\SubEnemyBase.cpp" />
+    <ClCompile Include="GameObject\SubEnemy\SubEnemyMinion.cpp" />
     <ClCompile Include="GameObject\SubPlayer\PlayerWeapon.cpp" />
     <ClCompile Include="GameObject\SubPlayer\SubPlayer.cpp" />
     <ClCompile Include="General\Application.cpp" />
@@ -198,7 +200,6 @@
     <ClCompile Include="UI\UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\Desktop\避難\SubEnemy\SubEnemyBase.h" />
     <ClInclude Include="Animator\Animator.h" />
     <ClInclude Include="Effect\Effect.h" />
     <ClInclude Include="Effect\EffectManager.h" />
@@ -223,6 +224,10 @@
     <ClInclude Include="GameObject\Stage\StageObjectBase.h" />
     <ClInclude Include="GameObject\Stage\StageObjectManager.h" />
     <ClInclude Include="GameObject\StatusComponent.h" />
+    <ClInclude Include="GameObject\SubEnemy\EnemyAtkColTiming.h" />
+    <ClInclude Include="GameObject\SubEnemy\EnemyMinionWeapon.h" />
+    <ClInclude Include="GameObject\SubEnemy\SubEnemyBase.h" />
+    <ClInclude Include="GameObject\SubEnemy\SubEnemyMinion.h" />
     <ClInclude Include="GameObject\SubPlayer\PlayerAtkColTiming.h" />
     <ClInclude Include="GameObject\SubPlayer\PlayerWeapon.h" />
     <ClInclude Include="GameObject\SubPlayer\SubPlayer.h" />

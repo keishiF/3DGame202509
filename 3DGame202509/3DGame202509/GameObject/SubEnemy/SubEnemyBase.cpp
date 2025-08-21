@@ -21,11 +21,9 @@ void SubEnemyBase::Draw()
 
 void SubEnemyBase::OnDamage(float atk)
 {
-    m_hp -= 1;
-    m_hpRate = static_cast<float>(m_hp) / m_maxHP;
-    m_hpRate = std::clamp(m_hpRate, 0.0f, 1.0f);
+    m_status.m_hp -= atk;
 
-    if (m_hp <= 0 && !m_isDead)
+    if (m_status.m_hp <= 0 && !m_isDead)
     {
         ChangeState(SubEnemyState::Dead);
     }

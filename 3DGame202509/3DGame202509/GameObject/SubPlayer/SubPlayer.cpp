@@ -120,9 +120,9 @@ void SubPlayer::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_state = SubPlayerState::Idle;
 
 	// 各ステータスの初期化
-	m_hp = kHP;
-	m_hpRate = m_hp / kHP;
-	m_atk = kDefaultAtk;
+	m_status.m_hp = kHP;
+	m_status.m_maxHP = kHP;
+	m_status.m_atk = kDefaultAtk;
 	m_stamina = kStamina;
 	m_staminaRate = m_stamina / kStamina;
 	m_specialGauge = 0.0f;
@@ -157,13 +157,10 @@ void SubPlayer::Draw()
 void SubPlayer::OnDamage(float atk)
 {
 	// ダメージを受ける
-	m_hp -= 1.0f;
-	// HP割合を計算する
-	m_hpRate = m_hp / kHP;
-	m_hpRate = std::clamp(m_hpRate, 0.0f, 1.0f);
+	m_status.m_hp -= atk;
 
 	// HPが0になったのなら死亡状態に移行する
-	if (m_hp <= 0 && !m_isDead)
+	if (m_status.m_hp <= 0 && !m_isDead)
 	{
 		ChangeState(SubPlayerState::Dead);
 	}
