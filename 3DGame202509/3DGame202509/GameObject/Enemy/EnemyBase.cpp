@@ -1,4 +1,4 @@
-#include "EnemyBase.h"
+ï»¿#include "EnemyBase.h"
 
 EnemyBase::EnemyBase() :
     m_state(EnemyState::Find),
@@ -28,8 +28,8 @@ void EnemyBase::OnCollide(std::shared_ptr<Collidable> collider)
 
 void EnemyBase::ChangeState(EnemyState newState, float playSpeed)
 {
-    // Œ»İ‚Ìó‘Ô‚ÆŸ‚Ìó‘Ô‚ª“¯‚¶ê‡return
-    // Hit‚¾‚¯—áŠOˆ—
+    // ç¾åœ¨ã®çŠ¶æ…‹ã¨æ¬¡ã®çŠ¶æ…‹ãŒåŒã˜å ´åˆreturn
+    // Hitã ã‘ä¾‹å¤–å‡¦ç†
     if (m_state == newState && m_state != EnemyState::Hit) return;
 
     m_prevState = m_state;

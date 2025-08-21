@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Collidable.h"
 #include <DxLib.h>
 
@@ -14,15 +14,15 @@ public:
 	PlayerLeftWeapon();
 	~PlayerLeftWeapon();
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	void Init();
-	// XV
+	// æ›´æ–°
 	void Update(int model, float currentFrame, const LeftAttackTiming& timing);
-	// ‘Ò‹@ó‘Ô
+	// å¾…æ©ŸçŠ¶æ…‹
 	void IdleUpdate(int model);
-	// UŒ‚ó‘Ô
+	// æ”»æ’ƒçŠ¶æ…‹
 	void AttackUpdate(int model);
-	// •`‰æ
+	// æç”»
 	void Draw();
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;

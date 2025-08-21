@@ -1,4 +1,4 @@
-#include "SubEnemyBase.h"
+ï»¿#include "SubEnemyBase.h"
 
 SubEnemyBase::SubEnemyBase(ObjectTag tag, ObjectPriority priority, ColliderData::Kind colliderKind) :
     m_state(SubEnemyState::Find),
@@ -36,11 +36,11 @@ void SubEnemyBase::OnDamage(float atk)
 Vector3 SubEnemyBase::GetScreenPos() const
 {
     Vector3 worldPos = m_rigidbody.GetPos();
-    worldPos.y += 120.0f; // “ªã‚Ì‚‚³’²®
+    worldPos.y += 120.0f; // é ­ä¸Šã®é«˜ã•èª¿æ•´
 
     VECTOR worldPosDx = worldPos.ToDxVECTOR();
 
-    // 3D¨2DÀ•W•ÏŠ·i–ß‚è’l‚ªƒXƒNƒŠ[ƒ“À•Wj
+    // 3Dâ†’2Dåº§æ¨™å¤‰æ›ï¼ˆæˆ»ã‚Šå€¤ãŒã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ï¼‰
     VECTOR screenPosDx = ConvWorldPosToScreenPos(worldPosDx);
 
     const int gaugeWidth = 100;
@@ -59,8 +59,8 @@ Vector3 SubEnemyBase::GetScreenPos() const
 
 void SubEnemyBase::ChangeState(SubEnemyState newState)
 {
-    // Œ»İ‚Ìó‘Ô‚ÆŸ‚Ìó‘Ô‚ª“¯‚¶ê‡return
-    // Hit‚¾‚¯—áŠOˆ—
+    // ç¾åœ¨ã®çŠ¶æ…‹ã¨æ¬¡ã®çŠ¶æ…‹ãŒåŒã˜å ´åˆreturn
+    // Hitã ã‘ä¾‹å¤–å‡¦ç†
     if (m_state == newState && m_state != SubEnemyState::Hit) return;
 
     m_prevState = m_state;

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 class Animator
 {
@@ -27,7 +27,7 @@ private:
 	AnimData m_nextAnim;
 	AnimData m_prevAnim;
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ğŠŠ‚ç‚©‚É•ÏX‚·‚é‚½‚ß‚ÌƒuƒŒƒ“ƒh—¦
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’æ»‘ã‚‰ã‹ã«å¤‰æ›´ã™ã‚‹ãŸã‚ã®ãƒ–ãƒ¬ãƒ³ãƒ‰ç‡
 	float m_blendRate;
 
 	int m_model;

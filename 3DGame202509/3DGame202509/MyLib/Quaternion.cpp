@@ -1,4 +1,4 @@
-#include "Quaternion.h"
+ï»¿#include "Quaternion.h"
 
 Quaternion::Quaternion()
 {
@@ -31,7 +31,7 @@ Quaternion Quaternion::Slerp(const Quaternion& a, const Quaternion& b, float t)
 
 	Quaternion end = b;
 
-	// ƒNƒH[ƒ^ƒjƒIƒ“‚ÌŒü‚«‚ª‹t‚È‚ç•âŠÔ•ûŒü‚ğ”½“]
+	// ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®å‘ããŒé€†ãªã‚‰è£œé–“æ–¹å‘ã‚’åè»¢
 	if (dot < 0.0f)
 	{
 		dot = -dot;
@@ -41,7 +41,7 @@ Quaternion Quaternion::Slerp(const Quaternion& a, const Quaternion& b, float t)
 		end.z = -end.z;
 	}
 
-	// •âŠÔŠp‚ª”ñí‚É¬‚³‚¢‚Æ‚«‚ÍüŒ`•âŠÔ
+	// è£œé–“è§’ãŒéå¸¸ã«å°ã•ã„ã¨ãã¯ç·šå½¢è£œé–“
 	if (dot > 0.9995f)
 	{
 		return Quaternion(
@@ -52,8 +52,8 @@ Quaternion Quaternion::Slerp(const Quaternion& a, const Quaternion& b, float t)
 		);
 	}
 
-	float theta_0 = acosf(dot);			// Šp“x
-	float theta = theta_0 * t;			// t‚É‰‚¶‚½Šp“x
+	float theta_0 = acosf(dot);			// è§’åº¦
+	float theta = theta_0 * t;			// tã«å¿œã˜ãŸè§’åº¦
 	float sin_theta = sinf(theta);
 	float sin_theta_0 = sinf(theta_0);
 
@@ -79,10 +79,10 @@ Quaternion operator*(const Quaternion& leftQ, const Quaternion& rightQ)
 {
 	Quaternion resultQ;
 
-	resultQ.w = leftQ.w * rightQ.w - leftQ.x * rightQ.x - leftQ.y * rightQ.y - leftQ.z * rightQ.z;//À•”
-	resultQ.x = leftQ.w * rightQ.x + leftQ.x * rightQ.w + leftQ.y * rightQ.z - leftQ.z * rightQ.y;//‹••”x
-	resultQ.y = leftQ.w * rightQ.y + leftQ.y * rightQ.w + leftQ.z * rightQ.x - leftQ.x * rightQ.z;//‹••”y
-	resultQ.z = leftQ.w * rightQ.z + leftQ.z * rightQ.w + leftQ.x * rightQ.y - leftQ.y * rightQ.x;//‹••”z
+	resultQ.w = leftQ.w * rightQ.w - leftQ.x * rightQ.x - leftQ.y * rightQ.y - leftQ.z * rightQ.z;//å®Ÿéƒ¨
+	resultQ.x = leftQ.w * rightQ.x + leftQ.x * rightQ.w + leftQ.y * rightQ.z - leftQ.z * rightQ.y;//è™šéƒ¨x
+	resultQ.y = leftQ.w * rightQ.y + leftQ.y * rightQ.w + leftQ.z * rightQ.x - leftQ.x * rightQ.z;//è™šéƒ¨y
+	resultQ.z = leftQ.w * rightQ.z + leftQ.z * rightQ.w + leftQ.x * rightQ.y - leftQ.y * rightQ.x;//è™šéƒ¨z
 
 	return resultQ;
 }
@@ -92,22 +92,22 @@ Vector3 operator*(const Quaternion& qRot, const Vector3& rightVec)
 	Quaternion qPos, qInv;
 	Vector3 vPos;
 
-	// 3ŸŒ³À•W‚ğƒNƒH[ƒ^ƒjƒIƒ“‚É•ÏŠ·
+	// 3æ¬¡å…ƒåº§æ¨™ã‚’ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã«å¤‰æ›
 	qPos.w = 1.0f;
 	qPos.x = rightVec.x;
 	qPos.y = rightVec.y;
 	qPos.z = rightVec.z;
 
-	// ‰ñ“]ƒNƒH[ƒ^ƒjƒIƒ“‚ÌƒCƒ“ƒo[ƒX‚Ìì¬
+	// å›è»¢ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®ã‚¤ãƒ³ãƒãƒ¼ã‚¹ã®ä½œæˆ
 	qInv.w = qRot.w;
 	qInv.x = -qRot.x;
 	qInv.y = -qRot.y;
 	qInv.z = -qRot.z;
 
-	// ‰ñ“]Œã‚ÌƒNƒH[ƒ^ƒjƒIƒ“‚Ìì¬
+	// å›è»¢å¾Œã®ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®ä½œæˆ
 	qPos = qRot * qPos * qInv;
 
-	// 3ŸŒ³À•W‚É–ß‚·
+	// 3æ¬¡å…ƒåº§æ¨™ã«æˆ»ã™
 	vPos.x = qPos.x;
 	vPos.y = qPos.y;
 	vPos.z = qPos.z;

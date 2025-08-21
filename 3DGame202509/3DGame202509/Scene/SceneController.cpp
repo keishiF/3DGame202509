@@ -1,4 +1,4 @@
-#include "SceneController.h"
+ï»¿#include "SceneController.h"
 #include "TitleScene.h"
 #include "GameScene.h"
 
@@ -44,9 +44,9 @@ void SceneController::PopScene()
 {
 	if (m_scenes.size() == 1)
 	{
-		// Às‚·‚×‚«ƒV[ƒ“‚ª‚È‚­‚È‚é‚½‚ß‹–‰Â‚µ‚È‚¢
+		// å®Ÿè¡Œã™ã¹ãã‚·ãƒ¼ãƒ³ãŒãªããªã‚‹ãŸã‚è¨±å¯ã—ãªã„
 		return;
 	}
-	// ––”ö‚ğæ‚èœ‚­
+	// æœ«å°¾ã‚’å–ã‚Šé™¤ã
 	m_scenes.pop_back();
 }

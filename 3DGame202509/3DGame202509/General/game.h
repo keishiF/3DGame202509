@@ -1,14 +1,14 @@
-#pragma once
+ï»¿#pragma once
 
 namespace Game
 {
-	// ƒEƒBƒ“ƒhƒEƒ‚[ƒhİ’è
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¢ãƒ¼ãƒ‰è¨­å®š
 	constexpr bool kDefaultWindowMode = true;
 
-	// ƒEƒBƒ“ƒhƒE–¼
-	const char* const kTitleText = "ƒQ[ƒ€–¼";
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å
+	const char* const kTitleText = "ã‚²ãƒ¼ãƒ å";
 
-	// ƒEƒBƒ“ƒhƒEƒTƒCƒY
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚º
 	constexpr int kScreenWidth = 1280;
 	constexpr int kScreenHeight = 720;
 

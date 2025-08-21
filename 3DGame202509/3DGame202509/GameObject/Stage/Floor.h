@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "StageObjectBase.h"
 
 class Floor : public StageObjectBase

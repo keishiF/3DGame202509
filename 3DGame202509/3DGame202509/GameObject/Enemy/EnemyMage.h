@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "EnemyBase.h"
 #include <memory>
 #include <vector>
@@ -16,29 +16,29 @@ public:
 
 	virtual void OnDamage() override;
 
-	// HPŠ„‡‚Ìæ“¾
+	// HPå‰²åˆã®å–å¾—
 	float GetHpRate() const { return m_hpRate; }
 
-	// 3D‹óŠÔ‚É‚¨‚¯‚éˆÊ’uÀ•W‚ğƒXƒNƒŠ[ƒ“À•W‚É•ÏŠ·‚µ‚½‚à‚Ì‚ğæ“¾
+	// 3Dç©ºé–“ã«ãŠã‘ã‚‹ä½ç½®åº§æ¨™ã‚’ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã«å¤‰æ›ã—ãŸã‚‚ã®ã‚’å–å¾—
 	Vector3 GetScreenPos() const;
 
 private:
 	const char* GetAnimName(EnemyState state) const override;
 	bool IsLoopAnim(EnemyState state) const override;
 
-	// ‘Ò‹@ó‘Ô
+	// å¾…æ©ŸçŠ¶æ…‹
 	void FindUpdate(std::shared_ptr<Player> player) override;
 
-	// ”­Œ©ó‘Ô
+	// ç™ºè¦‹çŠ¶æ…‹
 	void ChaseUpdate(std::shared_ptr<Player> player) override;
 
-	// UŒ‚ó‘Ô
+	// æ”»æ’ƒçŠ¶æ…‹
 	void AttackUpdate(std::shared_ptr<Player> player) override;
 
-	// ”í’eó‘Ô
+	// è¢«å¼¾çŠ¶æ…‹
 	void HitUpdate(std::shared_ptr<Player> player) override;
 
-	// €–Só‘Ô
+	// æ­»äº¡çŠ¶æ…‹
 	void DeadUpdate(std::shared_ptr<Player> player) override;
 
 	bool IsPlayerFind(const std::shared_ptr<Player>& player, const Vector3& centerDir, float viewAngleRad, float viewDistance);

@@ -1,4 +1,4 @@
-//#include "EffectManager.h"
+ï»¿//#include "EffectManager.h"
 //#include "Effect.h"
 //#include <DxLib.h>
 //#include <EffekseerForDXLib.h>
@@ -30,109 +30,109 @@
 //
 //void EffectManager::Init()
 //{
-//	// ˆê˜A‚Ì‚¨‚Ü‚¶‚È‚¢
+//	// ä¸€é€£ã®ãŠã¾ã˜ãªã„
 //	SetUseDirect3DVersion(DX_DIRECT3D_11);
-//	// ‰Šú‰»ˆ—‚É¸”s‚µ‚½‚çƒAƒvƒŠI—¹
+//	// åˆæœŸåŒ–å‡¦ç†ã«å¤±æ•—ã—ãŸã‚‰ã‚¢ãƒ—ãƒªçµ‚äº†
 //	if (Effekseer_Init(kEffectPerticleLimit) == -1) { DxLib_End(); }
 //
-//	// ƒtƒ‹ƒXƒNƒŠ[ƒ“‘Î‰
+//	// ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³å¯¾å¿œ
 //	SetChangeScreenModeGraphicsSystemResetFlag(false);
 //	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 //
-//	// ˜c‚İON
+//	// æ­ªã¿ON
 //	Effekseer_InitDistortion();
 //
-//	// Zƒoƒbƒtƒ@‚Ìİ’è‚ª•K—v‚È‚Ì‚¾‚ªA‚»‚ê‚Í‚Ù‚©‚ÌêŠ‚ÅÀs‚µ‚Ä‚¢‚é‚Ì‚Å‚æ‚µ
+//	// Zãƒãƒƒãƒ•ã‚¡ã®è¨­å®šãŒå¿…è¦ãªã®ã ãŒã€ãã‚Œã¯ã»ã‹ã®å ´æ‰€ã§å®Ÿè¡Œã—ã¦ã„ã‚‹ã®ã§ã‚ˆã—
 //
-//	// ƒGƒtƒFƒNƒg‚Ì“Ç‚İ‚İ
+//	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®èª­ã¿è¾¼ã¿
 //	LoadEffectSources();
 //}
 //
 //void EffectManager::Update()
 //{
-//	// ‚±‚ê‚ÅˆêŠ‡XV
+//	// ã“ã‚Œã§ä¸€æ‹¬æ›´æ–°
 //	UpdateEffekseer3D();
 //
-//	// Ä¶‚ªI—¹‚µ‚½ƒGƒtƒFƒNƒg‚ğíœ
+//	// å†ç”ŸãŒçµ‚äº†ã—ãŸã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤
 //	EffectList_t playingEffects;
 //	for (auto& effect : m_effects)
 //	{
-//		// Ä¶‚µ‚Ä‚È‚¢“z‚Í’u‚¢‚Ä‚¢‚­
+//		// å†ç”Ÿã—ã¦ãªã„å¥´ã¯ç½®ã„ã¦ã„ã
 //		if (!effect->IsPlaying()) continue;
 //
-//		// E‚¤
+//		// æ‹¾ã†
 //		playingEffects.emplace_back(effect);
 //	}
-//	// Ä¶’†‚Ì‚â‚Â‚¾‚¯‚É‚·‚é
+//	// å†ç”Ÿä¸­ã®ã‚„ã¤ã ã‘ã«ã™ã‚‹
 //	m_effects = playingEffects;
 //}
 //
 //void EffectManager::Draw() const
 //{
-//	// Effekseer‚ÌƒGƒtƒFƒNƒg‚Í‚±‚ê‚Å‚·‚×‚ÄˆêŠ‡•`‰æ‚³‚ê‚é
-//	// ‘½•ªƒhƒ[ƒR[ƒ‹‚ğŒ¸‚ç‚³‚È‚¢‚Æ•‰‰×‚ª‚â‚Î‚¢‚©‚ç‚¾‚Æv‚¤
+//	// Effekseerã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã¯ã“ã‚Œã§ã™ã¹ã¦ä¸€æ‹¬æç”»ã•ã‚Œã‚‹
+//	// å¤šåˆ†ãƒ‰ãƒ­ãƒ¼ã‚³ãƒ¼ãƒ«ã‚’æ¸›ã‚‰ã•ãªã„ã¨è² è·ãŒã‚„ã°ã„ã‹ã‚‰ã ã¨æ€ã†
 //	DrawEffekseer3D();
 //}
 //
 //std::weak_ptr<Effect> EffectManager::GenerateEffect(const std::string& fileName, const Vector3& initPos)
 //{
-//	// ƒ\[ƒX‚©‚çƒGƒtƒFƒNƒg¶¬
+//	// ã‚½ãƒ¼ã‚¹ã‹ã‚‰ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç”Ÿæˆ
 //	const int sourceHandle = m_effectSources[fileName];
 //	const int effectHandle = PlayEffekseer3DEffect(sourceHandle);
 //
-//	// ©‘OƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‰»
+//	// è‡ªå‰ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–
 //	auto effect = std::make_shared<Effect>();
 //	effect->Init(effectHandle, initPos);
 //
-//	// •Û‘¶
+//	// ä¿å­˜
 //	m_effects.emplace_back(effect);
 //
-//	// ‹¤—L
+//	// å…±æœ‰
 //	return effect;
 //}
 //
 //void EffectManager::ClearEffects()
 //{
-//	// íœŠÖ”
+//	// å‰Šé™¤é–¢æ•°
 //
 //	m_effects.clear();
 //}
 //
 //void EffectManager::LoadEffectSources()
 //{
-//	// ƒGƒtƒFƒNƒgƒtƒ@ƒCƒ‹‚ğA“Á’è‚ÌƒtƒHƒ‹ƒ_‚©‚çˆêŠ‡‚Å“Ç‚İ‚Ş
+//	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã€ç‰¹å®šã®ãƒ•ã‚©ãƒ«ãƒ€ã‹ã‚‰ä¸€æ‹¬ã§èª­ã¿è¾¼ã‚€
 //
 //	namespace fs = std::filesystem;
 //
-//	// ‚±‚±‚Å‚±‚ÌƒQ[ƒ€‚Åg‚¤‰æ‘œ‚ğˆêŠ‡‚Å“Ç‚İ‚ñ‚Å‚µ‚Ü‚¨‚¤
-//	// w’è‚µ‚½ƒtƒHƒ‹ƒ_‚Ì’†‚Ì‚·‚×‚Ä‚Ì‰æ‘œƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+//	// ã“ã“ã§ã“ã®ã‚²ãƒ¼ãƒ ã§ä½¿ã†ç”»åƒã‚’ä¸€æ‹¬ã§èª­ã¿è¾¼ã‚“ã§ã—ã¾ãŠã†
+//	// æŒ‡å®šã—ãŸãƒ•ã‚©ãƒ«ãƒ€ã®ä¸­ã®ã™ã¹ã¦ã®ç”»åƒãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
 //	for (const auto& file : fs::directory_iterator(kSourceFolder))
 //	{
 //		std::string path = file.path().string();
-//		// ‘Š‘ÎƒpƒX‚Å‚Í‚È‚­ƒtƒ@ƒCƒ‹–¼‚¾‚¯‚Åæ‚ê‚é‚æ‚¤‚É‚·‚é
+//		// ç›¸å¯¾ãƒ‘ã‚¹ã§ã¯ãªããƒ•ã‚¡ã‚¤ãƒ«åã ã‘ã§å–ã‚Œã‚‹ã‚ˆã†ã«ã™ã‚‹
 //		std::string pathCopy = path;
 //		std::string fileName = pathCopy.erase(0, kSourceFolder.size());
 //
-//		// ‚à‚µ³‚µ‚¢ƒtƒ@ƒCƒ‹Šg’£q‚Å‚È‚¢‚Æ‚«A”ò‚Î‚·
+//		// ã‚‚ã—æ­£ã—ã„ãƒ•ã‚¡ã‚¤ãƒ«æ‹¡å¼µå­ã§ãªã„ã¨ãã€é£›ã°ã™
 //		if (file.path().extension().string() != kEffectFileExtension)
 //		{
 //#if _DEBUG
-//			printf("ƒGƒtƒFƒNƒgƒtƒ@ƒCƒ‹‚Å‚È‚¢‚à‚Ì‚ğŒŸ’m\n");
-//			printf("@ƒpƒXF%s\n", path.c_str());
+//			printf("ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã§ãªã„ã‚‚ã®ã‚’æ¤œçŸ¥\n");
+//			printf("ã€€ãƒ‘ã‚¹ï¼š%s\n", path.c_str());
 //#endif
 //			continue;
 //		}
 //
-//		// “Ç‚İ‚İ
+//		// èª­ã¿è¾¼ã¿
 //		const int handle = LoadEffekseerEffect(path.c_str(), kDefaultEffectSize);
 //		m_effectSources[fileName] = handle;
 //
 //#if _DEBUG
-//		assert(handle != -1 && "“Ç‚İ‚İ‚É¸”s‚µ‚½");
-//		printf("‰æ‘œƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚İ‚Ü‚µ‚½\n");
-//		printf("@‘Š‘ÎƒpƒX@@F%s\n", path.c_str());
-//		printf("@˜A‘z”z—ñƒL[F%s\n", fileName.c_str());
-//		printf("@ƒnƒ“ƒhƒ‹@@F%d\n", handle);
+//		assert(handle != -1 && "èª­ã¿è¾¼ã¿ã«å¤±æ•—ã—ãŸ");
+//		printf("ç”»åƒãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã¿ã¾ã—ãŸ\n");
+//		printf("ã€€ç›¸å¯¾ãƒ‘ã‚¹ã€€ã€€ï¼š%s\n", path.c_str());
+//		printf("ã€€é€£æƒ³é…åˆ—ã‚­ãƒ¼ï¼š%s\n", fileName.c_str());
+//		printf("ã€€ãƒãƒ³ãƒ‰ãƒ«ã€€ã€€ï¼š%d\n", handle);
 //#endif
 //	}
 //}

@@ -1,4 +1,4 @@
-#include "Enemy/EnemyBoss.h"
+ï»¿#include "Enemy/EnemyBoss.h"
 #include "Enemy/EnemyMage.h"
 #include "Enemy/EnemyMinion.h"
 #include "HPGauge.h"
@@ -11,11 +11,11 @@
 
 namespace
 {
-	// ƒvƒŒƒCƒ„[‚ÌƒQ[ƒW‚ð•\Ž¦‚·‚éˆÊ’u
-	// HPƒQ[ƒW
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚²ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã™ã‚‹ä½ç½®
+	// HPã‚²ãƒ¼ã‚¸
 	constexpr float kPlayerHPGaugePosX = 50.0f;
 	constexpr float kPlayerHPGaugePosY = 50.0f;
-	// ƒXƒ^ƒ~ƒiƒQ[ƒW
+	// ã‚¹ã‚¿ãƒŸãƒŠã‚²ãƒ¼ã‚¸
 	constexpr float kPlayerStaminaGaugePosX = 50.0f;
 	constexpr float kPlayerStaminaGaugePosY = 70.0f;
 }
@@ -30,7 +30,7 @@ UIManager::~UIManager()
 
 void UIManager::Draw()
 {
-	// ƒvƒŒƒCƒ„[‚ÌƒQ[ƒW•`‰æ
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚²ãƒ¼ã‚¸æç”»
 	m_hpGauge->Draw();
 	m_staminaGauge->Draw();
 	m_specialGauge->Draw();

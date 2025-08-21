@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Animator.h"
 #include "Collidable.h"
 #include "Physics.h"
@@ -25,18 +25,18 @@ public:
 	EnemyBase();
 	virtual ~EnemyBase();
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	virtual void Init(Vector3& pos, Vector3& rot, Vector3& scale) abstract;
-	// XV
+	// æ›´æ–°
 	virtual void Update(std::shared_ptr<Player> player) abstract;
-	// •`‰æ
+	// æç”»
 	virtual void Draw() abstract;
 
-	// ˆÊ’u‚ğæ“¾
+	// ä½ç½®ã‚’å–å¾—
 	Vector3 GetPos() const;
-	// ƒ_ƒ[ƒW‚ğó‚¯‚½‚Ìˆ—
+	// ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ãŸæ™‚ã®å‡¦ç†
 	virtual void OnDamage() abstract;
-	// €‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©
+	// æ­»ã‚“ã§ã„ã‚‹ã‹ã©ã†ã‹
 	bool IsDead() const { return m_isDead; }
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
@@ -48,34 +48,34 @@ protected:
 	virtual bool IsLoopAnim(EnemyState state) const abstract;
 	void ChangeState(EnemyState newState, float playSpeed);
 
-	// Player‚ğ’T‚µ‚Ä‚¢‚éó‘Ô
+	// Playerã‚’æ¢ã—ã¦ã„ã‚‹çŠ¶æ…‹
 	virtual void FindUpdate(std::shared_ptr<Player> player) abstract;
-	// Player‚ğŒ©‚Â‚¯‚Ä’Ç‚¢‚©‚¯‚Ä‚¢‚éó‘Ô
+	// Playerã‚’è¦‹ã¤ã‘ã¦è¿½ã„ã‹ã‘ã¦ã„ã‚‹çŠ¶æ…‹
 	virtual void ChaseUpdate(std::shared_ptr<Player> player) abstract;
-	// UŒ‚ó‘Ô
+	// æ”»æ’ƒçŠ¶æ…‹
 	virtual void AttackUpdate(std::shared_ptr<Player> player) abstract;
-	// ”í’eó‘Ô
+	// è¢«å¼¾çŠ¶æ…‹
 	virtual void HitUpdate(std::shared_ptr<Player> player) abstract;
-	// €–Só‘Ô
+	// æ­»äº¡çŠ¶æ…‹
 	virtual void DeadUpdate(std::shared_ptr<Player> player) abstract;
 
 protected:
-	// ƒLƒƒƒ‰‚Æ•Ší‚Ìƒ‚ƒfƒ‹
+	// ã‚­ãƒ£ãƒ©ã¨æ­¦å™¨ã®ãƒ¢ãƒ‡ãƒ«
 	int m_charModel;
 	int m_weaponModel;
 
-	// ƒvƒŒƒCƒ„[‚ğ’T’m‚·‚é”ÍˆÍ
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’æ¢çŸ¥ã™ã‚‹ç¯„å›²
 	float m_findRadius;
-	// UŒ‚ó‘Ô‚ÉˆÚs‚Å‚«‚é”ÍˆÍ
+	// æ”»æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã§ãã‚‹ç¯„å›²
 	float m_attackRadius;
 	// HP
 	float m_hp;
 	float m_hpRate;
-	// €‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©
+	// æ­»ã‚“ã§ã„ã‚‹ã‹ã©ã†ã‹
 	bool m_isDead;
-	// UŒ‚ƒtƒŒ[ƒ€
+	// æ”»æ’ƒãƒ•ãƒ¬ãƒ¼ãƒ 
 	float m_attackFrame;
-	// ƒAƒjƒ[ƒVƒ‡ƒ“ŠÇ—
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç®¡ç†
 	Animator m_anim;
 };
 

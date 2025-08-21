@@ -1,15 +1,15 @@
-#pragma once
+ï»¿#pragma once
 #include "ColliderData.h"
 
 /// <summary>
-/// ‹…‚Ì“–‚½‚è”»’è‚É•K—v‚Èƒf[ƒ^‚ğ‚Ü‚Æ‚ß‚½ƒNƒ‰ƒX
+/// çƒã®å½“ãŸã‚Šåˆ¤å®šã«å¿…è¦ãªãƒ‡ãƒ¼ã‚¿ã‚’ã¾ã¨ã‚ãŸã‚¯ãƒ©ã‚¹
 /// </summary>
 class SphereColliderData : public ColliderData
 {
 public:
 	SphereColliderData();
 	~SphereColliderData();
-	// ‹…‚Ì”¼Œa
+	// çƒã®åŠå¾„
 	float m_radius;
 };
 

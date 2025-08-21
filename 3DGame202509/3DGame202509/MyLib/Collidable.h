@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ColliderData.h"
 #include "ObjectPriority.h"
 #include "ObjectTag.h"

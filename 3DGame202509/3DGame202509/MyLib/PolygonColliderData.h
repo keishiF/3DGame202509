@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "ColliderData.h"
 #include "Vector3.h"
 #include <DxLib.h>
@@ -10,19 +10,19 @@ public:
     virtual ~PolygonColliderData();
     MV1_COLL_RESULT_POLY_DIM& GetHitDim() { return m_hitDim; }
     void SetHitDim(MV1_COLL_RESULT_POLY_DIM& dim) { m_hitDim = dim; }
-    //•Ç‚Æ°‚Ì‹ß‚¢À•W
+    //å£ã¨åºŠã®è¿‘ã„åº§æ¨™
     Vector3 GetNearWallHitPos() const { return m_nearWallHitPos; }
     Vector3 GetNearFloorHitPos() const { return m_nearFloorHitPos; }
-    //ƒ‚ƒfƒ‹
+    //ãƒ¢ãƒ‡ãƒ«
     int GetModelHandle() const { return m_modelHandle; }
 public:
-    //“–‚½‚è”»’è‚ğ‚·‚éƒ‚ƒfƒ‹
+    //å½“ãŸã‚Šåˆ¤å®šã‚’ã™ã‚‹ãƒ¢ãƒ‡ãƒ«
     int m_modelHandle;
-    //“–‚½‚Á‚½ƒ|ƒŠƒSƒ“‚Ìî•ñ
+    //å½“ãŸã£ãŸãƒãƒªã‚´ãƒ³ã®æƒ…å ±
     MV1_COLL_RESULT_POLY_DIM m_hitDim;
-    //“–‚½‚Á‚½Û‚ÌÅ‚à‹ß‚¢•Çƒ|ƒŠƒSƒ“‚ÌÀ•W
+    //å½“ãŸã£ãŸéš›ã®æœ€ã‚‚è¿‘ã„å£ãƒãƒªã‚´ãƒ³ã®åº§æ¨™
     Vector3 m_nearWallHitPos;
-    //“–‚½‚Á‚½Û‚ÌÅ‚à‹ß‚¢°ƒ|ƒŠƒSƒ“‚ÌÀ•W
+    //å½“ãŸã£ãŸéš›ã®æœ€ã‚‚è¿‘ã„åºŠãƒãƒªã‚´ãƒ³ã®åº§æ¨™
     Vector3 m_nearFloorHitPos;
 };
 

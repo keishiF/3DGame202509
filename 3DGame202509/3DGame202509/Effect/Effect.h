@@ -1,7 +1,7 @@
-//#pragma once
+ï»¿//#pragma once
 //#include "Vector3.h"
 //
-//// ƒGƒtƒFƒNƒgƒNƒ‰ƒX
+//// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚¯ãƒ©ã‚¹
 //class Effect
 //{
 //public:
@@ -10,22 +10,22 @@
 //
 //	void Init(const int handle, const Vector3& initPos);
 //
-//	// ˆÊ’uİ’è
+//	// ä½ç½®è¨­å®š
 //	void SetPos(const Vector3& pos);
-//	// ‰ñ“]
+//	// å›è»¢
 //	void SetRotate(const Vector3& rad);
-//	// Šgk
+//	// æ‹¡ç¸®
 //	void SetScale(const Vector3& scale);
-//	// Ä¶‘¬“x
+//	// å†ç”Ÿé€Ÿåº¦
 //	void SetPlaySpeed(const float speed);
-//	// “®“Iƒpƒ‰ƒ[ƒ^‚ğİ’è‚·‚é
+//	// å‹•çš„ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’è¨­å®šã™ã‚‹
 //	void SetDynamicParam(const float x, const float y, const float z, const float w);
-//	// F
+//	// è‰²
 //	void SetColor(const int r, const int g, const int b, const int a);
 //
 //	const int  GetHandle() const { return m_handle; }
 //	const bool IsPlaying() const;
-//	// ‚±‚ÌƒGƒtƒFƒNƒg‚ğíœ
+//	// ã“ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤
 //	void Kill();
 //protected:
 //	int m_handle;

@@ -1,4 +1,4 @@
-#include "Animator.h"
+ï»¿#include "Animator.h"
 #include <DxLib.h>
 
 Animator::Animator() :
@@ -14,38 +14,38 @@ void Animator::Init(int model)
 
 void Animator::AttachAnim(AnimData& data, const char* animName, float playSpeed, bool isLoop)
 {
-	// ƒAƒ^ƒbƒ`‚µ‚½‚¢ƒAƒjƒ‚Ì”Ô†‚ğæ“¾
+	// ã‚¢ã‚¿ãƒƒãƒã—ãŸã„ã‚¢ãƒ‹ãƒ¡ã®ç•ªå·ã‚’å–å¾—
 	int index = MV1GetAnimIndex(m_model, animName);
-	// ƒ‚ƒfƒ‹‚ÉƒAƒjƒ[ƒVƒ‡ƒ“‚ğƒAƒ^ƒbƒ`
+	// ãƒ¢ãƒ‡ãƒ«ã«ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ã‚¢ã‚¿ãƒƒãƒ
 	data.attachNo = MV1AttachAnim(m_model, index, -1, false);
-	// ƒAƒjƒƒJƒEƒ“ƒ^‰Šú‰»
+	// ã‚¢ãƒ‹ãƒ¡ã‚«ã‚¦ãƒ³ã‚¿åˆæœŸåŒ–
 	data.frame = 0.0f;
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶‘¬“x‚ğİ’è
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿé€Ÿåº¦ã‚’è¨­å®š
 	data.playSpeed = playSpeed;
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìƒ‹[ƒvİ’è
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ãƒ«ãƒ¼ãƒ—è¨­å®š
 	data.isLoop = isLoop;
-	// ”ñƒ‹[ƒvƒAƒjƒ‚ÌI—¹ƒtƒ‰ƒO‚ğ—‚Æ‚µ‚Ä‚¨‚­
+	// éãƒ«ãƒ¼ãƒ—ã‚¢ãƒ‹ãƒ¡ã®çµ‚äº†ãƒ•ãƒ©ã‚°ã‚’è½ã¨ã—ã¦ãŠã
 	data.isEnd = false;
 }
 
 void Animator::UpdateAnim(AnimData& data)
 {
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªƒAƒ^ƒbƒ`‚³‚ê‚Ä‚¢‚È‚¢ê‡‚Í‰½‚à‚µ‚È‚¢
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒã‚¢ã‚¿ãƒƒãƒã•ã‚Œã¦ã„ãªã„å ´åˆã¯ä½•ã‚‚ã—ãªã„
 	if (data.attachNo == -1)
 	{
 		return;
 	}
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ği‚ß‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’é€²ã‚ã‚‹
 	data.frame += data.playSpeed;
 
-	// Œ»İÄ¶’†‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚Ì‘ŠÔ‚ğæ“¾‚·‚é
+	// ç¾åœ¨å†ç”Ÿä¸­ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ç·æ™‚é–“ã‚’å–å¾—ã™ã‚‹
 	const float totalTime = MV1GetAttachAnimTotalTime(m_model, data.attachNo);
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚Ìİ’è‚É‚æ‚Á‚Äƒ‹[ƒv‚³‚¹‚é‚©ÅŒã‚ÌƒtƒŒ[ƒ€‚Å~‚ß‚é‚©‚ğ”»’è
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®è¨­å®šã«ã‚ˆã£ã¦ãƒ«ãƒ¼ãƒ—ã•ã›ã‚‹ã‹æœ€å¾Œã®ãƒ•ãƒ¬ãƒ¼ãƒ ã§æ­¢ã‚ã‚‹ã‹ã‚’åˆ¤å®š
 	if (data.isLoop)
 	{
-		// ƒAƒjƒ[ƒVƒ‡ƒ“‚ğƒ‹[ƒv‚³‚¹‚é
+		// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ãƒ«ãƒ¼ãƒ—ã•ã›ã‚‹
 		while (data.frame > totalTime)
 		{
 			data.frame -= totalTime;
@@ -53,7 +53,7 @@ void Animator::UpdateAnim(AnimData& data)
 	}
 	else
 	{
-		// ÅŒã‚ÌƒtƒŒ[ƒ€‚Å’â~‚³‚¹‚é
+		// æœ€å¾Œã®ãƒ•ãƒ¬ãƒ¼ãƒ ã§åœæ­¢ã•ã›ã‚‹
 		if (data.frame > totalTime)
 		{
 			data.frame = totalTime;
@@ -61,17 +61,17 @@ void Animator::UpdateAnim(AnimData& data)
 		}
 	}
 
-	// is‚³‚¹‚½ƒAƒjƒ[ƒVƒ‡ƒ“‚ğƒ‚ƒfƒ‹‚É“K—p‚·‚é
+	// é€²è¡Œã•ã›ãŸã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ãƒ¢ãƒ‡ãƒ«ã«é©ç”¨ã™ã‚‹
 	MV1SetAttachAnimTime(m_model, data.attachNo, data.frame);
 }
 
 void Animator::UpdateAnimBlend()
 {
-	// —¼•û‚ÉƒAƒjƒ‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡‚Í•Ï‰»‚³‚¹‚È‚¢
+	// ä¸¡æ–¹ã«ã‚¢ãƒ‹ãƒ¡ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„å ´åˆã¯å¤‰åŒ–ã•ã›ãªã„
 	if (m_nextAnim.attachNo == -1) return;
 	if (m_prevAnim.attachNo == -1) return;
 
-	// m_blendRate‚ğ0.0f -> 1.0f‚É•Ï‰»‚³‚¹‚é
+	// m_blendRateã‚’0.0f -> 1.0fã«å¤‰åŒ–ã•ã›ã‚‹
 	m_blendRate += 1.0f / 8.0f;
 	if (m_blendRate > 1.0f) m_blendRate = 1.0f;
 
@@ -81,19 +81,19 @@ void Animator::UpdateAnimBlend()
 
 void Animator::ChangeAnim(const char* animName, float playSpeed, bool isLoop)
 {
-	// ‚Ğ‚Æ‚Â‘O‚Ìƒf[ƒ^‚Í¡ŒãŠÇ—‚Å‚«‚È‚­‚È‚é‚Ì‚Å‚ ‚ç‚©‚¶‚ßƒfƒ^ƒbƒ`‚µ‚Ä‚¨‚­
+	// ã²ã¨ã¤å‰ã®ãƒ‡ãƒ¼ã‚¿ã¯ä»Šå¾Œç®¡ç†ã§ããªããªã‚‹ã®ã§ã‚ã‚‰ã‹ã˜ã‚ãƒ‡ã‚¿ãƒƒãƒã—ã¦ãŠã
 	MV1DetachAnim(m_model, m_prevAnim.attachNo);
 
-	// Œ»İÄ¶’†‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚Íˆê‚ÂŒÃ‚¢ƒf[ƒ^ˆµ‚¢‚É‚È‚é
+	// ç¾åœ¨å†ç”Ÿä¸­ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã¯ä¸€ã¤å¤ã„ãƒ‡ãƒ¼ã‚¿æ‰±ã„ã«ãªã‚‹
 	m_prevAnim = m_nextAnim;
 
-	// V‚½‚ÉƒVƒ‡ƒbƒg‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ğƒAƒ^ƒbƒ`‚·‚é
+	// æ–°ãŸã«ã‚·ãƒ§ãƒƒãƒˆã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ã‚¢ã‚¿ãƒƒãƒã™ã‚‹
 	AttachAnim(m_nextAnim, animName, playSpeed, isLoop);
 
-	// ƒAƒjƒ‚ÌƒuƒŒƒ“ƒh—¦‚Í0.0>1.0‚É•Ï‰»‚·‚é‚Ì‚Å0.0‚Å‰Šú‰»
+	// ã‚¢ãƒ‹ãƒ¡ã®ãƒ–ãƒ¬ãƒ³ãƒ‰ç‡ã¯0.0>1.0ã«å¤‰åŒ–ã™ã‚‹ã®ã§0.0ã§åˆæœŸåŒ–
 	m_blendRate = 0.0f;
 
-	// m_blendRate‚ğƒAƒjƒ[ƒVƒ‡ƒ“‚É“K—p‚·‚é
+	// m_blendRateã‚’ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã«é©ç”¨ã™ã‚‹
 	MV1SetAttachAnimBlendRate(m_model, m_prevAnim.attachNo, 1.0f - m_blendRate);
 	MV1SetAttachAnimBlendRate(m_model, m_nextAnim.attachNo, m_blendRate);
 }

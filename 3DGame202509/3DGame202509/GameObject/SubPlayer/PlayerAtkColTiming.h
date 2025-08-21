@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "SubPlayer.h"
 #include <unordered_map>
 

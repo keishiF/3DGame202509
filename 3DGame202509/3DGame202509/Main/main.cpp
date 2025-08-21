@@ -1,28 +1,28 @@
-#include <DxLib.h>
+ï»¿#include <DxLib.h>
 #include "Application.h"
 
-// ƒvƒƒOƒ‰ƒ€‚Í WinMain ‚©‚çn‚Ü‚è‚Ü‚·
+// ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã¯ WinMain ã‹ã‚‰å§‹ã¾ã‚Šã¾ã™
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	Application& app = Application::GetInstance();
 
 #ifdef _DEBUG
-	AllocConsole();                                        // ƒRƒ“ƒ\[ƒ‹
+	AllocConsole();                                        // ã‚³ãƒ³ã‚½ãƒ¼ãƒ«
 	FILE* out = 0; freopen_s(&out, "CON", "w", stdout); // stdout
 	FILE* in = 0; freopen_s(&in, "CON", "r", stdin);   // stdin
 #endif
 
-	// ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚Ì‰Šú‰»
+	// ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®åˆæœŸåŒ–
 	if (!app.Init())
 	{
 		return -1;
 	}
 
-	// ƒƒCƒ“ƒ‹[ƒv
+	// ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—
 	app.Run();
 
-	// Œãˆ—
+	// å¾Œå‡¦ç†
 	app.Terminate();
 
-	return 0;				// ƒ\ƒtƒg‚ÌI—¹ 
+	return 0;				// ã‚½ãƒ•ãƒˆã®çµ‚äº† 
 }

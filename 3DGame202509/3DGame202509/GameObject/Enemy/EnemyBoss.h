@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "EnemyBase.h"
 
 class EnemyBossRightAxe;
@@ -6,49 +6,49 @@ class EnemyBossLeftAxe;
 class EnemyBoss : public EnemyBase
 {
 public:
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ÆƒfƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã¨ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	EnemyBoss();
 	~EnemyBoss();
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	void Init(Vector3& pos, Vector3& rot, Vector3& scale) override;
-	// XV
+	// æ›´æ–°
 	void Update(std::shared_ptr<Player> player) override;
-	// •`‰æ
+	// æç”»
 	void Draw() override;
 
-	// ƒ_ƒ[ƒW‚ğó‚¯‚½‚Ìˆ—
+	// ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ãŸæ™‚ã®å‡¦ç†
 	virtual void OnDamage() override;
 
-	// HPŠ„‡‚Ìæ“¾
+	// HPå‰²åˆã®å–å¾—
 	float GetHpRate() const { return m_hpRate; }
 
-	// €‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©
+	// æ­»ã‚“ã§ã„ã‚‹ã‹ã©ã†ã‹
 	bool IsDead() { return m_isDead; }
 
-	// 3D‹óŠÔ‚É‚¨‚¯‚éˆÊ’uÀ•W‚ğƒXƒNƒŠ[ƒ“À•W‚É•ÏŠ·‚µ‚½‚à‚Ì‚ğæ“¾
+	// 3Dç©ºé–“ã«ãŠã‘ã‚‹ä½ç½®åº§æ¨™ã‚’ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã«å¤‰æ›ã—ãŸã‚‚ã®ã‚’å–å¾—
 	Vector3 GetScreenPos() const;
 
-	// “G‚Ìó‘Ô
+	// æ•µã®çŠ¶æ…‹
 private:
 	const char* GetAnimName(EnemyState state) const override;
 	bool IsLoopAnim(EnemyState state) const override;
 
-	// •à‚«ó‘Ô
+	// æ­©ãçŠ¶æ…‹
 	void WalkUpdate(std::shared_ptr<Player> player);
-	// Player‚ğ’T‚µ‚Ä‚¢‚éó‘Ô
+	// Playerã‚’æ¢ã—ã¦ã„ã‚‹çŠ¶æ…‹
 	void FindUpdate(std::shared_ptr<Player> player) override;
-	// ”­Œ©ó‘Ô
+	// ç™ºè¦‹çŠ¶æ…‹
 	void ChaseUpdate(std::shared_ptr<Player> player) override;
-	// UŒ‚ó‘Ô
+	// æ”»æ’ƒçŠ¶æ…‹
 	void AttackUpdate(std::shared_ptr<Player> player) override;
 	void ChopUpdate(std::shared_ptr<Player> player);
 	void SliceUpdate(std::shared_ptr<Player> player);
 	void StabUpdate(std::shared_ptr<Player> player);
 	void SpinUpdate(std::shared_ptr<Player> player);
-	// ”í’eó‘Ô
+	// è¢«å¼¾çŠ¶æ…‹
 	void HitUpdate(std::shared_ptr<Player> player) override;
-	// €–Só‘Ô
+	// æ­»äº¡çŠ¶æ…‹
 	void DeadUpdate(std::shared_ptr<Player> player) override;
 
 	std::shared_ptr<EnemyBossRightAxe> m_rightWeapon;

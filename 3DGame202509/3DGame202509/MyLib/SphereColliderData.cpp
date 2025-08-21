@@ -1,4 +1,4 @@
-#include "SphereColliderData.h"
+﻿#include "SphereColliderData.h"
 
 SphereColliderData::SphereColliderData() :
 	ColliderData(ColliderData::Kind::Sphere),

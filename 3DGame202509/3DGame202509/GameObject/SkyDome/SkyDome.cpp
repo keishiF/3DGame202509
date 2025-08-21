@@ -1,4 +1,4 @@
-#include "Camera/Camera.h"
+ï»¿#include "Camera/Camera.h"
 #include "SkyDome/SkyDome.h"
 #include <cassert>
 #include <DxLib.h>
@@ -36,7 +36,7 @@ void SkyDome::Update(std::shared_ptr<Camera> camera)
 	m_pos = camera->GetPos(); 
 	m_rotY += kRotSpeed;
 
-	// 0?2ƒÎ‚Åƒ‹[ƒv‚³‚¹‚éi”’l¸“x‚Ì–â‘è‚ð–h‚®j
+	// 0?2Ï€ã§ãƒ«ãƒ¼ãƒ—ã•ã›ã‚‹ï¼ˆæ•°å€¤ç²¾åº¦ã®å•é¡Œã‚’é˜²ãï¼‰
 	if (m_rotY > DX_PI_F * 2.0f)
 	{
 		m_rotY -= DX_PI_F * 2.0f;

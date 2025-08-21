@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Vector3.h"
 #include <DxLib.h>
 #include <memory>
@@ -9,34 +9,34 @@ class Camera
 public:
 	Camera();
 	~Camera();
-	// XVˆ—
+	// æ›´æ–°å‡¦ç†
 	void Update(std::shared_ptr<Player> player);
-	// ƒJƒƒ‰‚Ì‰Šú‰»
+	// ã‚«ãƒ¡ãƒ©ã®åˆæœŸåŒ–
 	void SetCamera(std::shared_ptr<Player> player);
 
-	// ƒJƒƒ‰‚ÌˆÊ’uæ“¾
+	// ã‚«ãƒ¡ãƒ©ã®ä½ç½®å–å¾—
 	Vector3 GetPos() const { return m_pos; }
 
 private:
-	// ƒJƒƒ‰‚ÌˆÊ’u
+	// ã‚«ãƒ¡ãƒ©ã®ä½ç½®
 	Vector3 m_pos;
-	// ƒJƒƒ‰‚Ì’‹“_
+	// ã‚«ãƒ¡ãƒ©ã®æ³¨è¦–ç‚¹
 	Vector3 m_lookAtPos;
-	// ƒJƒƒ‰‚Ì‹–ìŠp
+	// ã‚«ãƒ¡ãƒ©ã®è¦–é‡è§’
 	float m_fov;
-	// ƒƒbƒNƒIƒ“ƒtƒ‰ƒO
+	// ãƒ­ãƒƒã‚¯ã‚ªãƒ³ãƒ•ãƒ©ã‚°
 	bool m_isLockOn;
 
 	float m_cameraRotX;
 	float m_cameraRotY;
 
-	// —h‚ê‚Ì‹­‚³
+	// æºã‚Œã®å¼·ã•
 	float m_shakeStrength;
-	// —h‚ê‚éŠÔ
+	// æºã‚Œã‚‹æ™‚é–“
 	float m_shakeDuration;
-	// —h‚ê‚ÌŒo‰ßŠÔ
+	// æºã‚Œã®çµŒéæ™‚é–“
 	float m_shakeTime;
-	// —h‚ê‚É‚æ‚éˆÊ’u•â³’l
+	// æºã‚Œã«ã‚ˆã‚‹ä½ç½®è£œæ­£å€¤
 	Vector3 m_shakeOffset;
 };
 

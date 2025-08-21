@@ -1,14 +1,14 @@
-#pragma once
+ï»¿#pragma once
 #include <DxLib.h>
 #include <string>
 #include <vector>
 
 struct ObjectData
 {
-	std::string name; // ƒIƒuƒWƒFƒNƒg–¼
-	VECTOR pos = VGet(0.0f, 0.0f, 0.0f);	  // ˆÊ’u
-	VECTOR rot = VGet(0.0f, 0.0f, 0.0f);      // ‰ñ“]
-	VECTOR scale = VGet(0.0f, 0.0f, 0.0f);	  // Šg‘å—Ê
+	std::string name; // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå
+	VECTOR pos = VGet(0.0f, 0.0f, 0.0f);	  // ä½ç½®
+	VECTOR rot = VGet(0.0f, 0.0f, 0.0f);      // å›è»¢
+	VECTOR scale = VGet(0.0f, 0.0f, 0.0f);	  // æ‹¡å¤§é‡
 };
 
 class TransformDataLoader
@@ -18,7 +18,7 @@ public:
     virtual ~TransformDataLoader();
 
     /// <summary>
-    /// CSVƒtƒ@ƒCƒ‹‚©‚çƒIƒuƒWƒFƒNƒg‚ÌTranceformî•ñ‚ğæ“¾
+    /// CSVãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®Tranceformæƒ…å ±ã‚’å–å¾—
     /// </summary>
     /// <param name="fileName">csv</param>
     /// <returns></returns>

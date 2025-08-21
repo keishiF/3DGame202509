@@ -1,4 +1,4 @@
-#include "Input.h"
+ï»¿#include "Input.h"
 #include <DxLib.h>
 
 Input::Input()
@@ -95,7 +95,7 @@ bool Input::IsTrigger(const char* key) const
 
 Input& Input::GetInstance()
 {
-	// TODO: return ƒXƒe[ƒgƒƒ“ƒg‚ğ‚±‚±‚É‘}“ü‚µ‚Ü‚·
+	// TODO: return ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¡ãƒ³ãƒˆã‚’ã“ã“ã«æŒ¿å…¥ã—ã¾ã™
 	static Input instance;
 	return instance;
 }

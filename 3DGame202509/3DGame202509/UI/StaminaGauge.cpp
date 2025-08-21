@@ -1,15 +1,15 @@
-#include "GameObjectManager.h"
+ï»¿#include "GameObjectManager.h"
 #include "Player/Player.h"
 #include "StaminaGauge.h"
 #include <DxLib.h>
 
 namespace
 {
-	// ƒQ[ƒW‚Ì‰¡•Ac•
+	// ã‚²ãƒ¼ã‚¸ã®æ¨ªå¹…ã€ç¸¦å¹…
 	constexpr float kStaminaGaugeWidth = 200;
 	constexpr float kStaminaGaugeHeight = 20;
 
-	// ƒvƒŒƒCƒ„[‚ÌƒXƒ^ƒ~ƒiƒQ[ƒW‚Ì•`‰æˆÊ’u
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¹ã‚¿ãƒŸãƒŠã‚²ãƒ¼ã‚¸ã®æç”»ä½ç½®
 	constexpr int kPlayerStaminaPosX = 50;
 	constexpr int kPlayerStaminaPosY = 70;
 }

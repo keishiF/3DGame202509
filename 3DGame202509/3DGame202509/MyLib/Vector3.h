@@ -1,8 +1,8 @@
-#pragma once
+ï»¿#pragma once
 #include <DxLib.h>
 #include <cmath>
 
-// 3ŸŒ³ƒxƒNƒgƒ‹ƒNƒ‰ƒX
+// 3æ¬¡å…ƒãƒ™ã‚¯ãƒˆãƒ«ã‚¯ãƒ©ã‚¹
 class Vector3
 {
 public:
@@ -101,13 +101,13 @@ public:
 		return sqrLen;
 	}
 
-	// ©g‚Ì’·‚³‚ğ1‚É‚·‚é(³‹K‰»)
+	// è‡ªèº«ã®é•·ã•ã‚’1ã«ã™ã‚‹(æ­£è¦åŒ–)
 	void Normalize()
 	{
 		float len = Length();
 		if (len <= 0)
 		{
-			// ƒ[ƒƒxƒNƒgƒ‹‚Í‚»‚Ì‚Ü‚Ü
+			// ã‚¼ãƒ­ãƒ™ã‚¯ãƒˆãƒ«ã¯ãã®ã¾ã¾
 			return;
 		}
 		x /= len;
@@ -115,12 +115,12 @@ public:
 		z /= len;
 	}
 
-	// “àÏ
+	// å†…ç©
 	float Dot(const Vector3& vec) const
 	{
 		return x * vec.x + y * vec.y + z * vec.z;
 	}
-	// ŠOÏ
+	// å¤–ç©
 	Vector3 Cross(const Vector3& vec) const
 	{
 		return Vector3
@@ -130,8 +130,8 @@ public:
 		);
 	}
 
-	// ©g‚Ì’·‚³‚ğ1‚É‚µ‚½ƒxƒNƒgƒ‹‚Ìæ“¾
-	// (‚±‚ÌŠÖ”‚ğ“Ç‚ñ‚Å‚à©g‚Ì’·‚³‚Í•Ï‰»‚µ‚È‚¢)
+	// è‡ªèº«ã®é•·ã•ã‚’1ã«ã—ãŸãƒ™ã‚¯ãƒˆãƒ«ã®å–å¾—
+	// (ã“ã®é–¢æ•°ã‚’èª­ã‚“ã§ã‚‚è‡ªèº«ã®é•·ã•ã¯å¤‰åŒ–ã—ãªã„)
 	Vector3 GetNormalize() const
 	{
 		float len = Length();
@@ -152,7 +152,7 @@ public:
 	}
 
 	/// <summary>
-	/// Dxƒ‰ƒCƒuƒ‰ƒŠ‚ÌVECTOR‚ÉƒLƒƒƒXƒg‚·‚é
+	/// Dxãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®VECTORã«ã‚­ãƒ£ã‚¹ãƒˆã™ã‚‹
 	/// </summary>
 	/// <returns></returns>
 	VECTOR ToDxVECTOR() const

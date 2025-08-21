@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Animator.h"
 #include "Collidable.h"
 #include "Input.h"
@@ -8,20 +8,20 @@
 
 enum class PlayerState
 {
-	Idle,       // ‘Ò‹@
-	Walk,       // •à‚«
-	NormalRun,  // ‘–‚è
-	TiredRun,   // ’x‚¢‘–‚è
-	Tired,		// ”æ‚ê
-	Chop,       // UŒ‚1’i–Ú
-	Slice,      // UŒ‚2’i–Ú
-	Stab,       // UŒ‚3’i–Ú
-	Spin,       // ‹­UŒ‚
-	Shot,       // ËŒ‚
-	Special,    // •KE‹Z
-	Dodge,      // ‰ñ”ğ
-	Hit,        // ”í’e
-	Dead        // €–S
+	Idle,       // å¾…æ©Ÿ
+	Walk,       // æ­©ã
+	NormalRun,  // èµ°ã‚Š
+	TiredRun,   // é…ã„èµ°ã‚Š
+	Tired,		// ç–²ã‚Œ
+	Chop,       // æ”»æ’ƒ1æ®µç›®
+	Slice,      // æ”»æ’ƒ2æ®µç›®
+	Stab,       // æ”»æ’ƒ3æ®µç›®
+	Spin,       // å¼·æ”»æ’ƒ
+	Shot,       // å°„æ’ƒ
+	Special,    // å¿…æ®ºæŠ€
+	Dodge,      // å›é¿
+	Hit,        // è¢«å¼¾
+	Dead        // æ­»äº¡
 };
 
 class Effect;
@@ -32,76 +32,76 @@ class PlayerRightWeapon;
 class Player : public Collidable
 {
 public:
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ÆƒfƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã¨ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	Player();
 	virtual ~Player();
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	void Init(Vector3& pos, const Vector3& rot, const Vector3& scale);
-	// XV
+	// æ›´æ–°
 	void Update();
-	// •`‰æ
+	// æç”»
 	void Draw();
 
-	// ƒQƒbƒ^[
-	// ˆÊ’uæ“¾
+	// ã‚²ãƒƒã‚¿ãƒ¼
+	// ä½ç½®å–å¾—
 	Vector3 GetPos() const { return m_rigidbody.GetPos(); }
-	// ”¼Œaæ“¾
+	// åŠå¾„å–å¾—
 	float GetRadius() const { return m_radius; }
-	// ƒ‚ƒfƒ‹æ“¾
+	// ãƒ¢ãƒ‡ãƒ«å–å¾—
 	int GetModel() const { return m_charModel; }
-	// HPæ“¾
+	// HPå–å¾—
 	float GetHP() const { return m_hp; }
 	float GetHPRate() const { return m_hpRate; }
-	// ƒXƒ^ƒ~ƒiæ“¾
+	// ã‚¹ã‚¿ãƒŸãƒŠå–å¾—
 	float GetStamina() const { return m_stamina; }
 	float GetStaminaRate() const { return m_staminaRate; }
-	// •KE‹ZƒQ[ƒWæ“¾
+	// å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸å–å¾—
 	float GetSpecialGauge() const { return m_specialGauge; }
 	float GetSpecialGaugeRate() const { return m_specialGaugeRate; }
-	// Œ»İ‚Ìó‘Ô‚ğæ“¾
+	// ç¾åœ¨ã®çŠ¶æ…‹ã‚’å–å¾—
 	PlayerState GetPlayerState() const { return m_state; }
 
-	// •KE‹ZƒQ[ƒW‚ğ‰ÁZ‚·‚éŠÖ”
+	// å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸ã‚’åŠ ç®—ã™ã‚‹é–¢æ•°
 	void SetSpecialGauge(int specialGaugePoint);
 
-	// ƒ_ƒ[ƒW‚ğó‚¯‚½‚Ìˆ—‚ğ‚Ü‚Æ‚ß‚éŠÖ”
+	// ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ãŸæ™‚ã®å‡¦ç†ã‚’ã¾ã¨ã‚ã‚‹é–¢æ•°
 	void OnDamage();
 
-	// €‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©
+	// æ­»ã‚“ã§ã„ã‚‹ã‹ã©ã†ã‹
 	bool IsDead() const { return m_isDead; }
 
-	// “–‚½‚Á‚½‚Ìˆ—
+	// å½“ãŸã£ãŸæ™‚ã®å‡¦ç†
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 
-	// ƒvƒŒƒCƒ„[‚Ìó‘Ô
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®çŠ¶æ…‹
 private:
 	PlayerState m_state;
 	void ChangeState(PlayerState newState);
 
-	// ‘Ò‹@ó‘Ô
+	// å¾…æ©ŸçŠ¶æ…‹
 	void IdleUpdate();
-	// ˆÚ“®
-	// •à‚«
+	// ç§»å‹•
+	// æ­©ã
 	void WalkUpdate();
-	// ‘–‚è
+	// èµ°ã‚Š
 	void RunUpdate();
-	// ’x‚¢‘–‚è
+	// é…ã„èµ°ã‚Š
 	void TiredRunUpdate();
-	// ”æ‚ê
+	// ç–²ã‚Œ
 	void TiredUpdate();
-	// ŠeUŒ‚ó‘Ô
+	// å„æ”»æ’ƒçŠ¶æ…‹
 	void ChopUpdate();
 	void SliceUpdate();
 	void StabUpdate();
 	void SpinUpdate();
 	void ShotUpdate();
 	void SpecialUpdate();
-	// ‰ñ”ğó‘Ô
+	// å›é¿çŠ¶æ…‹
 	void DodgeUpdate();
-	// ”í’eó‘Ô
+	// è¢«å¼¾çŠ¶æ…‹
 	void HitUpdate();
-	// €–Só‘Ô
+	// æ­»äº¡çŠ¶æ…‹
 	void DeadUpdate();
 
 private:
@@ -109,37 +109,37 @@ private:
 	std::shared_ptr<EnemyBase> FindNearestEnemy(float radius);
 
 private:
-	// ³–ÊƒxƒNƒgƒ‹
+	// æ­£é¢ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 m_forward;
 
-	// ƒvƒŒƒCƒ„[‚Ìƒ‚ƒfƒ‹
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ãƒ¢ãƒ‡ãƒ«
 	int m_charModel;
-	// ƒvƒŒƒCƒ„[‚Ì“–‚½‚è”»’è
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å½“ãŸã‚Šåˆ¤å®š
 	float m_radius;
-	// ƒvƒŒƒCƒ„[‚ÌHP
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®HP
 	float m_hp;
 	float m_hpRate;
-	// ƒvƒŒƒCƒ„[‚ÌƒXƒ^ƒ~ƒi
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¹ã‚¿ãƒŸãƒŠ
 	float m_stamina;
 	float m_staminaRate;
-	// •KE‹ZƒQ[ƒW
+	// å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸
 	float m_specialGauge;
 	float m_specialGaugeRate;
-	// ƒvƒŒƒCƒ„[‚Ìƒtƒ‰ƒO
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ãƒ•ãƒ©ã‚°
 	bool m_isCombo;
 	bool m_isDead;
 
 	int m_attackPower;
 
-	// Œo‰ßƒtƒŒ[ƒ€‚ğ‘ª‚é
+	// çµŒéãƒ•ãƒ¬ãƒ¼ãƒ ã‚’æ¸¬ã‚‹
 	float m_frame;
 	int m_blinkFrame;
 	float m_attackFrame;
 
-	// ƒGƒtƒFƒNƒgƒnƒ“ƒhƒ‹
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒãƒ³ãƒ‰ãƒ«
 	int m_specialEffect;
 
-	// ƒvƒŒƒCƒ„[‚ÌƒAƒjƒ[ƒVƒ‡ƒ“
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
 	Animator m_anim;
 
 	Quaternion m_currentRot;

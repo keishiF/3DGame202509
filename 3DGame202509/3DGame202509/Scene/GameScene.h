@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "SceneBase.h"
 #include "Vector3.h"
 #include <memory>
@@ -40,16 +40,16 @@ private:
 
 	GameObjectManager& m_gameObjectManager;
 
-	// ’ÊíXVˆ—
+	// é€šå¸¸æ™‚æ›´æ–°å‡¦ç†
 	void NormalUpdate();
-	// ƒtƒF[ƒhƒCƒ“
+	// ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³
 	void FadeInUpdate();
-	// ƒtƒF[ƒhƒAƒEƒg
+	// ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆ
 	void FadeOutUpdate();
 
-	// ’Êí•`‰æ
+	// é€šå¸¸æ™‚æç”»
 	void NormalDraw();
-	// ƒtƒF[ƒh‚Ì•`‰æ
+	// ãƒ•ã‚§ãƒ¼ãƒ‰æ™‚ã®æç”»
 	void FadeDraw();
 };
 

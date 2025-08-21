@@ -1,4 +1,4 @@
-#include "Animator.h"
+ï»¿#include "Animator.h"
 #include "CapsuleColliderData.h"
 #include "EnemyBoss.h"
 #include "EnemyBossLeftAxe.h"
@@ -11,46 +11,46 @@
 
 namespace
 {
-	// ƒGƒlƒ~[‚ªƒvƒŒƒCƒ„[‚ğ”­Œ©‚Å‚«‚é”ÍˆÍ
+	// ã‚¨ãƒãƒŸãƒ¼ãŒãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ç™ºè¦‹ã§ãã‚‹ç¯„å›²
 	constexpr float kFindRadius = 1500.0f;
 	constexpr float kAttackRadius = 600.0f;
 
-	// ‰ŠúHP
+	// åˆæœŸHP
 	constexpr int kHp = 1;
 
-	// ƒGƒlƒ~[‚Ì‘¬“x
+	// ã‚¨ãƒãƒŸãƒ¼ã®é€Ÿåº¦
 	constexpr float kWalkSpeed = 2.0f;
 	constexpr float kChaseSpeed = 10.0f;
 
-	// ƒGƒlƒ~[‚Ì“–‚½‚è”»’è—p”¼Œa
+	// ã‚¨ãƒãƒŸãƒ¼ã®å½“ãŸã‚Šåˆ¤å®šç”¨åŠå¾„
 	constexpr float kColScale = 200.0f;
 	constexpr float kColRadius = 75.0f;
 
 	constexpr float kAttackFrame = 32.0f;
 
-	// ƒ‚ƒfƒ‹‚ÌŠg‘å—¦
+	// ãƒ¢ãƒ‡ãƒ«ã®æ‹¡å¤§ç‡
 	constexpr float kModelScale = 200.0f;
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“–¼
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å
 
-	// •à‚«
+	// æ­©ã
 	const char* kWalkAnimName = "Walking_D_Skeletons";
-	// ‘Ò‹@
+	// å¾…æ©Ÿ
 	const char* kFindAnimName = "Idle";
-	// ”­Œ©
+	// ç™ºè¦‹
 	const char* kChaseAnimName = "Running_A";
-	// UŒ‚
+	// æ”»æ’ƒ
 	const char* kAttackAnimName      = "1H_Melee_Attack_Slice_Diagonal";
 	const char* kChopAttackAnimName  = "Dualwield_Melee_Attack_Chop";
 	const char* kSliceAttackAnimName = "Dualwield_Melee_Attack_Slice";
 	const char* kStabAttackAnimName  = "Dualwield_Melee_Attack_Stab";
 	const char* kSpinAttackAnimName  = "2H_Melee_Attack_Spinning";
-	// ”í’e
+	// è¢«å¼¾
 	const char* kHitAnimName  = "Hit_B";
-	// €–S
+	// æ­»äº¡
 	const char* kDeadAnimName = "Death_B";
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶‘¬“x
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿé€Ÿåº¦
 	constexpr float kAnimSpeed      = 0.5f;
 	constexpr float kChopAnimSpeed  = 0.4f;
 	constexpr float kSliceAnimSpeed = 0.4f;
@@ -107,7 +107,7 @@ void EnemyBoss::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	colData->m_startPos = pos;
 	colData->m_radius = kColRadius;
 
-	// ƒXƒs[ƒh‚Ì‰Šú‰»
+	// ã‚¹ãƒ”ãƒ¼ãƒ‰ã®åˆæœŸåŒ–
 	m_findRadius = kFindRadius;
 	m_attackRadius = kAttackRadius;
 	m_hp = kHp;
@@ -140,7 +140,7 @@ void EnemyBoss::Update(std::shared_ptr<Player> player)
 		return;
 	}
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXV
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
 	m_anim.UpdateAnimBlend();
@@ -179,7 +179,7 @@ void EnemyBoss::Update(std::shared_ptr<Player> player)
 		break;
 	}
 
-	//“–‚½‚è”»’è
+	//å½“ãŸã‚Šåˆ¤å®š
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	Vector3 colPos = m_rigidbody.GetPos();
 	colPos.y += kColScale;
@@ -230,7 +230,7 @@ void EnemyBoss::WalkUpdate(std::shared_ptr<Player> player)
 
 	++m_walkFrame;
 
-	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 toPlayerDir = player->GetPos() - myPos;
 	toPlayerDir.y = 0.0f;
@@ -238,10 +238,10 @@ void EnemyBoss::WalkUpdate(std::shared_ptr<Player> player)
 	m_rigidbody.SetVelo(toPlayerDir * kWalkSpeed);
 	MV1SetPosition(m_charModel, myPos.ToDxVECTOR());
 
-	// is•ûŒü‚ª0‚Å‚È‚¯‚ê‚Î‰ñ“]
+	// é€²è¡Œæ–¹å‘ãŒ0ã§ãªã‘ã‚Œã°å›è»¢
 	if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
 	{
-		// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
+		// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
 		float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
 		MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 	}
@@ -299,22 +299,22 @@ void EnemyBoss::ChaseUpdate(std::shared_ptr<Player> player)
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Chase));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Chase));
 
-	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 toPlayerDir = player->GetPos() - myPos;
 	toPlayerDir.y = 0.0f;
 
-	// ‹——£‚ª\•ª‚É‚ ‚éê‡‚Ì‚İˆÚ“®
+	// è·é›¢ãŒååˆ†ã«ã‚ã‚‹å ´åˆã®ã¿ç§»å‹•
 	if (toPlayerDir.Length() > 1.0f)
 	{
 		toPlayerDir.Normalize();
 		m_rigidbody.SetVelo(toPlayerDir * kChaseSpeed);
 		MV1SetPosition(m_charModel, myPos.ToDxVECTOR());
 
-		// is•ûŒü‚ª0‚Å‚È‚¯‚ê‚Î‰ñ“]
+		// é€²è¡Œæ–¹å‘ãŒ0ã§ãªã‘ã‚Œã°å›è»¢
 		if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
 		{
-			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
+			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
 			float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
 			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 		}
@@ -358,7 +358,7 @@ void EnemyBoss::AttackUpdate(std::shared_ptr<Player> player)
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Attack));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Attack));
 
-	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
@@ -368,7 +368,7 @@ void EnemyBoss::AttackUpdate(std::shared_ptr<Player> player)
 		++m_attackFrame;
 		if (dir.x != 0.0f || dir.z != 0.0f)
 		{
-			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
+			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
 			float angleY = std::atan2(dir.x, -dir.z);
 			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 		}
@@ -395,7 +395,7 @@ void EnemyBoss::ChopUpdate(std::shared_ptr<Player> player)
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Chop));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Chop));
 
-	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
@@ -405,7 +405,7 @@ void EnemyBoss::ChopUpdate(std::shared_ptr<Player> player)
 		++m_attackFrame;
 		if (dir.x != 0.0f || dir.z != 0.0f)
 		{
-			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
+			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
 			float angleY = std::atan2(dir.x, -dir.z);
 			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 		}
@@ -432,7 +432,7 @@ void EnemyBoss::SliceUpdate(std::shared_ptr<Player> player)
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Slice));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Slice));
 
-	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
@@ -442,7 +442,7 @@ void EnemyBoss::SliceUpdate(std::shared_ptr<Player> player)
 		++m_attackFrame;
 		if (dir.x != 0.0f || dir.z != 0.0f)
 		{
-			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
+			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
 			float angleY = std::atan2(dir.x, -dir.z);
 			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 		}
@@ -469,7 +469,7 @@ void EnemyBoss::StabUpdate(std::shared_ptr<Player> player)
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Stab));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Stab));
 
-	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
@@ -479,7 +479,7 @@ void EnemyBoss::StabUpdate(std::shared_ptr<Player> player)
 		++m_attackFrame;
 		if (dir.x != 0.0f || dir.z != 0.0f)
 		{
-			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
+			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
 			float angleY = std::atan2(dir.x, -dir.z);
 			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 		}
@@ -506,7 +506,7 @@ void EnemyBoss::SpinUpdate(std::shared_ptr<Player> player)
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Spin));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Spin));
 
-	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
@@ -516,7 +516,7 @@ void EnemyBoss::SpinUpdate(std::shared_ptr<Player> player)
 		++m_attackFrame;
 		if (dir.x != 0.0f || dir.z != 0.0f)
 		{
-			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
+			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
 			float angleY = std::atan2(dir.x, -dir.z);
 			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 		}
@@ -543,7 +543,7 @@ void EnemyBoss::HitUpdate(std::shared_ptr<Player> player)
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Hit));
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		ChangeState(EnemyState::Find, kAnimSpeed);
@@ -556,7 +556,7 @@ void EnemyBoss::DeadUpdate(std::shared_ptr<Player> player)
 	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Dead));
 	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Dead));
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		if (m_charModel >= 0)
@@ -571,11 +571,11 @@ void EnemyBoss::DeadUpdate(std::shared_ptr<Player> player)
 Vector3 EnemyBoss::GetScreenPos() const
 {
 	Vector3 worldPos = m_rigidbody.GetPos();
-	worldPos.y += 120.0f; // “ªã‚Ì‚‚³’²®
+	worldPos.y += 120.0f; // é ­ä¸Šã®é«˜ã•èª¿æ•´
 
 	VECTOR worldPosDx = worldPos.ToDxVECTOR();
 
-	// 3D¨2DÀ•W•ÏŠ·i–ß‚è’l‚ªƒXƒNƒŠ[ƒ“À•Wj
+	// 3Dâ†’2Dåº§æ¨™å¤‰æ›ï¼ˆæˆ»ã‚Šå€¤ãŒã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ï¼‰
 	VECTOR screenPosDx = ConvWorldPosToScreenPos(worldPosDx);
 
 	const int gaugeWidth = 100;
@@ -618,7 +618,7 @@ const char* EnemyBoss::GetAnimName(EnemyState state) const
 		return kDeadAnimName;
 	default:
 		return "";
-		assert(0 && "‘¶İ‚µ‚È‚¢ƒAƒjƒ[ƒVƒ‡ƒ“");
+		assert(0 && "å­˜åœ¨ã—ãªã„ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³");
 	}
 }
 
@@ -648,6 +648,6 @@ bool EnemyBoss::IsLoopAnim(EnemyState state) const
 		return false;
 	default:
 		return "";
-		assert(0 && "‘¶İ‚µ‚È‚¢ƒXƒe[ƒg");
+		assert(0 && "å­˜åœ¨ã—ãªã„ã‚¹ãƒ†ãƒ¼ãƒˆ");
 	}
 }

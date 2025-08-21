@@ -1,4 +1,4 @@
-#include "CapsuleColliderData.h"
+﻿#include "CapsuleColliderData.h"
 
 CapsuleColliderData::CapsuleColliderData() :
 	ColliderData(ColliderData::Kind::Capsule),

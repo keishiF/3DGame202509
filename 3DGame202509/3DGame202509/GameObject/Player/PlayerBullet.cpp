@@ -1,4 +1,4 @@
-#include "PlayerBullet.h"
+ï»¿#include "PlayerBullet.h"
 #include "SphereColliderData.h"
 #include <DxLib.h>
 
@@ -38,7 +38,7 @@ void PlayerBullet::Update()
 {
 	++m_frame;
 
-	// ˆÚ“®ˆ—
+	// ç§»å‹•å‡¦ç†
 	m_dir.Normalize();
 	m_rigidbody.SetVelo(m_dir * kRunSpeed);
 

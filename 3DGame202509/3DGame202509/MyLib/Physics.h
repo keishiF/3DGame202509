@@ -1,11 +1,11 @@
-#pragma once
+ï»¿#pragma once
 #include "Collidable.h"
 #include <list>
 #include <vector>
 
 namespace
 {
-	//ƒ|ƒŠƒSƒ“‚Ì“–‚½‚è”»’è‚Ì”z—ñ‚ÌÅ‘å”
+	//ãƒãƒªã‚´ãƒ³ã®å½“ãŸã‚Šåˆ¤å®šã®é…åˆ—ã®æœ€å¤§æ•°
 	constexpr int kMaxHitPolygon = 2048;
 }
 
@@ -23,7 +23,7 @@ public:
 private:
 	std::list<std::shared_ptr<Collidable>> m_collidables;
 
-	// OnCollide‚ÌÕ“Ë’Ê’m‚Ì‚½‚ß‚Ìƒf[ƒ^
+	// OnCollideã®è¡çªé€šçŸ¥ã®ãŸã‚ã®ãƒ‡ãƒ¼ã‚¿
 	struct OnCollideInfo
 	{
 		std::shared_ptr<Collidable> owner;
@@ -32,28 +32,28 @@ private:
 	};
 
 	/// <summary>
-	/// ƒIƒuƒWƒFƒNƒg‚ªÕ“Ë‚µ‚Ä‚¢‚é‚©‚ğ”»’è‚·‚éŠÖ”
+	/// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒè¡çªã—ã¦ã„ã‚‹ã‹ã‚’åˆ¤å®šã™ã‚‹é–¢æ•°
 	/// </summary>
 	/// <param name="first"></param>
 	/// <param name="second"></param>
 	/// <returns></returns>
 	bool IsCollide(std::shared_ptr<Collidable> first, std::shared_ptr<Collidable> second) const;
 	/// <summary>
-	/// ƒXƒtƒBƒA“¯m‚Ì“–‚½‚è”»’è
+	/// ã‚¹ãƒ•ã‚£ã‚¢åŒå£«ã®å½“ãŸã‚Šåˆ¤å®š
 	/// </summary>
 	/// <param name="first"></param>
 	/// <param name="second"></param>
 	/// <returns></returns>
 	bool IsCollideSS(std::shared_ptr<Collidable>& first, std::shared_ptr<Collidable>& second) const;
 	/// <summary>
-	/// ƒJƒvƒZƒ‹“¯m‚Ì“–‚½‚è”»’è
+	/// ã‚«ãƒ—ã‚»ãƒ«åŒå£«ã®å½“ãŸã‚Šåˆ¤å®š
 	/// </summary>
 	/// <param name="first"></param>
 	/// <param name="second"></param>
 	/// <returns></returns>
 	bool IsCollideCC(std::shared_ptr<Collidable>& first, std::shared_ptr<Collidable>& second) const;
 	/// <summary>
-	/// ƒJƒvƒZƒ‹‚ÆƒXƒtƒBƒA‚Ì“–‚½‚è”»’è
+	/// ã‚«ãƒ—ã‚»ãƒ«ã¨ã‚¹ãƒ•ã‚£ã‚¢ã®å½“ãŸã‚Šåˆ¤å®š
 	/// </summary>
 	/// <param name="firstKind"></param>
 	/// <param name="first"></param>
@@ -61,7 +61,7 @@ private:
 	/// <returns></returns>
 	bool IsCollideCS(ColliderData::Kind firstKind, std::shared_ptr<Collidable>& first, std::shared_ptr<Collidable>& second) const;
 	/// <summary>
-	/// ƒJƒvƒZƒ‹‚Æƒ|ƒŠƒSƒ“‚Ì“–‚½‚è”»’è
+	/// ã‚«ãƒ—ã‚»ãƒ«ã¨ãƒãƒªã‚´ãƒ³ã®å½“ãŸã‚Šåˆ¤å®š
 	/// </summary>
 	/// <param name="firstKind"></param>
 	/// <param name="first"></param>
@@ -72,19 +72,19 @@ private:
 	void FixPosition();
 	void FixNextPosition(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const;
 	/// <summary>
-	/// ƒXƒtƒBƒA“¯m‚ÌˆÊ’u•â³
+	/// ã‚¹ãƒ•ã‚£ã‚¢åŒå£«ã®ä½ç½®è£œæ­£
 	/// </summary>
 	/// <param name="secondary"></param>
 	/// <param name="primary"></param>
 	void FixNextPositionSS(std::shared_ptr<Collidable>& secondary, std::shared_ptr<Collidable>& primary) const;
 	/// <summary>
-	/// ƒJƒvƒZƒ‹“¯m‚ÌˆÊ’u•â³
+	/// ã‚«ãƒ—ã‚»ãƒ«åŒå£«ã®ä½ç½®è£œæ­£
 	/// </summary>
 	/// <param name="primary"></param>
 	/// <param name="secondary"></param>
 	void FixNextPositionCC(std::shared_ptr<Collidable>& primary, std::shared_ptr<Collidable>& secondary) const;
 	/// <summary>
-	/// ƒ|ƒŠƒSƒ“‚ÆƒJƒvƒZƒ‹‚ÌˆÊ’u•â³
+	/// ãƒãƒªã‚´ãƒ³ã¨ã‚«ãƒ—ã‚»ãƒ«ã®ä½ç½®è£œæ­£
 	/// </summary>
 	/// <param name="primary"></param>
 	/// <param name="secondary"></param>
@@ -92,11 +92,11 @@ private:
 
 	std::vector<OnCollideInfo> CheckCollide() const;
 
-	// “–‚½‚è”»’è‚ğ‚»‚à‚»‚àæ‚ç‚È‚¢‚æ‚¤‚É‚·‚é
+	// å½“ãŸã‚Šåˆ¤å®šã‚’ãã‚‚ãã‚‚å–ã‚‰ãªã„ã‚ˆã†ã«ã™ã‚‹
 	bool SkipCheckCollide(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const;
-	// “–‚½‚è”»’è©‘Ì‚Í‚Æ‚é‚ª‰Ÿ‚µ–ß‚µ‚Í‚µ‚È‚¢‚æ‚¤‚É‚·‚é
+	// å½“ãŸã‚Šåˆ¤å®šè‡ªä½“ã¯ã¨ã‚‹ãŒæŠ¼ã—æˆ»ã—ã¯ã—ãªã„ã‚ˆã†ã«ã™ã‚‹
 	bool SkipFixPos(std::shared_ptr<Collidable> primary, std::shared_ptr<Collidable> secondary) const;
-	// ˆÊ’u•â³‚Í‚·‚é‚ª‚»‚êˆÈŠO‚Ìˆ—(ƒ_ƒ[ƒW‚ğó‚¯‚é‚È‚Ç)‚Í‚µ‚È‚¢‚æ‚¤‚É‚·‚é
+	// ä½ç½®è£œæ­£ã¯ã™ã‚‹ãŒãã‚Œä»¥å¤–ã®å‡¦ç†(ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ã‚‹ãªã©)ã¯ã—ãªã„ã‚ˆã†ã«ã™ã‚‹
 	bool ShouldCallOnCollide(ObjectTag tagA, ObjectTag tagB) const;
 
 	void SegmentClosestPoint(Vector3& segAStart, Vector3& segAEnd,

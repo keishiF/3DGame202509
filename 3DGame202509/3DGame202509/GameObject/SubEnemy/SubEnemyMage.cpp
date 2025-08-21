@@ -1,60 +1,60 @@
-#include "CapsuleColliderData.h"
+ï»¿#include "CapsuleColliderData.h"
 #include "SubPlayer/SubPlayer.h"
 #include "SubEnemyMage.h"
 
 namespace
 {
-	// HP‚Ì‰Šú’lAÅ‘å’l
+	// HPã®åˆæœŸå€¤ã€æœ€å¤§å€¤
 	constexpr float kHP = 3.0f;
-	// UŒ‚—Í
+	// æ”»æ’ƒåŠ›
 	constexpr float kDefaultAtk = 1.0f;
 
-	// ˆÚ“®‘¬“x
+	// ç§»å‹•é€Ÿåº¦
 	constexpr float kRunSpeed = 0.5f;
 
-	// ƒ‚ƒfƒ‹‚ÌŠg‘å’l
+	// ãƒ¢ãƒ‡ãƒ«ã®æ‹¡å¤§å€¤
 	constexpr float kModelScale = 75.0f;
 	constexpr float kWeaponModelScale = 0.01f;
 
-	// UŒ‚ƒtƒŒ[ƒ€
+	// æ”»æ’ƒãƒ•ãƒ¬ãƒ¼ãƒ 
 	constexpr float kAtkFrame = 32.0f;
 
-	// “–‚½‚è”»’è
-	// ƒJƒvƒZƒ‹‚Ì”¼Œa
+	// å½“ãŸã‚Šåˆ¤å®š
+	// ã‚«ãƒ—ã‚»ãƒ«ã®åŠå¾„
 	constexpr float kCapsuleColRadius = 45.0f;
-	// ƒJƒvƒZƒ‹‚Ì’·‚³
+	// ã‚«ãƒ—ã‚»ãƒ«ã®é•·ã•
 	constexpr float kColScale = 140.0f;
-	// ó‘Ô‘JˆÚ‚Ég‚¤”¼Œa
-	// ƒvƒŒƒCƒ„[‚ğ’T’m‚Å‚«‚é”ÍˆÍ
+	// çŠ¶æ…‹é·ç§»ã«ä½¿ã†åŠå¾„
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’æ¢çŸ¥ã§ãã‚‹ç¯„å›²
 	constexpr float kPlayerFindRadius = 500.0f;
-	// UŒ‚ó‘Ô‚ÉˆÚs‚·‚é”ÍˆÍ
+	// æ”»æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹ç¯„å›²
 	constexpr float kAtkRadius = 300.0f;
 
-	// ‹–ìŠp
-	constexpr float kViewAngleRad = DX_PI_F / 2.0f; // 90“x
-	// Œ©‚¦‚é‹——£
+	// è¦–é‡è§’
+	constexpr float kViewAngleRad = DX_PI_F / 2.0f; // 90åº¦
+	// è¦‹ãˆã‚‹è·é›¢
 	constexpr float kViewDistance = 750.0f;
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“–¼
-	// ‘Ò‹@
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å
+	// å¾…æ©Ÿ
 	const char* kFindAnimName = "2H_Melee_Idle";
-	// •à‚«
+	// æ­©ã
 	const char* kWalkAnimName = "Walking_D_Skeletons";
-	// ”­Œ©
+	// ç™ºè¦‹
 	const char* kChaseAnimName = "Running_C";
-	// UŒ‚
+	// æ”»æ’ƒ
 	const char* kAttackAnimName = "1H_Melee_Attack_Slice_Diagonal";
-	// ”í’e
+	// è¢«å¼¾
 	const char* kHitAnimName = "Hit_B";
-	// €–S
+	// æ­»äº¡
 	const char* kDeadAnimName = "Death_B";
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶‘¬“x
-	// ’Êí‘¬“x
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿé€Ÿåº¦
+	// é€šå¸¸é€Ÿåº¦
 	constexpr float kDefaultAnimSpeed = 1.0f;
 	constexpr float kAtkAnimSpeed = 0.5f;
 
-	// “|‚³‚ê‚½‚Æ‚«‚ÉƒvƒŒƒCƒ„[‚Ì•KE‹ZƒQ[ƒW‚ğ‘‚â‚·—Ê
+	// å€’ã•ã‚ŒãŸã¨ãã«ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸ã‚’å¢—ã‚„ã™é‡
 	constexpr int kSpecialGaugePoint = 10;
 }
 
@@ -70,7 +70,7 @@ SubEnemyMage::~SubEnemyMage()
 
 void SubEnemyMage::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 {
-	// Physics‚É“o˜^
+	// Physicsã«ç™»éŒ²
 	Collidable::Init();
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
@@ -82,14 +82,14 @@ void SubEnemyMage::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_playerFindRadius = kPlayerFindRadius;
 	m_atkRadius = kAtkRadius;
 
-	// ŠeƒXƒe[ƒ^ƒX‚Ì‰Šú‰»
+	// å„ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã®åˆæœŸåŒ–
 	m_status.m_hp = kHP;
 	m_status.m_maxHP = kHP;
 	m_status.m_atk = kDefaultAtk;
 	m_atkFrame = 0.0f;
 	m_isDead = false;
 
-	// ƒ‚ƒfƒ‹‚Ìƒ[ƒh
+	// ãƒ¢ãƒ‡ãƒ«ã®ãƒ­ãƒ¼ãƒ‰
 	m_model = MV1LoadModel("Data/Model/Enemy/Minion/Minion.mv1");
 	assert(m_model >= 0);
 
@@ -98,7 +98,7 @@ void SubEnemyMage::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	MV1SetPosition(m_model, pos.ToDxVECTOR());
 	MV1SetRotationXYZ(m_model, VGet(rot.x, rot.y, rot.z));
 
-	// ƒAƒjƒ[ƒ^[
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚¿ãƒ¼
 	m_anim.Init(m_model);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, kDefaultAnimSpeed, true);
 }
@@ -120,10 +120,10 @@ void SubEnemyMage::Draw()
 	Vector3 pos = m_rigidbody.GetPos();
 	VECTOR base = pos.ToDxVECTOR();
 
-	// ñU‚èŠp“x
+	// é¦–æŒ¯ã‚Šè§’åº¦
 	float offsetAngle = std::sin(m_angle * m_rotSpeed) * m_angleMax;
 
-	// ‘O•ûŒüi‚Ü‚½‚Í Rigidbody ‚É•Û‘¶‚³‚ê‚Ä‚éŒü‚«j
+	// å‰æ–¹å‘ï¼ˆã¾ãŸã¯ Rigidbody ã«ä¿å­˜ã•ã‚Œã¦ã‚‹å‘ãï¼‰
 	Vector3 forward = m_rigidbody.GetDir();
 	if (forward.Length() == 0.0f)
 	{
@@ -131,7 +131,7 @@ void SubEnemyMage::Draw()
 	}
 	forward.Normalize();
 
-	// ƒXƒCƒ“ƒO‚µ‚½•ûŒüiY²‰ñ“]j
+	// ã‚¹ã‚¤ãƒ³ã‚°ã—ãŸæ–¹å‘ï¼ˆYè»¸å›è»¢ï¼‰
 	Vector3 swingDir{
 		forward.x * std::cos(offsetAngle) - forward.z * std::sin(offsetAngle),
 		0.0f,
@@ -139,7 +139,7 @@ void SubEnemyMage::Draw()
 	};
 	swingDir.Normalize();
 
-	// ¶‰E’[•ûŒü‚ğŒvZ
+	// å·¦å³ç«¯æ–¹å‘ã‚’è¨ˆç®—
 	float halfAngle = kViewAngleRad * 0.5f;
 
 	Vector3 left{
@@ -160,11 +160,11 @@ void SubEnemyMage::Draw()
 	Vector3 leftEnd = pos + left * kViewDistance;
 	Vector3 rightEnd = pos + right * kViewDistance;
 
-	DrawLine3D(base, frontEnd.ToDxVECTOR(), GetColor(255, 255, 0)); // ³–Ê
-	DrawLine3D(base, leftEnd.ToDxVECTOR(), GetColor(0, 255, 255));  // ¶’[
-	DrawLine3D(base, rightEnd.ToDxVECTOR(), GetColor(0, 255, 255)); // ‰E’[
+	DrawLine3D(base, frontEnd.ToDxVECTOR(), GetColor(255, 255, 0)); // æ­£é¢
+	DrawLine3D(base, leftEnd.ToDxVECTOR(), GetColor(0, 255, 255));  // å·¦ç«¯
+	DrawLine3D(base, rightEnd.ToDxVECTOR(), GetColor(0, 255, 255)); // å³ç«¯
 
-	// îŒ`‚Ì‰~ŒÊ‚ğ•`‰æ
+	// æ‰‡å½¢ã®å††å¼§ã‚’æç”»
 	constexpr int kSegments = 24;
 	for (int i = 0; i < kSegments; ++i)
 	{
@@ -196,7 +196,7 @@ void SubEnemyMage::Update(std::shared_ptr<SubPlayer> player)
 		return;
 	}
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXV
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
 	m_anim.UpdateAnimBlend();
@@ -223,7 +223,7 @@ void SubEnemyMage::Update(std::shared_ptr<SubPlayer> player)
 		break;
 	}
 
-	//“–‚½‚è”»’è
+	//å½“ãŸã‚Šåˆ¤å®š
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	Vector3 colPos = m_rigidbody.GetPos();
 	colPos.y += kColScale;
@@ -236,12 +236,12 @@ void SubEnemyMage::FindUpdate(std::shared_ptr<SubPlayer> player)
 {
 	SetActive(true);
 
-	// Œo‰ßŠÔ‚Å¶‰E‚É‰ñ“]
-	m_angle += 1.0f / 60.0f;  // –ˆƒtƒŒ[ƒ€–ñ1/60•b‰ÁZ
+	// çµŒéæ™‚é–“ã§å·¦å³ã«å›è»¢
+	m_angle += 1.0f / 60.0f;  // æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ç´„1/60ç§’åŠ ç®—
 
 	float offsetAngle = std::sin(m_angle * m_rotSpeed) * m_angleMax;
 
-	// Šî–{‚ÌŒü‚«ƒxƒNƒgƒ‹i‘O•ûŒüj
+	// åŸºæœ¬ã®å‘ããƒ™ã‚¯ãƒˆãƒ«ï¼ˆå‰æ–¹å‘ï¼‰
 	Vector3 forward = m_rigidbody.GetDir();
 	if (forward.Length() == 0.0f)
 	{
@@ -249,7 +249,7 @@ void SubEnemyMage::FindUpdate(std::shared_ptr<SubPlayer> player)
 	}
 	forward.Normalize();
 
-	// ’T’m’†S•ûŒüiƒXƒCƒ“ƒO‚Å‰ñ“]j
+	// æ¢çŸ¥ä¸­å¿ƒæ–¹å‘ï¼ˆã‚¹ã‚¤ãƒ³ã‚°ã§å›è»¢ï¼‰
 	Vector3 dir
 	{
 		forward.x * std::cos(offsetAngle) - forward.z * std::sin(offsetAngle),
@@ -258,11 +258,11 @@ void SubEnemyMage::FindUpdate(std::shared_ptr<SubPlayer> player)
 	};
 	dir.Normalize();
 
-	// ƒ‚ƒfƒ‹‚Ì‰ñ“]‚ğİ’èiZ‘O’ñ ¨ atan2j
-	float angleY = std::atan2(dir.x, -dir.z); // X‰E/Z‘O‚ÌÀ•WŒn
+	// ãƒ¢ãƒ‡ãƒ«ã®å›è»¢ã‚’è¨­å®šï¼ˆZå‰æ â†’ atan2ï¼‰
+	float angleY = std::atan2(dir.x, -dir.z); // Xå³/Zå‰ã®åº§æ¨™ç³»
 	MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 
-	// ’T’mˆ—F‚±‚Ì•ûŒü‚ğ’†S‚É‹–ìŠp‚Å’T‚·
+	// æ¢çŸ¥å‡¦ç†ï¼šã“ã®æ–¹å‘ã‚’ä¸­å¿ƒã«è¦–é‡è§’ã§æ¢ã™
 	if (IsPlayerFind(player, dir, kViewAngleRad, kViewDistance))
 	{
 		ChangeState(SubEnemyState::Attack);
@@ -277,22 +277,22 @@ void SubEnemyMage::ChaseUpdate(std::shared_ptr<SubPlayer> player)
 {
 	SetActive(true);
 
-	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 toPlayerDir = player->GetPos() - myPos;
 	toPlayerDir.y = 0.0f;
 
-	// ‹——£‚ª\•ª‚É‚ ‚éê‡‚Ì‚İˆÚ“®
+	// è·é›¢ãŒååˆ†ã«ã‚ã‚‹å ´åˆã®ã¿ç§»å‹•
 	if (toPlayerDir.Length() > 1.0f)
 	{
 		toPlayerDir.Normalize();
 		m_rigidbody.SetVelo(toPlayerDir * kRunSpeed);
 		MV1SetPosition(m_model, myPos.ToDxVECTOR());
 
-		// is•ûŒü‚ª0‚Å‚È‚¯‚ê‚Î‰ñ“]
+		// é€²è¡Œæ–¹å‘ãŒ0ã§ãªã‘ã‚Œã°å›è»¢
 		if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
 		{
-			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
+			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
 			float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
 			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 		}
@@ -319,13 +319,13 @@ void SubEnemyMage::AttackUpdate(std::shared_ptr<SubPlayer> player)
 	if (m_atkFrame <= kAtkFrame)
 	{
 		++m_atkFrame;
-		// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 		Vector3 myPos = m_rigidbody.GetPos();
 		Vector3 toPlayerDir = player->GetPos() - myPos;
 		toPlayerDir.y = 0.0f;
 		if (toPlayerDir.x != 0.0f || toPlayerDir.z != 0.0f)
 		{
-			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
+			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
 			float angleY = std::atan2(toPlayerDir.x, -toPlayerDir.z);
 			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 		}
@@ -333,7 +333,7 @@ void SubEnemyMage::AttackUpdate(std::shared_ptr<SubPlayer> player)
 
 	//if (m_attackFrame == kAttackFrame)
 	//{
-	//	// ’e‚ğ¶¬
+	//	// å¼¾ã‚’ç”Ÿæˆ
 	//	Vector3 myPos = m_rigidbody.GetPos();
 	//	myPos.y += 50.0f;
 	//	Vector3 playerPos = player->GetPos();
@@ -355,7 +355,7 @@ void SubEnemyMage::HitUpdate(std::shared_ptr<SubPlayer> player)
 	SetActive(false);
 
 	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		ChangeState(SubEnemyState::Attack);
@@ -373,7 +373,7 @@ void SubEnemyMage::DeadUpdate(std::shared_ptr<SubPlayer> player)
 	}
 	m_bullets.clear();*/
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		if (m_model >= 0)
@@ -389,16 +389,16 @@ void SubEnemyMage::DeadUpdate(std::shared_ptr<SubPlayer> player)
 
 bool SubEnemyMage::IsPlayerFind(const std::shared_ptr<SubPlayer>& player, const Vector3& centerDir, float viewAngleRad, float viewDistance)
 {
-	// Œ»İˆÊ’u‚ğæ“¾
+	// ç¾åœ¨ä½ç½®ã‚’å–å¾—
 	Vector3 myPos = m_rigidbody.GetPos();
-	// ©•ª‚©‚çPlayer‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ğ¶¬
+	// è‡ªåˆ†ã‹ã‚‰Playerã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’ç”Ÿæˆ
 	Vector3 toPlayer = player->GetPos() - myPos;
 
-	// Player‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚Ì’·‚³‚ª‹ŠE‹——£‚æ‚è’·‚¯‚ê‚ÎŒ©‚¦‚È‚¢‚Ì‚Åfalse
+	// Playerã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ãŒè¦–ç•Œè·é›¢ã‚ˆã‚Šé•·ã‘ã‚Œã°è¦‹ãˆãªã„ã®ã§false
 	if (toPlayer.Length() > viewDistance)
 		return false;
 
-	// Player‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚Æ©•ª‚Ì‹ü•ûŒüƒxƒNƒgƒ‹‚ğ³‹K‰»
+	// Playerã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã¨è‡ªåˆ†ã®è¦–ç·šæ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–
 	Vector3 toPlayerNorm = toPlayer.GetNormalize();
 	Vector3 centerNorm = centerDir.GetNormalize();
 
@@ -426,7 +426,7 @@ const char* SubEnemyMage::GetAnimName(SubEnemyState state) const
 		return kDeadAnimName;
 	default:
 		return "";
-		assert(0 && "‘¶İ‚µ‚È‚¢ƒAƒjƒ[ƒVƒ‡ƒ“");
+		assert(0 && "å­˜åœ¨ã—ãªã„ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³");
 	}
 }
 
@@ -467,6 +467,6 @@ bool SubEnemyMage::IsLoopAnim(SubEnemyState state) const
 		return false;
 	default:
 		return "";
-		assert(0 && "‘¶İ‚µ‚È‚¢ƒXƒe[ƒg");
+		assert(0 && "å­˜åœ¨ã—ãªã„ã‚¹ãƒ†ãƒ¼ãƒˆ");
 	}
 }

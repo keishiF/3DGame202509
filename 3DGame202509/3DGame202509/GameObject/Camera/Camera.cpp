@@ -1,4 +1,4 @@
-#include "Camera.h"
+ï»¿#include "Camera.h"
 #include "Player/Player.h"
 #include <cmath>
 #include <algorithm>
@@ -16,9 +16,9 @@ namespace
 	constexpr float kCameraPosZ = -600.0f;*/
 	constexpr float kCameraOffsetY = 150.0f;
 
-	// —h‚ê‚Ì‹­‚³
+	// æºã‚Œã®å¼·ã•
 	constexpr float kShakeStrength = 0.2f;
-	// —h‚ê‚éŠÔ
+	// æºã‚Œã‚‹æ™‚é–“
 	constexpr float kShakeDuration = 0.5f;
 }
 
@@ -42,17 +42,17 @@ Camera::~Camera()
 
 void Camera::Update(std::shared_ptr<Player> player)
 {
-	// ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğæ“¾‚µAƒJƒƒ‰‚ğƒvƒŒƒCƒ„[‚ÌˆÊ’u‚É‡‚í‚¹‚é
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã‚’å–å¾—ã—ã€ã‚«ãƒ¡ãƒ©ã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã«åˆã‚ã›ã‚‹
 	Vector3 playerPos = player->GetPos();
 	Vector3 cameraPos = { kCameraPosX, kCameraPosY, kCameraPosZ };
 	m_pos = playerPos + cameraPos;
 
-	// ƒJƒƒ‰‚Ì’‹“_‚ğƒvƒŒƒCƒ„[‚ÌˆÊ’u‚É‡‚í‚¹‚é
+	// ã‚«ãƒ¡ãƒ©ã®æ³¨è¦–ç‚¹ã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã«åˆã‚ã›ã‚‹
 	m_lookAtPos = { playerPos.x, playerPos.y + kCameraOffsetY, playerPos.z };
 
 	Vector3 offset = { kCameraPosX, kCameraPosY, kCameraPosZ };
 
-	// ‚à‚µƒvƒŒƒCƒ„[‚ª”í’e‚µ‚½‚ç
+	// ã‚‚ã—ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒè¢«å¼¾ã—ãŸã‚‰
 	if (player->GetPlayerState() == PlayerState::Hit)
 	{
 		m_shakeStrength = kShakeStrength;
@@ -60,33 +60,33 @@ void Camera::Update(std::shared_ptr<Player> player)
 		m_shakeTime = 0.0f;
 		m_shakeOffset = Vector3(0.0f, 0.0f, 0.0f);
 
-		// —h‚ê‚Ä‚¢‚éŠÔ‚ªAİ’è‚µ‚½—h‚ê‚Ì‘±ŠÔŒo‰ß‚µ‚Ä‚¢‚È‚¢‚È‚ç
+		// æºã‚Œã¦ã„ã‚‹æ™‚é–“ãŒã€è¨­å®šã—ãŸæºã‚Œã®æŒç¶šæ™‚é–“çµŒéã—ã¦ã„ãªã„ãªã‚‰
 		if (m_shakeTime < m_shakeDuration)
 		{
-			// —h‚ê‚Ä‚¢‚éŠÔ‚ğƒJƒEƒ“ƒg
+			// æºã‚Œã¦ã„ã‚‹æ™‚é–“ã‚’ã‚«ã‚¦ãƒ³ãƒˆ
 			m_shakeTime += 1.0f;
 
-			// c‰¡‚Éƒ‰ƒ“ƒ_ƒ€‚É—h‚ç‚·
+			// ç¸¦æ¨ªã«ãƒ©ãƒ³ãƒ€ãƒ ã«æºã‚‰ã™
 			m_shakeOffset.x = (rand() % 100 - 50) * m_shakeStrength;
 			m_shakeOffset.y = (rand() % 100 - 50) * m_shakeStrength;
-			m_shakeOffset.z = 0.0f; // z•ûŒü‚ÌU“®‚Í–³Œø
+			m_shakeOffset.z = 0.0f; // zæ–¹å‘ã®æŒ¯å‹•ã¯ç„¡åŠ¹
 		}
 		else
 		{
-			// U“®‚ªI—¹‚µ‚½‚çƒŠƒZƒbƒg
+			// æŒ¯å‹•ãŒçµ‚äº†ã—ãŸã‚‰ãƒªã‚»ãƒƒãƒˆ
 			m_shakeStrength = 0.0f;
 			m_shakeDuration = 0.0f;
 			m_shakeTime = 0.0f;
-			m_shakeOffset = Vector3(0.0f, 0.0f, 0.0f); // U“®I—¹
+			m_shakeOffset = Vector3(0.0f, 0.0f, 0.0f); // æŒ¯å‹•çµ‚äº†
 		}
 	}
 
 #ifdef _DEBUG
 	int inputX, inputY;
-	// ‰EƒXƒeƒBƒbƒN‚Ì“ü—Í‚ğæ“¾
+	// å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›ã‚’å–å¾—
 	GetJoypadAnalogInputRight(&inputX, &inputY, DX_INPUT_PAD1);
 
-	// ƒJƒƒ‰‚Ì‰ñ“]‚ğƒWƒ‡ƒCƒpƒbƒh‚Ì“ü—Í‚ÉŠî‚Ã‚¢‚ÄXV
+	// ã‚«ãƒ¡ãƒ©ã®å›è»¢ã‚’ã‚¸ãƒ§ã‚¤ãƒ‘ãƒƒãƒ‰ã®å…¥åŠ›ã«åŸºã¥ã„ã¦æ›´æ–°
 	if (inputX != 0)
 	{
 		m_cameraRotX += inputX * kRotSpeed;
@@ -94,12 +94,12 @@ void Camera::Update(std::shared_ptr<Player> player)
 	if (inputY != 0)
 	{
 		m_cameraRotY += inputY * kRotSpeed;
-		// c‰ñ“]‚É§ŒÀ‚ğ•t‚¯‚é
+		// ç¸¦å›è»¢ã«åˆ¶é™ã‚’ä»˜ã‘ã‚‹
 		m_cameraRotY = std::clamp(m_cameraRotY, -DX_PI_F / 3.0f, DX_PI_F / 5.80f);
 	}
 #endif
 
-	// ƒJƒƒ‰‚ÌˆÊ’u‚ğ‰ñ“]‚ÉŠî‚Ã‚¢‚ÄXV
+	// ã‚«ãƒ¡ãƒ©ã®ä½ç½®ã‚’å›è»¢ã«åŸºã¥ã„ã¦æ›´æ–°
 	Vector3 rotatedOffset = {
 		offset.x * cos(m_cameraRotX) - offset.z * sin(m_cameraRotX),
 		offset.y * cos(m_cameraRotY) - offset.z * sin(m_cameraRotY),
@@ -115,12 +115,12 @@ void Camera::Update(std::shared_ptr<Player> player)
 
 void Camera::SetCamera(std::shared_ptr<Player> player)
 {
-	// ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğæ“¾‚µAƒJƒƒ‰‚ğƒvƒŒƒCƒ„[‚ÌˆÊ’u‚É‡‚í‚¹‚é
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã‚’å–å¾—ã—ã€ã‚«ãƒ¡ãƒ©ã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã«åˆã‚ã›ã‚‹
 	Vector3 playerPos = player->GetPos();
 	Vector3 cameraPos = { kCameraPosX, kCameraPosY, kCameraPosZ };
 	m_pos = playerPos + cameraPos;
 
-	// ƒJƒƒ‰‚Ì’‹“_‚ğƒvƒŒƒCƒ„[‚ÌˆÊ’u‚É‡‚í‚¹‚é
+	// ã‚«ãƒ¡ãƒ©ã®æ³¨è¦–ç‚¹ã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã«åˆã‚ã›ã‚‹
 	m_lookAtPos = { playerPos.x, playerPos.y + kCameraOffsetY, playerPos.z };
 
 	SetupCamera_Perspective(m_fov);

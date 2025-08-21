@@ -1,4 +1,4 @@
-#include "Rigidbody.h"
+ï»¿#include "Rigidbody.h"
 
 Rigidbody::Rigidbody() :
 	m_pos(),
@@ -18,10 +18,10 @@ void Rigidbody::Init()
 void Rigidbody::SetVelo(Vector3 velo)
 {
 	m_velo = velo;
-	//ˆÚ“®—Ê‚ª‚ ‚Á‚½‚ç
+	//ç§»å‹•é‡ãŒã‚ã£ãŸã‚‰
 	if (m_velo.SqrLength() > 0)
 	{
-		//•ûŒüƒxƒNƒgƒ‹‚ðÝ’è‚·‚é
+		//æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨­å®šã™ã‚‹
 		m_dir = m_velo.GetNormalize();
 	}
 }

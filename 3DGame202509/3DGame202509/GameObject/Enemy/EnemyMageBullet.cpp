@@ -1,4 +1,4 @@
-#include "EnemyMageBullet.h"
+ï»¿#include "EnemyMageBullet.h"
 #include "SphereColliderData.h"
 #include <DxLib.h>
 
@@ -38,7 +38,7 @@ void EnemyMageBullet::Update()
 {
 	++m_frame;
 
-	// ˆÚ“®ˆ—
+	// ç§»å‹•å‡¦ç†
 	m_dir.Normalize();
 	m_rigidbody.SetVelo(m_dir * kRunSpeed);
 

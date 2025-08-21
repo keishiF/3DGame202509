@@ -1,9 +1,9 @@
-#pragma once
+ï»¿#pragma once
 #include "ColliderData.h"
 #include "Vector3.h"
 
 /// <summary>
-/// ƒJƒvƒZƒ‹‚Ì“–‚½‚è”»’è‚É•K—v‚Èƒf[ƒ^‚ğ‚Ü‚Æ‚ß‚½ƒNƒ‰ƒX
+/// ã‚«ãƒ—ã‚»ãƒ«ã®å½“ãŸã‚Šåˆ¤å®šã«å¿…è¦ãªãƒ‡ãƒ¼ã‚¿ã‚’ã¾ã¨ã‚ãŸã‚¯ãƒ©ã‚¹
 /// </summary>
 class CapsuleColliderData : public ColliderData
 {
@@ -11,12 +11,12 @@ public:
 	CapsuleColliderData();
 	~CapsuleColliderData();
 
-	//Ÿ‚ÌÀ•W
+	//æ¬¡ã®åº§æ¨™
 	Vector3 GetNextStartPos(Vector3 vec) const { return m_startPos + vec; };
 
-	// n“_
+	// å§‹ç‚¹
 	Vector3 m_startPos;
-	// ”¼Œa
+	// åŠå¾„
 	float m_radius;
 	bool m_isStartPos;
 };

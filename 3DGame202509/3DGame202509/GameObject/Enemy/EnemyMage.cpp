@@ -1,4 +1,4 @@
-#include "Animator.h"
+ï»¿#include "Animator.h"
 #include "CapsuleColliderData.h"
 #include "EnemyMage.h"
 #include "EnemyMageBullet.h"
@@ -10,47 +10,47 @@
 
 namespace
 {
-	// ƒAƒjƒ[ƒVƒ‡ƒ“–¼
-	// ‘Ò‹@
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å
+	// å¾…æ©Ÿ
 	const char* kFindAnimName   = "Idle_B";
-	// ”­Œ©
+	// ç™ºè¦‹
 	const char* kChaseAnimName  = "Running_B";
-	// UŒ‚
+	// æ”»æ’ƒ
 	const char* kAttackAnimName = "1H_Melee_Attack_Stab";
-	// ”í’e
+	// è¢«å¼¾
 	const char* kHitAnimName    = "Hit_B";
-	// €–S
+	// æ­»äº¡
 	const char* kDeadAnimName   = "Death_B";
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶‘¬“x
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿé€Ÿåº¦
 	constexpr float kAnimSpeed = 1.0f;
 	constexpr float kAttackAnimSpeed = 0.5f;
 
-	// ƒGƒlƒ~[‚ªƒvƒŒƒCƒ„[‚ğ”­Œ©‚Å‚«‚é”ÍˆÍ
+	// ã‚¨ãƒãƒŸãƒ¼ãŒãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ç™ºè¦‹ã§ãã‚‹ç¯„å›²
 	constexpr float kFindRadius   = 500.0f;
 	constexpr float kAttackRadius = 300.0f;
 
-	// ‰ŠúHP
+	// åˆæœŸHP
 	constexpr int kHp = 3;
 
-	// ƒGƒlƒ~[‚Ì‘¬“x
+	// ã‚¨ãƒãƒŸãƒ¼ã®é€Ÿåº¦
 	constexpr float kRunSpeed = 0.5f;
 
 	constexpr float kColScale  = 140.0f;
 	constexpr float kColRadius = 45.0f;
 
-	// ƒ‚ƒfƒ‹‚ÌŠg‘å—¦
+	// ãƒ¢ãƒ‡ãƒ«ã®æ‹¡å¤§ç‡
 	constexpr float kModelScale      = 75.0f;
 	constexpr float kBladeModelScale = 0.01f;
 
 	constexpr float kAttackFrame = 32.0f;
 
-	// ‹–ìŠp
-	constexpr float kViewAngleRad = DX_PI_F / 2.0f;  // 90“x
-	// Œ©‚¦‚é‹——£
+	// è¦–é‡è§’
+	constexpr float kViewAngleRad = DX_PI_F / 2.0f;  // 90åº¦
+	// è¦‹ãˆã‚‹è·é›¢
 	constexpr float kViewDistance = 750.0f;
 
-	// “|‚³‚ê‚½‚Æ‚«‚ÉƒvƒŒƒCƒ„[‚Ì•KE‹ZƒQ[ƒW‚ğ—­‚ß‚é—Ê
+	// å€’ã•ã‚ŒãŸã¨ãã«ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸ã‚’æºœã‚ã‚‹é‡
 	constexpr int kSpecialGaugePoint = 10;
 }
 
@@ -78,7 +78,7 @@ void EnemyMage::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	colData->m_startPos = pos;
 	colData->m_radius = kColRadius;
 
-	// ƒƒ“ƒo•Ï”‚Ì‰Šú‰»
+	// ãƒ¡ãƒ³ãƒå¤‰æ•°ã®åˆæœŸåŒ–
 	m_findRadius = kFindRadius;
 	m_attackRadius = kAttackRadius;
 	m_hp = kHp;
@@ -107,30 +107,30 @@ void EnemyMage::Update(std::shared_ptr<Player> player)
 		return;
 	}
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXV
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
 	m_anim.UpdateAnimBlend();
 
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌMV1SetMatrix‚Ìİ’è‚ğ–³Œø‰»‚·‚é
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®MV1SetMatrixã®è¨­å®šã‚’ç„¡åŠ¹åŒ–ã™ã‚‹
 	MV1SetMatrix(m_weaponModel, MGetIdent());
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌƒtƒŒ[ƒ€‚ÌÀ•W‚ğæ“¾‚·‚é
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®åº§æ¨™ã‚’å–å¾—ã™ã‚‹
 	VECTOR position = MV1GetFramePosition(m_weaponModel, 0);
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ğ,ƒtƒŒ[ƒ€‚ÌÀ•W‚ğŒ´“_‚É‚·‚é‚½‚ß‚Ì•½sˆÚ“®s—ñ‚ğì¬
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã‚’,ãƒ•ãƒ¬ãƒ¼ãƒ ã®åº§æ¨™ã‚’åŸç‚¹ã«ã™ã‚‹ãŸã‚ã®å¹³è¡Œç§»å‹•è¡Œåˆ—ã‚’ä½œæˆ
 	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
-	// ƒAƒ^ƒbƒ`‚³‚ê‚éƒ‚ƒfƒ‹‚ÌƒtƒŒ[ƒ€‚Ìs—ñ‚ğæ“¾
+	// ã‚¢ã‚¿ãƒƒãƒã•ã‚Œã‚‹ãƒ¢ãƒ‡ãƒ«ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®è¡Œåˆ—ã‚’å–å¾—
 	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(m_charModel, 14);
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌŠg‘ås—ñ‚ğæ“¾
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®æ‹¡å¤§è¡Œåˆ—ã‚’å–å¾—
 	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚Ì‰ñ“]s—ñ‚ğæ“¾
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®å›è»¢è¡Œåˆ—ã‚’å–å¾—
 	MATRIX yMat = MGetRotY(DX_PI_F);
-	// Šes—ñ‚ğ‡¬
+	// å„è¡Œåˆ—ã‚’åˆæˆ
 	MATRIX mixMat = MGetIdent();
 	mixMat = MMult(transMat, mixMat);
 	mixMat = MMult(frameMat, mixMat);
 	mixMat = MMult(scaleMat, mixMat);
 	mixMat = MMult(yMat, mixMat);
-	// ‡¬‚µ‚½s—ñ‚ğƒ‚ƒfƒ‹‚ÉƒZƒbƒg
+	// åˆæˆã—ãŸè¡Œåˆ—ã‚’ãƒ¢ãƒ‡ãƒ«ã«ã‚»ãƒƒãƒˆ
 	MV1SetMatrix(m_weaponModel, mixMat);
 
 	switch (m_state)
@@ -152,7 +152,7 @@ void EnemyMage::Update(std::shared_ptr<Player> player)
 		break;
 	}
 
-	//“–‚½‚è”»’è
+	//å½“ãŸã‚Šåˆ¤å®š
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	Vector3 colPos = m_rigidbody.GetPos();
 	colPos.y += kColScale;
@@ -199,10 +199,10 @@ void EnemyMage::Draw()
 	Vector3 pos = m_rigidbody.GetPos();
 	VECTOR base = pos.ToDxVECTOR();
 
-	// ñU‚èŠp“x
+	// é¦–æŒ¯ã‚Šè§’åº¦
 	float offsetAngle = std::sin(m_angle * m_rotSpeed) * m_angleMax;
 
-	// ‘O•ûŒüi‚Ü‚½‚Í Rigidbody ‚É•Û‘¶‚³‚ê‚Ä‚éŒü‚«j
+	// å‰æ–¹å‘ï¼ˆã¾ãŸã¯ Rigidbody ã«ä¿å­˜ã•ã‚Œã¦ã‚‹å‘ãï¼‰
 	Vector3 forward = m_rigidbody.GetDir();
 	if (forward.Length() == 0.0f)
 	{
@@ -210,7 +210,7 @@ void EnemyMage::Draw()
 	}
 	forward.Normalize();
 
-	// ƒXƒCƒ“ƒO‚µ‚½•ûŒüiY²‰ñ“]j
+	// ã‚¹ã‚¤ãƒ³ã‚°ã—ãŸæ–¹å‘ï¼ˆYè»¸å›è»¢ï¼‰
 	Vector3 swingDir{
 		forward.x * std::cos(offsetAngle) - forward.z * std::sin(offsetAngle),
 		0.0f,
@@ -218,7 +218,7 @@ void EnemyMage::Draw()
 	};
 	swingDir.Normalize();
 
-	// ¶‰E’[•ûŒü‚ğŒvZ
+	// å·¦å³ç«¯æ–¹å‘ã‚’è¨ˆç®—
 	float halfAngle = kViewAngleRad * 0.5f;
 
 	Vector3 left{
@@ -239,11 +239,11 @@ void EnemyMage::Draw()
 	Vector3 leftEnd = pos + left * kViewDistance;
 	Vector3 rightEnd = pos + right * kViewDistance;
 
-	DrawLine3D(base, frontEnd.ToDxVECTOR(), GetColor(255, 255, 0)); // ³–Ê
-	DrawLine3D(base, leftEnd.ToDxVECTOR(), GetColor(0, 255, 255));  // ¶’[
-	DrawLine3D(base, rightEnd.ToDxVECTOR(), GetColor(0, 255, 255)); // ‰E’[
+	DrawLine3D(base, frontEnd.ToDxVECTOR(), GetColor(255, 255, 0)); // æ­£é¢
+	DrawLine3D(base, leftEnd.ToDxVECTOR(), GetColor(0, 255, 255));  // å·¦ç«¯
+	DrawLine3D(base, rightEnd.ToDxVECTOR(), GetColor(0, 255, 255)); // å³ç«¯
 
-	// îŒ`‚Ì‰~ŒÊ‚ğ•`‰æ
+	// æ‰‡å½¢ã®å††å¼§ã‚’æç”»
 	constexpr int kSegments = 24;
 	for (int i = 0; i < kSegments; ++i)
 	{
@@ -287,11 +287,11 @@ void EnemyMage::OnDamage()
 Vector3 EnemyMage::GetScreenPos() const
 {
 	Vector3 worldPos = m_rigidbody.GetPos();
-	worldPos.y += 120.0f; // “ªã‚Ì‚‚³’²®
+	worldPos.y += 120.0f; // é ­ä¸Šã®é«˜ã•èª¿æ•´
 
 	VECTOR worldPosDx = worldPos.ToDxVECTOR();
 
-	// 3D¨2DÀ•W•ÏŠ·i–ß‚è’l‚ªƒXƒNƒŠ[ƒ“À•Wj
+	// 3Dâ†’2Dåº§æ¨™å¤‰æ›ï¼ˆæˆ»ã‚Šå€¤ãŒã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ï¼‰
 	VECTOR screenPosDx = ConvWorldPosToScreenPos(worldPosDx);
 
 	const int gaugeWidth = 100;
@@ -312,12 +312,12 @@ void EnemyMage::FindUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
 
-	// Œo‰ßŠÔ‚Å¶‰E‚É‰ñ“]
-	m_angle += 1.0f / 60.0f;  // –ˆƒtƒŒ[ƒ€–ñ1/60•b‰ÁZ
+	// çµŒéæ™‚é–“ã§å·¦å³ã«å›è»¢
+	m_angle += 1.0f / 60.0f;  // æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ç´„1/60ç§’åŠ ç®—
 
 	float offsetAngle = std::sin(m_angle * m_rotSpeed) * m_angleMax;
 
-	// Šî–{‚ÌŒü‚«ƒxƒNƒgƒ‹i‘O•ûŒüj
+	// åŸºæœ¬ã®å‘ããƒ™ã‚¯ãƒˆãƒ«ï¼ˆå‰æ–¹å‘ï¼‰
 	Vector3 forward = m_rigidbody.GetDir();
 	if (forward.Length() == 0.0f)
 	{
@@ -325,7 +325,7 @@ void EnemyMage::FindUpdate(std::shared_ptr<Player> player)
 	}
 	forward.Normalize();
 
-	// ’T’m’†S•ûŒüiƒXƒCƒ“ƒO‚Å‰ñ“]j
+	// æ¢çŸ¥ä¸­å¿ƒæ–¹å‘ï¼ˆã‚¹ã‚¤ãƒ³ã‚°ã§å›è»¢ï¼‰
 	Vector3 dir
 	{
 		forward.x * std::cos(offsetAngle) - forward.z * std::sin(offsetAngle),
@@ -334,11 +334,11 @@ void EnemyMage::FindUpdate(std::shared_ptr<Player> player)
 	};
 	dir.Normalize();
 
-	// ƒ‚ƒfƒ‹‚Ì‰ñ“]‚ğİ’èiZ‘O’ñ ¨ atan2j
-	float angleY = std::atan2(dir.x, -dir.z); // X‰E/Z‘O‚ÌÀ•WŒn
+	// ãƒ¢ãƒ‡ãƒ«ã®å›è»¢ã‚’è¨­å®šï¼ˆZå‰æ â†’ atan2ï¼‰
+	float angleY = std::atan2(dir.x, -dir.z); // Xå³/Zå‰ã®åº§æ¨™ç³»
 	MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 
-	// ’T’mˆ—F‚±‚Ì•ûŒü‚ğ’†S‚É‹–ìŠp‚Å’T‚·
+	// æ¢çŸ¥å‡¦ç†ï¼šã“ã®æ–¹å‘ã‚’ä¸­å¿ƒã«è¦–é‡è§’ã§æ¢ã™
 	if (IsPlayerFind(player, dir, kViewAngleRad, kViewDistance))
 	{
 		ChangeState(EnemyState::Attack, kAttackAnimSpeed);
@@ -349,22 +349,22 @@ void EnemyMage::ChaseUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
 
-	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 toPlayerDir = player->GetPos() - myPos;
 	toPlayerDir.y = 0.0f;
 
-	// ‹——£‚ª\•ª‚É‚ ‚éê‡‚Ì‚İˆÚ“®
+	// è·é›¢ãŒååˆ†ã«ã‚ã‚‹å ´åˆã®ã¿ç§»å‹•
 	if (toPlayerDir.Length() > 1.0f) 
 	{
 		toPlayerDir.Normalize();
 		m_rigidbody.SetVelo(toPlayerDir * kRunSpeed);
 		MV1SetPosition(m_charModel, myPos.ToDxVECTOR());
 
-		// is•ûŒü‚ª0‚Å‚È‚¯‚ê‚Î‰ñ“]
+		// é€²è¡Œæ–¹å‘ãŒ0ã§ãªã‘ã‚Œã°å›è»¢
 		if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
 		{
-			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
+			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
 			float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
 			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 		}
@@ -391,13 +391,13 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 	if (m_attackFrame <= kAttackFrame)
 	{
 		++m_attackFrame;
-		// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 		Vector3 myPos = m_rigidbody.GetPos();
 		Vector3 toPlayerDir = player->GetPos() - myPos;
 		toPlayerDir.y = 0.0f;
 		if (toPlayerDir.x != 0.0f || toPlayerDir.z != 0.0f)
 		{
-			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
+			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
 			float angleY = std::atan2(toPlayerDir.x, -toPlayerDir.z);
 			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
 		}
@@ -405,7 +405,7 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 
 	if (m_attackFrame == kAttackFrame)
 	{
-		// ’e‚ğ¶¬
+		// å¼¾ã‚’ç”Ÿæˆ
 		Vector3 myPos = m_rigidbody.GetPos();
 		myPos.y += 50.0f;
 		Vector3 playerPos = player->GetPos();
@@ -438,7 +438,7 @@ void EnemyMage::HitUpdate(std::shared_ptr<Player> player)
 	SetActive(false);
 
 	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		ChangeState(EnemyState::Attack, kAnimSpeed);
@@ -456,7 +456,7 @@ void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)
 	}
 	m_bullets.clear();
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		if (m_charModel >= 0)
@@ -472,16 +472,16 @@ void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)
 
 bool EnemyMage::IsPlayerFind(const std::shared_ptr<Player>& player, const Vector3& centerDir, float viewAngleRad, float viewDistance)
 {
-	// Œ»İˆÊ’u‚ğæ“¾
+	// ç¾åœ¨ä½ç½®ã‚’å–å¾—
 	Vector3 myPos = m_rigidbody.GetPos();
-	// ©•ª‚©‚çPlayer‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚ğ¶¬
+	// è‡ªåˆ†ã‹ã‚‰Playerã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã‚’ç”Ÿæˆ
 	Vector3 toPlayer = player->GetPos() - myPos;
 
-	// Player‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚Ì’·‚³‚ª‹ŠE‹——£‚æ‚è’·‚¯‚ê‚ÎŒ©‚¦‚È‚¢‚Ì‚Åfalse
+	// Playerã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ãŒè¦–ç•Œè·é›¢ã‚ˆã‚Šé•·ã‘ã‚Œã°è¦‹ãˆãªã„ã®ã§false
 	if (toPlayer.Length() > viewDistance)
 		return false;
 
-	// Player‚ÉŒü‚©‚¤ƒxƒNƒgƒ‹‚Æ©•ª‚Ì‹ü•ûŒüƒxƒNƒgƒ‹‚ğ³‹K‰»
+	// Playerã«å‘ã‹ã†ãƒ™ã‚¯ãƒˆãƒ«ã¨è‡ªåˆ†ã®è¦–ç·šæ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–
 	Vector3 toPlayerNorm = toPlayer.GetNormalize();
 	Vector3 centerNorm = centerDir.GetNormalize();
 
@@ -507,7 +507,7 @@ const char* EnemyMage::GetAnimName(EnemyState state) const
 		return kDeadAnimName;
 	default:
 		return "";
-		assert(0 && "‘¶İ‚µ‚È‚¢ƒAƒjƒ[ƒVƒ‡ƒ“");
+		assert(0 && "å­˜åœ¨ã—ãªã„ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³");
 	}
 }
 
@@ -527,6 +527,6 @@ bool EnemyMage::IsLoopAnim(EnemyState state) const
 		return false;
 	default:
 		return "";
-		assert(0 && "‘¶İ‚µ‚È‚¢ƒXƒe[ƒg");
+		assert(0 && "å­˜åœ¨ã—ãªã„ã‚¹ãƒ†ãƒ¼ãƒˆ");
 	}
 }

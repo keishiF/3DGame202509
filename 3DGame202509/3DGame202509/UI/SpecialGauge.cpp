@@ -1,4 +1,4 @@
-#include "game.h"
+ï»¿#include "game.h"
 #include "GameObjectManager.h"
 #include "Player/Player.h"
 #include "SpecialGauge.h"
@@ -6,11 +6,11 @@
 
 namespace
 {
-	// ƒQ[ƒW‚Ì‰¡•Ac•
+	// ã‚²ãƒ¼ã‚¸ã®æ¨ªå¹…ã€ç¸¦å¹…
 	constexpr float kSpecialGaugeWidth = 200;
 	constexpr float kSpecialGaugeHeight = 20;
 
-	// •KŽE‹ZƒQ[ƒW‚Ì•`‰æˆÊ’u‚ð•â³‚·‚é‚½‚ß‚Ì’l
+	// å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸ã®æç”»ä½ç½®ã‚’è£œæ­£ã™ã‚‹ãŸã‚ã®å€¤
 	constexpr int kGaugeOffset = 100;
 }
 
@@ -28,11 +28,11 @@ void SpecialGauge::Draw()
 	auto player = gameObjectManager.GetPlayer();
 	if (!player) return;
 
-	// •KŽE‹ZƒQ[ƒW‚Ì•`‰æˆÊ’u
+	// å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸ã®æç”»ä½ç½®
 	int specialGaugePosX = (Game::kScreenWidth - kSpecialGaugeWidth) * 0.5f;
 	int specialGaugePosY = Game::kScreenHeight - kSpecialGaugeHeight - kGaugeOffset;
 
-	// •KŽE‹ZƒQ[ƒW—Ê
+	// å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸é‡
 	float specialGaugeRate = player->GetSpecialGaugeRate();
 
 	DrawBox(specialGaugePosX, 

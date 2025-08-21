@@ -1,12 +1,12 @@
-#include "TransformDataLoader.h"
+ï»¿#include "TransformDataLoader.h"
 #include <fstream>
 #include <sstream>
 
 namespace
 {
-	//–¼‘OAÀ•WXYZA‰ñ“]XYZA‘å‚«‚³XYZ@‚Å‡Œv10
+	//åå‰ã€åº§æ¨™XYZã€å›è»¢XYZã€å¤§ãã•XYZã€€ã§åˆè¨ˆ10
 	constexpr int kElementNum = 10;
-	//Unity‚ÌÀ•W‚ÉŠ|‚¯‚é‚±‚Æ‚ÅDXƒ‰ƒCƒuƒ‰ƒŠ‚Å‚àUnity‚Æ“¯‚¶‘å‚«‚³‚É‚È‚é
+	//Unityã®åº§æ¨™ã«æ›ã‘ã‚‹ã“ã¨ã§DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªã§ã‚‚Unityã¨åŒã˜å¤§ãã•ã«ãªã‚‹
 	constexpr float kUnityToDXPosition = 100.0f;
 }
 
@@ -22,64 +22,64 @@ TransformDataLoader::~TransformDataLoader()
 
 std::vector<ObjectData> TransformDataLoader::LoadDataCSV(const char* fileName)
 {
-	//ƒf[ƒ^‚ğŠi”[‚·‚é”z—ñ
+	//ãƒ‡ãƒ¼ã‚¿ã‚’æ ¼ç´ã™ã‚‹é…åˆ—
 	std::vector<ObjectData> objects;
 
-	//ƒtƒ@ƒCƒ‹‚ğŠJ‚­
+	//ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
 	std::ifstream file(fileName);
-	//‚à‚µ‚àƒtƒ@ƒCƒ‹‚ğŠJ‚¯‚È‚©‚Á‚½‚ç
-	if (!file.is_open())return objects;//‹ó‚ÌƒŠƒXƒg‚ğ•Ô‚·
+	//ã‚‚ã—ã‚‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã‘ãªã‹ã£ãŸã‚‰
+	if (!file.is_open())return objects;//ç©ºã®ãƒªã‚¹ãƒˆã‚’è¿”ã™
 
-	//1s‚¸‚Â“Ç‚İæ‚é—p‚Ì•Ï”
+	//1è¡Œãšã¤èª­ã¿å–ã‚‹ç”¨ã®å¤‰æ•°
 	std::string line;
-	//Å‰‚Ìƒwƒbƒ_[‚ÍƒXƒLƒbƒv‚µ‚½‚¢
+	//æœ€åˆã®ãƒ˜ãƒƒãƒ€ãƒ¼ã¯ã‚¹ã‚­ãƒƒãƒ—ã—ãŸã„
 	bool isHeader = true;
 
-	//CSV‚ÌI‚í‚è‚Ü‚Å“Ç‚İæ‚é
-	// getline‚Å“Ç‚İæ‚Á‚Ä‚¢‚­(“Ç‚İæ‚èˆÊ’ui“à•”‚Ìuƒ|ƒCƒ“ƒ^vj‚ÍAƒ‹[ƒv‚Ì‚½‚Ñ‚É‘O‚Éi‚İ‚Ü‚·)
-	//1s‚¸‚Â“Ç‚İæ‚Á‚Ä‚¢‚«“Ç‚İæ‚és‚ª‚È‚­‚È‚Á‚½‚çfalse‚É‚È‚é
-	while (std::getline(file, line))//1s‚¸‚Â“Ç‚İæ‚é
+	//CSVã®çµ‚ã‚ã‚Šã¾ã§èª­ã¿å–ã‚‹
+	// getlineã§èª­ã¿å–ã£ã¦ã„ã(èª­ã¿å–ã‚Šä½ç½®ï¼ˆå†…éƒ¨ã®ã€Œãƒã‚¤ãƒ³ã‚¿ã€ï¼‰ã¯ã€ãƒ«ãƒ¼ãƒ—ã®ãŸã³ã«å‰ã«é€²ã¿ã¾ã™)
+	//1è¡Œãšã¤èª­ã¿å–ã£ã¦ã„ãèª­ã¿å–ã‚‹è¡ŒãŒãªããªã£ãŸã‚‰falseã«ãªã‚‹
+	while (std::getline(file, line))//1è¡Œãšã¤èª­ã¿å–ã‚‹
 	{
-		//Å‰‚Ìs‚ÍƒXƒLƒbƒv‚·‚é(ƒwƒbƒ_[)
+		//æœ€åˆã®è¡Œã¯ã‚¹ã‚­ãƒƒãƒ—ã™ã‚‹(ãƒ˜ãƒƒãƒ€ãƒ¼)
 		if (isHeader)
 		{
 			isHeader = false;
 			continue;
 		}
 
-		//s‚ğƒJƒ“ƒ}‹æØ‚è‚Å1‚Â‚¸‚Â“Ç‚İ‚Ş‚½‚ß‚Ì€”õ
-		std::stringstream ss(line);			//•¶š—ñ‚ğƒXƒgƒŠ[ƒ€(getline‚Å“Ç‚İæ‚é‚½‚ß)‚É•ÏŠ·
-		std::string part;					//•ª‰ğ‚µ‚Äæ‚èo‚µ‚½1—v‘f
-		std::vector<std::string> values;	//—v‘f‚ğ‚Ü‚Æ‚ß‚½”z—ñ
+		//è¡Œã‚’ã‚«ãƒ³ãƒåŒºåˆ‡ã‚Šã§1ã¤ãšã¤èª­ã¿è¾¼ã‚€ãŸã‚ã®æº–å‚™
+		std::stringstream ss(line);			//æ–‡å­—åˆ—ã‚’ã‚¹ãƒˆãƒªãƒ¼ãƒ (getlineã§èª­ã¿å–ã‚‹ãŸã‚)ã«å¤‰æ›
+		std::string part;					//åˆ†è§£ã—ã¦å–ã‚Šå‡ºã—ãŸ1è¦ç´ 
+		std::vector<std::string> values;	//è¦ç´ ã‚’ã¾ã¨ã‚ãŸé…åˆ—
 
-		//ƒJƒ“ƒ}‹æØ‚è‚Åæ‚èo‚µ‚Ä‚¢‚­
-		//ss‚©‚ç,‹æØ‚è‚Åæ‚èo‚µ‚Ä‚¢‚«part‚É“ü‚ê‚Ä‚¢‚­
+		//ã‚«ãƒ³ãƒåŒºåˆ‡ã‚Šã§å–ã‚Šå‡ºã—ã¦ã„ã
+		//ssã‹ã‚‰,åŒºåˆ‡ã‚Šã§å–ã‚Šå‡ºã—ã¦ã„ãpartã«å…¥ã‚Œã¦ã„ã
 		while (std::getline(ss, part, ',')) {
-			values.emplace_back(part);           // •ªŠ„‚³‚ê‚½€–Ú‚ğƒŠƒXƒg‚É’Ç‰Á
+			values.emplace_back(part);           // åˆ†å‰²ã•ã‚ŒãŸé …ç›®ã‚’ãƒªã‚¹ãƒˆã«è¿½åŠ 
 		}
 
-		//—v‘f”‚ª10‚ ‚é‚©ƒ`ƒFƒbƒN(10—ñ•K—v)
-		if (values.size() < kElementNum)continue;//‚È‚¢ê‡‚Í•s³‚Ès‚È‚Ì‚Å”ò‚Î‚·
+		//è¦ç´ æ•°ãŒ10ã‚ã‚‹ã‹ãƒã‚§ãƒƒã‚¯(10åˆ—å¿…è¦)
+		if (values.size() < kElementNum)continue;//ãªã„å ´åˆã¯ä¸æ­£ãªè¡Œãªã®ã§é£›ã°ã™
 
-		//\‘¢‘Ì‚Éƒf[ƒ^‚ğ“ü‚ê‚Ä‚¢‚­
+		//æ§‹é€ ä½“ã«ãƒ‡ãƒ¼ã‚¿ã‚’å…¥ã‚Œã¦ã„ã
 		ObjectData objData;
 
-		//–¼‘O
+		//åå‰
 		objData.name = values[0];
-		//À•W
-		objData.pos.x = std::stof(values[1]) * kUnityToDXPosition;	//std::stof‚Í•¶š—ñ‚ğfloat‚É•ÏŠ·‚·‚é
+		//åº§æ¨™
+		objData.pos.x = std::stof(values[1]) * kUnityToDXPosition;	//std::stofã¯æ–‡å­—åˆ—ã‚’floatã«å¤‰æ›ã™ã‚‹
 		objData.pos.y = std::stof(values[2]) * kUnityToDXPosition;
 		objData.pos.z = std::stof(values[3]) * kUnityToDXPosition;
-		//‰ñ“]
+		//å›è»¢
 		objData.rot.x = std::stof(values[4]);
 		objData.rot.y = std::stof(values[5]);
 		objData.rot.z = -1 * std::stof(values[6]);
-		//‘å‚«‚³
+		//å¤§ãã•
 		objData.scale.x = std::stof(values[7]);
 		objData.scale.y = std::stof(values[8]);
 		objData.scale.z = std::stof(values[9]);
 
-		//”z—ñ‚É’Ç‰Á
+		//é…åˆ—ã«è¿½åŠ 
 		objects.emplace_back(objData);
 	}
 

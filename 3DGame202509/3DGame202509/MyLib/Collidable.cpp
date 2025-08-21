@@ -1,4 +1,4 @@
-#include "Collidable.h"
+ï»¿#include "Collidable.h"
 #include "SphereColliderData.h"
 #include "CapsuleColliderData.h"
 #include "Physics.h"
@@ -31,23 +31,23 @@ std::shared_ptr<ColliderData> Collidable::CreateColliderData(ColliderData::Kind 
 {
 	if (m_colliderData != nullptr)
 	{
-		assert(0 && "colliderData‚Í‚·‚Å‚Éì‚ç‚ê‚Ä‚¢‚Ü‚·");
+		assert(0 && "colliderDataã¯ã™ã§ã«ä½œã‚‰ã‚Œã¦ã„ã¾ã™");
 		return m_colliderData;
 	}
 
 	if (kind == ColliderData::Kind::Capsule)
 	{
-		// ƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_[‚Ìî•ñ‚ğ“ü‚ê‚é
+		// ã‚«ãƒ—ã‚»ãƒ«ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ã®æƒ…å ±ã‚’å…¥ã‚Œã‚‹
 		return std::make_shared<CapsuleColliderData>();
 	}
 	else if (kind == ColliderData::Kind::Sphere)
 	{
-		// ƒXƒtƒBƒAƒRƒ‰ƒCƒ_[‚Ìî•ñ‚ğ“ü‚ê‚é
+		// ã‚¹ãƒ•ã‚£ã‚¢ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ã®æƒ…å ±ã‚’å…¥ã‚Œã‚‹
 		return std::make_shared<SphereColliderData>();
 	}
 	else if (kind == ColliderData::Kind::Polygon)
 	{
-		// ƒ|ƒŠƒSƒ“ƒRƒ‰ƒCƒ_[‚Ìî•ñ‚ğ“ü‚ê‚é
+		// ãƒãƒªã‚´ãƒ³ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ã®æƒ…å ±ã‚’å…¥ã‚Œã‚‹
 		return std::make_shared<PolygonColliderData>();
 	}
 	else

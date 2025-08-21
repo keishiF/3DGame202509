@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "CharacterBase.h"
 
 enum class SubEnemyState
@@ -38,20 +38,20 @@ protected:
 	virtual bool IsLoopAnim(SubEnemyState state) const abstract;
 	void ChangeState(SubEnemyState newState);
 
-	// Player‚ğ’T‚µ‚Ä‚¢‚éó‘Ô
+	// Playerã‚’æ¢ã—ã¦ã„ã‚‹çŠ¶æ…‹
 	virtual void FindUpdate(std::shared_ptr<SubPlayer> player) abstract;
-	// Player‚ğŒ©‚Â‚¯‚Ä’Ç‚¢‚©‚¯‚Ä‚¢‚éó‘Ô
+	// Playerã‚’è¦‹ã¤ã‘ã¦è¿½ã„ã‹ã‘ã¦ã„ã‚‹çŠ¶æ…‹
 	virtual void ChaseUpdate(std::shared_ptr<SubPlayer> player) abstract;
-	// UŒ‚ó‘Ô
+	// æ”»æ’ƒçŠ¶æ…‹
 	virtual void AttackUpdate(std::shared_ptr<SubPlayer> player) abstract;
-	// ”í’eó‘Ô
+	// è¢«å¼¾çŠ¶æ…‹
 	virtual void HitUpdate(std::shared_ptr<SubPlayer> player) abstract;
-	// €–Só‘Ô
+	// æ­»äº¡çŠ¶æ…‹
 	virtual void DeadUpdate(std::shared_ptr<SubPlayer> player) abstract;
 
-	// ƒvƒŒƒCƒ„[‚ğ’T’m‚Å‚«‚é”ÍˆÍ
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’æ¢çŸ¥ã§ãã‚‹ç¯„å›²
 	float m_playerFindRadius = 0.0f;
-	// UŒ‚‚ÉˆÚs‚Å‚«‚é”ÍˆÍ
+	// æ”»æ’ƒã«ç§»è¡Œã§ãã‚‹ç¯„å›²
 	float m_atkRadius = 0.0f;
 };
 

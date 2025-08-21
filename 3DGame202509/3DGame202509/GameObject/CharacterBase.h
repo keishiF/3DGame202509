@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Animator.h"
 #include "Collidable.h"
 #include "ColliderData.h"
@@ -14,7 +14,7 @@
 #include <vector>
 
 /// <summary>
-/// ƒLƒƒƒ‰ƒNƒ^[‚ÌŠî’êƒNƒ‰ƒX
+/// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®åŸºåº•ã‚¯ãƒ©ã‚¹
 /// </summary>
 class CharacterBase : public Collidable
 {
@@ -27,33 +27,33 @@ public:
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 	virtual void OnDamage(float atk) abstract;
 
-	// ƒQƒbƒ^[
-	// ƒ‚ƒfƒ‹æ“¾
+	// ã‚²ãƒƒã‚¿ãƒ¼
+	// ãƒ¢ãƒ‡ãƒ«å–å¾—
 	int GetModel() const { return m_model; }
-	// ŠeƒXƒe[ƒ^ƒX‚ğŒ©‚é‚½‚ß‚ÌStatusComponent‚ğæ“¾
+	// å„ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’è¦‹ã‚‹ãŸã‚ã®StatusComponentã‚’å–å¾—
 	StatusComponent GetStatusComp() const { return m_status; }
-	// ”¼Œaæ“¾
+	// åŠå¾„å–å¾—
 	float GetRadius() const { return m_radius; }
-	// €‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©
+	// æ­»ã‚“ã§ã„ã‚‹ã‹ã©ã†ã‹
 	bool IsDead() const { return m_isDead; }
 
 protected:
-	// ƒ‚ƒfƒ‹ƒnƒ“ƒhƒ‹
+	// ãƒ¢ãƒ‡ãƒ«ãƒãƒ³ãƒ‰ãƒ«
 	int m_model = -1;
 	StatusComponent m_status;
-	// ”¼Œa
+	// åŠå¾„
 	float m_radius = 0.0f;
-	// €‚ñ‚Å‚¢‚é‚©‚Ç‚¤‚©
+	// æ­»ã‚“ã§ã„ã‚‹ã‹ã©ã†ã‹
 	bool m_isDead = false;
-	// Œo‰ßƒtƒŒ[ƒ€‚ğ‘ª‚é
+	// çµŒéãƒ•ãƒ¬ãƒ¼ãƒ ã‚’æ¸¬ã‚‹
 	int m_frame = 0;
-	// UŒ‚ƒtƒŒ[ƒ€
+	// æ”»æ’ƒãƒ•ãƒ¬ãƒ¼ãƒ 
 	int m_atkFrame = 0.0f;
-	// “_–ÅƒtƒŒ[ƒ€
+	// ç‚¹æ»…ãƒ•ãƒ¬ãƒ¼ãƒ 
 	int m_blinkFrame = 0.0f;
-	// ³–ÊƒxƒNƒgƒ‹
+	// æ­£é¢ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 m_forward = { 0.0f, 0.0f, 1.0f };
-	// ƒAƒjƒ[ƒVƒ‡ƒ“
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
 	Animator m_anim;
 };
 

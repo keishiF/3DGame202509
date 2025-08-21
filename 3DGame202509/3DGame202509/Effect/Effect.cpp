@@ -1,4 +1,4 @@
-//#include "Effect.h"
+﻿//#include "Effect.h"
 //#include <EffekseerForDXLib.h>
 //
 //Effect::Effect() :
@@ -8,7 +8,7 @@
 //
 //Effect::~Effect()
 //{
-//	// ���̃C���X�^���X�����񂾂Ƃ��A�G�t�F�N�g�����ʂ悤�ɂ���
+//	// このインスタンスが死んだとき、エフェクトも死ぬようにする
 //	Kill();
 //}
 //
@@ -41,7 +41,7 @@
 //
 //const bool Effect::IsPlaying() const
 //{
-//	// �Đ��� = 0,��~��or�Đ��I�� = -1
+//	// 再生中 = 0,停止中or再生終了 = -1
 //	return IsEffekseer3DEffectPlaying(m_handle) == 0;
 //}
 //
@@ -60,7 +60,7 @@
 //
 //void Effect::Kill()
 //{
-//	// �Ƃ肠�����Đ����~�߂��Manager�������Ă����
-//	// ���̎d�l�͂̂��ɓs���������ĕύX���邩��
+//	// とりあえず再生を止めればManagerが消してくれる
+//	// この仕様はのちに都合が悪くて変更するかも
 //	StopEffekseer3DEffect(m_handle);
 //}

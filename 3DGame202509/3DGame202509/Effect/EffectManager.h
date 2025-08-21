@@ -1,4 +1,4 @@
-//#pragma once
+ï»¿//#pragma once
 //#include "Vector3.h"
 //#include <list>
 //#include <memory>
@@ -7,11 +7,11 @@
 //
 //class Effect;
 //
-//// Effekseer‚ğg‚Á‚Ä
-//// ƒGƒtƒFƒNƒg‚ğo‚·
-//// ƒGƒtƒFƒNƒg‚ğ“®‚©‚·
-//// ƒGƒtƒFƒNƒg‚ğ•`‰æ
-//// ƒVƒ“ƒOƒ‹ƒgƒ“‚É‚µ‚æ
+//// Effekseerã‚’ä½¿ã£ã¦
+//// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å‡ºã™
+//// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å‹•ã‹ã™
+//// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’æç”»
+//// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã«ã—ã‚ˆ
 //class EffectManager
 //{
 //private:
@@ -29,9 +29,9 @@
 //	void Update();
 //	void Draw() const;
 //
-//	// ƒ|ƒCƒ“ƒ^‚ğ•Ô‚µ‚ÄŒÄ‚Ño‚µ‚½ƒNƒ‰ƒX‚ª‘€ì‚Å‚«‚é‚æ‚¤‚É‚·‚é
+//	// ãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã—ã¦å‘¼ã³å‡ºã—ãŸã‚¯ãƒ©ã‚¹ãŒæ“ä½œã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹
 //	std::weak_ptr<Effect> GenerateEffect(const std::string& fileName, const Vector3& initPos);
-//	// ¡o‚Ä‚¢‚éƒGƒtƒFƒNƒg‚ğ‚·‚×‚Äíœ
+//	// ä»Šå‡ºã¦ã„ã‚‹ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’ã™ã¹ã¦å‰Šé™¤
 //	void ClearEffects();
 //private:
 //	using EffectSourceMap_t = std::unordered_map<std::string, int>;

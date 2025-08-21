@@ -1,18 +1,18 @@
-#include "PlayerWeapon.h"
+ï»¿#include "PlayerWeapon.h"
 #include "SphereColliderData.h"
 #include <cassert>
 #include <DxLib.h>
 
 namespace
 {
-	// ‹…‚Ì“–‚½‚è”»’è‚Ì”¼Œa
+	// çƒã®å½“ãŸã‚Šåˆ¤å®šã®åŠå¾„
 	constexpr float kRadius = 100.0f;
 	constexpr float kSpecialRadius = 500.0f;
 
-	// ƒ‚ƒfƒ‹‚ÌŠg‘å’l
+	// ãƒ¢ãƒ‡ãƒ«ã®æ‹¡å¤§å€¤
 	constexpr float kBladeModelScale = 0.01f;
 
-	// “–‚½‚è”»’è‚ğ‘O•ûŒü‚Éo‚·‚½‚ß‚Ì•â³’l
+	// å½“ãŸã‚Šåˆ¤å®šã‚’å‰æ–¹å‘ã«å‡ºã™ãŸã‚ã®è£œæ­£å€¤
 	constexpr float kColOffsetScale = 100.0f;
 }
 
@@ -40,136 +40,136 @@ void PlayerWeapon::Update(int model, float currentFrame, const AtkTiming& timing
 {
 	if (currentFrame >= timing.start && currentFrame < timing.end && specialFlag)
 	{
-		// •KE‹Zó‘Ô‚ÉˆÚs
+		// å¿…æ®ºæŠ€çŠ¶æ…‹ã«ç§»è¡Œ
 		SpecialUpdate(model);
 	}
 	if (currentFrame >= timing.start && currentFrame < timing.end && !specialFlag)
 	{
-		AttackUpdate(model); // UŒ‚”»’èON
+		AttackUpdate(model); // æ”»æ’ƒåˆ¤å®šON
 	}
 	else
 	{
-		IdleUpdate(model);   // UŒ‚”»’èOFF
+		IdleUpdate(model);   // æ”»æ’ƒåˆ¤å®šOFF
 	}
 }
 
 void PlayerWeapon::IdleUpdate(int model)
 {
-	// “–‚½‚è”»’è‚ğ–³Œø‰»‚·‚é
+	// å½“ãŸã‚Šåˆ¤å®šã‚’ç„¡åŠ¹åŒ–ã™ã‚‹
 	SetActive(false);
 
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌMV1SetMatrix‚Ìİ’è‚ğ–³Œø‰»‚·‚é
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®MV1SetMatrixã®è¨­å®šã‚’ç„¡åŠ¹åŒ–ã™ã‚‹
 	MV1SetMatrix(m_model, MGetIdent());
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌƒtƒŒ[ƒ€‚ÌÀ•W‚ğæ“¾‚·‚é
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®åº§æ¨™ã‚’å–å¾—ã™ã‚‹
 	VECTOR position = MV1GetFramePosition(m_model, 0);
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ğ,ƒtƒŒ[ƒ€‚ÌÀ•W‚ğŒ´“_‚É‚·‚é‚½‚ß‚Ì•½sˆÚ“®s—ñ‚ğì¬
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã‚’,ãƒ•ãƒ¬ãƒ¼ãƒ ã®åº§æ¨™ã‚’åŸç‚¹ã«ã™ã‚‹ãŸã‚ã®å¹³è¡Œç§»å‹•è¡Œåˆ—ã‚’ä½œæˆ
 	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
-	// ƒAƒ^ƒbƒ`‚³‚ê‚éƒ‚ƒfƒ‹‚ÌƒtƒŒ[ƒ€‚Ìs—ñ‚ğæ“¾
+	// ã‚¢ã‚¿ãƒƒãƒã•ã‚Œã‚‹ãƒ¢ãƒ‡ãƒ«ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®è¡Œåˆ—ã‚’å–å¾—
 	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 26);
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌŠg‘ås—ñ‚ğæ“¾
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®æ‹¡å¤§è¡Œåˆ—ã‚’å–å¾—
 	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚Ì‰ñ“]s—ñ‚ğæ“¾
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®å›è»¢è¡Œåˆ—ã‚’å–å¾—
 	MATRIX yMat = MGetRotY(DX_PI_F);
-	// Šes—ñ‚ğ‡¬
+	// å„è¡Œåˆ—ã‚’åˆæˆ
 	MATRIX mixMat = MGetIdent();
 	mixMat = MMult(transMat, mixMat);
 	mixMat = MMult(frameMat, mixMat);
 	mixMat = MMult(scaleMat, mixMat);
 	mixMat = MMult(yMat, mixMat);
-	// ‡¬‚µ‚½s—ñ‚ğƒ‚ƒfƒ‹‚ÉƒZƒbƒg
+	// åˆæˆã—ãŸè¡Œåˆ—ã‚’ãƒ¢ãƒ‡ãƒ«ã«ã‚»ãƒƒãƒˆ
 	MV1SetMatrix(m_model, mixMat);
 }
 
 void PlayerWeapon::AttackUpdate(int model)
 {
-	// “–‚½‚è”»’è‚ğ—LŒø‰»‚·‚é
+	// å½“ãŸã‚Šåˆ¤å®šã‚’æœ‰åŠ¹åŒ–ã™ã‚‹
 	SetActive(true);
 
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌMV1SetMatrix‚Ìİ’è‚ğ–³Œø‰»‚·‚é
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®MV1SetMatrixã®è¨­å®šã‚’ç„¡åŠ¹åŒ–ã™ã‚‹
 	MV1SetMatrix(m_model, MGetIdent());
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌƒtƒŒ[ƒ€‚ÌÀ•W‚ğæ“¾‚·‚é
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®åº§æ¨™ã‚’å–å¾—ã™ã‚‹
 	VECTOR position = MV1GetFramePosition(m_model, 0);
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ğ,ƒtƒŒ[ƒ€‚ÌÀ•W‚ğŒ´“_‚É‚·‚é‚½‚ß‚Ì•½sˆÚ“®s—ñ‚ğì¬
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã‚’,ãƒ•ãƒ¬ãƒ¼ãƒ ã®åº§æ¨™ã‚’åŸç‚¹ã«ã™ã‚‹ãŸã‚ã®å¹³è¡Œç§»å‹•è¡Œåˆ—ã‚’ä½œæˆ
 	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
-	// ƒAƒ^ƒbƒ`‚³‚ê‚éƒ‚ƒfƒ‹‚ÌƒtƒŒ[ƒ€‚Ìs—ñ‚ğæ“¾
+	// ã‚¢ã‚¿ãƒƒãƒã•ã‚Œã‚‹ãƒ¢ãƒ‡ãƒ«ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®è¡Œåˆ—ã‚’å–å¾—
 	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 26);
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌŠg‘ås—ñ‚ğæ“¾
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®æ‹¡å¤§è¡Œåˆ—ã‚’å–å¾—
 	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚Ì‰ñ“]s—ñ‚ğæ“¾
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®å›è»¢è¡Œåˆ—ã‚’å–å¾—
 	MATRIX yMat = MGetRotY(DX_PI_F);
-	// Šes—ñ‚ğ‡¬
+	// å„è¡Œåˆ—ã‚’åˆæˆ
 	MATRIX mixMat = MGetIdent();
 	mixMat = MMult(transMat, mixMat);
 	mixMat = MMult(frameMat, mixMat);
 	mixMat = MMult(scaleMat, mixMat);
 	mixMat = MMult(yMat, mixMat);
-	// ‡¬‚µ‚½s—ñ‚ğƒ‚ƒfƒ‹‚ÉƒZƒbƒg
+	// åˆæˆã—ãŸè¡Œåˆ—ã‚’ãƒ¢ãƒ‡ãƒ«ã«ã‚»ãƒƒãƒˆ
 	MV1SetMatrix(m_model, mixMat);
 
-	// “–‚½‚è”»’è
+	// å½“ãŸã‚Šåˆ¤å®š
 	auto colData = std::dynamic_pointer_cast<SphereColliderData>(m_colliderData);
 
-	// ƒvƒŒƒCƒ„[‚Ìƒ‚ƒfƒ‹‚©‚çˆÊ’u‚Æ‰ñ“]‚ğæ“¾
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ãƒ¢ãƒ‡ãƒ«ã‹ã‚‰ä½ç½®ã¨å›è»¢ã‚’å–å¾—
 	VECTOR playerPos = MV1GetPosition(model);
 	VECTOR rotVec = MV1GetRotationXYZ(model);
 	float angleY = -rotVec.y;
 
-	// ‘O•ûƒxƒNƒgƒ‹‚ğŒvZ
+	// å‰æ–¹ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨ˆç®—
 	Vector3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
 	forward.Normalize();
 
-	// ƒvƒŒƒCƒ„[ˆÊ’u‚©‚ç‘O•û‚ÖƒIƒtƒZƒbƒg
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ä½ç½®ã‹ã‚‰å‰æ–¹ã¸ã‚ªãƒ•ã‚»ãƒƒãƒˆ
 	Vector3 weaponPos(playerPos.x, playerPos.y, playerPos.z);
 	weaponPos += forward * kColOffsetScale;
 
-	// “–‚½‚è”»’è‚ÌƒZƒbƒg
+	// å½“ãŸã‚Šåˆ¤å®šã®ã‚»ãƒƒãƒˆ
 	colData->m_radius = kRadius;
 	m_rigidbody.SetPos(weaponPos);
 }
 
 void PlayerWeapon::SpecialUpdate(int model)
 {
-	// “–‚½‚è”»’è‚ğ—LŒø‰»‚·‚é
+	// å½“ãŸã‚Šåˆ¤å®šã‚’æœ‰åŠ¹åŒ–ã™ã‚‹
 	SetActive(true);
 
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌMV1SetMatrix‚Ìİ’è‚ğ–³Œø‰»‚·‚é
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®MV1SetMatrixã®è¨­å®šã‚’ç„¡åŠ¹åŒ–ã™ã‚‹
 	MV1SetMatrix(m_model, MGetIdent());
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌƒtƒŒ[ƒ€‚ÌÀ•W‚ğæ“¾‚·‚é
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®åº§æ¨™ã‚’å–å¾—ã™ã‚‹
 	VECTOR position = MV1GetFramePosition(m_model, 0);
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ğ,ƒtƒŒ[ƒ€‚ÌÀ•W‚ğŒ´“_‚É‚·‚é‚½‚ß‚Ì•½sˆÚ“®s—ñ‚ğì¬
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã‚’,ãƒ•ãƒ¬ãƒ¼ãƒ ã®åº§æ¨™ã‚’åŸç‚¹ã«ã™ã‚‹ãŸã‚ã®å¹³è¡Œç§»å‹•è¡Œåˆ—ã‚’ä½œæˆ
 	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
-	// ƒAƒ^ƒbƒ`‚³‚ê‚éƒ‚ƒfƒ‹‚ÌƒtƒŒ[ƒ€‚Ìs—ñ‚ğæ“¾
+	// ã‚¢ã‚¿ãƒƒãƒã•ã‚Œã‚‹ãƒ¢ãƒ‡ãƒ«ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®è¡Œåˆ—ã‚’å–å¾—
 	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 26);
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌŠg‘ås—ñ‚ğæ“¾
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®æ‹¡å¤§è¡Œåˆ—ã‚’å–å¾—
 	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
-	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚Ì‰ñ“]s—ñ‚ğæ“¾
+	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®å›è»¢è¡Œåˆ—ã‚’å–å¾—
 	MATRIX yMat = MGetRotY(DX_PI_F);
-	// Šes—ñ‚ğ‡¬
+	// å„è¡Œåˆ—ã‚’åˆæˆ
 	MATRIX mixMat = MGetIdent();
 	mixMat = MMult(transMat, mixMat);
 	mixMat = MMult(frameMat, mixMat);
 	mixMat = MMult(scaleMat, mixMat);
 	mixMat = MMult(yMat, mixMat);
-	// ‡¬‚µ‚½s—ñ‚ğƒ‚ƒfƒ‹‚ÉƒZƒbƒg
+	// åˆæˆã—ãŸè¡Œåˆ—ã‚’ãƒ¢ãƒ‡ãƒ«ã«ã‚»ãƒƒãƒˆ
 	MV1SetMatrix(m_model, mixMat);
 
-	// “–‚½‚è”»’è
+	// å½“ãŸã‚Šåˆ¤å®š
 	auto colData = std::dynamic_pointer_cast<SphereColliderData>(m_colliderData);
 
-	// ƒvƒŒƒCƒ„[‚Ìƒ‚ƒfƒ‹‚©‚çˆÊ’u‚Æ‰ñ“]‚ğæ“¾
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ãƒ¢ãƒ‡ãƒ«ã‹ã‚‰ä½ç½®ã¨å›è»¢ã‚’å–å¾—
 	VECTOR playerPos = MV1GetPosition(model);
 	VECTOR rotVec = MV1GetRotationXYZ(model);
 	float angleY = -rotVec.y;
 
-	// ‘O•ûƒxƒNƒgƒ‹‚ğŒvZ
+	// å‰æ–¹ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨ˆç®—
 	Vector3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
 	forward.Normalize();
 
-	// ƒvƒŒƒCƒ„[ˆÊ’u‚©‚ç‘O•û‚ÖƒIƒtƒZƒbƒg
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ä½ç½®ã‹ã‚‰å‰æ–¹ã¸ã‚ªãƒ•ã‚»ãƒƒãƒˆ
 	Vector3 weaponPos(playerPos.x, playerPos.y, playerPos.z);
 	weaponPos += forward * kColOffsetScale;
 
-	// “–‚½‚è”»’è‚ÌƒZƒbƒg
+	// å½“ãŸã‚Šåˆ¤å®šã®ã‚»ãƒƒãƒˆ
 	colData->m_radius = kSpecialRadius;
 	m_rigidbody.SetPos(weaponPos);
 }

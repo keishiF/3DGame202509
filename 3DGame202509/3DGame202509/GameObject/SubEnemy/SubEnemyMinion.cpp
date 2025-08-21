@@ -1,58 +1,58 @@
-#include "CapsuleColliderData.h"
+ï»¿#include "CapsuleColliderData.h"
 #include "EnemyMinionWeapon.h"
 #include "SubPlayer/SubPlayer.h"
 #include "SubEnemyMinion.h"
 
 namespace
 {
-	// HP‚Ì‰Šú’lAÅ‘å’l
+	// HPã®åˆæœŸå€¤ã€æœ€å¤§å€¤
 	constexpr float kHP = 5.0f;
-	// UŒ‚—Í
+	// æ”»æ’ƒåŠ›
 	constexpr float kDefaultAtk = 1.0f;
 
-	// ˆÚ“®‘¬“x
+	// ç§»å‹•é€Ÿåº¦
 	constexpr float kWalkSpeed = 2.5f;
 	constexpr float kRunSpeed = 5.0f;
 
-	// ƒ‚ƒfƒ‹‚ÌŠg‘å’l
+	// ãƒ¢ãƒ‡ãƒ«ã®æ‹¡å¤§å€¤
 	constexpr float kModelScale = 75.0f;
 
-	// UŒ‚ƒtƒŒ[ƒ€
+	// æ”»æ’ƒãƒ•ãƒ¬ãƒ¼ãƒ 
 	constexpr float kAtkFrame = 32.0f;
 
-	// “–‚½‚è”»’è
-	// ƒJƒvƒZƒ‹‚Ì”¼Œa
+	// å½“ãŸã‚Šåˆ¤å®š
+	// ã‚«ãƒ—ã‚»ãƒ«ã®åŠå¾„
 	constexpr float kCapsuleColRadius = 45.0f;
-	// ƒJƒvƒZƒ‹‚Ì’·‚³
+	// ã‚«ãƒ—ã‚»ãƒ«ã®é•·ã•
 	constexpr float kColScale = 140.0f;
-	// ó‘Ô‘JˆÚ‚Ég‚¤”¼Œa
-	// ƒvƒŒƒCƒ„[‚ğ’T’m‚Å‚«‚é”ÍˆÍ
+	// çŠ¶æ…‹é·ç§»ã«ä½¿ã†åŠå¾„
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’æ¢çŸ¥ã§ãã‚‹ç¯„å›²
 	constexpr float kPlayerFindRadius = 900.0f;
-	// ‘–‚èó‘Ô‚ÉˆÚs‚·‚é”ÍˆÍ
+	// èµ°ã‚ŠçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹ç¯„å›²
 	constexpr float kRunRadius = 450.0f;
-	// UŒ‚ó‘Ô‚ÉˆÚs‚·‚é”ÍˆÍ
+	// æ”»æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹ç¯„å›²
 	constexpr float kAtkRadius = 100.0f;
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“–¼
-	// ‘Ò‹@
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å
+	// å¾…æ©Ÿ
 	const char* kFindAnimName = "2H_Melee_Idle";
-	// •à‚«
+	// æ­©ã
 	const char* kWalkAnimName = "Walking_D_Skeletons";
-	// ”­Œ©
+	// ç™ºè¦‹
 	const char* kChaseAnimName = "Running_C";
-	// UŒ‚
+	// æ”»æ’ƒ
 	const char* kAttackAnimName = "1H_Melee_Attack_Slice_Diagonal";
-	// ”í’e
+	// è¢«å¼¾
 	const char* kHitAnimName = "Hit_B";
-	// €–S
+	// æ­»äº¡
 	const char* kDeadAnimName = "Death_B";
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶‘¬“x
-	// ’Êí‘¬“x
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿé€Ÿåº¦
+	// é€šå¸¸é€Ÿåº¦
 	constexpr float kDefaultAnimSpeed = 0.5f;
 	constexpr float kHitAnimSpeed = 1.0f;
 
-	// “|‚³‚ê‚½‚Æ‚«‚ÉƒvƒŒƒCƒ„[‚Ì•KE‹ZƒQ[ƒW‚ğ‘‚â‚·—Ê
+	// å€’ã•ã‚ŒãŸã¨ãã«ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸ã‚’å¢—ã‚„ã™é‡
 	constexpr int kSpecialGaugePoint = 10;
 }
 
@@ -68,7 +68,7 @@ SubEnemyMinion::~SubEnemyMinion()
 
 void SubEnemyMinion::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 {
-	// Physics‚É“o˜^
+	// Physicsã«ç™»éŒ²
 	Collidable::Init();
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
@@ -80,14 +80,14 @@ void SubEnemyMinion::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_playerFindRadius = kPlayerFindRadius;
 	m_atkRadius = kAtkRadius;
 
-	// ŠeƒXƒe[ƒ^ƒX‚Ì‰Šú‰»
+	// å„ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã®åˆæœŸåŒ–
 	m_status.m_hp = kHP;
 	m_status.m_maxHP = kHP;
 	m_status.m_atk = kDefaultAtk;
 	m_atkFrame = 0.0f;
 	m_isDead = false;
 
-	// ƒ‚ƒfƒ‹‚Ìƒ[ƒh
+	// ãƒ¢ãƒ‡ãƒ«ã®ãƒ­ãƒ¼ãƒ‰
 	m_model = MV1LoadModel("Data/Model/Enemy/Minion/Minion.mv1");
 	assert(m_model >= 0);
 
@@ -96,11 +96,11 @@ void SubEnemyMinion::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	MV1SetPosition(m_model, pos.ToDxVECTOR());
 	MV1SetRotationXYZ(m_model, VGet(rot.x, rot.y, rot.z));
 
-	// ƒAƒjƒ[ƒ^[
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚¿ãƒ¼
 	m_anim.Init(m_model);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, kDefaultAnimSpeed, true);
 
-	// •Ší
+	// æ­¦å™¨
 	m_weapon = std::make_shared<EnemyMinionWeapon>();
 	m_weapon->Init();
 }
@@ -130,7 +130,7 @@ void SubEnemyMinion::Update(std::shared_ptr<SubPlayer> player)
 		return;
 	}
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXV
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
 	m_anim.UpdateAnimBlend();
@@ -157,7 +157,7 @@ void SubEnemyMinion::Update(std::shared_ptr<SubPlayer> player)
 		break;
 	}
 
-	//“–‚½‚è”»’è
+	//å½“ãŸã‚Šåˆ¤å®š
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	Vector3 colPos = m_rigidbody.GetPos();
 	colPos.y += kColScale;
@@ -183,22 +183,22 @@ void SubEnemyMinion::WalkUpdate(std::shared_ptr<SubPlayer> player)
 	SetActive(true);
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubEnemyState::Chase));
 
-	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 toPlayerDir = player->GetPos() - myPos;
 	toPlayerDir.y = 0.0f;
 
-	// ‹——£‚ª\•ª‚É‚ ‚éê‡‚Ì‚İˆÚ“®
+	// è·é›¢ãŒååˆ†ã«ã‚ã‚‹å ´åˆã®ã¿ç§»å‹•
 	if (toPlayerDir.Length() > 1.0f)
 	{
 		toPlayerDir.Normalize();
 		m_rigidbody.SetVelo(toPlayerDir * kWalkSpeed);
 		MV1SetPosition(m_model, myPos.ToDxVECTOR());
 
-		// is•ûŒü‚ª0‚Å‚È‚¯‚ê‚Î‰ñ“]
+		// é€²è¡Œæ–¹å‘ãŒ0ã§ãªã‘ã‚Œã°å›è»¢
 		if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
 		{
-			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
+			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
 			float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
 			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 		}
@@ -224,22 +224,22 @@ void SubEnemyMinion::ChaseUpdate(std::shared_ptr<SubPlayer> player)
 	SetActive(true);
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubEnemyState::Chase));
 
-	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 toPlayerDir = player->GetPos() - myPos;
 	toPlayerDir.y = 0.0f;
 
-	// ‹——£‚ª\•ª‚É‚ ‚éê‡‚Ì‚İˆÚ“®
+	// è·é›¢ãŒååˆ†ã«ã‚ã‚‹å ´åˆã®ã¿ç§»å‹•
 	if (toPlayerDir.Length() > 1.0f)
 	{
 		toPlayerDir.Normalize();
 		m_rigidbody.SetVelo(toPlayerDir * kRunSpeed);
 		MV1SetPosition(m_model, myPos.ToDxVECTOR());
 
-		// is•ûŒü‚ª0‚Å‚È‚¯‚ê‚Î‰ñ“]
+		// é€²è¡Œæ–¹å‘ãŒ0ã§ãªã‘ã‚Œã°å›è»¢
 		if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
 		{
-			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
+			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
 			float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
 			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 		}
@@ -263,7 +263,7 @@ void SubEnemyMinion::AttackUpdate(std::shared_ptr<SubPlayer> player)
 	++m_atkFrame;
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubEnemyState::Attack));
 
-	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
@@ -273,7 +273,7 @@ void SubEnemyMinion::AttackUpdate(std::shared_ptr<SubPlayer> player)
 		++m_atkFrame;
 		if (dir.x != 0.0f || dir.z != 0.0f)
 		{
-			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
+			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
 			float angleY = std::atan2(dir.x, -dir.z);
 			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 		}
@@ -299,7 +299,7 @@ void SubEnemyMinion::HitUpdate(std::shared_ptr<SubPlayer> player)
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubEnemyState::Hit));
 
 	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		ChangeState(SubEnemyState::Find);
@@ -311,7 +311,7 @@ void SubEnemyMinion::DeadUpdate(std::shared_ptr<SubPlayer> player)
 	SetActive(false);
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubEnemyState::Dead));
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		if (m_model >= 0)
@@ -343,7 +343,7 @@ const char* SubEnemyMinion::GetAnimName(SubEnemyState state) const
 		return kDeadAnimName;
 	default:
 		return "";
-		assert(0 && "‘¶İ‚µ‚È‚¢ƒAƒjƒ[ƒVƒ‡ƒ“");
+		assert(0 && "å­˜åœ¨ã—ãªã„ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³");
 	}
 }
 
@@ -384,6 +384,6 @@ bool SubEnemyMinion::IsLoopAnim(SubEnemyState state) const
 		return false;
 	default:
 		return "";
-		assert(0 && "‘¶İ‚µ‚È‚¢ƒXƒe[ƒg");
+		assert(0 && "å­˜åœ¨ã—ãªã„ã‚¹ãƒ†ãƒ¼ãƒˆ");
 	}
 }

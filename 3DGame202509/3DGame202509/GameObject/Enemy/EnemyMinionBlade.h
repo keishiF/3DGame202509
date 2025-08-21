@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Collidable.h"
 #include <DxLib.h>
 
@@ -16,9 +16,9 @@ public:
 
 	void Init();
 	void Update(int model, float currentFrame, const AttackTiming& timing);
-	// ‘Ò‹@ó‘Ô
+	// å¾…æ©ŸçŠ¶æ…‹
 	void IdleUpdate(int model);
-	// ŠeUŒ‚ó‘Ô
+	// å„æ”»æ’ƒçŠ¶æ…‹
 	void AttackUpdate(int model);
 	void Draw();
 

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Vector3.h"
 
 class Rigidbody
@@ -10,7 +10,7 @@ public:
 	Vector3 GetPos()  const { return m_pos; }
 	Vector3 GetDir()  const { return m_dir; }
 	Vector3 GetVelo() const { return m_velo; }
-	//Ÿ‚ÌÀ•W
+	//æ¬¡ã®åº§æ¨™
 	Vector3 GetNextPos() { return m_pos + m_velo; };
 
 	void SetPos(Vector3 pos) { m_pos = pos; }

@@ -1,15 +1,15 @@
-#pragma once
+ï»¿#pragma once
 
 class Input;
 class SceneController;
 
-// ƒQ[ƒ€ƒV[ƒ“Šî’êƒNƒ‰ƒX
+// ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³åŸºåº•ã‚¯ãƒ©ã‚¹
 class SceneBase
 {
 public:
 	SceneBase(SceneController& controller);
 
-	// XVA•`‰æ
+	// æ›´æ–°ã€æç”»
 	virtual void Update() abstract;
 	virtual void Draw() = 0;
 

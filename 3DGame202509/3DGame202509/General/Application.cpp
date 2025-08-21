@@ -1,4 +1,4 @@
-#include "Application.h"
+ï»¿#include "Application.h"
 #include "SceneController.h"
 #include "Input.h"
 #include <DxLib.h>
@@ -7,30 +7,30 @@
 
 Application& Application::GetInstance()
 {
-	// TODO: return ƒXƒe[ƒgƒƒ“ƒg‚ğ‚±‚±‚É‘}“ü‚µ‚Ü‚·
+	// TODO: return ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¡ãƒ³ãƒˆã‚’ã“ã“ã«æŒ¿å…¥ã—ã¾ã™
 	static Application app;
 	return app;
 }
 
 bool Application::Init()
 {
-	// ƒtƒ‹ƒXƒNƒŠ[ƒ“‚Å‚Í‚È‚­AƒEƒCƒ“ƒhƒEƒ‚[ƒh‚ÅŠJ‚­‚æ‚¤‚É‚·‚é
+	// ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã§ã¯ãªãã€ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ãƒ¢ãƒ¼ãƒ‰ã§é–‹ãã‚ˆã†ã«ã™ã‚‹
 	ChangeWindowMode(Game::kDefaultWindowMode);
-	// ƒEƒBƒ“ƒhƒE–¼İ’è
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦åè¨­å®š
 	SetMainWindowText(Game::kTitleText);
-	// ‰æ–Ê‚ÌƒTƒCƒY‚ğ•ÏX‚·‚é
+	// ç”»é¢ã®ã‚µã‚¤ã‚ºã‚’å¤‰æ›´ã™ã‚‹
 	SetGraphMode(Game::kScreenWidth, Game::kScreenHeight, Game::kColorBitNum);
 
-	if (DxLib_Init() == -1)		// ‚c‚wƒ‰ƒCƒuƒ‰ƒŠ‰Šú‰»ˆ—
+	if (DxLib_Init() == -1)		// ï¼¤ï¼¸ãƒ©ã‚¤ãƒ–ãƒ©ãƒªåˆæœŸåŒ–å‡¦ç†
 	{
-		return false;			// ƒGƒ‰[‚ª‹N‚«‚½‚ç’¼‚¿‚ÉI—¹
+		return false;			// ã‚¨ãƒ©ãƒ¼ãŒèµ·ããŸã‚‰ç›´ã¡ã«çµ‚äº†
 	}
 
 	SetUseZBuffer3D(true);
 	SetWriteZBuffer3D(true);
 	SetUseBackCulling(true);
 
-	// •`‰ææ‚ğ— ‰æ–Ê‚É‚·‚é
+	// æç”»å…ˆã‚’è£ç”»é¢ã«ã™ã‚‹
 	SetDrawScreen(DX_SCREEN_BACK);
 
 	return true;
@@ -40,35 +40,35 @@ void Application::Run()
 {
 	m_frame = 0;
 
-	// ƒƒ‚ƒŠ‚ÌŠm•Û
+	// ãƒ¡ãƒ¢ãƒªã®ç¢ºä¿
 	SceneController sceneController;
 
-	// ƒQ[ƒ€ƒ‹[ƒv
-	while (ProcessMessage() == 0)	// Windows‚ªs‚¤ˆ—‚ğ‘Ò‚Â•K—v‚ª‚ ‚é
+	// ã‚²ãƒ¼ãƒ ãƒ«ãƒ¼ãƒ—
+	while (ProcessMessage() == 0)	// WindowsãŒè¡Œã†å‡¦ç†ã‚’å¾…ã¤å¿…è¦ãŒã‚ã‚‹
 	{
-		// ¡‰ñ‚Ìƒ‹[ƒv‚ªn‚Ü‚Á‚½ŠÔ‚ğŠo‚¦‚Ä‚¨‚­
+		// ä»Šå›ã®ãƒ«ãƒ¼ãƒ—ãŒå§‹ã¾ã£ãŸæ™‚é–“ã‚’è¦šãˆã¦ãŠã
 		LONGLONG time = GetNowHiPerformanceCount();
 
-		// ‰æ–Ê‘S‘Ì‚ğƒNƒŠƒA‚·‚é
+		// ç”»é¢å…¨ä½“ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹
 		ClearDrawScreen();
 
-		// ‚±‚±‚ÉƒQ[ƒ€‚Ìˆ—‚ğ‘‚­
-		// ƒpƒbƒh‚Ì“ü—ÍXVˆ—
+		// ã“ã“ã«ã‚²ãƒ¼ãƒ ã®å‡¦ç†ã‚’æ›¸ã
+		// ãƒ‘ãƒƒãƒ‰ã®å…¥åŠ›æ›´æ–°å‡¦ç†
 		Input::GetInstance().Update();
 
 		sceneController.Update();
 		sceneController.Draw();
 
-		// ‰æ–Ê‚ÌØ‚è‘Ö‚í‚è‚ğ‘Ò‚Â•K—v‚ª‚ ‚é
-		ScreenFlip();	// 1/60•bŒo‰ß‚·‚é‚Ü‚Å‘Ò‚Â
+		// ç”»é¢ã®åˆ‡ã‚Šæ›¿ã‚ã‚Šã‚’å¾…ã¤å¿…è¦ãŒã‚ã‚‹
+		ScreenFlip();	// 1/60ç§’çµŒéã™ã‚‹ã¾ã§å¾…ã¤
 		++m_frame;
 
-		// FPS(Frame Per Second)60‚ÉŒÅ’è
+		// FPS(Frame Per Second)60ã«å›ºå®š
 		while (GetNowHiPerformanceCount() - time < 16667)
 		{
 		}
 
-		// ‚à‚µ‚d‚r‚bƒL[‚ª‰Ÿ‚³‚ê‚Ä‚¢‚½‚çƒ‹[ƒv‚©‚ç”²‚¯‚é
+		// ã‚‚ã—ï¼¥ï¼³ï¼£ã‚­ãƒ¼ãŒæŠ¼ã•ã‚Œã¦ã„ãŸã‚‰ãƒ«ãƒ¼ãƒ—ã‹ã‚‰æŠœã‘ã‚‹
 		if (CheckHitKey(KEY_INPUT_ESCAPE))
 		{
 			break;
@@ -78,5 +78,5 @@ void Application::Run()
 
 void Application::Terminate()
 {
-	DxLib_End();				// ‚c‚wƒ‰ƒCƒuƒ‰ƒŠg—p‚ÌI—¹ˆ—
+	DxLib_End();				// ï¼¤ï¼¸ãƒ©ã‚¤ãƒ–ãƒ©ãƒªä½¿ç”¨ã®çµ‚äº†å‡¦ç†
 }

@@ -1,47 +1,47 @@
-#pragma once
+ï»¿#pragma once
 #include "EnemyBase.h"
 
 class EnemyMinionBlade;
 class EnemyMinion : public EnemyBase
 {
 public:
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ÆƒfƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã¨ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	EnemyMinion();
 	virtual ~EnemyMinion();
 
-	// ‰Šú‰»AXVA•`‰æ
+	// åˆæœŸåŒ–ã€æ›´æ–°ã€æç”»
 	void Init(Vector3& pos, Vector3& rot, Vector3& scale) override;
 	void Update(std::shared_ptr<Player> player) override;
 	void Draw() override;
 
 	virtual void OnDamage() override;
 
-	// HPŠ„‡‚Ìæ“¾
+	// HPå‰²åˆã®å–å¾—
 	float GetHpRate() const { return m_hpRate; }
 
-	// 3D‹óŠÔ‚É‚¨‚¯‚éˆÊ’uÀ•W‚ğƒXƒNƒŠ[ƒ“À•W‚É•ÏŠ·‚µ‚½‚à‚Ì‚ğæ“¾
+	// 3Dç©ºé–“ã«ãŠã‘ã‚‹ä½ç½®åº§æ¨™ã‚’ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã«å¤‰æ›ã—ãŸã‚‚ã®ã‚’å–å¾—
 	Vector3 GetScreenPos() const;
 
-	// “G‚Ìó‘Ô
+	// æ•µã®çŠ¶æ…‹
 private:
 	const char* GetAnimName(EnemyState state) const override;
 	bool IsLoopAnim(EnemyState state) const override;
 
-	// ‘Ò‹@ó‘Ô
+	// å¾…æ©ŸçŠ¶æ…‹
 	void FindUpdate(std::shared_ptr<Player> player) override;
 
 	void WalkUpdate(std::shared_ptr<Player> player);
 
-	// ”­Œ©ó‘Ô
+	// ç™ºè¦‹çŠ¶æ…‹
 	void ChaseUpdate(std::shared_ptr<Player> player) override;
 
-	// UŒ‚ó‘Ô
+	// æ”»æ’ƒçŠ¶æ…‹
 	void AttackUpdate(std::shared_ptr<Player> player) override;
 
-	// ”í’eó‘Ô
+	// è¢«å¼¾çŠ¶æ…‹
 	void HitUpdate(std::shared_ptr<Player> player) override;
 
-	// €–Só‘Ô
+	// æ­»äº¡çŠ¶æ…‹
 	void DeadUpdate(std::shared_ptr<Player> player) override;
 
 	std::shared_ptr<EnemyMinionBlade> m_weapon;

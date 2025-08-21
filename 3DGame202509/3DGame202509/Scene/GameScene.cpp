@@ -1,4 +1,4 @@
-#include "Camera/Camera.h"
+ï»¿#include "Camera/Camera.h"
 #include "Enemy/EnemyMage.h"
 #include "Enemy/EnemyMinion.h"
 #include "game.h"
@@ -19,9 +19,9 @@
 namespace
 {
 	constexpr int kFadeInterval = 60;
-	// ƒtƒB[ƒ‹ƒh‚Ìˆê•Ó‚Ì’·‚³
+	// ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®ä¸€è¾ºã®é•·ã•
 	constexpr float kFieldSize = 500.0f;
-	// ƒXƒJƒCƒh[ƒ€‚ÌŠg‘å—¦
+	// ã‚¹ã‚«ã‚¤ãƒ‰ãƒ¼ãƒ ã®æ‹¡å¤§ç‡
 	constexpr float kSkyModelScale = 5.0f;
 }
 
@@ -100,7 +100,7 @@ void GameScene::FadeOutUpdate()
 	{
 		m_controller.ChangeScene(std::make_shared<ResultScene>(m_controller));
 
-		// ©•ª‚ª€‚ñ‚Å‚¢‚é‚Ì‚Å‚à‚µ—]Œv‚Èˆ—‚ª“ü‚Á‚Ä‚¢‚é‚Æ‚Ü‚¸‚¢‚Ì‚Åreturn;
+		// è‡ªåˆ†ãŒæ­»ã‚“ã§ã„ã‚‹ã®ã§ã‚‚ã—ä½™è¨ˆãªå‡¦ç†ãŒå…¥ã£ã¦ã„ã‚‹ã¨ã¾ãšã„ã®ã§return;
 		return;
 	}
 }
@@ -108,7 +108,7 @@ void GameScene::FadeOutUpdate()
 void GameScene::NormalDraw()
 {
 #ifdef _DEBUG
-	// “_–ÅŒø‰Ê‚Ì‚½‚ß‚ÌğŒ
+	// ç‚¹æ»…åŠ¹æœã®ãŸã‚ã®æ¡ä»¶
 	if ((m_blinkFrame / 30) % 2 == 0)
 	{
 		DrawString(0, 0, "Game Scene", 0xffffff);

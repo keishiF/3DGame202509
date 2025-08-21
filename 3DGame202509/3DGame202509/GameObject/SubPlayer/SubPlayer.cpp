@@ -1,4 +1,4 @@
-#include "CapsuleColliderData.h"
+ï»¿#include "CapsuleColliderData.h"
 #include "Enemy/EnemyBase.h"
 #include "GameObjectManager.h"
 #include "Input.h"
@@ -8,30 +8,30 @@
 
 namespace
 {
-	// HP‚Ì‰Šú’lAÅ‘å’l
+	// HPã®åˆæœŸå€¤ã€æœ€å¤§å€¤
 	constexpr float kHP = 20;
-	// UŒ‚—Í
+	// æ”»æ’ƒåŠ›
 	constexpr float kDefaultAtk = 1.0f;
-	// ƒXƒ^ƒ~ƒi‚Ì‰Šú’lAÅ‘å’l
+	// ã‚¹ã‚¿ãƒŸãƒŠã®åˆæœŸå€¤ã€æœ€å¤§å€¤
 	constexpr float kStamina = 100.0f;
-	// ‘Ò‹@ó‘ÔA•à‚«ó‘Ô‚Å–ˆƒtƒŒ[ƒ€‰ñ•œ‚·‚éƒXƒ^ƒ~ƒi
+	// å¾…æ©ŸçŠ¶æ…‹ã€æ­©ãçŠ¶æ…‹ã§æ¯ãƒ•ãƒ¬ãƒ¼ãƒ å›å¾©ã™ã‚‹ã‚¹ã‚¿ãƒŸãƒŠ
 	constexpr float kRegeneStamina = 0.34f;
-	// ”æ‚êó‘Ô‚Å–ˆƒtƒŒ[ƒ€‰ñ•œ‚·‚éƒXƒ^ƒ~ƒi
+	// ç–²ã‚ŒçŠ¶æ…‹ã§æ¯ãƒ•ãƒ¬ãƒ¼ãƒ å›å¾©ã™ã‚‹ã‚¹ã‚¿ãƒŸãƒŠ
 	constexpr float kTiredRegeneStamina = 0.17f;
-	// ‘–‚Á‚Ä‚¢‚éÛ‚ÉÁ”ï‚·‚éƒXƒ^ƒ~ƒi
+	// èµ°ã£ã¦ã„ã‚‹éš›ã«æ¶ˆè²»ã™ã‚‹ã‚¹ã‚¿ãƒŸãƒŠ
 	constexpr float kRunStamina = 0.25f;
-	// ‹­UŒ‚‚ğ‚µ‚½Û‚ÉÁ”ï‚·‚éƒXƒ^ƒ~ƒi
+	// å¼·æ”»æ’ƒã‚’ã—ãŸéš›ã«æ¶ˆè²»ã™ã‚‹ã‚¹ã‚¿ãƒŸãƒŠ
 	constexpr float kSpinStamina = 15.0f;
-	// ƒXƒ^ƒ~ƒi‚ª‚±‚Ì’l‚ğ‰º‰ñ‚Á‚½‚ç‘–‚é‚Ì‚ª’x‚­‚È‚éƒ‰ƒCƒ“
+	// ã‚¹ã‚¿ãƒŸãƒŠãŒã“ã®å€¤ã‚’ä¸‹å›ã£ãŸã‚‰èµ°ã‚‹ã®ãŒé…ããªã‚‹ãƒ©ã‚¤ãƒ³
 	constexpr float kRunSpeedDownStaminaRate = 35.0f;
-	// •KE‹ZƒQ[ƒW‚ÌÅ‘å’l
+	// å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸ã®æœ€å¤§å€¤
 	constexpr float kMaxSpecialGauge = 100.0f;
-	// ŠÔŒo‰ß‚Å‘‚¦‚é•KE‹ZƒQ[ƒW‚Ì—Ê
+	// æ™‚é–“çµŒéã§å¢—ãˆã‚‹å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸ã®é‡
 	constexpr float kTimeSpecialGauge = 2.0f;
-	// •KE‹ZƒQ[ƒW‚ª‘‚¦‚é‚Ü‚Å‚ÌŠÔ
+	// å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸ãŒå¢—ãˆã‚‹ã¾ã§ã®æ™‚é–“
 	constexpr float kSpecialGaugeTime = 60.0f;
 	
-	// ˆÚ“®‘¬“x
+	// ç§»å‹•é€Ÿåº¦
 	constexpr float kWalkSpeed = 8.5f;
 	constexpr float kNormalRunSpeed = 17.5f;
 	constexpr float kTiredRunSpeed = 5.0f;
@@ -40,50 +40,50 @@ namespace
 
 	constexpr float kLerpT = 0.2f;
 
-	// ƒ‚ƒfƒ‹‚ÌŠg‘å’l
+	// ãƒ¢ãƒ‡ãƒ«ã®æ‹¡å¤§å€¤
 	constexpr float kModelScale = 70.0f;
 
-	// “–‚½‚è”»’è
-	// ƒJƒvƒZƒ‹‚Ì”¼Œa
+	// å½“ãŸã‚Šåˆ¤å®š
+	// ã‚«ãƒ—ã‚»ãƒ«ã®åŠå¾„
 	constexpr float kCapsuleColRadius = 45.0f;
-	// ƒJƒvƒZƒ‹‚Ì’·‚³
+	// ã‚«ãƒ—ã‚»ãƒ«ã®é•·ã•
 	constexpr float kColScale = 140.0f;
-	// UŒ‚‚ğ‚ ‚é’ö“x“G‚Ì•ûŒü‚ÉŒü‚©‚¹‚ê‚é”ÍˆÍ
+	// æ”»æ’ƒã‚’ã‚ã‚‹ç¨‹åº¦æ•µã®æ–¹å‘ã«å‘ã‹ã›ã‚Œã‚‹ç¯„å›²
 	constexpr float kAttackOffsetRadius = 230.0f;
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“–¼
-	// ‘Ò‹@
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å
+	// å¾…æ©Ÿ
 	const char* kIdleAnimName    = "Idle";
-	// •à‚«
+	// æ­©ã
 	const char* kWalkAnimName    = "Walking_B";
-	// ‘–‚è
+	// èµ°ã‚Š
 	const char* kRunAnimName     = "Running_A";
-	// ”æ‚ê
+	// ç–²ã‚Œ
 	const char* kTiredAnimName   = "Sit_Floor_Idle";
-	// UŒ‚
+	// æ”»æ’ƒ
 	const char* kChopAnimName    = "1H_Melee_Attack_Chop";
 	const char* kSliceAnimName   = "1H_Melee_Attack_Slice_Diagonal";
 	const char* kStabAnimName    = "1H_Melee_Attack_Stab";
 	const char* kSpinAnimName    = "2H_Melee_Attack_Spin";
 	const char* kShotAnimName    = "2H_Melee_Attack_Stab";
 	const char* kSpecialAnimName = "2H_Melee_Attack_Stab";
-	// ‰ñ”ğ
+	// å›é¿
 	const char* kDodgeAnimName   = "Dodge_Forward";
-	// ”í’e
+	// è¢«å¼¾
 	const char* kHitAnimName     = "Hit_B";
-	// €–S
+	// æ­»äº¡
 	const char* kDeadAnimName    = "Death_B";
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶‘¬“x
-	// ’Êí‘¬“x
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿé€Ÿåº¦
+	// é€šå¸¸é€Ÿåº¦
 	constexpr float kDefaultAnimSpeed  = 1.0f;
-	// ‘Ò‹@
+	// å¾…æ©Ÿ
 	constexpr float kIdleAnimSpeed     = 0.5f;
-	// •à‚«
+	// æ­©ã
 	constexpr float kWalkAnimSpeed     = 0.75f;
-	// ’x‚¢‘–‚è
+	// é…ã„èµ°ã‚Š
 	constexpr float kTiredRunAnimSpeed = 0.5f;
-	// •KE‹Z
+	// å¿…æ®ºæŠ€
 	constexpr float kSpecialAnimSpeed  = 0.5f;
 }
 
@@ -99,7 +99,7 @@ SubPlayer::~SubPlayer()
 
 void SubPlayer::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 {
-	// Physics‚É“o˜^
+	// Physicsã«ç™»éŒ²
 	Collidable::Init();
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
@@ -108,18 +108,18 @@ void SubPlayer::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	colData->m_startPos = pos;
 	colData->m_radius = kCapsuleColRadius;
 
-	// ƒ‚ƒfƒ‹‚Ìƒ[ƒh
+	// ãƒ¢ãƒ‡ãƒ«ã®ãƒ­ãƒ¼ãƒ‰
 	m_model = MV1LoadModel("Data/Model/Player/Player.mv1");
 	assert(m_model >= 0);
-	// ƒ‚ƒfƒ‹‚ÌƒTƒCƒYAˆÊ’u
+	// ãƒ¢ãƒ‡ãƒ«ã®ã‚µã‚¤ã‚ºã€ä½ç½®
 	VECTOR modelScale = VGet(scale.x * kModelScale, scale.x * kModelScale, scale.x * kModelScale);
 	MV1SetScale(m_model, modelScale);
 	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 
-	// ƒvƒŒƒCƒ„[‚Ì‰Šúó‘Ô‚ğ‘Ò‹@ó‘Ô‚É‚·‚é
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åˆæœŸçŠ¶æ…‹ã‚’å¾…æ©ŸçŠ¶æ…‹ã«ã™ã‚‹
 	m_state = SubPlayerState::Idle;
 
-	// ŠeƒXƒe[ƒ^ƒX‚Ì‰Šú‰»
+	// å„ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã®åˆæœŸåŒ–
 	m_status.m_hp = kHP;
 	m_status.m_maxHP = kHP;
 	m_status.m_atk = kDefaultAtk;
@@ -131,7 +131,7 @@ void SubPlayer::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_isCombo = false;
 	m_isDead = false;
 
-	// ƒAƒjƒ[ƒ^[
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚¿ãƒ¼
 	m_anim.Init(m_model);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kIdleAnimName, kIdleAnimSpeed, true);
 }
@@ -143,7 +143,7 @@ void SubPlayer::Draw()
 		return;
 	}
 
-	// “_–ÅŒø‰Ê‚Ì‚½‚ß‚ÌğŒ
+	// ç‚¹æ»…åŠ¹æœã®ãŸã‚ã®æ¡ä»¶
 	if ((m_blinkFrame / 3) % 2 == 0)
 	{
 #if _DEBUG
@@ -156,15 +156,15 @@ void SubPlayer::Draw()
 
 void SubPlayer::OnDamage(float atk)
 {
-	// ƒ_ƒ[ƒW‚ğó‚¯‚é
+	// ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ã‚‹
 	m_status.m_hp -= atk;
 
-	// HP‚ª0‚É‚È‚Á‚½‚Ì‚È‚ç€–Só‘Ô‚ÉˆÚs‚·‚é
+	// HPãŒ0ã«ãªã£ãŸã®ãªã‚‰æ­»äº¡çŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (m_status.m_hp <= 0 && !m_isDead)
 	{
 		ChangeState(SubPlayerState::Dead);
 	}
-	// ‚»‚¤‚Å‚È‚¢‚È‚ç”í’eó‘Ô‚ÉˆÚs‚·‚é
+	// ãã†ã§ãªã„ãªã‚‰è¢«å¼¾çŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	else
 	{
 		ChangeState(SubPlayerState::Hit);
@@ -173,13 +173,13 @@ void SubPlayer::OnDamage(float atk)
 
 void SubPlayer::ChangeState(SubPlayerState newState)
 {
-	// Œ»İ‚Ìó‘Ô‚ÆŸ‚Ìó‘Ô‚ª“¯‚¶ê‡return
-	// Hit‚¾‚¯—áŠOˆ—
+	// ç¾åœ¨ã®çŠ¶æ…‹ã¨æ¬¡ã®çŠ¶æ…‹ãŒåŒã˜å ´åˆreturn
+	// Hitã ã‘ä¾‹å¤–å‡¦ç†
 	if (m_state == newState && m_state != SubPlayerState::Hit) return;
 
 	m_state = newState;
 
-	// ó‘Ô‘JˆÚ‚ÉUŒ‚ƒtƒŒ[ƒ€‚È‚Ç‚ğ0‚É‚µ‚ÄƒŠƒZƒbƒg‚·‚é
+	// çŠ¶æ…‹é·ç§»æ™‚ã«æ”»æ’ƒãƒ•ãƒ¬ãƒ¼ãƒ ãªã©ã‚’0ã«ã—ã¦ãƒªã‚»ãƒƒãƒˆã™ã‚‹
 	m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
 	m_atkFrame = 0.0f;
 	m_blinkFrame = 0;
@@ -239,13 +239,13 @@ void SubPlayer::ChangeState(SubPlayerState newState)
 
 void SubPlayer::Update()
 {
-	// €‚ñ‚Å‚¢‚½‚çreturn
+	// æ­»ã‚“ã§ã„ãŸã‚‰return
 	if (m_isDead && m_model < 0)
 	{
 		return;
 	}
 
-	// •KE‹ZƒQ[ƒW‚ªÅ‘å‚Å‚È‚¢‚Æ‚«
+	// å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸ãŒæœ€å¤§ã§ãªã„ã¨ã
 	if (m_specialGauge < kMaxSpecialGauge)
 	{
 		if (++m_frame >= kSpecialGaugeTime)
@@ -258,7 +258,7 @@ void SubPlayer::Update()
 		}
 	}
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXV
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
 	m_anim.UpdateAnimBlend();
@@ -309,7 +309,7 @@ void SubPlayer::Update()
 		break;
 	}
 
-	//“–‚½‚è”»’è
+	//å½“ãŸã‚Šåˆ¤å®š
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	Vector3 colPos = m_rigidbody.GetPos();
 	colPos.y += kColScale;
@@ -324,12 +324,12 @@ void SubPlayer::Update()
 void SubPlayer::IdleUpdate()
 {
 	auto& input = Input::GetInstance();
-	// ƒvƒŒƒCƒ„[©g‚Ì“–‚½‚è”»’è‚ğƒIƒ“‚É‚·‚é
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è‡ªèº«ã®å½“ãŸã‚Šåˆ¤å®šã‚’ã‚ªãƒ³ã«ã™ã‚‹
 	SetActive(true);
 
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubPlayerState::Idle), false);
 
-	// ƒXƒ^ƒ~ƒi‚ªÅ‘å‚¶‚á‚È‚¢‚Æ‚«‚Í™X‚É‰ñ•œ‚·‚é
+	// ã‚¹ã‚¿ãƒŸãƒŠãŒæœ€å¤§ã˜ã‚ƒãªã„ã¨ãã¯å¾ã€…ã«å›å¾©ã™ã‚‹
 	if (m_stamina < kStamina)
 	{
 		m_stamina += kRegeneStamina;
@@ -337,20 +337,20 @@ void SubPlayer::IdleUpdate()
 		m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
 	}
 
-	// ¶ƒXƒeƒBƒbƒN‚Ì“ü—Í‚ª‚ ‚ê‚Î•à‚«ó‘Ô‚ÉˆÚs‚·‚é
+	// å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›ãŒã‚ã‚Œã°æ­©ãçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsPress("LEFT") || input.IsPress("RIGHT") ||
 		input.IsPress("UP") || input.IsPress("DOWN"))
 	{
 		ChangeState(SubPlayerState::Walk);
 	}
 
-	// Aƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚ÎUŒ‚ó‘Ô‚ÉˆÚs‚·‚é
+	// Aãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°æ”»æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("A"))
 	{
 		ChangeState(SubPlayerState::Chop);
 	}
 
-	// Xƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚Î‹­UŒ‚ó‘Ô‚ÉˆÚs‚·‚é
+	// Xãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°å¼·æ”»æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("X"))
 	{
 		if (m_stamina >= kSpinStamina)
@@ -362,14 +362,14 @@ void SubPlayer::IdleUpdate()
 		}
 	}
 
-	// Yƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚ÎËŒ‚ó‘Ô‚ÉˆÚs‚·‚é
+	// Yãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°å°„æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("Y"))
 	{
 		ChangeState(SubPlayerState::Shot);
 	}
 
 #ifdef _DEBUG
-	// ¶ƒXƒeƒBƒbƒN‚ğ‰Ÿ‚µ‚ñ‚¾‚É•KE‹ZƒQ[ƒW‚ªÅ‘å‚Å‚È‚¯‚ê‚ÎÅ‘å‚É‚·‚é
+	// å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã‚’æŠ¼ã—è¾¼ã‚“ã æ™‚ã«å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸ãŒæœ€å¤§ã§ãªã‘ã‚Œã°æœ€å¤§ã«ã™ã‚‹
 	if (input.IsPress("LPush"))
 	{
 		if (m_specialGauge < kMaxSpecialGauge)
@@ -381,19 +381,19 @@ void SubPlayer::IdleUpdate()
 	}
 #endif
 
-	// LBƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚Î•KE‹Zó‘Ô‚ÉˆÚs‚·‚é
+	// LBãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°å¿…æ®ºæŠ€çŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("Special"))
 	{
 		if (m_specialGauge < kMaxSpecialGauge)
 		{
 #ifdef _DEBUG
-			printfDx("•KE‹Z‘Å‚Ä‚È‚¢‚æI\n");
+			printfDx("å¿…æ®ºæŠ€æ‰“ã¦ãªã„ã‚ˆï¼\n");
 #endif
 		}
 		if (m_specialGauge >= kMaxSpecialGauge)
 		{
 #ifdef _DEBUG
-			printfDx("•KE‹Z”­“®I\n");
+			printfDx("å¿…æ®ºæŠ€ç™ºå‹•ï¼\n");
 #endif
 			ChangeState(SubPlayerState::Special);
 		}
@@ -403,12 +403,12 @@ void SubPlayer::IdleUpdate()
 void SubPlayer::WalkUpdate()
 {
 	auto& input = Input::GetInstance();
-	// ƒvƒŒƒCƒ„[©g‚Ì“–‚½‚è”»’è‚ğƒIƒ“‚É‚·‚é
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è‡ªèº«ã®å½“ãŸã‚Šåˆ¤å®šã‚’ã‚ªãƒ³ã«ã™ã‚‹
 	SetActive(true);
 
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubPlayerState::Walk), false);
 
-	// ƒXƒ^ƒ~ƒi‚ªÅ‘å‚¶‚á‚È‚¢‚Æ‚«‚Í™X‚É‰ñ•œ‚·‚é
+	// ã‚¹ã‚¿ãƒŸãƒŠãŒæœ€å¤§ã˜ã‚ƒãªã„ã¨ãã¯å¾ã€…ã«å›å¾©ã™ã‚‹
 	if (m_stamina < kStamina)
 	{
 		m_stamina += kRegeneStamina;
@@ -417,44 +417,44 @@ void SubPlayer::WalkUpdate()
 	}
 
 	Vector3 dir = { 0.0f, 0.0f,0.0f };
-	// ¶ƒXƒeƒBƒbƒN‚ÅˆÚ“®
-	// ¶“ü—Í
+	// å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã§ç§»å‹•
+	// å·¦å…¥åŠ›
 	if (input.IsPress("LEFT"))
 	{
 		dir.x = -kWalkSpeed;
 	}
-	// ‰E“ü—Í
+	// å³å…¥åŠ›
 	else if (input.IsPress("RIGHT"))
 	{
 		dir.x = kWalkSpeed;
 	}
-	// ‰¡•ûŒü‚Ì“ü—Í‚È‚µ
+	// æ¨ªæ–¹å‘ã®å…¥åŠ›ãªã—
 	else
 	{
 		dir.x = 0.0f;
 	}
-	// ã“ü—Í
+	// ä¸Šå…¥åŠ›
 	if (input.IsPress("UP"))
 	{
 		dir.z = kWalkSpeed;
 	}
-	// ‰º“ü—Í
+	// ä¸‹å…¥åŠ›
 	else if (input.IsPress("DOWN"))
 	{
 		dir.z = -kWalkSpeed;
 	}
-	// c•ûŒü‚Ì“ü—Í‚È‚µ
+	// ç¸¦æ–¹å‘ã®å…¥åŠ›ãªã—
 	else
 	{
 		dir.z = 0.0f;
 	}
 
-	// ƒxƒNƒgƒ‹‚ğ³‹K‰»‚µˆÚ“®‘¬“x‚ğ‚©‚¯ƒ|ƒWƒVƒ‡ƒ“‚É‰ÁZ
+	// ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–ã—ç§»å‹•é€Ÿåº¦ã‚’ã‹ã‘ãƒã‚¸ã‚·ãƒ§ãƒ³ã«åŠ ç®—
 	dir.Normalize();
 	m_rigidbody.SetVelo(dir * kWalkSpeed);
 	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 
-	// is•ûŒü‚Éƒ‚ƒfƒ‹‚ğ‰ñ“]‚³‚¹‚é
+	// é€²è¡Œæ–¹å‘ã«ãƒ¢ãƒ‡ãƒ«ã‚’å›è»¢ã•ã›ã‚‹
 	Vector3 velocity = m_rigidbody.GetVelo();
 	if (velocity.x != 0.0f || velocity.z != 0.0f)
 	{
@@ -470,13 +470,13 @@ void SubPlayer::WalkUpdate()
 		MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 	}
 
-	// ¶ƒXƒeƒBƒbƒN‚Ì“ü—Í‚ª‚È‚¢ê‡‘Ò‹@ó‘Ô‚ÉˆÚs
+	// å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›ãŒãªã„å ´åˆå¾…æ©ŸçŠ¶æ…‹ã«ç§»è¡Œ
 	if (m_rigidbody.GetVelo().x == 0.0f && m_rigidbody.GetVelo().z == 0.0f)
 	{
 		ChangeState(SubPlayerState::Idle);
 	}
 
-	// RB‚Ì“ü—Í‚ª‚ ‚ê‚Îƒ_ƒbƒVƒ…ó‘Ô‚ÉˆÚs‚·‚é
+	// RBã®å…¥åŠ›ãŒã‚ã‚Œã°ãƒ€ãƒƒã‚·ãƒ¥çŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("RB"))
 	{
 		if (m_stamina >= kRunSpeedDownStaminaRate)
@@ -489,13 +489,13 @@ void SubPlayer::WalkUpdate()
 		}
 	}
 
-	// Aƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚ÎUŒ‚ó‘Ô‚ÉˆÚs‚·‚é
+	// Aãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°æ”»æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("A"))
 	{
 		ChangeState(SubPlayerState::Chop);
 	}
 
-	// Xƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚Î‹­UŒ‚ó‘Ô‚ÉˆÚs‚·‚é
+	// Xãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°å¼·æ”»æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("X"))
 	{
 		if (m_stamina >= kSpinStamina)
@@ -507,13 +507,13 @@ void SubPlayer::WalkUpdate()
 		}
 	}
 
-	// Yƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚ÎËŒ‚ó‘Ô‚ÉˆÚs‚·‚é
+	// Yãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°å°„æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("Y"))
 	{
 		ChangeState(SubPlayerState::Shot);
 	}
 
-	// Bƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚Î‰ñ”ğó‘Ô‚ÉˆÚs‚·‚é
+	// Bãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°å›é¿çŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("B"))
 	{
 		ChangeState(SubPlayerState::Dodge);
@@ -523,7 +523,7 @@ void SubPlayer::WalkUpdate()
 void SubPlayer::RunUpdate()
 {
 	auto& input = Input::GetInstance();
-	// ƒvƒŒƒCƒ„[©g‚Ì“–‚½‚è”»’è‚ğƒIƒ“‚É‚·‚é
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è‡ªèº«ã®å½“ãŸã‚Šåˆ¤å®šã‚’ã‚ªãƒ³ã«ã™ã‚‹
 	SetActive(true);
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubPlayerState::NormalRun), false);
 	Vector3 dir = { 0.0f, 0.0f, 0.0f };
@@ -532,44 +532,44 @@ void SubPlayer::RunUpdate()
 	m_staminaRate = m_stamina / kStamina;
 	m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
 
-	// ¶ƒXƒeƒBƒbƒN‚ÅˆÚ“®
-	// ¶“ü—Í
+	// å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã§ç§»å‹•
+	// å·¦å…¥åŠ›
 	if (input.IsPress("LEFT"))
 	{
 		dir.x = -kNormalRunSpeed;
 	}
-	// ‰E“ü—Í
+	// å³å…¥åŠ›
 	else if (input.IsPress("RIGHT"))
 	{
 		dir.x = kNormalRunSpeed;
 	}
-	// ‰¡•ûŒü‚Ì“ü—Í‚È‚µ
+	// æ¨ªæ–¹å‘ã®å…¥åŠ›ãªã—
 	else
 	{
 		dir.x = 0.0f;
 	}
-	// ã“ü—Í
+	// ä¸Šå…¥åŠ›
 	if (input.IsPress("UP"))
 	{
 		dir.z = kNormalRunSpeed;
 	}
-	// ‰º“ü—Í
+	// ä¸‹å…¥åŠ›
 	else if (input.IsPress("DOWN"))
 	{
 		dir.z = -kNormalRunSpeed;
 	}
-	// c•ûŒü‚Ì“ü—Í‚È‚µ
+	// ç¸¦æ–¹å‘ã®å…¥åŠ›ãªã—
 	else
 	{
 		dir.z = 0.0f;
 	}
 
-	// ƒxƒNƒgƒ‹‚ğ³‹K‰»‚µˆÚ“®‘¬“x‚ğ‚©‚¯ƒ|ƒWƒVƒ‡ƒ“‚É‰ÁZ
+	// ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–ã—ç§»å‹•é€Ÿåº¦ã‚’ã‹ã‘ãƒã‚¸ã‚·ãƒ§ãƒ³ã«åŠ ç®—
 	dir.Normalize();
 	m_rigidbody.SetVelo(dir * kNormalRunSpeed);
 	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 
-	// is•ûŒü‚Éƒ‚ƒfƒ‹‚ğ‰ñ“]‚³‚¹‚é
+	// é€²è¡Œæ–¹å‘ã«ãƒ¢ãƒ‡ãƒ«ã‚’å›è»¢ã•ã›ã‚‹
 	Vector3 velocity = m_rigidbody.GetVelo();
 	if (velocity.x != 0.0f || velocity.z != 0.0f)
 	{
@@ -585,36 +585,36 @@ void SubPlayer::RunUpdate()
 		MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 	}
 
-	// ¶ƒXƒeƒBƒbƒN‚Ì“ü—Í‚ª‚È‚¢ê‡‘Ò‹@ó‘Ô‚ÉˆÚs‚·‚é
+	// å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›ãŒãªã„å ´åˆå¾…æ©ŸçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (m_rigidbody.GetVelo().x == 0.0f && m_rigidbody.GetVelo().z == 0.0f)
 	{
 		ChangeState(SubPlayerState::Idle);
 	}
 
-	// RB‚Ì“ü—Í‚ª‚ ‚ê‚Î•à‚«ó‘Ô‚ÉˆÚs‚·‚é
+	// RBã®å…¥åŠ›ãŒã‚ã‚Œã°æ­©ãçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("RB"))
 	{
 		ChangeState(SubPlayerState::Walk);
 	}
 
-	// ƒXƒ^ƒ~ƒi‚ªŒ¸‚Á‚Ä‚«‚½‚ç’x‚¢‘–‚èó‘Ô‚ÉˆÚs‚·‚é
+	// ã‚¹ã‚¿ãƒŸãƒŠãŒæ¸›ã£ã¦ããŸã‚‰é…ã„èµ°ã‚ŠçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (m_stamina < kRunSpeedDownStaminaRate)
 	{
 		ChangeState(SubPlayerState::TiredRun);
 	}
-	// ƒXƒ^ƒ~ƒi‚ª‚È‚­‚È‚Á‚½‚ç”æ‚êó‘Ô‚ÉˆÚs‚·‚é
+	// ã‚¹ã‚¿ãƒŸãƒŠãŒãªããªã£ãŸã‚‰ç–²ã‚ŒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (m_stamina <= 0)
 	{
 		ChangeState(SubPlayerState::Tired);
 	}
 
-	// Aƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚ÎUŒ‚ó‘Ô‚ÉˆÚs‚·‚é
+	// Aãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°æ”»æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("A"))
 	{
 		ChangeState(SubPlayerState::Chop);
 	}
 
-	// Xƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚Î‹­UŒ‚ó‘Ô‚ÉˆÚs‚·‚é
+	// Xãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°å¼·æ”»æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("X"))
 	{
 		if (m_stamina >= kSpinStamina)
@@ -624,13 +624,13 @@ void SubPlayer::RunUpdate()
 		}
 	}
 
-	// Yƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚ÎËŒ‚ó‘Ô‚ÉˆÚs‚·‚é
+	// Yãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°å°„æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("Y"))
 	{
 		ChangeState(SubPlayerState::Shot);
 	}
 
-	// Bƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚Î‰ñ”ğó‘Ô‚ÉˆÚs‚·‚é
+	// Bãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°å›é¿çŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("B"))
 	{
 		ChangeState(SubPlayerState::Dodge);
@@ -640,7 +640,7 @@ void SubPlayer::RunUpdate()
 void SubPlayer::TiredRunUpdate()
 {
 	auto& input = Input::GetInstance();
-	// ƒvƒŒƒCƒ„[©g‚Ì“–‚½‚è”»’è‚ğƒIƒ“‚É‚·‚é
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è‡ªèº«ã®å½“ãŸã‚Šåˆ¤å®šã‚’ã‚ªãƒ³ã«ã™ã‚‹
 	SetActive(true);
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubPlayerState::NormalRun), false);
 	Vector3 dir = { 0.0f, 0.0f, 0.0f };
@@ -649,44 +649,44 @@ void SubPlayer::TiredRunUpdate()
 	m_staminaRate = m_stamina / kStamina;
 	m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
 
-	// ¶ƒXƒeƒBƒbƒN‚ÅˆÚ“®
-	// ¶“ü—Í
+	// å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã§ç§»å‹•
+	// å·¦å…¥åŠ›
 	if (input.IsPress("LEFT"))
 	{
 		dir.x = -kTiredRunSpeed;
 	}
-	// ‰E“ü—Í
+	// å³å…¥åŠ›
 	else if (input.IsPress("RIGHT"))
 	{
 		dir.x = kTiredRunSpeed;
 	}
-	// ‰¡•ûŒü‚Ì“ü—Í‚È‚µ
+	// æ¨ªæ–¹å‘ã®å…¥åŠ›ãªã—
 	else
 	{
 		dir.x = 0.0f;
 	}
-	// ã“ü—Í
+	// ä¸Šå…¥åŠ›
 	if (input.IsPress("UP"))
 	{
 		dir.z = kTiredRunSpeed;
 	}
-	// ‰º“ü—Í
+	// ä¸‹å…¥åŠ›
 	else if (input.IsPress("DOWN"))
 	{
 		dir.z = -kTiredRunSpeed;
 	}
-	// c•ûŒü‚Ì“ü—Í‚È‚µ
+	// ç¸¦æ–¹å‘ã®å…¥åŠ›ãªã—
 	else
 	{
 		dir.z = 0.0f;
 	}
 
-	// ƒxƒNƒgƒ‹‚ğ³‹K‰»‚µˆÚ“®‘¬“x‚ğ‚©‚¯ƒ|ƒWƒVƒ‡ƒ“‚É‰ÁZ
+	// ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–ã—ç§»å‹•é€Ÿåº¦ã‚’ã‹ã‘ãƒã‚¸ã‚·ãƒ§ãƒ³ã«åŠ ç®—
 	dir.Normalize();
 	m_rigidbody.SetVelo(dir * kTiredRunSpeed);
 	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 
-	// is•ûŒü‚Éƒ‚ƒfƒ‹‚ğ‰ñ“]‚³‚¹‚é
+	// é€²è¡Œæ–¹å‘ã«ãƒ¢ãƒ‡ãƒ«ã‚’å›è»¢ã•ã›ã‚‹
 	Vector3 velocity = m_rigidbody.GetVelo();
 	if (velocity.x != 0.0f || velocity.z != 0.0f)
 	{
@@ -702,31 +702,31 @@ void SubPlayer::TiredRunUpdate()
 		MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 	}
 
-	// ¶ƒXƒeƒBƒbƒN‚Ì“ü—Í‚ª‚È‚¢ê‡‘Ò‹@ó‘Ô‚ÉˆÚs‚·‚é
+	// å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›ãŒãªã„å ´åˆå¾…æ©ŸçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (m_rigidbody.GetVelo().x == 0.0f && m_rigidbody.GetVelo().z == 0.0f)
 	{
 		ChangeState(SubPlayerState::Idle);
 	}
 
-	// RB‚Ì“ü—Í‚ª‚ ‚ê‚Î•à‚«ó‘Ô‚ÉˆÚs‚·‚é
+	// RBã®å…¥åŠ›ãŒã‚ã‚Œã°æ­©ãçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("RB"))
 	{
 		ChangeState(SubPlayerState::Walk);
 	}
 
-	// ƒXƒ^ƒ~ƒi‚ª‚È‚­‚È‚Á‚½‚ç”æ‚êó‘Ô‚ÉˆÚs‚·‚é
+	// ã‚¹ã‚¿ãƒŸãƒŠãŒãªããªã£ãŸã‚‰ç–²ã‚ŒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (m_stamina <= 0)
 	{
 		ChangeState(SubPlayerState::Tired);
 	}
 
-	// Aƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚ÎUŒ‚ó‘Ô‚ÉˆÚs‚·‚é
+	// Aãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°æ”»æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("A"))
 	{
 		ChangeState(SubPlayerState::Chop);
 	}
 
-	// Xƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚Î‹­UŒ‚ó‘Ô‚ÉˆÚs‚·‚é
+	// Xãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°å¼·æ”»æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("X"))
 	{
 		if (m_stamina >= kSpinStamina)
@@ -736,7 +736,7 @@ void SubPlayer::TiredRunUpdate()
 		}
 	}
 
-	// Bƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚Î‰ñ”ğó‘Ô‚ÉˆÚs‚·‚é
+	// Bãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°å›é¿çŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 	if (input.IsTrigger("B"))
 	{
 		ChangeState(SubPlayerState::Dodge);
@@ -746,14 +746,14 @@ void SubPlayer::TiredRunUpdate()
 void SubPlayer::TiredUpdate()
 {
 	auto& input = Input::GetInstance();
-	// “–‚½‚è”»’è‚ğƒIƒ“‚É‚·‚é
+	// å½“ãŸã‚Šåˆ¤å®šã‚’ã‚ªãƒ³ã«ã™ã‚‹
 	SetActive(true);
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubPlayerState::Tired), false);
 
 	m_stamina += kTiredRegeneStamina;
 	m_staminaRate = m_stamina / kStamina;
 	m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
-	// ƒXƒ^ƒ~ƒi‚ªˆê’è’l‚Ü‚Å‰ñ•œ‚µ‚½‚ç‘Ò‹@ó‘Ô‚ÉˆÚs
+	// ã‚¹ã‚¿ãƒŸãƒŠãŒä¸€å®šå€¤ã¾ã§å›å¾©ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«ç§»è¡Œ
 	if (m_stamina >= kStamina * 0.5f)
 	{
 		ChangeState(SubPlayerState::Idle);
@@ -763,45 +763,45 @@ void SubPlayer::TiredUpdate()
 void SubPlayer::ChopUpdate()
 {
 	auto& input = Input::GetInstance();
-	// ƒvƒŒƒCƒ„[©g‚Ì“–‚½‚è”»’è‚ğƒIƒ“‚É‚·‚é
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è‡ªèº«ã®å½“ãŸã‚Šåˆ¤å®šã‚’ã‚ªãƒ³ã«ã™ã‚‹
 	SetActive(true);
 
 	++m_atkFrame;
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubPlayerState::Chop), false);
 
-	// ˆê”Ô‹ß‚¢“G‚Ì•ûŒü‚É‰ñ“]
+	// ä¸€ç•ªè¿‘ã„æ•µã®æ–¹å‘ã«å›è»¢
 	RotateToNearestEnemy(kAttackOffsetRadius);
 
-	// UŒ‚ŠJn‚©‚çˆê’èƒtƒŒ[ƒ€‚ÌŠÔ‘Oi
+	// æ”»æ’ƒé–‹å§‹ã‹ã‚‰ä¸€å®šãƒ•ãƒ¬ãƒ¼ãƒ ã®é–“å‰é€²
 	if (m_atkFrame <= 15.0f)
 	{
-		// UŒ‚’†‚É‘Oi‚·‚éˆ—iŒ»İ‚Ì‰ñ“]•ûŒü‚Éi‚Şj
+		// æ”»æ’ƒä¸­ã«å‰é€²ã™ã‚‹å‡¦ç†ï¼ˆç¾åœ¨ã®å›è»¢æ–¹å‘ã«é€²ã‚€ï¼‰
 		VECTOR rotVec = MV1GetRotationXYZ(m_model);
-		float angleY = -rotVec.y; // ƒ‚ƒfƒ‹‰ñ“]‚Æˆê’v‚³‚¹‚é‚½‚ß-‚ª•K—v
+		float angleY = -rotVec.y; // ãƒ¢ãƒ‡ãƒ«å›è»¢ã¨ä¸€è‡´ã•ã›ã‚‹ãŸã‚-ãŒå¿…è¦
 		Vector3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
 		forward.Normalize();
-		m_rigidbody.SetVelo(forward * kAttackMoveSpeed); // UŒ‚’†‚Ì‘¬“xi’è”j
+		m_rigidbody.SetVelo(forward * kAttackMoveSpeed); // æ”»æ’ƒä¸­ã®é€Ÿåº¦ï¼ˆå®šæ•°ï¼‰
 		MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 	}
 
 	if (m_atkFrame > 16.0f && m_atkFrame < 32.0f)
 	{
-		// 1ƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚ÎUŒ‚ó‘Ô‚ÉˆÚs‚·‚é
+		// 1ãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°æ”»æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 		if (input.IsTrigger("A"))
 		{
 			m_isCombo = true;
 		}
 	}
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†æ™‚
 	if (m_anim.GetNextAnim().isEnd)
 	{
-		// 1ƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚ÎUŒ‚ó‘Ô‚ÉˆÚs‚·‚é
+		// 1ãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°æ”»æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 		if (m_isCombo)
 		{
 			ChangeState(SubPlayerState::Slice);
 		}
-		// ‰½‚à‚È‚¯‚ê‚Î‘Ò‹@ó‘Ô‚ÉˆÚs‚·‚é
+		// ä½•ã‚‚ãªã‘ã‚Œã°å¾…æ©ŸçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 		else
 		{
 			ChangeState(SubPlayerState::Idle);
@@ -812,41 +812,41 @@ void SubPlayer::ChopUpdate()
 void SubPlayer::SliceUpdate()
 {
 	auto& input = Input::GetInstance();
-	// ƒvƒŒƒCƒ„[©g‚Ì“–‚½‚è”»’è‚ğƒIƒ“‚É‚·‚é
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è‡ªèº«ã®å½“ãŸã‚Šåˆ¤å®šã‚’ã‚ªãƒ³ã«ã™ã‚‹
 	SetActive(true);
 
 	++m_atkFrame;
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubPlayerState::Slice), false);
 
-	// ˆê”Ô‹ß‚¢“G‚Ì•ûŒü‚É‰ñ“]
+	// ä¸€ç•ªè¿‘ã„æ•µã®æ–¹å‘ã«å›è»¢
 	RotateToNearestEnemy(kAttackOffsetRadius);
 
-	// UŒ‚ŠJn‚©‚çˆê’èƒtƒŒ[ƒ€‚ÌŠÔ‘Oi
+	// æ”»æ’ƒé–‹å§‹ã‹ã‚‰ä¸€å®šãƒ•ãƒ¬ãƒ¼ãƒ ã®é–“å‰é€²
 	if (m_atkFrame <= 15.0f)
 	{
-		// UŒ‚’†‚É‘Oi‚·‚éˆ—iŒ»İ‚Ì‰ñ“]•ûŒü‚Éi‚Şj
+		// æ”»æ’ƒä¸­ã«å‰é€²ã™ã‚‹å‡¦ç†ï¼ˆç¾åœ¨ã®å›è»¢æ–¹å‘ã«é€²ã‚€ï¼‰
 		VECTOR rotVec = MV1GetRotationXYZ(m_model);
-		float angleY = -rotVec.y; // ƒ‚ƒfƒ‹‰ñ“]‚Æˆê’v‚³‚¹‚é‚½‚ß-‚ª•K—v
+		float angleY = -rotVec.y; // ãƒ¢ãƒ‡ãƒ«å›è»¢ã¨ä¸€è‡´ã•ã›ã‚‹ãŸã‚-ãŒå¿…è¦
 		Vector3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
 		forward.Normalize();
-		m_rigidbody.SetVelo(forward * kAttackMoveSpeed); // UŒ‚’†‚Ì‘¬“xi’è”j
+		m_rigidbody.SetVelo(forward * kAttackMoveSpeed); // æ”»æ’ƒä¸­ã®é€Ÿåº¦ï¼ˆå®šæ•°ï¼‰
 
 		MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 	}
 
 	if (m_atkFrame > 15.0f && m_atkFrame < 30.0f)
 	{
-		// 1ƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚ÎUŒ‚ó‘Ô‚ÉˆÚs‚·‚é
+		// 1ãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°æ”»æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 		if (input.IsTrigger("A"))
 		{
 			m_isCombo = true;
 		}
 	}
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
 	if (m_anim.GetNextAnim().isEnd)
 	{
-		// 1ƒ{ƒ^ƒ“‚Ì“ü—Í‚ª‚ ‚ê‚ÎUŒ‚ó‘Ô‚ÉˆÚs‚·‚é
+		// 1ãƒœã‚¿ãƒ³ã®å…¥åŠ›ãŒã‚ã‚Œã°æ”»æ’ƒçŠ¶æ…‹ã«ç§»è¡Œã™ã‚‹
 		if (m_isCombo)
 		{
 			ChangeState(SubPlayerState::Stab);
@@ -860,29 +860,29 @@ void SubPlayer::SliceUpdate()
 
 void SubPlayer::StabUpdate()
 {
-	// ƒvƒŒƒCƒ„[©g‚Ì“–‚½‚è”»’è‚ğƒIƒ“‚É‚·‚é
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è‡ªèº«ã®å½“ãŸã‚Šåˆ¤å®šã‚’ã‚ªãƒ³ã«ã™ã‚‹
 	SetActive(true);
 
 	++m_atkFrame;
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubPlayerState::Stab), false);
 
-	// ˆê”Ô‹ß‚¢“G‚Ì•ûŒü‚É‰ñ“]
+	// ä¸€ç•ªè¿‘ã„æ•µã®æ–¹å‘ã«å›è»¢
 	RotateToNearestEnemy(kAttackOffsetRadius);
 
-	// UŒ‚ŠJn‚©‚çˆê’èƒtƒŒ[ƒ€‚ÌŠÔ‘Oi
+	// æ”»æ’ƒé–‹å§‹ã‹ã‚‰ä¸€å®šãƒ•ãƒ¬ãƒ¼ãƒ ã®é–“å‰é€²
 	if (m_atkFrame <= 15.0f)
 	{
-		// UŒ‚’†‚É‘Oi‚·‚éˆ—iŒ»İ‚Ì‰ñ“]•ûŒü‚Éi‚Şj
+		// æ”»æ’ƒä¸­ã«å‰é€²ã™ã‚‹å‡¦ç†ï¼ˆç¾åœ¨ã®å›è»¢æ–¹å‘ã«é€²ã‚€ï¼‰
 		VECTOR rotVec = MV1GetRotationXYZ(m_model);
-		float angleY = -rotVec.y; // ƒ‚ƒfƒ‹‰ñ“]‚Æˆê’v‚³‚¹‚é‚½‚ß-‚ª•K—v
+		float angleY = -rotVec.y; // ãƒ¢ãƒ‡ãƒ«å›è»¢ã¨ä¸€è‡´ã•ã›ã‚‹ãŸã‚-ãŒå¿…è¦
 		Vector3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
 		forward.Normalize();
-		m_rigidbody.SetVelo(forward * kAttackMoveSpeed); // UŒ‚’†‚Ì‘¬“xi’è”j
+		m_rigidbody.SetVelo(forward * kAttackMoveSpeed); // æ”»æ’ƒä¸­ã®é€Ÿåº¦ï¼ˆå®šæ•°ï¼‰
 
 		MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 	}
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		ChangeState(SubPlayerState::Idle);
@@ -891,7 +891,7 @@ void SubPlayer::StabUpdate()
 
 void SubPlayer::SpinUpdate()
 {
-	// ƒvƒŒƒCƒ„[©g‚Ì“–‚½‚è”»’è‚ğƒIƒ“‚É‚·‚é
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è‡ªèº«ã®å½“ãŸã‚Šåˆ¤å®šã‚’ã‚ªãƒ³ã«ã™ã‚‹
 	SetActive(true);
 
 	++m_atkFrame;
@@ -905,14 +905,14 @@ void SubPlayer::SpinUpdate()
 
 void SubPlayer::ShotUpdate()
 {
-	// “–‚½‚è”»’è‚ğƒIƒ“‚É‚·‚é
+	// å½“ãŸã‚Šåˆ¤å®šã‚’ã‚ªãƒ³ã«ã™ã‚‹
 	SetActive(true);
 	++m_atkFrame;
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubPlayerState::Shot), false);
 
 	//if (m_atkFrame == kShotTiming)
 	//{
-	//	// ’e‚ğ¶¬
+	//	// å¼¾ã‚’ç”Ÿæˆ
 	//	Vector3 myPos = m_rigidbody.GetPos();
 	//	myPos.y += 50.0f;
 
@@ -935,7 +935,7 @@ void SubPlayer::SpecialUpdate()
 
 	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 
-		// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
+		// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		m_specialGauge = 0;
@@ -950,16 +950,16 @@ void SubPlayer::DodgeUpdate()
 	SetActive(true);
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubPlayerState::Dodge), false);
 
-	// m_forward ‚ÉŠî‚Ã‚¢‚ÄˆÚ“®ƒxƒNƒgƒ‹‚ğİ’èi‘O•ûŒü‚Öj
+	// m_forward ã«åŸºã¥ã„ã¦ç§»å‹•ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨­å®šï¼ˆå‰æ–¹å‘ã¸ï¼‰
 	Vector3 dodgeDir = m_forward;
 	dodgeDir.Normalize();
 
 	m_rigidbody.SetVelo(dodgeDir * kDodgeSpped);
 
-	// Œ»İˆÊ’u‚Éƒ‚ƒfƒ‹‚ğ”½‰f
+	// ç¾åœ¨ä½ç½®ã«ãƒ¢ãƒ‡ãƒ«ã‚’åæ˜ 
 	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		ChangeState(SubPlayerState::Idle);
@@ -974,7 +974,7 @@ void SubPlayer::HitUpdate()
 	++m_blinkFrame;
 
 	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		ChangeState(SubPlayerState::Idle);
@@ -986,7 +986,7 @@ void SubPlayer::DeadUpdate()
 	SetActive(false);
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(SubPlayerState::Dead), false);
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		if (m_model >= 0)
@@ -1008,22 +1008,22 @@ void SubPlayer::SetSpecialGauge(int specialGaugePoint)
 
 void SubPlayer::RotateToNearestEnemy(float radius)
 {
-	// UŒ‚ŠJn‚©‚çˆê’èƒtƒŒ[ƒ€‚Å“G‚Ì•ûŒü‚É‰ñ“]•âŠÔ‚ğn‚ß‚é
+	// æ”»æ’ƒé–‹å§‹ã‹ã‚‰ä¸€å®šãƒ•ãƒ¬ãƒ¼ãƒ ã§æ•µã®æ–¹å‘ã«å›è»¢è£œé–“ã‚’å§‹ã‚ã‚‹
 	if (m_atkFrame <= 7.0f)
 	{
-		// ƒvƒŒƒCƒ„[‚©‚çˆê’è”ÍˆÍ“à‚Ì“G‚Åˆê”Ô‹ß‚¢“G‚ğ’T‚·
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‹ã‚‰ä¸€å®šç¯„å›²å†…ã®æ•µã§ä¸€ç•ªè¿‘ã„æ•µã‚’æ¢ã™
 		auto nearestEnemy = FindNearestEnemy(kAttackOffsetRadius);
 		if (nearestEnemy)
 		{
-			// ˆê”Ô‹ß‚¢“G‚Ö‚ÌƒxƒNƒgƒ‹
+			// ä¸€ç•ªè¿‘ã„æ•µã¸ã®ãƒ™ã‚¯ãƒˆãƒ«
 			Vector3 toEnemy = nearestEnemy->GetPos() - m_rigidbody.GetPos();
 			toEnemy.y = 0.0f;
 
-			// ˆê”Ô‹ß‚¢“G‚Ì•ûŒü‚É‰ñ“]
+			// ä¸€ç•ªè¿‘ã„æ•µã®æ–¹å‘ã«å›è»¢
 			static Quaternion currentRot;
 			if (toEnemy.x != 0.0f || toEnemy.z != 0.0f)
 			{
-				// “G•ûŒü‚Ö‚Ì–Ú•W‰ñ“]
+				// æ•µæ–¹å‘ã¸ã®ç›®æ¨™å›è»¢
 				float targetAngle = std::atan2(toEnemy.x, -toEnemy.z);
 				Vector3 axis(0.0f, 1.0f, 0.0f);
 				Quaternion targetRot;
@@ -1031,7 +1031,7 @@ void SubPlayer::RotateToNearestEnemy(float radius)
 
 				currentRot = Quaternion::Slerp(currentRot, targetRot, kLerpT);
 
-				// ‰ñ“]‚ğ“K—p
+				// å›è»¢ã‚’é©ç”¨
 				float angleY = currentRot.ToEulerY();
 				MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 			}

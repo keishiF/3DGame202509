@@ -1,4 +1,4 @@
-#include "PolygonColliderData.h"
+﻿#include "PolygonColliderData.h"
 
 PolygonColliderData::PolygonColliderData() :
 	ColliderData(ColliderData::Kind::Polygon),

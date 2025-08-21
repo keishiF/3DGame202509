@@ -1,4 +1,4 @@
-#include "game.h"
+ï»¿#include "game.h"
 #include "Input.h"
 #include "ResultScene.h"
 #include "SceneController.h"
@@ -10,7 +10,7 @@ namespace
 {
 	constexpr float kFadeInterval = 60;
 
-	// ƒXƒJƒCƒh[ƒ€‚ÌŠg‘å—¦
+	// ã‚¹ã‚«ã‚¤ãƒ‰ãƒ¼ãƒ ã®æ‹¡å¤§ç‡
 	constexpr float kSkyModelScale = 5.0f;
 }
 
@@ -69,7 +69,7 @@ void ResultScene::FadeOutUpdate()
 	{
 		m_controller.ChangeScene(std::make_shared<TitleScene>(m_controller));
 
-		// ©•ª‚ª€‚ñ‚Å‚¢‚é‚Ì‚Å‚à‚µ—]Œv‚Èˆ—‚ª“ü‚Á‚Ä‚¢‚é‚Æ‚Ü‚¸‚¢‚Ì‚Åreturn;
+		// è‡ªåˆ†ãŒæ­»ã‚“ã§ã„ã‚‹ã®ã§ã‚‚ã—ä½™è¨ˆãªå‡¦ç†ãŒå…¥ã£ã¦ã„ã‚‹ã¨ã¾ãšã„ã®ã§return;
 		return;
 	}
 }
@@ -79,7 +79,7 @@ void ResultScene::NormalDraw()
 	MV1DrawModel(m_skyModel);
 
 #ifdef _DEBUG
-	// “_–ÅŒø‰Ê‚Ì‚½‚ß‚ÌğŒ
+	// ç‚¹æ»…åŠ¹æœã®ãŸã‚ã®æ¡ä»¶
 	if ((m_blinkFrame / 30) % 2 == 0)
 	{
 		DrawString(0, 0, "Result Scene", 0x000000);

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "SubEnemyBase.h"
 
 class SubEnemyMage : public SubEnemyBase
@@ -12,27 +12,27 @@ public:
 
 	virtual void Update(std::shared_ptr<SubPlayer> player) override;
 
-	// “G‚Ìó‘Ô
+	// æ•µã®çŠ¶æ…‹
 private:
 	const char* GetAnimName(SubEnemyState state) const override;
 	virtual float GetAnimPlaySpeed(SubEnemyState state) const override;
 	bool IsLoopAnim(SubEnemyState state) const override;
 
-	// ‘Ò‹@ó‘Ô
+	// å¾…æ©ŸçŠ¶æ…‹
 	void FindUpdate(std::shared_ptr<SubPlayer> player) override;
 
 	void WalkUpdate(std::shared_ptr<SubPlayer> player);
 
-	// ”­Œ©ó‘Ô
+	// ç™ºè¦‹çŠ¶æ…‹
 	void ChaseUpdate(std::shared_ptr<SubPlayer> player) override;
 
-	// UŒ‚ó‘Ô
+	// æ”»æ’ƒçŠ¶æ…‹
 	void AttackUpdate(std::shared_ptr<SubPlayer> player) override;
 
-	// ”í’eó‘Ô
+	// è¢«å¼¾çŠ¶æ…‹
 	void HitUpdate(std::shared_ptr<SubPlayer> player) override;
 
-	// €–Só‘Ô
+	// æ­»äº¡çŠ¶æ…‹
 	void DeadUpdate(std::shared_ptr<SubPlayer> player) override;
 
 	bool IsPlayerFind(const std::shared_ptr<SubPlayer>& player, const Vector3& centerDir, float viewAngleRad, float viewDistance);

@@ -1,25 +1,25 @@
-#pragma once
+ï»¿#pragma once
 #include "CharacterBase.h"
 
 /// <summary>
-/// ƒvƒŒƒCƒ„[‚Ìó‘Ô
+/// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®çŠ¶æ…‹
 /// </summary>
 enum class SubPlayerState
 {
-	Idle,       // ‘Ò‹@
-	Walk,       // •à‚«
-	NormalRun,  // ‘–‚è
-	TiredRun,   // ’x‚¢‘–‚è
-	Tired,		// ”æ‚ê
-	Chop,       // UŒ‚1’i–Ú
-	Slice,      // UŒ‚2’i–Ú
-	Stab,       // UŒ‚3’i–Ú
-	Spin,       // ‹­UŒ‚
-	Shot,       // ËŒ‚
-	Special,    // •KE‹Z
-	Dodge,      // ‰ñ”ğ
-	Hit,        // ”í’e
-	Dead        // €–S
+	Idle,       // å¾…æ©Ÿ
+	Walk,       // æ­©ã
+	NormalRun,  // èµ°ã‚Š
+	TiredRun,   // é…ã„èµ°ã‚Š
+	Tired,		// ç–²ã‚Œ
+	Chop,       // æ”»æ’ƒ1æ®µç›®
+	Slice,      // æ”»æ’ƒ2æ®µç›®
+	Stab,       // æ”»æ’ƒ3æ®µç›®
+	Spin,       // å¼·æ”»æ’ƒ
+	Shot,       // å°„æ’ƒ
+	Special,    // å¿…æ®ºæŠ€
+	Dodge,      // å›é¿
+	Hit,        // è¢«å¼¾
+	Dead        // æ­»äº¡
 };
 
 class EnemyBase;
@@ -34,16 +34,16 @@ public:
 	virtual void Draw() override;
 	virtual void OnDamage(float atk) override;
 
-	// ƒQƒbƒ^[
-	// ƒXƒ^ƒ~ƒiæ“¾
+	// ã‚²ãƒƒã‚¿ãƒ¼
+	// ã‚¹ã‚¿ãƒŸãƒŠå–å¾—
 	float GetStamina() const { return m_stamina; }
-	// ƒXƒ^ƒ~ƒiŠ„‡æ“¾
+	// ã‚¹ã‚¿ãƒŸãƒŠå‰²åˆå–å¾—
 	float GetStaminaRate() const { return m_staminaRate; }
-	// •KE‹ZƒQ[ƒWæ“¾
+	// å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸å–å¾—
 	float GetSpecialGauge() const { return m_specialGauge; }
-	// •KE‹ZƒQ[ƒWŠ„‡æ“¾
+	// å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸å‰²åˆå–å¾—
 	float GetSpecialGaugeRate() const { return m_specialGaugeRate; }
-	// ó‘Ôæ“¾
+	// çŠ¶æ…‹å–å¾—
 	SubPlayerState GetPlayerState() const { return m_state; }
 	Vector3 GetPos() const { return m_rigidbody.GetPos(); }
 
@@ -54,29 +54,29 @@ private:
 	SubPlayerState m_state;
 	void ChangeState(SubPlayerState newState);
 
-	// ‘Ò‹@ó‘Ô
+	// å¾…æ©ŸçŠ¶æ…‹
 	void IdleUpdate();
-	// ˆÚ“®
-	// •à‚«
+	// ç§»å‹•
+	// æ­©ã
 	void WalkUpdate();
-	// ‘–‚è
+	// èµ°ã‚Š
 	void RunUpdate();
-	// ’x‚¢‘–‚è
+	// é…ã„èµ°ã‚Š
 	void TiredRunUpdate();
-	// ”æ‚ê
+	// ç–²ã‚Œ
 	void TiredUpdate();
-	// ŠeUŒ‚ó‘Ô
+	// å„æ”»æ’ƒçŠ¶æ…‹
 	void ChopUpdate();
 	void SliceUpdate();
 	void StabUpdate();
 	void SpinUpdate();
 	void ShotUpdate();
 	void SpecialUpdate();
-	// ‰ñ”ğó‘Ô
+	// å›é¿çŠ¶æ…‹
 	void DodgeUpdate();
-	// ”í’eó‘Ô
+	// è¢«å¼¾çŠ¶æ…‹
 	void HitUpdate();
-	// €–Só‘Ô
+	// æ­»äº¡çŠ¶æ…‹
 	void DeadUpdate();
 
 private:
@@ -84,19 +84,19 @@ private:
 	std::shared_ptr<EnemyBase> FindNearestEnemy(float radius);
 
 private:
-	// ƒXƒ^ƒ~ƒi
+	// ã‚¹ã‚¿ãƒŸãƒŠ
 	float m_stamina = 0.0f;
-	// ƒXƒ^ƒ~ƒiŠ„‡
+	// ã‚¹ã‚¿ãƒŸãƒŠå‰²åˆ
 	float m_staminaRate = 0.0f;
-	// •KE‹ZƒQ[ƒW
+	// å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸
 	float m_specialGauge = 0.0f;
-	// •KE‹ZƒQ[ƒWŠ„‡
+	// å¿…æ®ºæŠ€ã‚²ãƒ¼ã‚¸å‰²åˆ
 	float m_specialGaugeRate = 0.0f;
-	// ƒRƒ“ƒ{ƒtƒ‰ƒO
+	// ã‚³ãƒ³ãƒœãƒ•ãƒ©ã‚°
 	bool m_isCombo = false;
-	// ‰ñ“]
+	// å›è»¢
 	Quaternion m_currentRot = { 1.0f, 0.0f, 0.0, 0.0f };
-	// •Ší‚ğ‚Â
+	// æ­¦å™¨ã‚’æŒã¤
 	std::shared_ptr<PlayerWeapon> m_weapon;
 };
 

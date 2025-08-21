@@ -1,4 +1,4 @@
-#include "Enemy/EnemyBoss.h"
+ï»¿#include "Enemy/EnemyBoss.h"
 #include "Enemy/EnemyMage.h"
 #include "Enemy/EnemyMinion.h"
 #include "GameObjectManager.h"
@@ -8,7 +8,7 @@
 
 namespace
 {
-	// ƒQ[ƒW‚Ì‰¡•Ac•
+	// ã‚²ãƒ¼ã‚¸ã®æ¨ªå¹…ã€ç¸¦å¹…
 	constexpr float kPlayerHPGaugeWidth  = 200;
 	constexpr float kPlayerHPGaugeHeight = 20;
 
@@ -18,7 +18,7 @@ namespace
 	constexpr float kBossHPGaugeWidth  = 200;
 	constexpr float kBossHPGaugeHeight = 20;
 
-	// ƒvƒŒƒCƒ„[‚ÌHPƒQ[ƒW‚Ì•`‰æˆÊ’u
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®HPã‚²ãƒ¼ã‚¸ã®æç”»ä½ç½®
 	constexpr int kPlayerHPPosX = 50;
 	constexpr int kPlayerHPPosY = 50;
 }
@@ -93,12 +93,12 @@ void HPGauge::DrawMageHP()
 
 	for (auto& mage : mages)
 	{
-		// null‚Ì‚Ícontinue
+		// nullã®æ™‚ã¯continue
 		if (!mage) continue;
 
 		float mageHPRate = mage->GetHpRate();
 
-		// null‚¶‚á‚È‚­‚ÄHP‚ª‚È‚¢‚Æ‚«‚àcontinue
+		// nullã˜ã‚ƒãªãã¦HPãŒãªã„ã¨ãã‚‚continue
 		if (mageHPRate <= 0.0f) continue;
 
 		float magePosX = mage->GetScreenPos().x;
@@ -126,12 +126,12 @@ void HPGauge::DrawMinionHP()
 
 	for (auto& minion : minions)
 	{
-		// null‚Ì‚Ícontinue
+		// nullã®æ™‚ã¯continue
 		if (!minion) continue;
 
 		float minionHPRate = minion->GetHpRate();
 
-		// HP‚ª‚È‚¢ê‡‚Ícontinue
+		// HPãŒãªã„å ´åˆã¯continue
 		if (minionHPRate <= 0.0f) continue;
 
 		float minionPosX = minion->GetScreenPos().x;

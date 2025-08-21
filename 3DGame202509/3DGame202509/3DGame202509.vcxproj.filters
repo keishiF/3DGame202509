@@ -251,6 +251,9 @@
     <ClCompile Include="GameObject\SubEnemy\SubEnemyBase.cpp">
       <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject\SubEnemy\SubEnemyMage.cpp">
+      <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="General\Application.h">
@@ -422,6 +425,9 @@
       <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\SubEnemy\SubEnemyBase.h">
+      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\SubEnemy\SubEnemyMage.h">
       <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
     </ClInclude>
   </ItemGroup>
