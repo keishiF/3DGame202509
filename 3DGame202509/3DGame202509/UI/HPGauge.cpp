@@ -33,10 +33,10 @@ HPGauge::~HPGauge()
 
 void HPGauge::Draw()
 {
-	DrawPlayerHP();
 	DrawBossHP();
 	DrawMageHP();
 	DrawMinionHP();
+	DrawPlayerHP();
 }
 
 void HPGauge::DrawPlayerHP()
@@ -45,20 +45,43 @@ void HPGauge::DrawPlayerHP()
 	auto player = gameObjectManager.GetPlayer();
 	if (!player) return;
 
+	// プレイヤーの現在のHPと最大HPを取得し
+	// 現在のHPの割合を計算
 	float playerCurrentHP = player->GetStatusComp().m_hp;
 	float playerMaxHP = player->GetStatusComp().m_maxHP;
 	float playerHPRate = playerCurrentHP / playerMaxHP;
 	playerHPRate = std::clamp(playerHPRate, 0.0f, 1.0f);
 
+	// HPが減った部分を灰色で描画
 	DrawBox(kPlayerHPPosX, kPlayerHPPosY,
 		kPlayerHPPosX + kPlayerHPGaugeWidth, kPlayerHPPosY + kPlayerHPGaugeHeight,
 		0x808080, true);
 
+	// 現在のHPの割合で描画するHPゲージの色を変える
+	int hpColor = 0x00ff00;
+	// 50%以上なら緑
+	if (playerHPRate >= 0.5f)
+	{
+		hpColor = 0x00ff00;
+	}
+	// 25%以上なら黄色
+	else if (playerHPRate > 0.25f)
+	{
+		hpColor = 0xffff00;
+	}
+	// それ以下なら赤
+	else
+	{
+		hpColor = 0xff0000;
+	}
+
+	// HPゲージ部分の描画
 	int hpBarWidth = static_cast<int>(kPlayerHPGaugeWidth * playerHPRate);
 	DrawBox(kPlayerHPPosX, kPlayerHPPosY,
 		kPlayerHPPosX + hpBarWidth, kPlayerHPPosY + kPlayerHPGaugeHeight,
-		0x00ff00, true);
+		hpColor, true);
 
+	// 境界線として塗りつぶしのない黒いボックスを描画HPゲージを少し強調
 	DrawBox(kPlayerHPPosX, kPlayerHPPosY,
 		kPlayerHPPosX + kPlayerHPGaugeWidth, kPlayerHPPosY + kPlayerHPGaugeHeight,
 		0x000000, false);

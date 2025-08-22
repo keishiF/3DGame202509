@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Collidable.h"
 
 class BulletBase : public Collidable

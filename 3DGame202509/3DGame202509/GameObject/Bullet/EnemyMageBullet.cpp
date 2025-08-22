@@ -1,13 +1,13 @@
-#include "EnemyMageBullet.h"
+ï»¿#include "EnemyMageBullet.h"
 #include "SphereColliderData.h"
 
 namespace
 {
-	// ’e‘¬
+	// å¼¾é€Ÿ
 	constexpr float kRunSpeed = 7.5;
-	// ’e‚Ì¶‘¶ŽžŠÔ
+	// å¼¾ã®ç”Ÿå­˜æ™‚é–“
 	constexpr float kLifeFrame = 300.0f;
-	// ’e‚Ì”¼Œa
+	// å¼¾ã®åŠå¾„
 	constexpr float kColRadius = 30.0f;
 }
 
@@ -37,7 +37,7 @@ void EnemyMageBullet::Init(Vector3 pos, Vector3 dir)
 void EnemyMageBullet::Update()
 {
 	++m_lifeFrame;
-	// ˆÚ“®ˆ—
+	// ç§»å‹•å‡¦ç†
 	m_rigidbody.SetVelo(m_dir * kRunSpeed);
 
 	if (m_lifeFrame >= kLifeFrame)

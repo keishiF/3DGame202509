@@ -1,4 +1,4 @@
-#include "GameObjectManager.h"
+ï»¿#include "GameObjectManager.h"
 #include "Physics.h"
 #include "Player/Player.h"
 #include "Enemy/EnemyBase.h"
@@ -26,20 +26,20 @@ void GameObjectManager::Init()
 
 	for (const auto& data : transformDataList)
 	{
-		// ƒIƒuƒWƒFƒNƒg–¼‚ªKnight‚¾‚Á‚½‚ç
+		// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåãŒKnightã ã£ãŸã‚‰
 		if (data.name == "Knight")
 		{
-			// Player‚É”z’uƒf[ƒ^‚ğ“n‚µ‚Ä‰Šú‰»
+			// Playerã«é…ç½®ãƒ‡ãƒ¼ã‚¿ã‚’æ¸¡ã—ã¦åˆæœŸåŒ–
 			m_player = std::make_shared<Player>();
 			Vector3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vector3 rot = { data.rot.x, data.rot.y, data.rot.z };
 			Vector3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			m_player->Init(pos, rot, scale);
 		}
-		// ƒIƒuƒWƒFƒNƒg–¼‚ªSkeleton_Minion‚¾‚Á‚½‚ç
+		// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåãŒSkeleton_Minionã ã£ãŸã‚‰
 		else if (data.name == "Skeleton_Minion")
 		{
-			// EnemyMinion‚É”z’uƒf[ƒ^‚ğ“n‚µ‚Ä‰Šú‰»
+			// EnemyMinionã«é…ç½®ãƒ‡ãƒ¼ã‚¿ã‚’æ¸¡ã—ã¦åˆæœŸåŒ–
 			auto minion = std::make_shared<EnemyMinion>();
 			Vector3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vector3 rot = { data.rot.x, data.rot.y, data.rot.z };
@@ -47,10 +47,10 @@ void GameObjectManager::Init()
 			minion->Init(pos, rot, scale);
 			m_minions.emplace_back(minion);
 		}
-		// ƒIƒuƒWƒFƒNƒg–¼‚ªSkeleton_Mage‚¾‚Á‚½‚ç
+		// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåãŒSkeleton_Mageã ã£ãŸã‚‰
 		else if (data.name == "Skeleton_Mage")
 		{
-			// EnemyMage‚É”z’uƒf[ƒ^‚ğ“n‚µ‚Ä‰Šú‰»
+			// EnemyMageã«é…ç½®ãƒ‡ãƒ¼ã‚¿ã‚’æ¸¡ã—ã¦åˆæœŸåŒ–
 			auto mage = std::make_shared<EnemyMage>();
 			Vector3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vector3 rot = { data.rot.x, data.rot.y, data.rot.z };
@@ -58,10 +58,10 @@ void GameObjectManager::Init()
 			mage->Init(pos, rot, scale);
 			m_mages.emplace_back(mage);
 		}
-		// ƒIƒuƒWƒFƒNƒg–¼‚ªSkeleton_Warrior‚¾‚Á‚½‚ç
+		// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåãŒSkeleton_Warriorã ã£ãŸã‚‰
 		else if (data.name == "Skeleton_Warrior")
 		{
-			// EnemyBoss‚É”z’uƒf[ƒ^‚ğ“n‚µ‚Ä‰Šú‰»
+			// EnemyBossã«é…ç½®ãƒ‡ãƒ¼ã‚¿ã‚’æ¸¡ã—ã¦åˆæœŸåŒ–
 			m_boss = std::make_shared<EnemyBoss>();
 			Vector3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vector3 rot = { data.rot.x, data.rot.y, data.rot.z };
@@ -173,7 +173,7 @@ std::vector<std::shared_ptr<EnemyBase>> GameObjectManager::GetEnemies()
 
 GameObjectManager& GameObjectManager::Instance()
 {
-	// TODO: return ƒXƒe[ƒgƒƒ“ƒg‚ğ‚±‚±‚É‘}“ü‚µ‚Ü‚·
+	// TODO: return ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¡ãƒ³ãƒˆã‚’ã“ã“ã«æŒ¿å…¥ã—ã¾ã™
 	static GameObjectManager instance;
 	return instance;
 }

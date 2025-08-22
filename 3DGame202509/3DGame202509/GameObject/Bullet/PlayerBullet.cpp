@@ -1,13 +1,13 @@
-#include "PlayerBullet.h"
+ï»¿#include "PlayerBullet.h"
 #include "SphereColliderData.h"
 
 namespace
 {
-	// ’e‘¬
+	// å¼¾é€Ÿ
 	constexpr float kRunSpeed = 15.0f;
-	// ’e‚Ì¶‘¶ŠÔ
+	// å¼¾ã®ç”Ÿå­˜æ™‚é–“
 	constexpr float kLifeFrame = 300.0f;
-	// ’e‚Ì”¼Œa
+	// å¼¾ã®åŠå¾„
 	constexpr float kColRadius = 50.0f;
 }
 
@@ -37,7 +37,7 @@ void PlayerBullet::Init(Vector3 pos, Vector3 dir)
 void PlayerBullet::Update()
 {
 	++m_lifeFrame;
-	// ˆÚ“®ˆ—
+	// ç§»å‹•å‡¦ç†
 	m_dir.Normalize();
 	m_rigidbody.SetVelo(m_dir * kRunSpeed);
 	

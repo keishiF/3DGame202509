@@ -227,13 +227,13 @@
     <ClCompile Include="GameObject\Enemy\EnemyMage.cpp">
       <Filter>ソース ファイル\GameObject\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="BulletBase.cpp">
-      <Filter>ソース ファイル\GameObject\Bullet</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject\Bullet\PlayerBullet.cpp">
       <Filter>ソース ファイル\GameObject\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="GameObject\Bullet\EnemyMageBullet.cpp">
+      <Filter>ソース ファイル\GameObject\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Bullet\BulletBase.cpp">
       <Filter>ソース ファイル\GameObject\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
@@ -394,13 +394,13 @@
     <ClInclude Include="GameObject\Enemy\EnemyMage.h">
       <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="BulletBase.h">
-      <Filter>ヘッダー ファイル\GameObject\Bullet</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject\Bullet\EnemyMageBullet.h">
       <Filter>ヘッダー ファイル\GameObject\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\Bullet\PlayerBullet.h">
+      <Filter>ヘッダー ファイル\GameObject\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Bullet\BulletBase.h">
       <Filter>ヘッダー ファイル\GameObject\Bullet</Filter>
     </ClInclude>
   </ItemGroup>

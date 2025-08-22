@@ -764,7 +764,7 @@ void Player::TiredUpdate()
 
 	m_stamina += kTiredRegeneStamina;
 	// スタミナが一定値まで回復したら待機状態に移行
-	if (m_stamina >= kStamina * 0.5f)
+	if (m_stamina >= kStamina * 0.35f)
 	{
 		ChangeState(PlayerState::Idle);
 	}
