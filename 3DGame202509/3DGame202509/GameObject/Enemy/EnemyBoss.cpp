@@ -1,175 +1,162 @@
-ï»¿#include "Animator.h"
 #include "CapsuleColliderData.h"
 #include "EnemyBoss.h"
-#include "EnemyBossLeftAxe.h"
-#include "EnemyBossRightAxe.h"
+#include "EnemyBossLeftWeapon.h"
+#include "EnemyBossRightWeapon.h"
 #include "Player/Player.h"
-#include <algorithm>
-#include <cassert>
-#include <DxLib.h>
-#include <unordered_map>
 
 namespace
 {
-	// ã‚¨ãƒãƒŸãƒ¼ãŒãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ç™ºè¦‹ã§ãã‚‹ç¯„å›²
-	constexpr float kFindRadius = 1500.0f;
-	constexpr float kAttackRadius = 600.0f;
+	// HP‚Ì‰Šú’lAÅ‘å’l
+	constexpr float kHP = 15.0f;
+	// UŒ‚—Í
+	constexpr float kDefaultAtk = 1.0f;
 
-	// åˆæœŸHP
-	constexpr int kHp = 1;
-
-	// ã‚¨ãƒãƒŸãƒ¼ã®é€Ÿåº¦
+	// ˆÚ“®‘¬“x
 	constexpr float kWalkSpeed = 2.0f;
 	constexpr float kChaseSpeed = 10.0f;
 
-	// ã‚¨ãƒãƒŸãƒ¼ã®å½“ãŸã‚Šåˆ¤å®šç”¨åŠå¾„
-	constexpr float kColScale = 200.0f;
-	constexpr float kColRadius = 75.0f;
-
-	constexpr float kAttackFrame = 32.0f;
-
-	// ãƒ¢ãƒ‡ãƒ«ã®æ‹¡å¤§ç‡
+	// ƒ‚ƒfƒ‹‚ÌŠg‘å’l
 	constexpr float kModelScale = 200.0f;
 
-	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å
+	// UŒ‚ƒtƒŒ[ƒ€
+	constexpr float kAtkFrame = 32.0f;
 
-	// æ­©ã
-	const char* kWalkAnimName = "Walking_D_Skeletons";
-	// å¾…æ©Ÿ
+	// “–‚½‚è”»’è
+	// ƒJƒvƒZƒ‹‚Ì”¼Œa
+	constexpr float kCapsuleColRadius = 75.0f;
+	// ƒJƒvƒZƒ‹‚Ì’·‚³
+	constexpr float kColScale = 200.0f;
+	// ó‘Ô‘JˆÚ‚Ég‚¤”¼Œa
+	// ƒvƒŒƒCƒ„[‚ğ’T’m‚Å‚«‚é”ÍˆÍ
+	constexpr float kPlayerFindRadius = 1500.0f;
+	// UŒ‚ó‘Ô‚ÉˆÚs‚·‚é”ÍˆÍ
+	constexpr float kAtkRadius = 600.0f;
+
+	// ƒAƒjƒ[ƒVƒ‡ƒ“–¼
+	// ‘Ò‹@
 	const char* kFindAnimName = "Idle";
-	// ç™ºè¦‹
+	// •à‚«
+	const char* kWalkAnimName = "Walking_D_Skeletons";
+	// ”­Œ©
 	const char* kChaseAnimName = "Running_A";
-	// æ”»æ’ƒ
-	const char* kAttackAnimName      = "1H_Melee_Attack_Slice_Diagonal";
-	const char* kChopAttackAnimName  = "Dualwield_Melee_Attack_Chop";
+	// UŒ‚
+	const char* kAttackAnimName = "1H_Melee_Attack_Slice_Diagonal";
+	const char* kChopAttackAnimName = "Dualwield_Melee_Attack_Chop";
 	const char* kSliceAttackAnimName = "Dualwield_Melee_Attack_Slice";
-	const char* kStabAttackAnimName  = "Dualwield_Melee_Attack_Stab";
-	const char* kSpinAttackAnimName  = "2H_Melee_Attack_Spinning";
-	// è¢«å¼¾
-	const char* kHitAnimName  = "Hit_B";
-	// æ­»äº¡
+	const char* kStabAttackAnimName = "Dualwield_Melee_Attack_Stab";
+	const char* kSpinAttackAnimName = "2H_Melee_Attack_Spinning";
+	// ”í’e
+	const char* kHitAnimName = "Hit_B";
+	// €–S
 	const char* kDeadAnimName = "Death_B";
 
-	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å†ç”Ÿé€Ÿåº¦
-	constexpr float kAnimSpeed      = 0.5f;
-	constexpr float kChopAnimSpeed  = 0.4f;
+	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌÄ¶‘¬“x
+	// ’Êí‘¬“x
+	constexpr float kDefaultAnimSpeed = 0.5f;
+	constexpr float kChopAnimSpeed = 0.4f;
 	constexpr float kSliceAnimSpeed = 0.4f;
-	constexpr float kStabAnimSpeed  = 0.4f;
-	constexpr float kSpinAnimSpeed  = 0.4f;
+	constexpr float kStabAnimSpeed = 0.4f;
+	constexpr float kSpinAnimSpeed = 0.4f;
 
-	const std::unordered_map<EnemyState, RightAttackTiming> kRightColTimingTable =
-	{
-		{EnemyState::Walk,	 { 0,  0}},
-		{EnemyState::Find,	 { 0,  0}},
-		{EnemyState::Chase,	 { 0,  0}},
-		{EnemyState::Attack, { 0, 48}},
-		{EnemyState::Chop,   {12, 48}},
-		{EnemyState::Slice,  {12, 56}},
-		{EnemyState::Stab,   {12, 48}},
-		{EnemyState::Spin,   { 0, 180}},
-		{EnemyState::Hit,	 { 0,  0}},
-		{EnemyState::Dead,	 { 0,  0}}
-	};
-	const std::unordered_map<EnemyState, LeftAttackTiming> kLeftColTimingTable =
-	{
-		{EnemyState::Walk,	 { 0,  0}},
-		{EnemyState::Find,	 { 0,  0}},
-		{EnemyState::Chase,	 { 0,  0}},
-		{EnemyState::Attack, { 0, 48}},
-		{EnemyState::Chop,   {12, 48}},
-		{EnemyState::Slice,  {12, 56}},
-		{EnemyState::Stab,   {12, 48}},
-		{EnemyState::Spin,   { 0, 180}},
-		{EnemyState::Hit,	 { 0,  0}},
-		{EnemyState::Dead,	 { 0,  0}}
-	};
+	// “|‚³‚ê‚½‚Æ‚«‚ÉƒvƒŒƒCƒ„[‚Ì•KE‹ZƒQ[ƒW‚ğ‘‚â‚·—Ê
+	constexpr int kSpecialGaugePoint = 10;
 }
 
 EnemyBoss::EnemyBoss() :
 	m_walkFrame(0.0f),
-	m_isDead(false)
+	EnemyBase(ObjectTag::Boss, ObjectPriority::Middle, ColliderData::Kind::Capsule)
 {
 }
 
 EnemyBoss::~EnemyBoss()
 {
-	MV1DeleteModel(m_charModel);
+	MV1DeleteModel(m_model);
 }
 
 void EnemyBoss::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 {
+	// Physics‚É“o˜^
 	Collidable::Init();
-
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
 
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	colData->m_startPos = pos;
-	colData->m_radius = kColRadius;
+	colData->m_radius = kCapsuleColRadius;
 
-	// ã‚¹ãƒ”ãƒ¼ãƒ‰ã®åˆæœŸåŒ–
-	m_findRadius = kFindRadius;
-	m_attackRadius = kAttackRadius;
-	m_hp = kHp;
-	m_hpRate = m_hp / kHp;
+	m_playerFindRadius = kPlayerFindRadius;
+	m_atkRadius = kAtkRadius;
+
+	// ŠeƒXƒe[ƒ^ƒX‚Ì‰Šú‰»
+	m_status.m_hp = kHP;
+	m_status.m_maxHP = kHP;
+	m_status.m_atk = kDefaultAtk;
+	m_atkFrame = 0.0f;
 	m_isDead = false;
-	m_attackFrame = 0.0f;
-	m_walkFrame = 0.0f;
 
-	m_charModel = MV1LoadModel("Data/Model/Enemy/Boss/Boss.mv1");
-	assert(m_charModel >= 0);
+	// ƒ‚ƒfƒ‹‚Ìƒ[ƒh
+	m_model = MV1LoadModel("Data/Model/Enemy/Minion/Minion.mv1");
+	assert(m_model >= 0);
 
-	MV1SetScale(m_charModel, VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale));
-	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
-	MV1SetRotationXYZ(m_charModel, VGet(rot.x, rot.y, rot.z));
+	VECTOR modelScale = VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale);
+	MV1SetScale(m_model, modelScale);
+	MV1SetPosition(m_model, pos.ToDxVECTOR());
+	MV1SetRotationXYZ(m_model, VGet(rot.x, rot.y, rot.z));
 
-	m_anim.Init(m_charModel);
-	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, kAnimSpeed, true);
+	// ƒAƒjƒ[ƒ^[
+	m_anim.Init(m_model);
+	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, kDefaultAnimSpeed, true);
 
-	m_rightWeapon = std::make_shared<EnemyBossRightAxe>();
-	m_rightWeapon->Init();
-
-	m_leftWeapon = std::make_shared<EnemyBossLeftAxe>();
+	// •Ší
+	m_leftWeapon = std::make_shared<EnemyBossLeftWeapon>();
 	m_leftWeapon->Init();
+	m_rightWeapon = std::make_shared<EnemyBossRightWeapon>();
+	m_rightWeapon->Init();
 }
 
-void EnemyBoss::Update(std::shared_ptr<Player> player)
+void EnemyBoss::Draw()
 {
-	if (m_isDead && m_charModel < 0)
+	if (m_isDead && m_model < 0)
 	{
 		return;
 	}
 
-	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°
+#if _DEBUG
+	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), 10.0f, 16, 0x0000ff, 0x0000ff, true);
+	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_playerFindRadius, 16, 0xff00ff, 0xff00ff, false);
+	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_atkRadius, 16, 0xff00ff, 0xff00ff, false);
+#endif
+
+	MV1DrawModel(m_model);
+	m_leftWeapon->Draw();
+	m_rightWeapon->Draw();
+}
+
+void EnemyBoss::Update(std::shared_ptr<Player> player)
+{
+	if (m_isDead && m_model < 0)
+	{
+		return;
+	}
+
+	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXV
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
 	m_anim.UpdateAnimBlend();
 
 	switch (m_state)
 	{
-	case EnemyState::Walk:
-		WalkUpdate(player);
-		break;
 	case EnemyState::Find:
 		FindUpdate(player);
+		break;
+	case EnemyState::Walk:
+		WalkUpdate(player);
 		break;
 	case EnemyState::Chase:
 		ChaseUpdate(player);
 		break;
 	case EnemyState::Attack:
 		AttackUpdate(player);
-		break;
-	case EnemyState::Chop:
-		ChopUpdate(player);
-		break;
-	case EnemyState::Slice:
-		SliceUpdate(player);
-		break;
-	case EnemyState::Stab:
-		StabUpdate(player);
-		break;
-	case EnemyState::Spin:
-		SpinUpdate(player);
 		break;
 	case EnemyState::Hit:
 		HitUpdate(player);
@@ -179,174 +166,140 @@ void EnemyBoss::Update(std::shared_ptr<Player> player)
 		break;
 	}
 
-	//å½“ãŸã‚Šåˆ¤å®š
+	//“–‚½‚è”»’è
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	Vector3 colPos = m_rigidbody.GetPos();
 	colPos.y += kColScale;
 	colData->m_startPos = colPos;
 
-	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 }
 
-void EnemyBoss::Draw()
+void EnemyBoss::FindUpdate(std::shared_ptr<Player> player)
 {
-	if (m_isDead && m_charModel < 0)
+	SetActive(true);
+	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Find));
+	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Find));
+
+	float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
+	if (distance <= (m_playerFindRadius + player->GetRadius()))
 	{
-		return;
-	}
-
-#if _DEBUG
-	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), 10.0f, 16, 0x0000ff, 0x0000ff, true);
-	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_findRadius, 16, 0xff00ff, 0xff00ff, false);
-	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_attackRadius, 16, 0xff00ff, 0xff00ff, false);
-
-#endif
-	MV1DrawModel(m_charModel);
-	m_rightWeapon->Draw();
-	m_leftWeapon->Draw();
-}
-
-void EnemyBoss::OnDamage()
-{
-	m_hp -= 1;
-	m_hpRate = static_cast<float>(m_hp) / kHp;
-	m_hpRate = std::clamp(m_hpRate, 0.0f, 1.0f);
-
-	if (m_hp <= 0 && !m_isDead)
-	{
-		ChangeState(EnemyState::Dead, kAnimSpeed);
-	}
-	else
-	{
-		ChangeState(EnemyState::Hit, kAnimSpeed);
+		ChangeState(EnemyState::Chase);
 	}
 }
 
 void EnemyBoss::WalkUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Walk));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Walk));
+	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Walk));
+	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Walk));
 
 	++m_walkFrame;
 
-	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
+	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 toPlayerDir = player->GetPos() - myPos;
 	toPlayerDir.y = 0.0f;
 	toPlayerDir.Normalize();
 	m_rigidbody.SetVelo(toPlayerDir * kWalkSpeed);
-	MV1SetPosition(m_charModel, myPos.ToDxVECTOR());
+	MV1SetPosition(m_model, myPos.ToDxVECTOR());
 
-	// é€²è¡Œæ–¹å‘ãŒ0ã§ãªã‘ã‚Œã°å›è»¢
+	// is•ûŒü‚ª0‚Å‚È‚¯‚ê‚Î‰ñ“]
 	if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
 	{
-		// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
+		// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
 		float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
-		MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+		MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 	}
 
 	if (m_walkFrame >= 120.0f)
 	{
 		float distance = (myPos - player->GetPos()).Length();
-		if (distance >= (m_findRadius + player->GetRadius()))
+		if (distance >= (m_playerFindRadius + player->GetRadius()))
 		{
-			ChangeState(EnemyState::Find, kAnimSpeed);
+			ChangeState(EnemyState::Find);
 		}
 
-		if (distance <= (m_attackRadius + player->GetRadius()))
+		if (distance <= (m_atkRadius + player->GetRadius()))
 		{
 			if (distance > 500.0f && m_prevState != EnemyState::Stab)
 			{
-				ChangeState(EnemyState::Stab, kStabAnimSpeed);
+				ChangeState(EnemyState::Stab);
 			}
 			else if (distance > 400.0f && m_prevState != EnemyState::Chop)
 			{
-				ChangeState(EnemyState::Chop, kChopAnimSpeed);
+				ChangeState(EnemyState::Chop);
 			}
 			else if (distance > 300.0f && m_prevState != EnemyState::Slice)
 			{
-				ChangeState(EnemyState::Slice, kSliceAnimSpeed);
+				ChangeState(EnemyState::Slice);
 			}
 			else if (distance < 300.0f && m_prevState == EnemyState::Spin)
 			{
-				ChangeState(EnemyState::Slice, kSliceAnimSpeed);
+				ChangeState(EnemyState::Slice);
 			}
 			else if (m_prevState != EnemyState::Spin)
 			{
-				ChangeState(EnemyState::Spin, kSpinAnimSpeed);
+				ChangeState(EnemyState::Spin);
 			}
 		}
-	}
-}
-
-void EnemyBoss::FindUpdate(std::shared_ptr<Player> player)
-{
-	SetActive(true);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Find));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Find));
-
-	float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
-	if (distance <= (m_findRadius + player->GetRadius()))
-	{
-		ChangeState(EnemyState::Chase, kAnimSpeed);
 	}
 }
 
 void EnemyBoss::ChaseUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Chase));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Chase));
+	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Chase));
+	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Chase));
 
-	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
+	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 toPlayerDir = player->GetPos() - myPos;
 	toPlayerDir.y = 0.0f;
 
-	// è·é›¢ãŒååˆ†ã«ã‚ã‚‹å ´åˆã®ã¿ç§»å‹•
+	// ‹——£‚ª\•ª‚É‚ ‚éê‡‚Ì‚İˆÚ“®
 	if (toPlayerDir.Length() > 1.0f)
 	{
 		toPlayerDir.Normalize();
 		m_rigidbody.SetVelo(toPlayerDir * kChaseSpeed);
-		MV1SetPosition(m_charModel, myPos.ToDxVECTOR());
+		MV1SetPosition(m_model, myPos.ToDxVECTOR());
 
-		// é€²è¡Œæ–¹å‘ãŒ0ã§ãªã‘ã‚Œã°å›è»¢
+		// is•ûŒü‚ª0‚Å‚È‚¯‚ê‚Î‰ñ“]
 		if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
 		{
-			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
+			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
 			float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
-			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 		}
 	}
 
 	float distance = (myPos - player->GetPos()).Length();
-	if (distance >= (m_findRadius + player->GetRadius()))
+	if (distance >= (m_playerFindRadius + player->GetRadius()))
 	{
-		ChangeState(EnemyState::Find, kAnimSpeed);
+		ChangeState(EnemyState::Find);
 	}
 
-	if (distance <= (m_attackRadius + player->GetRadius()))
+	if (distance <= (m_atkRadius + player->GetRadius()))
 	{
 		if (distance > 500.0f && m_prevState != EnemyState::Stab)
 		{
-			ChangeState(EnemyState::Stab, kStabAnimSpeed);
+			ChangeState(EnemyState::Stab);
 		}
 		else if (distance > 400.0f && m_prevState != EnemyState::Chop)
 		{
-			ChangeState(EnemyState::Chop, kChopAnimSpeed);
+			ChangeState(EnemyState::Chop);
 		}
 		else if (distance > 300.0f && m_prevState != EnemyState::Slice)
 		{
-			ChangeState(EnemyState::Slice, kSliceAnimSpeed);
+			ChangeState(EnemyState::Slice);
 		}
 		else if (distance < 300.0f && m_prevState == EnemyState::Spin)
 		{
-			ChangeState(EnemyState::Slice, kSliceAnimSpeed);
+			ChangeState(EnemyState::Slice);
 		}
 		else if (m_prevState != EnemyState::Spin)
 		{
-			ChangeState(EnemyState::Spin, kSpinAnimSpeed);
+			ChangeState(EnemyState::Spin);
 		}
 	}
 }
@@ -354,36 +307,36 @@ void EnemyBoss::ChaseUpdate(std::shared_ptr<Player> player)
 void EnemyBoss::AttackUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
-	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Attack));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Attack));
+	++m_atkFrame;
+	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Attack));
+	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Attack));
 
-	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
+	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
 
-	if (m_attackFrame <= kAttackFrame)
+	if (m_atkFrame <= kAtkFrame)
 	{
-		++m_attackFrame;
+		++m_atkFrame;
 		if (dir.x != 0.0f || dir.z != 0.0f)
 		{
-			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
+			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
 			float angleY = std::atan2(dir.x, -dir.z);
-			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 		}
 	}
 
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		float distance = (myPos - player->GetPos()).Length();
-		if (distance >= (m_findRadius + player->GetRadius()))
+		if (distance >= (m_playerFindRadius + player->GetRadius()))
 		{
-			ChangeState(EnemyState::Find, kAnimSpeed);
+			ChangeState(EnemyState::Find);
 		}
 		else
 		{
-			ChangeState(EnemyState::Chase, kAnimSpeed);
+			ChangeState(EnemyState::Chase);
 		}
 	}
 }
@@ -391,36 +344,36 @@ void EnemyBoss::AttackUpdate(std::shared_ptr<Player> player)
 void EnemyBoss::ChopUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
-	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Chop));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Chop));
+	++m_atkFrame;
+	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Chop));
+	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Chop));
 
-	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
+	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
 
-	if (m_attackFrame <= kAttackFrame)
+	if (m_atkFrame <= kAtkFrame)
 	{
-		++m_attackFrame;
+		++m_atkFrame;
 		if (dir.x != 0.0f || dir.z != 0.0f)
 		{
-			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
+			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
 			float angleY = std::atan2(dir.x, -dir.z);
-			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 		}
 	}
 
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		float distance = (myPos - player->GetPos()).Length();
-		if (distance >= (m_findRadius + player->GetRadius()))
+		if (distance >= (m_playerFindRadius + player->GetRadius()))
 		{
-			ChangeState(EnemyState::Find, kAnimSpeed);
+			ChangeState(EnemyState::Find);
 		}
 		else
 		{
-			ChangeState(EnemyState::Walk, kAnimSpeed);
+			ChangeState(EnemyState::Walk);
 		}
 	}
 }
@@ -428,36 +381,36 @@ void EnemyBoss::ChopUpdate(std::shared_ptr<Player> player)
 void EnemyBoss::SliceUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
-	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Slice));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Slice));
+	++m_atkFrame;
+	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Slice));
+	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Slice));
 
-	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
+	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
 
-	if (m_attackFrame <= kAttackFrame)
+	if (m_atkFrame <= kAtkFrame)
 	{
-		++m_attackFrame;
+		++m_atkFrame;
 		if (dir.x != 0.0f || dir.z != 0.0f)
 		{
-			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
+			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
 			float angleY = std::atan2(dir.x, -dir.z);
-			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 		}
 	}
 
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		float distance = (myPos - player->GetPos()).Length();
-		if (distance >= (m_findRadius + player->GetRadius()))
+		if (distance >= (m_playerFindRadius + player->GetRadius()))
 		{
-			ChangeState(EnemyState::Find, kAnimSpeed);
+			ChangeState(EnemyState::Find);
 		}
 		else
 		{
-			ChangeState(EnemyState::Walk, kAnimSpeed);
+			ChangeState(EnemyState::Walk);
 		}
 	}
 }
@@ -465,36 +418,36 @@ void EnemyBoss::SliceUpdate(std::shared_ptr<Player> player)
 void EnemyBoss::StabUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
-	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Stab));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Stab));
+	++m_atkFrame;
+	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Stab));
+	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Stab));
 
-	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
+	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
 
-	if (m_attackFrame <= kAttackFrame)
+	if (m_atkFrame <= kAtkFrame)
 	{
-		++m_attackFrame;
+		++m_atkFrame;
 		if (dir.x != 0.0f || dir.z != 0.0f)
 		{
-			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
+			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
 			float angleY = std::atan2(dir.x, -dir.z);
-			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 		}
 	}
 
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		float distance = (myPos - player->GetPos()).Length();
-		if (distance >= (m_findRadius + player->GetRadius()))
+		if (distance >= (m_playerFindRadius + player->GetRadius()))
 		{
-			ChangeState(EnemyState::Find, kAnimSpeed);
+			ChangeState(EnemyState::Find);
 		}
 		else
 		{
-			ChangeState(EnemyState::Walk, kAnimSpeed);
+			ChangeState(EnemyState::Walk);
 		}
 	}
 }
@@ -502,36 +455,36 @@ void EnemyBoss::StabUpdate(std::shared_ptr<Player> player)
 void EnemyBoss::SpinUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
-	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Spin));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Spin));
+	++m_atkFrame;
+	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Spin));
+	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Spin));
 
-	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¸ã®æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«
+	// ƒvƒŒƒCƒ„[‚Ö‚Ì•ûŒüƒxƒNƒgƒ‹
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
 
-	if (m_attackFrame <= kAttackFrame)
+	if (m_atkFrame <= kAtkFrame)
 	{
-		++m_attackFrame;
+		++m_atkFrame;
 		if (dir.x != 0.0f || dir.z != 0.0f)
 		{
-			// atan2ã§Yè»¸å›è»¢è§’ã‚’è¨ˆç®—ï¼ˆZãŒå‰ã€XãŒå³ã®åº§æ¨™ç³»ã®å ´åˆï¼‰
+			// atan2‚ÅY²‰ñ“]Šp‚ğŒvZiZ‚ª‘OAX‚ª‰E‚ÌÀ•WŒn‚Ìê‡j
 			float angleY = std::atan2(dir.x, -dir.z);
-			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 		}
 	}
 
-	if (m_attackFrame >= 180.0f)
+	if (m_atkFrame >= 180.0f)
 	{
 		float distance = (myPos - player->GetPos()).Length();
-		if (distance >= (m_findRadius + player->GetRadius()))
+		if (distance >= (m_playerFindRadius + player->GetRadius()))
 		{
-			ChangeState(EnemyState::Find, kAnimSpeed);
+			ChangeState(EnemyState::Find);
 		}
 		else
 		{
-			ChangeState(EnemyState::Walk, kAnimSpeed);
+			ChangeState(EnemyState::Walk);
 		}
 	}
 }
@@ -539,57 +492,34 @@ void EnemyBoss::SpinUpdate(std::shared_ptr<Player> player)
 void EnemyBoss::HitUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Hit));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Hit));
+	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Hit));
+	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Hit));
 
-	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
-	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
+	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
+	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
 	if (m_anim.GetNextAnim().isEnd)
 	{
-		ChangeState(EnemyState::Find, kAnimSpeed);
+		ChangeState(EnemyState::Find);
 	}
 }
 
 void EnemyBoss::DeadUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(EnemyState::Dead));
-	m_leftWeapon->Update(m_charModel, m_attackFrame, kLeftColTimingTable.at(EnemyState::Dead));
+	player->SetSpecialGauge(kSpecialGaugePoint);
+	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Dead));
+	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Dead));
 
-	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚äº†ã—ãŸã‚‰å¾…æ©ŸçŠ¶æ…‹ã«æˆ»ã‚‹
+	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ªI—¹‚µ‚½‚ç‘Ò‹@ó‘Ô‚É–ß‚é
 	if (m_anim.GetNextAnim().isEnd)
 	{
-		if (m_charModel >= 0)
+		if (m_model >= 0)
 		{
-			MV1DeleteModel(m_charModel);
-			m_charModel = -1;
+			MV1DeleteModel(m_model);
+			m_model = -1;
 		}
 		m_isDead = true;
 	}
-}
-
-Vector3 EnemyBoss::GetScreenPos() const
-{
-	Vector3 worldPos = m_rigidbody.GetPos();
-	worldPos.y += 120.0f; // é ­ä¸Šã®é«˜ã•èª¿æ•´
-
-	VECTOR worldPosDx = worldPos.ToDxVECTOR();
-
-	// 3Dâ†’2Dåº§æ¨™å¤‰æ›ï¼ˆæˆ»ã‚Šå€¤ãŒã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ï¼‰
-	VECTOR screenPosDx = ConvWorldPosToScreenPos(worldPosDx);
-
-	const int gaugeWidth = 100;
-	const int gaugeHeight = 10;
-
-	screenPosDx.x = screenPosDx.x - gaugeWidth * 0.5f;
-	screenPosDx.y = screenPosDx.y - gaugeHeight * 0.5f;
-
-	Vector3 screenPos =
-	{
-		screenPosDx.x, screenPosDx.y, screenPosDx.z
-	};
-
-	return screenPos;
 }
 
 const char* EnemyBoss::GetAnimName(EnemyState state) const
@@ -618,7 +548,34 @@ const char* EnemyBoss::GetAnimName(EnemyState state) const
 		return kDeadAnimName;
 	default:
 		return "";
-		assert(0 && "å­˜åœ¨ã—ãªã„ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³");
+		assert(0 && "‘¶İ‚µ‚È‚¢ƒAƒjƒ[ƒVƒ‡ƒ“");
+	}
+}
+
+float EnemyBoss::GetAnimPlaySpeed(EnemyState state) const
+{
+	switch (state)
+	{
+	case EnemyState::Find:
+		return kDefaultAnimSpeed;
+	case EnemyState::Walk:
+		return kDefaultAnimSpeed;
+	case EnemyState::Chase:
+		return kDefaultAnimSpeed;
+	case EnemyState::Attack:
+		return kDefaultAnimSpeed;
+	case EnemyState::Chop:
+		return kChopAnimSpeed;
+	case EnemyState::Slice:
+		return kSliceAnimSpeed;
+	case EnemyState::Stab:
+		return kStabAnimSpeed;
+	case EnemyState::Spin:
+		return kSpinAnimSpeed;
+	case EnemyState::Hit:
+		return kDefaultAnimSpeed;
+	case EnemyState::Dead:
+		return kDefaultAnimSpeed;
 	}
 }
 
@@ -648,6 +605,6 @@ bool EnemyBoss::IsLoopAnim(EnemyState state) const
 		return false;
 	default:
 		return "";
-		assert(0 && "å­˜åœ¨ã—ãªã„ã‚¹ãƒ†ãƒ¼ãƒˆ");
+		assert(0 && "‘¶İ‚µ‚È‚¢ƒXƒe[ƒg");
 	}
 }

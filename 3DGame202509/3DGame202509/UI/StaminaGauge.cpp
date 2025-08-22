@@ -28,7 +28,10 @@ void StaminaGauge::Draw()
 	auto player = gameObjectManager.GetPlayer();
 	if (!player) return;
 
-	float playerStaminaRate = player->GetStaminaRate();
+	float playerCurrentStamina = player->GetStamina();
+	float playerMaxStamina = player->GetMaxStamina();
+	float playerStaminaRate = playerCurrentStamina / playerMaxStamina;
+	playerStaminaRate = std::clamp(playerStaminaRate, 0.0f, 1.0f);
 
 	DrawBox(kPlayerStaminaPosX, 
 		kPlayerStaminaPosY,

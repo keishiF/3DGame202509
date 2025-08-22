@@ -1,7 +1,5 @@
-ï»¿#include "CapsuleColliderData.h"
-#include "EnemyBossRightAxe.h"
-#include <cassert>
-#include <DxLib.h>
+#include "CapsuleColliderData.h"
+#include "EnemyBossRightWeapon.h"
 
 namespace
 {
@@ -10,18 +8,18 @@ namespace
 	constexpr float kBladeModelScale = 0.03f;
 }
 
-EnemyBossRightAxe::EnemyBossRightAxe() :
+EnemyBossRightWeapon::EnemyBossRightWeapon() :
 	m_model(-1),
 	Collidable(ObjectTag::EnemyWeapon, ObjectPriority::Low, ColliderData::Kind::Capsule)
 {
 }
 
-EnemyBossRightAxe::~EnemyBossRightAxe()
+EnemyBossRightWeapon::~EnemyBossRightWeapon()
 {
 	MV1DeleteModel(m_model);
 }
 
-void EnemyBossRightAxe::Init()
+void EnemyBossRightWeapon::Init()
 {
 	Collidable::Init();
 	m_rigidbody.Init();
@@ -30,72 +28,72 @@ void EnemyBossRightAxe::Init()
 	assert(m_model >= 0);
 }
 
-void EnemyBossRightAxe::Update(int model, float currentFrame, const RightAttackTiming& timing)
+void EnemyBossRightWeapon::Update(int model, float currentFrame, const BossAtk::AtkTiming& timing)
 {
 	if (currentFrame >= timing.start && currentFrame < timing.end)
 	{
-		AttackUpdate(model); // æ”»æ’ƒåˆ¤å®šON
+		AttackUpdate(model); // UŒ‚”»’èON
 	}
 	else
 	{
-		IdleUpdate(model);   // æ”»æ’ƒåˆ¤å®šOFF
+		IdleUpdate(model);   // UŒ‚”»’èOFF
 	}
 }
 
-void EnemyBossRightAxe::IdleUpdate(int model)
+void EnemyBossRightWeapon::IdleUpdate(int model)
 {
-	// å½“ãŸã‚Šåˆ¤å®šã‚’ç„¡åŠ¹åŒ–ã™ã‚‹
+	// “–‚½‚è”»’è‚ð–³Œø‰»‚·‚é
 	SetActive(false);
 
-	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®MV1SetMatrixã®è¨­å®šã‚’ç„¡åŠ¹åŒ–ã™ã‚‹
+	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌMV1SetMatrix‚ÌÝ’è‚ð–³Œø‰»‚·‚é
 	MV1SetMatrix(m_model, MGetIdent());
-	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®åº§æ¨™ã‚’å–å¾—ã™ã‚‹
+	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌƒtƒŒ[ƒ€‚ÌÀ•W‚ðŽæ“¾‚·‚é
 	VECTOR position = MV1GetFramePosition(m_model, 0);
-	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã‚’,ãƒ•ãƒ¬ãƒ¼ãƒ ã®åº§æ¨™ã‚’åŽŸç‚¹ã«ã™ã‚‹ãŸã‚ã®å¹³è¡Œç§»å‹•è¡Œåˆ—ã‚’ä½œæˆ
+	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ð,ƒtƒŒ[ƒ€‚ÌÀ•W‚ðŒ´“_‚É‚·‚é‚½‚ß‚Ì•½sˆÚ“®s—ñ‚ðì¬
 	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
-	// ã‚¢ã‚¿ãƒƒãƒã•ã‚Œã‚‹ãƒ¢ãƒ‡ãƒ«ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®è¡Œåˆ—ã‚’å–å¾—
-	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 9);
-	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®æ‹¡å¤§è¡Œåˆ—ã‚’å–å¾—
+	// ƒAƒ^ƒbƒ`‚³‚ê‚éƒ‚ƒfƒ‹‚ÌƒtƒŒ[ƒ€‚Ìs—ñ‚ðŽæ“¾
+	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 14);
+	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌŠg‘ås—ñ‚ðŽæ“¾
 	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
-	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®å›žè»¢è¡Œåˆ—ã‚’å–å¾—
+	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚Ì‰ñ“]s—ñ‚ðŽæ“¾
 	MATRIX yMat = MGetRotY(DX_PI_F);
-	// å„è¡Œåˆ—ã‚’åˆæˆ
+	// Šes—ñ‚ð‡¬
 	MATRIX mixMat = MGetIdent();
 	mixMat = MMult(transMat, mixMat);
 	mixMat = MMult(frameMat, mixMat);
 	mixMat = MMult(scaleMat, mixMat);
 	mixMat = MMult(yMat, mixMat);
-	// åˆæˆã—ãŸè¡Œåˆ—ã‚’ãƒ¢ãƒ‡ãƒ«ã«ã‚»ãƒƒãƒˆ
+	// ‡¬‚µ‚½s—ñ‚ðƒ‚ƒfƒ‹‚ÉƒZƒbƒg
 	MV1SetMatrix(m_model, mixMat);
 }
 
-void EnemyBossRightAxe::AttackUpdate(int model)
+void EnemyBossRightWeapon::AttackUpdate(int model)
 {
-	// å½“ãŸã‚Šåˆ¤å®šã‚’æœ‰åŠ¹åŒ–ã™ã‚‹
+	// “–‚½‚è”»’è‚ð—LŒø‰»‚·‚é
 	SetActive(true);
 
-	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®MV1SetMatrixã®è¨­å®šã‚’ç„¡åŠ¹åŒ–ã™ã‚‹
+	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌMV1SetMatrix‚ÌÝ’è‚ð–³Œø‰»‚·‚é
 	MV1SetMatrix(m_model, MGetIdent());
-	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®åº§æ¨™ã‚’å–å¾—ã™ã‚‹
+	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌƒtƒŒ[ƒ€‚ÌÀ•W‚ðŽæ“¾‚·‚é
 	VECTOR position = MV1GetFramePosition(m_model, 0);
-	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã‚’,ãƒ•ãƒ¬ãƒ¼ãƒ ã®åº§æ¨™ã‚’åŽŸç‚¹ã«ã™ã‚‹ãŸã‚ã®å¹³è¡Œç§»å‹•è¡Œåˆ—ã‚’ä½œæˆ
+	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ð,ƒtƒŒ[ƒ€‚ÌÀ•W‚ðŒ´“_‚É‚·‚é‚½‚ß‚Ì•½sˆÚ“®s—ñ‚ðì¬
 	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
-	// ã‚¢ã‚¿ãƒƒãƒã•ã‚Œã‚‹ãƒ¢ãƒ‡ãƒ«ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®è¡Œåˆ—ã‚’å–å¾—
-	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 14);
-	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®æ‹¡å¤§è¡Œåˆ—ã‚’å–å¾—
+	// ƒAƒ^ƒbƒ`‚³‚ê‚éƒ‚ƒfƒ‹‚ÌƒtƒŒ[ƒ€‚Ìs—ñ‚ðŽæ“¾
+	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 9);
+	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚ÌŠg‘ås—ñ‚ðŽæ“¾
 	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
-	// ã‚¢ã‚¿ãƒƒãƒã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®å›žè»¢è¡Œåˆ—ã‚’å–å¾—
+	// ƒAƒ^ƒbƒ`‚·‚éƒ‚ƒfƒ‹‚Ì‰ñ“]s—ñ‚ðŽæ“¾
 	MATRIX yMat = MGetRotY(DX_PI_F);
-	// å„è¡Œåˆ—ã‚’åˆæˆ
+	// Šes—ñ‚ð‡¬
 	MATRIX mixMat = MGetIdent();
 	mixMat = MMult(transMat, mixMat);
 	mixMat = MMult(frameMat, mixMat);
 	mixMat = MMult(scaleMat, mixMat);
 	mixMat = MMult(yMat, mixMat);
-	// åˆæˆã—ãŸè¡Œåˆ—ã‚’ãƒ¢ãƒ‡ãƒ«ã«ã‚»ãƒƒãƒˆ
+	// ‡¬‚µ‚½s—ñ‚ðƒ‚ƒfƒ‹‚ÉƒZƒbƒg
 	MV1SetMatrix(m_model, mixMat);
 
-	//å½“ãŸã‚Šåˆ¤å®š
+	//“–‚½‚è”»’è
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	colData->m_radius = kRadius;
 	VECTOR start = MV1GetFramePosition(m_model, 2);
@@ -106,11 +104,11 @@ void EnemyBossRightAxe::AttackUpdate(int model)
 	colData->m_startPos = startPos;
 }
 
-void EnemyBossRightAxe::Draw()
+void EnemyBossRightWeapon::Draw()
 {
 	MV1DrawModel(m_model);
 }
 
-void EnemyBossRightAxe::OnCollide(std::shared_ptr<Collidable> collider)
+void EnemyBossRightWeapon::OnCollide(std::shared_ptr<Collidable> collider)
 {
 }

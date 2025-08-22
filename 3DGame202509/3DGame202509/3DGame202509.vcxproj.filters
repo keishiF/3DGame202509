@@ -84,18 +84,6 @@
     <Filter Include="ヘッダー ファイル\UI">
       <UniqueIdentifier>{223cc11c-7680-4b08-94e5-97780fbb34c9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\GameObject\SubPlayer">
-      <UniqueIdentifier>{b7d368b7-49af-4430-95b5-839297612547}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\GameObject\SubPlayer">
-      <UniqueIdentifier>{b76ae1e0-958f-4d9f-a83d-8f5e06d8a399}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\GameObject\SubEnemy">
-      <UniqueIdentifier>{386e3be2-42c3-4b22-aeb5-abefb845121c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\GameObject\SubEnemy">
-      <UniqueIdentifier>{9953ebd7-c413-4773-ab6e-64e475949e47}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="General\Application.cpp">
@@ -119,44 +107,14 @@
     <ClCompile Include="MyLib\Input.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\Enemy\EnemyMinion.cpp">
-      <Filter>ソース ファイル\GameObject\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\Player\Player.cpp">
+    <ClCompile Include="GameObject\Player\Player2.cpp">
       <Filter>ソース ファイル\GameObject\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\Enemy\EnemyBase.cpp">
-      <Filter>ソース ファイル\GameObject\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\Enemy\EnemyMage.cpp">
-      <Filter>ソース ファイル\GameObject\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\Enemy\EnemyMageBullet.cpp">
-      <Filter>ソース ファイル\GameObject\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\Physics.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\Rigidbody.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\Player\PlayerRightWeapon.cpp">
-      <Filter>ソース ファイル\GameObject\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\Enemy\EnemyMinionBlade.cpp">
-      <Filter>ソース ファイル\GameObject\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\GameObjectManager.cpp">
-      <Filter>ソース ファイル\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\Player\PlayerLeftWeapon.cpp">
-      <Filter>ソース ファイル\GameObject\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\Enemy\EnemyBoss.cpp">
-      <Filter>ソース ファイル\GameObject\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\Enemy\EnemyBossRightAxe.cpp">
-      <Filter>ソース ファイル\GameObject\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="GameObject\Stage\StageObjectManager.cpp">
       <Filter>ソース ファイル\GameObject\Stage</Filter>
@@ -169,9 +127,6 @@
     </ClCompile>
     <ClCompile Include="GameObject\Stage\StageObjectBase.cpp">
       <Filter>ソース ファイル\GameObject\Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\Enemy\EnemyBossLeftAxe.cpp">
-      <Filter>ソース ファイル\GameObject\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="MyLib\TransformDataLoader.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
@@ -236,35 +191,35 @@
     <ClCompile Include="GameObject\StatusComponent.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\SubPlayer\PlayerWeapon.cpp">
-      <Filter>ソース ファイル\GameObject\SubPlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\SubPlayer\SubPlayer.cpp">
-      <Filter>ソース ファイル\GameObject\SubPlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\SubEnemy\EnemyMinionWeapon.cpp">
-      <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\SubEnemy\SubEnemyMinion.cpp">
-      <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\SubEnemy\SubEnemyBase.cpp">
-      <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\SubEnemy\SubEnemyMage.cpp">
-      <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\SubEnemy\SubEnemyBoss.cpp">
-      <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\SubEnemy\SubEnemyBossLeftWeapon.cpp">
-      <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\SubEnemy\SubEnemyBossRightWeapon.cpp">
-      <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\SubGameObjectManager.cpp">
+    <ClCompile Include="GameObject\GameObjectManager.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Player\PlayerWeapon.cpp">
+      <Filter>ソース ファイル\GameObject\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Player\Player.cpp">
+      <Filter>ソース ファイル\GameObject\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Enemy\EnemyBase.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Enemy\EnemyMinion.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Enemy\EnemyMinionWeapon.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Enemy\EnemyBoss.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Enemy\EnemyBossLeftWeapon.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Enemy\EnemyBossRightWeapon.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Enemy\EnemyMage.cpp">
+      <Filter>ソース ファイル\GameObject\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -289,44 +244,14 @@
     <ClInclude Include="MyLib\Input.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\Enemy\EnemyMinion.h">
-      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\Player\Player.h">
+    <ClInclude Include="GameObject\Player\Player2.h">
       <Filter>ヘッダー ファイル\GameObject\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\Enemy\EnemyBase.h">
-      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\Enemy\EnemyMage.h">
-      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\Enemy\EnemyMageBullet.h">
-      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Physics.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Rigidbody.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\Player\PlayerRightWeapon.h">
-      <Filter>ヘッダー ファイル\GameObject\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\Enemy\EnemyMinionBlade.h">
-      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\GameObjectManager.h">
-      <Filter>ヘッダー ファイル\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\Player\PlayerLeftWeapon.h">
-      <Filter>ヘッダー ファイル\GameObject\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\Enemy\EnemyBoss.h">
-      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\Enemy\EnemyBossRightAxe.h">
-      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\Stage\StageObjectManager.h">
       <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
@@ -339,9 +264,6 @@
     </ClInclude>
     <ClInclude Include="GameObject\Stage\StageObjectBase.h">
       <Filter>ヘッダー ファイル\GameObject\Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\Enemy\EnemyBossLeftAxe.h">
-      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\TransformDataLoader.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
@@ -418,44 +340,44 @@
     <ClInclude Include="GameObject\StatusComponent.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\SubPlayer\PlayerAtkColTiming.h">
-      <Filter>ヘッダー ファイル\GameObject\SubPlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubPlayer\PlayerWeapon.h">
-      <Filter>ヘッダー ファイル\GameObject\SubPlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubPlayer\SubPlayer.h">
-      <Filter>ヘッダー ファイル\GameObject\SubPlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubEnemy\EnemyMinionAtkColTiming.h">
-      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubEnemy\EnemyMinionWeapon.h">
-      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubEnemy\SubEnemyMinion.h">
-      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubEnemy\SubEnemyBase.h">
-      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubEnemy\SubEnemyMage.h">
-      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubEnemy\SubEnemyBoss.h">
-      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubEnemy\EnemyBossAtkColTiming.h">
-      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubEnemy\SubEnemyBossLeftWeapon.h">
-      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubEnemy\SubEnemyBossRightWeapon.h">
-      <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\SubGameObjectManager.h">
+    <ClInclude Include="GameObject\GameObjectManager.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Player\PlayerAtkColTiming.h">
+      <Filter>ヘッダー ファイル\GameObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Player\PlayerWeapon.h">
+      <Filter>ヘッダー ファイル\GameObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Player\Player.h">
+      <Filter>ヘッダー ファイル\GameObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy\EnemyBase.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy\EnemyMinion.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy\EnemyBossAtkColTiming.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy\EnemyMinionAtkColTiming.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy\EnemyMinionWeapon.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy\EnemyBoss.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy\EnemyBossLeftWeapon.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy\EnemyBossRightWeapon.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy\EnemyMage.h">
+      <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

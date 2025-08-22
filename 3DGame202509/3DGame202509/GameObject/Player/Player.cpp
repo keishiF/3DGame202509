@@ -1,27 +1,20 @@
 ﻿#include "CapsuleColliderData.h"
 #include "Enemy/EnemyBase.h"
-#include "game.h"
+#include "Enemy/EnemyBase.h"
 #include "GameObjectManager.h"
-#include "Physics.h"
+#include "Input.h"
+#include "PlayerAtkColTiming.h"
+#include "PlayerWeapon.h"
 #include "Player.h"
-#include "PlayerBullet.h"
-#include "PlayerLeftWeapon.h"
-#include "PlayerRightWeapon.h"
-#include <algorithm>
-#include <cassert>
-#include <DxLib.h>
-#include <EffekseerForDxLib.h>
-#include <unordered_map>
 
 namespace
 {
 	// HPの初期値、最大値
-	constexpr float kHp = 20.0f;
-	// スタミナの最大値
-	constexpr float kMaxStamina = 100.0f;
-	// 必殺技ゲージの最大値
-	constexpr float kMaxSpecialGauge = 100.0f;
-	// スタミナ消費量
+	constexpr float kHP = 20;
+	// 攻撃力
+	constexpr float kDefaultAtk = 1.0f;
+	// スタミナの初期値、最大値
+	constexpr float kStamina = 100.0f;
 	// 待機状態、歩き状態で毎フレーム回復するスタミナ
 	constexpr float kRegeneStamina = 0.34f;
 	// 疲れ状態で毎フレーム回復するスタミナ
@@ -32,21 +25,32 @@ namespace
 	constexpr float kSpinStamina = 15.0f;
 	// スタミナがこの値を下回ったら走るのが遅くなるライン
 	constexpr float kRunSpeedDownStaminaRate = 35.0f;
-
+	// 必殺技ゲージの最大値
+	constexpr float kMaxSpecialGauge = 100.0f;
+	// 時間経過で増える必殺技ゲージの量
+	constexpr float kTimeSpecialGauge = 2.0f;
+	// 必殺技ゲージが増えるまでの時間
+	constexpr float kSpecialGaugeTime = 60.0f;
+	
 	// 移動速度
 	constexpr float kWalkSpeed = 8.5f;
 	constexpr float kNormalRunSpeed = 17.5f;
 	constexpr float kTiredRunSpeed = 5.0f;
 	constexpr float kAttackMoveSpeed = 1.0f;
 	constexpr float kDodgeSpped = 40.0f;
-	// プレイヤーのモデルの拡大値
-	constexpr float kModelScale = 70.0f;
-	// プレイヤーの当たり判定
-	constexpr float kRadius = 45.0f;
-	constexpr float kColScale = 140.0f;
-	constexpr float kAttackOffsetRadius = 230.0f;
 
 	constexpr float kLerpT = 0.2f;
+
+	// モデルの拡大値
+	constexpr float kModelScale = 70.0f;
+
+	// 当たり判定
+	// カプセルの半径
+	constexpr float kCapsuleColRadius = 45.0f;
+	// カプセルの長さ
+	constexpr float kColScale = 140.0f;
+	// 攻撃をある程度敵の方向に向かせれる範囲
+	constexpr float kAttackOffsetRadius = 230.0f;
 
 	// アニメーション名
 	// 待機
@@ -70,111 +74,178 @@ namespace
 	const char* kHitAnimName     = "Hit_B";
 	// 死亡
 	const char* kDeadAnimName    = "Death_B";
+
 	// アニメーションの再生速度
-	constexpr float kAnimSpeed = 1.0f;
-	constexpr float kIdleAnimSpeed = 0.5f;
-	constexpr float kWalkAnimSpeed = 0.75f;
-	constexpr float kSlowRunAnimSpeed = 0.5f;
-	constexpr float kChopAnimSpeed = 1.0f;
-	constexpr float kSpecialAttackAnimSpeed = 0.5f;
-
-	constexpr float kShotTiming = 10.0f;
-
-	const std::unordered_map<PlayerState, RightAttackTiming> kRightColTimingTable =
-	{
-		{PlayerState::Idle,		 { 0,  0}},
-		{PlayerState::Walk,		 { 0,  0}},
-		{PlayerState::NormalRun, { 0,  0}},
-		{PlayerState::Tired,	 { 0,  0}},
-		{PlayerState::Chop,		 {16, 28}},
-		{PlayerState::Slice,	 {16, 28}},
-		{PlayerState::Stab,		 {16, 28}},
-		{PlayerState::Spin,      {16, 36}},
-		{PlayerState::Shot,      { 0,  0}},
-		{PlayerState::Special,   { 0, 36}},
-		{PlayerState::Dodge,	 { 0,  0}},
-		{PlayerState::Hit,		 { 0,  0}},
-		{PlayerState::Dead,		 { 0,  0}}
-	};
-
-	const std::unordered_map<PlayerState, LeftAttackTiming> kLeftColTimingTable =
-	{
-		{PlayerState::Idle,		 { 0,  0}},
-		{PlayerState::Walk,		 { 0,  0}},
-		{PlayerState::NormalRun, { 0,  0}},
-		{PlayerState::Tired,	 { 0,  0}},
-		{PlayerState::Chop,		 {16, 28}},
-		{PlayerState::Slice,	 {16, 28}},
-		{PlayerState::Stab,		 {16, 28}},
-		{PlayerState::Spin,      {16, 36}},
-		{PlayerState::Shot,      { 0,  0}},
-		{PlayerState::Special,   {16, 36}},
-		{PlayerState::Dodge,	 { 0,  0}},
-		{PlayerState::Hit,		 { 0,  0}},
-		{PlayerState::Dead,		 { 0,  0}}
-	};
+	// 通常速度
+	constexpr float kDefaultAnimSpeed  = 1.0f;
+	// 待機
+	constexpr float kIdleAnimSpeed     = 0.5f;
+	// 歩き
+	constexpr float kWalkAnimSpeed     = 0.75f;
+	// 遅い走り
+	constexpr float kTiredRunAnimSpeed = 0.5f;
+	// 必殺技
+	constexpr float kSpecialAnimSpeed  = 0.5f;
 }
 
 Player::Player() :
-	m_forward(0.0f, 0.0f, 1.0f),
-	m_charModel(-1),
-	m_radius(kRadius),
-	m_hp(kHp),
-	m_hpRate(m_hp / kHp),
-	m_stamina(kMaxStamina),
-	m_staminaRate(m_stamina / kMaxStamina),
-	m_specialGauge(0),
-	m_specialGaugeRate(m_specialGauge / kMaxSpecialGauge),
-	m_isCombo(false),
-	m_isDead(false),
-	m_attackPower(1),
-	m_frame(0.0),
-	m_blinkFrame(0.0f),
-	m_attackFrame(0.0f),
-	m_specialEffect(-1),
 	m_state(PlayerState::Idle),
-	Collidable(ObjectTag::Player, ObjectPriority::High, ColliderData::Kind::Capsule)
+	CharacterBase(ObjectTag::Player, ObjectPriority::High, ColliderData::Kind::Capsule)
 {
 }
 
 Player::~Player()
 {
-	MV1DeleteModel(m_charModel);
 }
 
-void Player::Init(Vector3& pos, const Vector3& rot, const Vector3& scale)
+void Player::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 {
+	// Physicsに登録
 	Collidable::Init();
-
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
 
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	colData->m_startPos = pos;
-	colData->m_radius = kRadius;
+	colData->m_radius = kCapsuleColRadius;
 
-	m_charModel = MV1LoadModel("Data/Model/Player/Player.mv1");
-	assert(m_charModel >= 0);
+	// モデルのロード
+	m_model = MV1LoadModel("Data/Model/Player/Player.mv1");
+	assert(m_model >= 0);
+	// モデルのサイズ、位置
+	VECTOR modelScale = VGet(scale.x * kModelScale, scale.x * kModelScale, scale.x * kModelScale);
+	MV1SetScale(m_model, modelScale);
+	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 
-	MV1SetScale(m_charModel, VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale));
-	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
+	// プレイヤーの初期状態を待機状態にする
+	m_state = PlayerState::Idle;
 
-	/*m_specialEffect = LoadEffekseerEffect("Data/Effect/PlayerSpecialAttack.efkefc", 100.0f);
-	assert(m_specialEffect >= 0);*/
+	// 各ステータスの初期化
+	m_status.m_hp = kHP;
+	m_status.m_maxHP = kHP;
+	m_status.m_atk = kDefaultAtk;
+	m_stamina = kStamina;
+	m_maxStamina = kStamina;
+	m_specialGauge = 0.0f;
+	m_maxSpecialGauge = kMaxSpecialGauge;
+	m_atkFrame = 0.0f;
+	m_isCombo = false;
+	m_isDead = false;
 
-	m_anim.Init(m_charModel);
+	// アニメーター
+	m_anim.Init(m_model);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kIdleAnimName, kIdleAnimSpeed, true);
 
-	m_rightWeapon = std::make_shared<PlayerRightWeapon>();
-	m_rightWeapon->Init();
+	m_weapon = std::make_shared<PlayerWeapon>();
+	m_weapon->Init();
+}
 
-	/*m_leftWeapon = std::make_shared<PlayerLeftWeapon>();
-	m_leftWeapon->Init();*/
+void Player::Draw()
+{
+	if (m_isDead && m_model < 0)
+	{
+		return;
+	}
+
+	// 点滅効果のための条件
+	if ((m_blinkFrame / 3) % 2 == 0)
+	{
+#if _DEBUG
+		DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kCapsuleColRadius, 16, 0x00ff00, 0x00ff00, false);
+		DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kAttackOffsetRadius, 16, 0xff0000, 0xff0000, false);
+#endif
+		MV1DrawModel(m_model);
+		m_weapon->Draw();
+	}
+}
+
+void Player::OnDamage(float atk)
+{
+	// ダメージを受ける
+	m_status.m_hp -= atk;
+
+	// HPが0になったのなら死亡状態に移行する
+	if (m_status.m_hp <= 0 && !m_isDead)
+	{
+		ChangeState(PlayerState::Dead);
+	}
+	// そうでないなら被弾状態に移行する
+	else
+	{
+		ChangeState(PlayerState::Hit);
+	}
+}
+
+void Player::ChangeState(PlayerState newState)
+{
+	// 現在の状態と次の状態が同じ場合return
+	// Hitだけ例外処理
+	if (m_state == newState && m_state != PlayerState::Hit) return;
+
+	m_state = newState;
+
+	// 状態遷移時に攻撃フレームなどを0にしてリセットする
+	m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
+	m_atkFrame = 0.0f;
+	m_blinkFrame = 0;
+	m_isCombo = false;
+
+	VECTOR rotVec = MV1GetRotationXYZ(m_model);
+	float angleY = -rotVec.y;
+	Vector3 axis(0.0f, 1.0f, 0.0f);
+	m_currentRot.AngleAxis(angleY, axis);
+
+	switch (m_state)
+	{
+	case PlayerState::Idle:
+		m_anim.ChangeAnim(kIdleAnimName, kIdleAnimSpeed, true);
+		break;
+	case PlayerState::Walk:
+		m_anim.ChangeAnim(kWalkAnimName, kWalkAnimSpeed, true);
+		break;
+	case PlayerState::NormalRun:
+		m_anim.ChangeAnim(kRunAnimName, kDefaultAnimSpeed, true);
+		break;
+	case PlayerState::TiredRun:
+		m_anim.ChangeAnim(kRunAnimName, kTiredRunAnimSpeed, true);
+		break;
+	case PlayerState::Tired:
+		m_anim.ChangeAnim(kTiredAnimName, kDefaultAnimSpeed, true);
+		break;
+	case PlayerState::Chop:
+		m_anim.ChangeAnim(kChopAnimName, kDefaultAnimSpeed, false);
+		break;
+	case PlayerState::Slice:
+		m_anim.ChangeAnim(kSliceAnimName, kDefaultAnimSpeed, false);
+		break;
+	case PlayerState::Stab:
+		m_anim.ChangeAnim(kStabAnimName, kDefaultAnimSpeed, false);
+		break;
+	case PlayerState::Spin:
+		m_anim.ChangeAnim(kSpinAnimName, kDefaultAnimSpeed, false);
+		break;
+	case PlayerState::Shot:
+		m_anim.ChangeAnim(kStabAnimName, kDefaultAnimSpeed, false);
+		break;
+	case PlayerState::Special:
+		m_anim.ChangeAnim(kSpecialAnimName, kSpecialAnimSpeed, false);
+		break;
+	case PlayerState::Dodge:
+		m_anim.ChangeAnim(kDodgeAnimName, kDefaultAnimSpeed, false);
+		break;
+	case PlayerState::Hit:
+		m_anim.ChangeAnim(kHitAnimName, kDefaultAnimSpeed, false);
+		break;
+	case PlayerState::Dead:
+		m_anim.ChangeAnim(kDeadAnimName, kDefaultAnimSpeed, false);
+		break;
+	}
 }
 
 void Player::Update()
 {
-	if (m_isDead && m_charModel < 0)
+	// 死んでいたらreturn
+	if (m_isDead && m_model < 0)
 	{
 		return;
 	}
@@ -182,11 +253,10 @@ void Player::Update()
 	// 必殺技ゲージが最大でないとき
 	if (m_specialGauge < kMaxSpecialGauge)
 	{
-		if (++m_frame >= 60)
+		if (++m_frame >= kSpecialGaugeTime)
 		{
-			m_specialGauge += 2.0f;
-			m_specialGaugeRate = m_specialGauge / kMaxSpecialGauge;
-			m_specialGaugeRate = std::clamp(m_specialGaugeRate, 0.0f, 1.0f);
+			m_specialGauge += kTimeSpecialGauge;
+			//m_specialGaugeRate = std::clamp(m_specialGaugeRate, 0.0f, 1.0f);
 
 			m_frame = 0.0f;
 		}
@@ -243,149 +313,16 @@ void Player::Update()
 		break;
 	}
 
-	for (auto& bullet : m_bullets)
-	{
-		bullet->Update();
-	}
-	m_bullets.erase(std::remove_if(m_bullets.begin(), m_bullets.end(), [this](const std::shared_ptr<PlayerBullet>& b)
-		{
-			if (b->IsDead())
-			{
-				b->Final();
-				return true;
-			}
-			return false;
-		}),
-		m_bullets.end()
-	);
-
 	//当たり判定
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	Vector3 colPos = m_rigidbody.GetPos();
 	colPos.y += kColScale;
 	colData->m_startPos = colPos;
 
-	VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
+	VECTOR rotVec = MV1GetRotationXYZ(m_model);
 	float angleY = -rotVec.y;
 	m_forward = Vector3(std::sin(angleY), 0.0f, -std::cos(angleY));
 	m_forward.Normalize();
-}
-
-void Player::Draw()
-{
-	if (m_isDead && m_charModel < 0)
-	{
-		return;
-	}
-
-	// 点滅効果のための条件
-	if ((m_blinkFrame / 3) % 2 == 0)
-	{
-#if _DEBUG
-		DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_radius, 16, 0x00ff00, 0x00ff00, false);
-		DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kAttackOffsetRadius, 16, 0xff0000, 0xff0000, false);
-#endif
-		MV1DrawModel(m_charModel);
-		m_rightWeapon->Draw();
-	}
-}
-
-void Player::SetSpecialGauge(int specialGaugePoint)
-{
-	m_specialGauge += specialGaugePoint;
-
-	m_specialGaugeRate = m_specialGauge / kMaxSpecialGauge;
-	m_specialGaugeRate = std::clamp(m_specialGaugeRate, 0.0f, 1.0f);
-}
-
-void Player::OnDamage()
-{
-	// ダメージを受ける
-	m_hp -= 1.0f;
-	// HP割合を計算する
-	m_hpRate = m_hp / kHp;
-	m_hpRate = std::clamp(m_hpRate, 0.0f, 1.0f);
-
-	// HPが0になったのなら死亡状態に移行する
-	if (m_hp <= 0 && !m_isDead)
-	{
-		ChangeState(PlayerState::Dead);
-	}
-	// そうでないなら被弾状態に移行する
-	else
-	{
-		ChangeState(PlayerState::Hit);
-	}
-}
-
-void Player::OnCollide(std::shared_ptr<Collidable> collider)
-{
-	OnDamage();
-}
-
-void Player::ChangeState(PlayerState newState)
-{
-	// 現在の状態と次の状態が同じ場合return
-	// Hitだけ例外処理
-	if (m_state == newState && m_state != PlayerState::Hit) return;
-
-	m_state = newState;
-
-	m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
-	m_attackFrame = 0.0f;
-	m_blinkFrame = 0;
-	m_isCombo = false;
-
-	VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
-	float angleY = -rotVec.y;
-	Vector3 axis(0.0f, 1.0f, 0.0f);
-	m_currentRot.AngleAxis(angleY, axis);
-
-	switch (m_state)
-	{
-	case PlayerState::Idle:
-		m_anim.ChangeAnim(kIdleAnimName, kIdleAnimSpeed, true);
-		break;
-	case PlayerState::Walk:
-		m_anim.ChangeAnim(kWalkAnimName, kWalkAnimSpeed, true);
-		break;
-	case PlayerState::NormalRun:
-		m_anim.ChangeAnim(kRunAnimName, kAnimSpeed, true);
-		break;
-	case PlayerState::TiredRun:
-		m_anim.ChangeAnim(kRunAnimName, kSlowRunAnimSpeed, true);
-		break;
-	case PlayerState::Tired:
-		m_anim.ChangeAnim(kTiredAnimName, kAnimSpeed, true);
-		break;
-	case PlayerState::Chop:
-		m_anim.ChangeAnim(kChopAnimName, kChopAnimSpeed, false);
-		break;
-	case PlayerState::Slice:
-		m_anim.ChangeAnim(kSliceAnimName, kAnimSpeed, false);
-		break;
-	case PlayerState::Stab:
-		m_anim.ChangeAnim(kStabAnimName, kAnimSpeed, false);
-		break;
-	case PlayerState::Spin:
-		m_anim.ChangeAnim(kSpinAnimName, kAnimSpeed, false);
-		break;
-	case PlayerState::Shot:
-		m_anim.ChangeAnim(kStabAnimName, kAnimSpeed, false);
-		break;
-	case PlayerState::Special:
-		m_anim.ChangeAnim(kSpecialAnimName, kSpecialAttackAnimSpeed, false);
-		break;
-	case PlayerState::Dodge:
-		m_anim.ChangeAnim(kDodgeAnimName, kAnimSpeed, false);
-		break;
-	case PlayerState::Hit:
-		m_anim.ChangeAnim(kHitAnimName, kAnimSpeed, false);
-		break;
-	case PlayerState::Dead:
-		m_anim.ChangeAnim(kDeadAnimName, kAnimSpeed, false);
-		break;
-	}
 }
 
 void Player::IdleUpdate()
@@ -394,14 +331,12 @@ void Player::IdleUpdate()
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
 
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Idle), false);
+	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::Idle), false);
 
 	// スタミナが最大じゃないときは徐々に回復する
-	if (m_stamina < kMaxStamina)
+	if (m_stamina < kStamina)
 	{
 		m_stamina += kRegeneStamina;
-		m_staminaRate = m_stamina / kMaxStamina;
-		m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
 	}
 
 	// 左スティックの入力があれば歩き状態に移行する
@@ -423,8 +358,6 @@ void Player::IdleUpdate()
 		if (m_stamina >= kSpinStamina)
 		{
 			m_stamina -= kSpinStamina;
-			m_staminaRate = m_stamina / kMaxStamina;
-			m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
 			ChangeState(PlayerState::Spin);
 		}
 	}
@@ -442,8 +375,6 @@ void Player::IdleUpdate()
 		if (m_specialGauge < kMaxSpecialGauge)
 		{
 			m_specialGauge += kMaxSpecialGauge;
-			m_specialGaugeRate = m_specialGauge / kMaxSpecialGauge;
-			m_specialGaugeRate = std::clamp(m_specialGaugeRate, 0.0f, 1.0f);
 		}
 	}
 #endif
@@ -473,14 +404,12 @@ void Player::WalkUpdate()
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
 
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Walk), false);
+	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::Walk), false);
 
 	// スタミナが最大じゃないときは徐々に回復する
-	if (m_stamina < kMaxStamina)
+	if (m_stamina < kStamina)
 	{
 		m_stamina += kRegeneStamina;
-		m_staminaRate = m_stamina / kMaxStamina;
-		m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
 	}
 
 	Vector3 dir = { 0.0f, 0.0f,0.0f };
@@ -519,7 +448,7 @@ void Player::WalkUpdate()
 	// ベクトルを正規化し移動速度をかけポジションに加算
 	dir.Normalize();
 	m_rigidbody.SetVelo(dir * kWalkSpeed);
-	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 
 	// 進行方向にモデルを回転させる
 	Vector3 velocity = m_rigidbody.GetVelo();
@@ -534,7 +463,7 @@ void Player::WalkUpdate()
 		m_currentRot = Quaternion::Slerp(m_currentRot, targetRot, kLerpT);
 
 		float angleY = m_currentRot.ToEulerY();
-		MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+		MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 	}
 
 	// 左スティックの入力がない場合待機状態に移行
@@ -568,8 +497,6 @@ void Player::WalkUpdate()
 		if (m_stamina >= kSpinStamina)
 		{
 			m_stamina -= kSpinStamina;
-			m_staminaRate = m_stamina / kMaxStamina;
-			m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
 			ChangeState(PlayerState::Spin);
 		}
 	}
@@ -592,12 +519,10 @@ void Player::RunUpdate()
 	auto& input = Input::GetInstance();
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::NormalRun), false);
+	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::NormalRun), false);
 	Vector3 dir = { 0.0f, 0.0f, 0.0f };
 
 	m_stamina -= kRunStamina;
-	m_staminaRate = m_stamina / kMaxStamina;
-	m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
 
 	// 左スティックで移動
 	// 左入力
@@ -634,7 +559,7 @@ void Player::RunUpdate()
 	// ベクトルを正規化し移動速度をかけポジションに加算
 	dir.Normalize();
 	m_rigidbody.SetVelo(dir * kNormalRunSpeed);
-	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 
 	// 進行方向にモデルを回転させる
 	Vector3 velocity = m_rigidbody.GetVelo();
@@ -649,7 +574,7 @@ void Player::RunUpdate()
 		m_currentRot = Quaternion::Slerp(m_currentRot, targetRot, kLerpT);
 
 		float angleY = m_currentRot.ToEulerY();
-		MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+		MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 	}
 
 	// 左スティックの入力がない場合待機状態に移行する
@@ -709,12 +634,10 @@ void Player::TiredRunUpdate()
 	auto& input = Input::GetInstance();
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::NormalRun), false);
+	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::NormalRun), false);
 	Vector3 dir = { 0.0f, 0.0f, 0.0f };
 
 	m_stamina -= kRunStamina;
-	m_staminaRate = m_stamina / kMaxStamina;
-	m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
 
 	// 左スティックで移動
 	// 左入力
@@ -751,7 +674,7 @@ void Player::TiredRunUpdate()
 	// ベクトルを正規化し移動速度をかけポジションに加算
 	dir.Normalize();
 	m_rigidbody.SetVelo(dir * kTiredRunSpeed);
-	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 
 	// 進行方向にモデルを回転させる
 	Vector3 velocity = m_rigidbody.GetVelo();
@@ -766,7 +689,7 @@ void Player::TiredRunUpdate()
 		m_currentRot = Quaternion::Slerp(m_currentRot, targetRot, kLerpT);
 
 		float angleY = m_currentRot.ToEulerY();
-		MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+		MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 	}
 
 	// 左スティックの入力がない場合待機状態に移行する
@@ -815,13 +738,11 @@ void Player::TiredUpdate()
 	auto& input = Input::GetInstance();
 	// 当たり判定をオンにする
 	SetActive(true);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Tired), false);
+	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::Tired), false);
 
 	m_stamina += kTiredRegeneStamina;
-	m_staminaRate = m_stamina / kMaxStamina;
-	m_staminaRate = std::clamp(m_staminaRate, 0.0f, 1.0f);
 	// スタミナが一定値まで回復したら待機状態に移行
-	if (m_stamina >= kMaxStamina * 0.5f)
+	if (m_stamina >= kStamina * 0.5f)
 	{
 		ChangeState(PlayerState::Idle);
 	}
@@ -833,26 +754,25 @@ void Player::ChopUpdate()
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
 
-	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Chop), false);
+	++m_atkFrame;
+	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::Chop), false);
 
 	// 一番近い敵の方向に回転
 	RotateToNearestEnemy(kAttackOffsetRadius);
 
 	// 攻撃開始から一定フレームの間前進
-	if (m_attackFrame <= 15.0f)
+	if (m_atkFrame <= 15.0f)
 	{
 		// 攻撃中に前進する処理（現在の回転方向に進む）
-		VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
+		VECTOR rotVec = MV1GetRotationXYZ(m_model);
 		float angleY = -rotVec.y; // モデル回転と一致させるため-が必要
 		Vector3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
 		forward.Normalize();
 		m_rigidbody.SetVelo(forward * kAttackMoveSpeed); // 攻撃中の速度（定数）
-
-		MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+		MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 	}
 
-	if (m_attackFrame > 16.0f && m_attackFrame < 32.0f)
+	if (m_atkFrame > 16.0f && m_atkFrame < 32.0f)
 	{
 		// 1ボタンの入力があれば攻撃状態に移行する
 		if (input.IsTrigger("A"))
@@ -883,26 +803,26 @@ void Player::SliceUpdate()
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
 
-	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Slice), false);
+	++m_atkFrame;
+	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::Slice), false);
 
 	// 一番近い敵の方向に回転
 	RotateToNearestEnemy(kAttackOffsetRadius);
 
 	// 攻撃開始から一定フレームの間前進
-	if (m_attackFrame <= 15.0f)
+	if (m_atkFrame <= 15.0f)
 	{
 		// 攻撃中に前進する処理（現在の回転方向に進む）
-		VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
+		VECTOR rotVec = MV1GetRotationXYZ(m_model);
 		float angleY = -rotVec.y; // モデル回転と一致させるため-が必要
 		Vector3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
 		forward.Normalize();
 		m_rigidbody.SetVelo(forward * kAttackMoveSpeed); // 攻撃中の速度（定数）
 
-		MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+		MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 	}
 
-	if (m_attackFrame > 15.0f && m_attackFrame < 30.0f)
+	if (m_atkFrame > 15.0f && m_atkFrame < 30.0f)
 	{
 		// 1ボタンの入力があれば攻撃状態に移行する
 		if (input.IsTrigger("A"))
@@ -931,23 +851,23 @@ void Player::StabUpdate()
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
 
-	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Stab), false);
+	++m_atkFrame;
+	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::Stab), false);
 
 	// 一番近い敵の方向に回転
 	RotateToNearestEnemy(kAttackOffsetRadius);
 
 	// 攻撃開始から一定フレームの間前進
-	if (m_attackFrame <= 15.0f)
+	if (m_atkFrame <= 15.0f)
 	{
 		// 攻撃中に前進する処理（現在の回転方向に進む）
-		VECTOR rotVec = MV1GetRotationXYZ(m_charModel);
+		VECTOR rotVec = MV1GetRotationXYZ(m_model);
 		float angleY = -rotVec.y; // モデル回転と一致させるため-が必要
 		Vector3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
 		forward.Normalize();
 		m_rigidbody.SetVelo(forward * kAttackMoveSpeed); // 攻撃中の速度（定数）
 
-		MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+		MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 	}
 
 	// アニメーションが終了したら待機状態に戻る
@@ -962,8 +882,8 @@ void Player::SpinUpdate()
 	// プレイヤー自身の当たり判定をオンにする
 	SetActive(true);
 
-	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Spin), false);
+	++m_atkFrame;
+	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::Spin), false);
 
 	if (m_anim.GetNextAnim().isEnd)
 	{
@@ -975,19 +895,19 @@ void Player::ShotUpdate()
 {
 	// 当たり判定をオンにする
 	SetActive(true);
-	++m_attackFrame;
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Shot), false);
+	++m_atkFrame;
+	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::Shot), false);
 
-	if (m_attackFrame == kShotTiming)
-	{
-		// 弾を生成
-		Vector3 myPos = m_rigidbody.GetPos();
-		myPos.y += 50.0f;
+	//if (m_atkFrame == kShotTiming)
+	//{
+	//	// 弾を生成
+	//	Vector3 myPos = m_rigidbody.GetPos();
+	//	myPos.y += 50.0f;
 
-		auto bullet = std::make_shared<PlayerBullet>();
-		bullet->Init(myPos, m_forward);
-		m_bullets.push_back(bullet);
-	}
+	//	auto bullet = std::make_shared<PlayerBullet>();
+	//	bullet->Init(myPos, m_forward);
+	//	m_bullets.push_back(bullet);
+	//}
 
 	if (m_anim.GetNextAnim().isEnd)
 	{
@@ -997,22 +917,16 @@ void Player::ShotUpdate()
 
 void Player::SpecialUpdate()
 {
-	++m_attackFrame;
+	++m_atkFrame;
 	SetActive(false);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Special), true);
+	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::Special), true);
 
-	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 
-	/*PlayEffekseer3DEffect(m_specialEffect);
-	SetPosPlayingEffekseer3DEffect(m_specialEffect,
-		m_rigidbody.GetPos().x, m_rigidbody.GetPos().y, m_rigidbody.GetPos().z);*/
-
-	// アニメーションが終了したら待機状態に戻る
+		// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		m_specialGauge = 0;
-		m_specialGaugeRate = m_specialGauge / kMaxSpecialGauge;
-		m_specialGaugeRate = std::clamp(m_specialGaugeRate, 0.0f, 1.0f);
 		ChangeState(PlayerState::Idle);
 	}
 }
@@ -1020,7 +934,7 @@ void Player::SpecialUpdate()
 void Player::DodgeUpdate()
 {
 	SetActive(true);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Dodge), false);
+	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::Dodge), false);
 
 	// m_forward に基づいて移動ベクトルを設定（前方向へ）
 	Vector3 dodgeDir = m_forward;
@@ -1029,7 +943,7 @@ void Player::DodgeUpdate()
 	m_rigidbody.SetVelo(dodgeDir * kDodgeSpped);
 
 	// 現在位置にモデルを反映
-	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
@@ -1041,11 +955,11 @@ void Player::DodgeUpdate()
 void Player::HitUpdate()
 {
 	SetActive(false);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Hit), false);
+	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::Hit), false);
 
 	++m_blinkFrame;
 
-	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
@@ -1056,24 +970,29 @@ void Player::HitUpdate()
 void Player::DeadUpdate()
 {
 	SetActive(false);
-	m_rightWeapon->Update(m_charModel, m_attackFrame, kRightColTimingTable.at(PlayerState::Dead), false);
+	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::Dead), false);
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
-		if (m_charModel >= 0)
+		if (m_model >= 0)
 		{
-			MV1DeleteModel(m_charModel);
-			m_charModel = -1;
+			MV1DeleteModel(m_model);
+			m_model = -1;
 		}
 		m_isDead = true;
 	}
 }
 
+void Player::SetSpecialGauge(int specialGaugePoint)
+{
+	m_specialGauge += specialGaugePoint;
+}
+
 void Player::RotateToNearestEnemy(float radius)
 {
 	// 攻撃開始から一定フレームで敵の方向に回転補間を始める
-	if (m_attackFrame <= 7.0f)
+	if (m_atkFrame <= 7.0f)
 	{
 		// プレイヤーから一定範囲内の敵で一番近い敵を探す
 		auto nearestEnemy = FindNearestEnemy(kAttackOffsetRadius);
@@ -1097,7 +1016,7 @@ void Player::RotateToNearestEnemy(float radius)
 
 				// 回転を適用
 				float angleY = currentRot.ToEulerY();
-				MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+				MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 			}
 		}
 	}
@@ -1123,4 +1042,3 @@ std::shared_ptr<EnemyBase> Player::FindNearestEnemy(float radius)
 	}
 	return nearest;
 }
-

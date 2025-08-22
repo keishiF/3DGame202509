@@ -1,40 +1,34 @@
-﻿#include "PlayerLeftWeapon.h"
-#include "SphereColliderData.h"
-#include <cassert>
+﻿#include "CapsuleColliderData.h"
+#include "EnemyMinionWeapon.h"
+#include "EnemyBossLeftWeapon.h"
 
 namespace
 {
-	// 球の当たり判定の半径
-	constexpr float kRadius = 100.0f;
-
-	// モデルの拡大値
+	// 当たり判定の半径
+	constexpr float kRadius = 7.5f;
 	constexpr float kBladeModelScale = 0.01f;
-
-	// 当たり判定を前方向に出すための補正値
-	constexpr float kColOffsetScale = 100.0f;
 }
 
-PlayerLeftWeapon::PlayerLeftWeapon() :
-	m_model(-1),
-	Collidable(ObjectTag::PlayerWeapon, ObjectPriority::Low, ColliderData::Kind::Sphere)
+EnemyMinionWeapon::EnemyMinionWeapon() :
+	Collidable(ObjectTag::EnemyWeapon, ObjectPriority::Low, ColliderData::Kind::Capsule)
 {
 }
 
-PlayerLeftWeapon::~PlayerLeftWeapon()
+EnemyMinionWeapon::~EnemyMinionWeapon()
 {
 	MV1DeleteModel(m_model);
 }
 
-void PlayerLeftWeapon::Init()
+void EnemyMinionWeapon::Init()
 {
 	Collidable::Init();
 	m_rigidbody.Init();
 
-	m_model = MV1LoadModel("Data/Model/Player/Sword.mv1");
+	m_model = MV1LoadModel("Data/Model/Enemy/Minion/Blade.mv1");
 	assert(m_model >= 0);
 }
 
-void PlayerLeftWeapon::Update(int model, float currentFrame, const LeftAttackTiming& timing)
+void EnemyMinionWeapon::Update(int model, float currentFrame, const MinionAtk::AtkTiming& timing)
 {
 	if (currentFrame >= timing.start && currentFrame < timing.end)
 	{
@@ -46,7 +40,7 @@ void PlayerLeftWeapon::Update(int model, float currentFrame, const LeftAttackTim
 	}
 }
 
-void PlayerLeftWeapon::IdleUpdate(int model)
+void EnemyMinionWeapon::IdleUpdate(int model)
 {
 	// 当たり判定を無効化する
 	SetActive(false);
@@ -58,7 +52,7 @@ void PlayerLeftWeapon::IdleUpdate(int model)
 	// アタッチするモデルを,フレームの座標を原点にするための平行移動行列を作成
 	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
 	// アタッチされるモデルのフレームの行列を取得
-	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 16);
+	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 14);
 	// アタッチするモデルの拡大行列を取得
 	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
 	// アタッチするモデルの回転行列を取得
@@ -73,7 +67,7 @@ void PlayerLeftWeapon::IdleUpdate(int model)
 	MV1SetMatrix(m_model, mixMat);
 }
 
-void PlayerLeftWeapon::AttackUpdate(int model)
+void EnemyMinionWeapon::AttackUpdate(int model)
 {
 	// 当たり判定を有効化する
 	SetActive(true);
@@ -85,7 +79,7 @@ void PlayerLeftWeapon::AttackUpdate(int model)
 	// アタッチするモデルを,フレームの座標を原点にするための平行移動行列を作成
 	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
 	// アタッチされるモデルのフレームの行列を取得
-	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 16);
+	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 14);
 	// アタッチするモデルの拡大行列を取得
 	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
 	// アタッチするモデルの回転行列を取得
@@ -99,32 +93,22 @@ void PlayerLeftWeapon::AttackUpdate(int model)
 	// 合成した行列をモデルにセット
 	MV1SetMatrix(m_model, mixMat);
 
-	// 当たり判定
-	auto colData = std::dynamic_pointer_cast<SphereColliderData>(m_colliderData);
-
-	// プレイヤーのモデルから位置と回転を取得
-	VECTOR playerPos = MV1GetPosition(model);
-	VECTOR rotVec = MV1GetRotationXYZ(model);
-	float angleY = -rotVec.y;
-
-	// 前方ベクトルを計算
-	Vector3 forward(std::sin(angleY), 0.0f, -std::cos(angleY));
-	forward.Normalize();
-
-	// プレイヤー位置から前方へオフセット
-	Vector3 weaponPos(playerPos.x, playerPos.y, playerPos.z);
-	weaponPos += forward * kColOffsetScale;
-
-	// 当たり判定のセット
+	//当たり判定
+	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	colData->m_radius = kRadius;
-	m_rigidbody.SetPos(weaponPos);
+	VECTOR start = MV1GetFramePosition(m_model, 2);
+	VECTOR end = MV1GetFramePosition(m_model, 1);
+	Vector3 startPos = { start.x, start.y, start.z };
+	Vector3 endPos = { end.x, end.y, end.z };
+	m_rigidbody.SetPos(endPos);
+	colData->m_startPos = startPos;
 }
 
-void PlayerLeftWeapon::Draw()
+void EnemyMinionWeapon::Draw()
 {
 	MV1DrawModel(m_model);
 }
 
-void PlayerLeftWeapon::OnCollide(std::shared_ptr<Collidable> collider)
+void EnemyMinionWeapon::OnCollide(std::shared_ptr<Collidable> collider)
 {
 }

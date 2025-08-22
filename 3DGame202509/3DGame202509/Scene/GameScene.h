@@ -3,10 +3,9 @@
 #include "Vector3.h"
 #include <memory>
 
-class GameObjectManager;
 class Physics;
 class StageObjectManager;
-class SubGameObjectManager;
+class GameObjectManager;
 class UIManager;
 class GameScene final : public SceneBase
 {
@@ -32,7 +31,6 @@ private:
 	std::shared_ptr<UIManager> m_uiManager;
 
 	GameObjectManager& m_gameObjectManager;
-	SubGameObjectManager& m_subGameObjectManager;
 
 	// 通常時更新処理
 	void NormalUpdate();

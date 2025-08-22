@@ -1,5 +1,5 @@
 #include "CapsuleColliderData.h"
-#include "SubEnemyBossRightWeapon.h"
+#include "EnemyBossLeftWeapon.h"
 
 namespace
 {
@@ -8,18 +8,18 @@ namespace
 	constexpr float kBladeModelScale = 0.03f;
 }
 
-SubEnemyBossRightWeapon::SubEnemyBossRightWeapon() :
+EnemyBossLeftWeapon::EnemyBossLeftWeapon() :
 	m_model(-1),
 	Collidable(ObjectTag::EnemyWeapon, ObjectPriority::Low, ColliderData::Kind::Capsule)
 {
 }
 
-SubEnemyBossRightWeapon::~SubEnemyBossRightWeapon()
+EnemyBossLeftWeapon::~EnemyBossLeftWeapon()
 {
 	MV1DeleteModel(m_model);
 }
 
-void SubEnemyBossRightWeapon::Init()
+void EnemyBossLeftWeapon::Init()
 {
 	Collidable::Init();
 	m_rigidbody.Init();
@@ -28,7 +28,7 @@ void SubEnemyBossRightWeapon::Init()
 	assert(m_model >= 0);
 }
 
-void SubEnemyBossRightWeapon::Update(int model, float currentFrame, const BossAtk::AtkTiming& timing)
+void EnemyBossLeftWeapon::Update(int model, float currentFrame, const BossAtk::AtkTiming& timing)
 {
 	if (currentFrame >= timing.start && currentFrame < timing.end)
 	{
@@ -40,7 +40,7 @@ void SubEnemyBossRightWeapon::Update(int model, float currentFrame, const BossAt
 	}
 }
 
-void SubEnemyBossRightWeapon::IdleUpdate(int model)
+void EnemyBossLeftWeapon::IdleUpdate(int model)
 {
 	// “–‚½‚è”»’è‚ð–³Œø‰»‚·‚é
 	SetActive(false);
@@ -67,7 +67,7 @@ void SubEnemyBossRightWeapon::IdleUpdate(int model)
 	MV1SetMatrix(m_model, mixMat);
 }
 
-void SubEnemyBossRightWeapon::AttackUpdate(int model)
+void EnemyBossLeftWeapon::AttackUpdate(int model)
 {
 	// “–‚½‚è”»’è‚ð—LŒø‰»‚·‚é
 	SetActive(true);
@@ -104,11 +104,11 @@ void SubEnemyBossRightWeapon::AttackUpdate(int model)
 	colData->m_startPos = startPos;
 }
 
-void SubEnemyBossRightWeapon::Draw()
+void EnemyBossLeftWeapon::Draw()
 {
 	MV1DrawModel(m_model);
 }
 
-void SubEnemyBossRightWeapon::OnCollide(std::shared_ptr<Collidable> collider)
+void EnemyBossLeftWeapon::OnCollide(std::shared_ptr<Collidable> collider)
 {
 }

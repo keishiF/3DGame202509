@@ -1,113 +1,131 @@
-﻿#include "Animator.h"
-#include "CapsuleColliderData.h"
-#include "EnemyMinion.h"
-#include "EnemyMinionBlade.h"
+﻿#include "CapsuleColliderData.h"
+#include "EnemyMinionWeapon.h"
 #include "Player/Player.h"
-#include <algorithm>
-#include <cassert>
-#include <DxLib.h>
-#include <unordered_map>
+#include "EnemyMinion.h"
 
 namespace
 {
-	// エネミーがプレイヤーを発見できる範囲
-	constexpr float kFindRadius   = 900.0f;
-	constexpr float kRunRadius	  = 450.0f;
-	constexpr float kAttackRadius = 100.0f;
+	// HPの初期値、最大値
+	constexpr float kHP = 5.0f;
+	// 攻撃力
+	constexpr float kDefaultAtk = 1.0f;
 
-	// 初期HP
-	constexpr int kHp = 5.0f;
-
-	// エネミーの速度
+	// 移動速度
 	constexpr float kWalkSpeed = 2.5f;
 	constexpr float kRunSpeed = 5.0f;
 
-	// エネミーの当たり判定用半径
-	constexpr float kColScale = 140.0f;
-	constexpr float kColRadius = 45.0f;
-
-	constexpr float kAttackFrame = 32.0f;
-
-	// モデルの拡大率
+	// モデルの拡大値
 	constexpr float kModelScale = 75.0f;
+
+	// 攻撃フレーム
+	constexpr float kAtkFrame = 32.0f;
+
+	// 当たり判定
+	// カプセルの半径
+	constexpr float kCapsuleColRadius = 45.0f;
+	// カプセルの長さ
+	constexpr float kColScale = 140.0f;
+	// 状態遷移に使う半径
+	// プレイヤーを探知できる範囲
+	constexpr float kPlayerFindRadius = 900.0f;
+	// 走り状態に移行する範囲
+	constexpr float kRunRadius = 450.0f;
+	// 攻撃状態に移行する範囲
+	constexpr float kAtkRadius = 100.0f;
 
 	// アニメーション名
 	// 待機
-	const char* kFindAnimName   = "2H_Melee_Idle";
-
-	const char* kWalkAnimName   = "Walking_D_Skeletons";
-
+	const char* kFindAnimName = "2H_Melee_Idle";
+	// 歩き
+	const char* kWalkAnimName = "Walking_D_Skeletons";
 	// 発見
-	const char* kChaseAnimName  = "Running_C";
+	const char* kChaseAnimName = "Running_C";
 	// 攻撃
 	const char* kAttackAnimName = "1H_Melee_Attack_Slice_Diagonal";
 	// 被弾
-	const char* kHitAnimName    = "Hit_B";
+	const char* kHitAnimName = "Hit_B";
 	// 死亡
-	const char* kDeadAnimName   = "Death_B";
+	const char* kDeadAnimName = "Death_B";
 
 	// アニメーションの再生速度
-	constexpr float kAnimSpeed = 0.5f;
+	// 通常速度
+	constexpr float kDefaultAnimSpeed = 0.5f;
 	constexpr float kHitAnimSpeed = 1.0f;
 
-	const std::unordered_map<EnemyState, AttackTiming> kColTimingTable =
-	{
-		{EnemyState::Find,	 { 0,  0}},
-		{EnemyState::Chase,	 { 0,  0}},
-		{EnemyState::Attack, {20, 48}},
-		{EnemyState::Hit,	 { 0,  0}},
-		{EnemyState::Dead,	 { 0,  0}}
-	};
-
-	// 倒されたときにプレイヤーの必殺技ゲージを溜める量
+	// 倒されたときにプレイヤーの必殺技ゲージを増やす量
 	constexpr int kSpecialGaugePoint = 10;
 }
 
-EnemyMinion::EnemyMinion()
-{	
+EnemyMinion::EnemyMinion() :
+	EnemyBase(ObjectTag::Enemy, ObjectPriority::Low, ColliderData::Kind::Capsule)
+{
 }
 
 EnemyMinion::~EnemyMinion()
 {
-	MV1DeleteModel(m_charModel);
+	MV1DeleteModel(m_model);
 }
 
 void EnemyMinion::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 {
+	// Physicsに登録
 	Collidable::Init();
-
 	m_rigidbody.Init();
 	m_rigidbody.SetPos(pos);
 
 	auto colData = std::dynamic_pointer_cast<CapsuleColliderData>(m_colliderData);
 	colData->m_startPos = pos;
-	colData->m_radius = kColRadius;
+	colData->m_radius = kCapsuleColRadius;
 
-	// スピードの初期化
-	m_findRadius = kFindRadius;
-	m_attackRadius = kAttackRadius;
-	m_hp = kHp;
-	m_hpRate = m_hp / kHp;
+	m_playerFindRadius = kPlayerFindRadius;
+	m_atkRadius = kAtkRadius;
+
+	// 各ステータスの初期化
+	m_status.m_hp = kHP;
+	m_status.m_maxHP = kHP;
+	m_status.m_atk = kDefaultAtk;
+	m_atkFrame = 0.0f;
 	m_isDead = false;
-	m_attackFrame = 0.0f;
 
-	m_charModel = MV1LoadModel("Data/Model/Enemy/Minion/Minion.mv1");
-	assert(m_charModel >= 0);
+	// モデルのロード
+	m_model = MV1LoadModel("Data/Model/Enemy/Minion/Minion.mv1");
+	assert(m_model >= 0);
 
-	MV1SetScale(m_charModel, VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale));
-	MV1SetPosition(m_charModel, pos.ToDxVECTOR());
-	MV1SetRotationXYZ(m_charModel, VGet(rot.x, rot.y, rot.z));
+	VECTOR modelScale = VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale);
+	MV1SetScale(m_model, modelScale);
+	MV1SetPosition(m_model, pos.ToDxVECTOR());
+	MV1SetRotationXYZ(m_model, VGet(rot.x, rot.y, rot.z));
 
-	m_anim.Init(m_charModel);
-	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, kAnimSpeed, true);
+	// アニメーター
+	m_anim.Init(m_model);
+	m_anim.AttachAnim(m_anim.GetNextAnim(), kFindAnimName, kDefaultAnimSpeed, true);
 
-	m_weapon = std::make_shared<EnemyMinionBlade>();
+	// 武器
+	m_weapon = std::make_shared<EnemyMinionWeapon>();
 	m_weapon->Init();
+}
+
+void EnemyMinion::Draw()
+{
+	if (m_isDead && m_model < 0)
+	{
+		return;
+	}
+
+#if _DEBUG
+	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), 10.0f, 16, 0x0000ff, 0x0000ff, true);
+	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_playerFindRadius, 16, 0xff00ff, 0xff00ff, false);
+	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kRunRadius, 16, 0xff00ff, 0xff00ff, false);
+	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_atkRadius, 16, 0xff00ff, 0xff00ff, false);
+
+#endif
+	MV1DrawModel(m_model);
+	m_weapon->Draw();
 }
 
 void EnemyMinion::Update(std::shared_ptr<Player> player)
 {
-	if (m_isDead && m_charModel < 0)
+	if (m_isDead && m_model < 0)
 	{
 		return;
 	}
@@ -145,83 +163,25 @@ void EnemyMinion::Update(std::shared_ptr<Player> player)
 	colPos.y += kColScale;
 	colData->m_startPos = colPos;
 
-	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
-}
-
-void EnemyMinion::Draw()
-{
-	if (m_isDead && m_charModel < 0)
-	{
-		return;
-	}
-
-#if _DEBUG
-	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), 10.0f, 16, 0x0000ff, 0x0000ff, true);
-	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_findRadius, 16, 0xff00ff, 0xff00ff, false);
-	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kRunRadius, 16, 0xff00ff, 0xff00ff, false);
-	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), m_attackRadius, 16, 0xff00ff, 0xff00ff, false);
-
-#endif
-	MV1DrawModel(m_charModel);
-	m_weapon->Draw();
-}
-
-void EnemyMinion::OnDamage()
-{
-	m_hp -= 1.0f;
-	m_hpRate = static_cast<float>(m_hp) / kHp;
-	m_hpRate = std::clamp(m_hpRate, 0.0f, 1.0f);
-
-	if (m_hp <= 0 && !m_isDead)
-	{
-		ChangeState(EnemyState::Dead, kAnimSpeed);
-	}
-	else
-	{
-		ChangeState(EnemyState::Hit, kHitAnimSpeed);
-	}
-}
-
-Vector3 EnemyMinion::GetScreenPos() const
-{
-	Vector3 worldPos = m_rigidbody.GetPos();
-	worldPos.y += 120.0f; // 頭上の高さ調整
-
-	VECTOR worldPosDx = worldPos.ToDxVECTOR();
-
-	// 3D→2D座標変換（戻り値がスクリーン座標）
-	VECTOR screenPosDx = ConvWorldPosToScreenPos(worldPosDx);
-
-	const int gaugeWidth = 100;
-	const int gaugeHeight = 10;
-
-	screenPosDx.x = screenPosDx.x - gaugeWidth * 0.5f;
-	screenPosDx.y = screenPosDx.y - gaugeHeight * 0.5f;
-
-	Vector3 screenPos =
-	{
-		screenPosDx.x, screenPosDx.y, screenPosDx.z
-	};
-
-	return screenPos;
+	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 }
 
 void EnemyMinion::FindUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Find));
+	m_weapon->Update(m_model, m_atkFrame, MinionAtk::kColTimingTable.at(EnemyState::Find));
 
 	float distance = (m_rigidbody.GetPos() - player->GetPos()).Length();
-	if (distance <= (m_findRadius + player->GetRadius()))
+	if (distance <= (m_playerFindRadius + player->GetRadius()))
 	{
-		ChangeState(EnemyState::Walk, kAnimSpeed);
+		ChangeState(EnemyState::Walk);
 	}
 }
 
 void EnemyMinion::WalkUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Chase));
+	m_weapon->Update(m_model, m_atkFrame, MinionAtk::kColTimingTable.at(EnemyState::Chase));
 
 	// プレイヤーへの方向ベクトル
 	Vector3 myPos = m_rigidbody.GetPos();
@@ -233,36 +193,36 @@ void EnemyMinion::WalkUpdate(std::shared_ptr<Player> player)
 	{
 		toPlayerDir.Normalize();
 		m_rigidbody.SetVelo(toPlayerDir * kWalkSpeed);
-		MV1SetPosition(m_charModel, myPos.ToDxVECTOR());
+		MV1SetPosition(m_model, myPos.ToDxVECTOR());
 
 		// 進行方向が0でなければ回転
 		if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
 		{
 			// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
 			float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
-			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 		}
 	}
 
 	float distance = (myPos - player->GetPos()).Length();
-	if (distance >= (m_findRadius + player->GetRadius()))
+	if (distance >= (m_playerFindRadius + player->GetRadius()))
 	{
-		ChangeState(EnemyState::Find, kAnimSpeed);
+		ChangeState(EnemyState::Find);
 	}
 	else if (distance <= (kRunRadius + player->GetRadius()))
 	{
-		ChangeState(EnemyState::Chase, kAnimSpeed);
+		ChangeState(EnemyState::Chase);
 	}
-	else if (distance <= (m_attackRadius + player->GetRadius()))
+	else if (distance <= (m_atkRadius + player->GetRadius()))
 	{
-		ChangeState(EnemyState::Attack, kAnimSpeed);
+		ChangeState(EnemyState::Attack);
 	}
 }
 
 void EnemyMinion::ChaseUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Chase));
+	m_weapon->Update(m_model, m_atkFrame, MinionAtk::kColTimingTable.at(EnemyState::Chase));
 
 	// プレイヤーへの方向ベクトル
 	Vector3 myPos = m_rigidbody.GetPos();
@@ -274,61 +234,61 @@ void EnemyMinion::ChaseUpdate(std::shared_ptr<Player> player)
 	{
 		toPlayerDir.Normalize();
 		m_rigidbody.SetVelo(toPlayerDir * kRunSpeed);
-		MV1SetPosition(m_charModel, myPos.ToDxVECTOR());
+		MV1SetPosition(m_model, myPos.ToDxVECTOR());
 
 		// 進行方向が0でなければ回転
 		if (m_rigidbody.GetVelo().x != 0.0f || m_rigidbody.GetVelo().z != 0.0f)
 		{
 			// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
 			float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
-			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 		}
 	}
 
 	float distance = (myPos - player->GetPos()).Length();
-	if (distance >= (m_findRadius + player->GetRadius()))
+	if (distance >= (m_playerFindRadius + player->GetRadius()))
 	{
-		ChangeState(EnemyState::Find, kAnimSpeed);
+		ChangeState(EnemyState::Find);
 	}
 
-	if (distance <= (m_attackRadius + player->GetRadius()))
+	if (distance <= (m_atkRadius + player->GetRadius()))
 	{
-		ChangeState(EnemyState::Attack, kAnimSpeed);
+		ChangeState(EnemyState::Attack);
 	}
 }
 
 void EnemyMinion::AttackUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(true);
-	++m_attackFrame;
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Attack));
+	++m_atkFrame;
+	m_weapon->Update(m_model, m_atkFrame, MinionAtk::kColTimingTable.at(EnemyState::Attack));
 
 	// プレイヤーへの方向ベクトル
 	Vector3 myPos = m_rigidbody.GetPos();
 	Vector3 dir = player->GetPos() - myPos;
 	dir.y = 0.0f;
 
-	if (m_attackFrame <= kAttackFrame)
+	if (m_atkFrame <= kAtkFrame)
 	{
-		++m_attackFrame;
+		++m_atkFrame;
 		if (dir.x != 0.0f || dir.z != 0.0f)
 		{
 			// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
 			float angleY = std::atan2(dir.x, -dir.z);
-			MV1SetRotationXYZ(m_charModel, VGet(0.0f, -angleY, 0.0f));
+			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 		}
 	}
 
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		float distance = (myPos - player->GetPos()).Length();
-		if (distance >= (m_findRadius + player->GetRadius()))
+		if (distance >= (m_playerFindRadius + player->GetRadius()))
 		{
-			ChangeState(EnemyState::Find, kAnimSpeed);
+			ChangeState(EnemyState::Find);
 		}
 		else
 		{
-			ChangeState(EnemyState::Chase, kAnimSpeed);
+			ChangeState(EnemyState::Chase);
 		}
 	}
 }
@@ -336,30 +296,30 @@ void EnemyMinion::AttackUpdate(std::shared_ptr<Player> player)
 void EnemyMinion::HitUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Hit));
+	m_weapon->Update(m_model, m_atkFrame, MinionAtk::kColTimingTable.at(EnemyState::Hit));
 
-	MV1SetPosition(m_charModel, m_rigidbody.GetPos().ToDxVECTOR());
+	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
-		ChangeState(EnemyState::Find, kAnimSpeed);
+		ChangeState(EnemyState::Find);
 	}
 }
 
 void EnemyMinion::DeadUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
-	m_weapon->Update(m_charModel, m_attackFrame, kColTimingTable.at(EnemyState::Dead));
+	player->SetSpecialGauge(kSpecialGaugePoint);
+	m_weapon->Update(m_model, m_atkFrame, MinionAtk::kColTimingTable.at(EnemyState::Dead));
 
 	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
-		if (m_charModel >= 0)
+		if (m_model >= 0)
 		{
-			MV1DeleteModel(m_charModel);
-			m_charModel = -1;
+			MV1DeleteModel(m_model);
+			m_model = -1;
 		}
-		player->SetSpecialGauge(kSpecialGaugePoint);
 		m_isDead = true;
 		return;
 	}
@@ -367,7 +327,7 @@ void EnemyMinion::DeadUpdate(std::shared_ptr<Player> player)
 
 const char* EnemyMinion::GetAnimName(EnemyState state) const
 {
-	switch (state)
+	switch(state)
 	{
 	case EnemyState::Find:
 		return kFindAnimName;
@@ -384,6 +344,25 @@ const char* EnemyMinion::GetAnimName(EnemyState state) const
 	default:
 		return "";
 		assert(0 && "存在しないアニメーション");
+	}
+}
+
+float EnemyMinion::GetAnimPlaySpeed(EnemyState state) const
+{
+	switch (state)
+	{
+	case EnemyState::Find:
+		return kDefaultAnimSpeed;
+	case EnemyState::Walk:
+		return kDefaultAnimSpeed;
+	case EnemyState::Chase:
+		return kDefaultAnimSpeed;
+	case EnemyState::Attack:
+		return kDefaultAnimSpeed;
+	case EnemyState::Hit:
+		return kHitAnimSpeed;
+	case EnemyState::Dead:
+		return kDefaultAnimSpeed;
 	}
 }
 

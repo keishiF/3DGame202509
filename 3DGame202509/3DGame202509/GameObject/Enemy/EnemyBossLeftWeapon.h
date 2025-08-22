@@ -2,11 +2,11 @@
 #include "Collidable.h"
 #include "EnemyBossAtkColTiming.h"
 
-class SubEnemyBossRightWeapon : public Collidable
+class EnemyBossLeftWeapon : public Collidable
 {
-public:
-	SubEnemyBossRightWeapon();
-	~SubEnemyBossRightWeapon();
+ public:
+	 EnemyBossLeftWeapon();
+	 ~EnemyBossLeftWeapon();
 
 	void Init();
 	void Update(int model, float currentFrame, const BossAtk::AtkTiming& timing);

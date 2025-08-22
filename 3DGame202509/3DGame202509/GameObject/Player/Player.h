@@ -1,11 +1,9 @@
 ﻿#pragma once
-#include "Animator.h"
-#include "Collidable.h"
-#include "Input.h"
-#include "Quaternion.h"
-#include "Vector3.h"
-#include <queue>
+#include "CharacterBase.h"
 
+/// <summary>
+/// プレイヤーの状態
+/// </summary>
 enum class PlayerState
 {
 	Idle,       // 待機
@@ -24,57 +22,35 @@ enum class PlayerState
 	Dead        // 死亡
 };
 
-class Effect;
 class EnemyBase;
-class PlayerBullet;
-class PlayerLeftWeapon;
-class PlayerRightWeapon;
-class Player : public Collidable
+class EnemyBase;
+class PlayerWeapon;
+class Player : public CharacterBase
 {
 public:
-	// コンストラクタとデストラクタ
 	Player();
-	virtual ~Player();
+	~Player();
 
-	// 初期化
-	void Init(Vector3& pos, const Vector3& rot, const Vector3& scale);
-	// 更新
-	void Update();
-	// 描画
-	void Draw();
+	virtual void Init(Vector3& pos, Vector3& rot, Vector3& scale) override;
+	virtual void Draw() override;
+	virtual void OnDamage(float atk) override;
 
 	// ゲッター
-	// 位置取得
-	Vector3 GetPos() const { return m_rigidbody.GetPos(); }
-	// 半径取得
-	float GetRadius() const { return m_radius; }
-	// モデル取得
-	int GetModel() const { return m_charModel; }
-	// HP取得
-	float GetHP() const { return m_hp; }
-	float GetHPRate() const { return m_hpRate; }
 	// スタミナ取得
 	float GetStamina() const { return m_stamina; }
-	float GetStaminaRate() const { return m_staminaRate; }
+	// 最大スタミナ取得
+	float GetMaxStamina() const { return m_maxStamina; }
 	// 必殺技ゲージ取得
 	float GetSpecialGauge() const { return m_specialGauge; }
-	float GetSpecialGaugeRate() const { return m_specialGaugeRate; }
-	// 現在の状態を取得
+	// 最大必殺技ゲージ取得
+	float GetMaxSpecialGauge() const { return m_maxSpecialGauge; }
+	// 状態取得
 	PlayerState GetPlayerState() const { return m_state; }
+	Vector3 GetPos() const { return m_rigidbody.GetPos(); }
 
-	// 必殺技ゲージを加算する関数
 	void SetSpecialGauge(int specialGaugePoint);
 
-	// ダメージを受けた時の処理をまとめる関数
-	void OnDamage();
-
-	// 死んでいるかどうか
-	bool IsDead() const { return m_isDead; }
-
-	// 当たった時の処理
-	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
-
-	// プレイヤーの状態
+	void Update();
 private:
 	PlayerState m_state;
 	void ChangeState(PlayerState newState);
@@ -109,46 +85,19 @@ private:
 	std::shared_ptr<EnemyBase> FindNearestEnemy(float radius);
 
 private:
-	// 正面ベクトル
-	Vector3 m_forward;
-
-	// プレイヤーのモデル
-	int m_charModel;
-	// プレイヤーの当たり判定
-	float m_radius;
-	// プレイヤーのHP
-	float m_hp;
-	float m_hpRate;
-	// プレイヤーのスタミナ
-	float m_stamina;
-	float m_staminaRate;
+	// スタミナ
+	float m_stamina = 0.0f;
+	// スタミナの最大量
+	float m_maxStamina = 0.0f;
 	// 必殺技ゲージ
-	float m_specialGauge;
-	float m_specialGaugeRate;
-	// プレイヤーのフラグ
-	bool m_isCombo;
-	bool m_isDead;
-
-	int m_attackPower;
-
-	// 経過フレームを測る
-	float m_frame;
-	int m_blinkFrame;
-	float m_attackFrame;
-
-	// エフェクトハンドル
-	int m_specialEffect;
-
-	// プレイヤーのアニメーション
-	Animator m_anim;
-
-	Quaternion m_currentRot;
-
-	std::vector<std::shared_ptr<PlayerBullet>> m_bullets;
-
-	std::shared_ptr<PlayerRightWeapon> m_rightWeapon;
-	//std::shared_ptr<PlayerLeftWeapon> m_leftWeapon;
-
-	std::weak_ptr<Effect> m_effect;
+	float m_specialGauge = 0.0f;
+	// 必殺技ゲージの最大値
+	float m_maxSpecialGauge = 0.0f;
+	// コンボフラグ
+	bool m_isCombo = false;
+	// 回転
+	Quaternion m_currentRot = { 1.0f, 0.0f, 0.0, 0.0f };
+	// 武器を持つ
+	std::shared_ptr<PlayerWeapon> m_weapon;
 };
 

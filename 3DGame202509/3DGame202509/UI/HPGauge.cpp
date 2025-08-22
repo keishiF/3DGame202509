@@ -45,7 +45,10 @@ void HPGauge::DrawPlayerHP()
 	auto player = gameObjectManager.GetPlayer();
 	if (!player) return;
 
-	float playerHPRate = player->GetHPRate();
+	float playerCurrentHP = player->GetStatusComp().m_hp;
+	float playerMaxHP = player->GetStatusComp().m_maxHP;
+	float playerHPRate = playerCurrentHP / playerMaxHP;
+	playerHPRate = std::clamp(playerHPRate, 0.0f, 1.0f);
 
 	DrawBox(kPlayerHPPosX, kPlayerHPPosY,
 		kPlayerHPPosX + kPlayerHPGaugeWidth, kPlayerHPPosY + kPlayerHPGaugeHeight,
@@ -67,7 +70,10 @@ void HPGauge::DrawBossHP()
 	auto boss = gameObjectManager.GetEnemyBoss();
 	if (!boss) return;
 
-	float bossHPRate = boss->GetHpRate();
+	float bossCurrentHP = boss->GetStatusComp().m_hp;
+	float bossMaxHP = boss->GetStatusComp().m_maxHP;
+	float bossHPRate = bossCurrentHP / bossMaxHP;
+	bossHPRate = std::clamp(bossHPRate, 0.0f, 1.0f);
 
 	float bossPosX = boss->GetScreenPos().x;
 	float bossPosY = boss->GetScreenPos().y;
@@ -96,7 +102,10 @@ void HPGauge::DrawMageHP()
 		// nullの時はcontinue
 		if (!mage) continue;
 
-		float mageHPRate = mage->GetHpRate();
+		float mageCurrentHP = mage->GetStatusComp().m_hp;
+		float mageMaxHP = mage->GetStatusComp().m_maxHP;
+		float mageHPRate = mageCurrentHP / mageMaxHP;
+		mageHPRate = std::clamp(mageHPRate, 0.0f, 1.0f);
 
 		// nullじゃなくてHPがないときもcontinue
 		if (mageHPRate <= 0.0f) continue;
@@ -129,7 +138,10 @@ void HPGauge::DrawMinionHP()
 		// nullの時はcontinue
 		if (!minion) continue;
 
-		float minionHPRate = minion->GetHpRate();
+		float minionCurrentHP = minion->GetStatusComp().m_hp;
+		float minionMaxHP = minion->GetStatusComp().m_maxHP;
+		float minionHPRate = minionCurrentHP / minionMaxHP;
+		minionHPRate = std::clamp(minionHPRate, 0.0f, 1.0f);
 
 		// HPがない場合はcontinue
 		if (minionHPRate <= 0.0f) continue;

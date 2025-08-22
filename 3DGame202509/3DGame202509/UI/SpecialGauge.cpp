@@ -33,7 +33,10 @@ void SpecialGauge::Draw()
 	int specialGaugePosY = Game::kScreenHeight - kSpecialGaugeHeight - kGaugeOffset;
 
 	// 必殺技ゲージ量
-	float specialGaugeRate = player->GetSpecialGaugeRate();
+	float playerCurrentSpecialGauge = player->GetSpecialGauge();
+	float playerMaxSpecialGauge = player->GetMaxSpecialGauge();
+	float playerSpecialGaugeRate = playerCurrentSpecialGauge / playerMaxSpecialGauge;
+	playerSpecialGaugeRate = std::clamp(playerSpecialGaugeRate, 0.0f, 1.0f);
 
 	DrawBox(specialGaugePosX, 
 		specialGaugePosY,
@@ -41,7 +44,7 @@ void SpecialGauge::Draw()
 		specialGaugePosY + kSpecialGaugeHeight,
 		0x808080, true);
 
-	int hpBarWidth = static_cast<int>(kSpecialGaugeWidth * specialGaugeRate);
+	int hpBarWidth = static_cast<int>(kSpecialGaugeWidth * playerSpecialGaugeRate);
 	DrawBox(specialGaugePosX, 
 		specialGaugePosY,
 		specialGaugePosX + hpBarWidth, 

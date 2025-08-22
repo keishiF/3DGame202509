@@ -6,7 +6,7 @@
 #include "ResultScene.h"
 #include "SceneController.h"
 #include "Stage/StageObjectManager.h"
-#include "SubGameObjectManager.h"
+#include "GameObjectManager.h"
 #include "TitleScene.h"
 #include "UIManager.h"
 #include <cassert>
@@ -27,12 +27,10 @@ GameScene::GameScene(SceneController& controller) :
 	m_fadeFrame(kFadeInterval),
 	m_blinkFrame(0),
 	m_gameObjectManager(GameObjectManager::Instance()),
-	m_subGameObjectManager(SubGameObjectManager::Instance()),
 	m_update(&GameScene::FadeInUpdate),
 	m_draw(&GameScene::FadeDraw)
 {
-	//m_gameObjectManager.Init();
-	m_subGameObjectManager.Init();
+	m_gameObjectManager.Init();
 
 	m_stageObjectManager = std::make_shared<StageObjectManager>();
 	m_stageObjectManager->Init();
@@ -42,8 +40,7 @@ GameScene::GameScene(SceneController& controller) :
 
 GameScene::~GameScene()
 {
-	//m_gameObjectManager.Finalize();
-	m_subGameObjectManager.Finalize();
+	m_gameObjectManager.Finalize();
 	if (m_stageObjectManager)
 	{
 		m_stageObjectManager->Finalize(); 
@@ -65,7 +62,7 @@ void GameScene::NormalUpdate()
 	++m_frame;
 	++m_blinkFrame;
 
-	/*m_gameObjectManager.Update();
+	m_gameObjectManager.Update();
 	if (m_gameObjectManager.IsGameOver())
 	{
 		m_update = &GameScene::FadeOutUpdate;
@@ -73,20 +70,6 @@ void GameScene::NormalUpdate()
 		m_fadeFrame = 0;
 	}
 	else if (m_gameObjectManager.IsClear())
-	{
-		m_update = &GameScene::FadeOutUpdate;
-		m_draw = &GameScene::FadeDraw;
-		m_fadeFrame = 0;
-	}*/
-
-	m_subGameObjectManager.Update();
-	if (m_subGameObjectManager.IsGameOver())
-	{
-		m_update = &GameScene::FadeOutUpdate;
-		m_draw = &GameScene::FadeDraw;
-		m_fadeFrame = 0;
-	}
-	else if (m_subGameObjectManager.IsClear())
 	{
 		m_update = &GameScene::FadeOutUpdate;
 		m_draw = &GameScene::FadeDraw;
@@ -126,18 +109,15 @@ void GameScene::NormalDraw()
 	printf("frame %d\n", m_frame);
 
 	m_stageObjectManager->Draw();
+	m_gameObjectManager.Draw();
 	m_uiManager->Draw();
-
-	//m_gameObjectManager.Draw();
-	m_subGameObjectManager.Draw();
 }
 
 void GameScene::FadeDraw()
 {
 	m_stageObjectManager->Draw();
+	m_gameObjectManager.Draw();
 	m_uiManager->Draw();
-	//m_gameObjectManager.Draw();
-	m_subGameObjectManager.Draw();
 
 	float rate = static_cast<float>(m_fadeFrame) / static_cast<float>(kFadeInterval);
 	SetDrawBlendMode(DX_BLENDMODE_MULA, static_cast<int>(rate * 255.0f));

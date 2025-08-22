@@ -1,8 +1,5 @@
 ﻿#pragma once
-#include "Animator.h"
-#include "Collidable.h"
-#include "Physics.h"
-#include "Vector3.h"
+#include "CharacterBase.h"
 
 enum class EnemyState
 {
@@ -19,37 +16,33 @@ enum class EnemyState
 };
 
 class Player;
-class EnemyBase : public Collidable
+class EnemyBase : public CharacterBase
 {
 public:
-	EnemyBase();
+	EnemyBase(ObjectTag tag, ObjectPriority priority, ColliderData::Kind colliderKind);
 	virtual ~EnemyBase();
 
-	// 初期化
-	virtual void Init(Vector3& pos, Vector3& rot, Vector3& scale) abstract;
-	// 更新
+	virtual void Init(Vector3& pos, Vector3& rot, Vector3& scale) override;
+	virtual void Draw() override;
+	virtual void OnDamage(float atk) override;
+
 	virtual void Update(std::shared_ptr<Player> player) abstract;
-	// 描画
-	virtual void Draw() abstract;
 
-	// 位置を取得
-	Vector3 GetPos() const;
-	// ダメージを受けた時の処理
-	virtual void OnDamage() abstract;
-	// 死んでいるかどうか
-	bool IsDead() const { return m_isDead; }
-
-	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
+	Vector3 GetPos() const { return m_rigidbody.GetPos(); }
+	Vector3 GetScreenPos() const;
 
 protected:
 	EnemyState m_state;
 	EnemyState m_prevState;
 	virtual const char* GetAnimName(EnemyState state) const abstract;
+	virtual float GetAnimPlaySpeed(EnemyState state) const abstract;
 	virtual bool IsLoopAnim(EnemyState state) const abstract;
-	void ChangeState(EnemyState newState, float playSpeed);
+	void ChangeState(EnemyState newState);
 
 	// Playerを探している状態
 	virtual void FindUpdate(std::shared_ptr<Player> player) abstract;
+	// 歩き状態
+	virtual void WalkUpdate(std::shared_ptr<Player> player) abstract;
 	// Playerを見つけて追いかけている状態
 	virtual void ChaseUpdate(std::shared_ptr<Player> player) abstract;
 	// 攻撃状態
@@ -59,23 +52,9 @@ protected:
 	// 死亡状態
 	virtual void DeadUpdate(std::shared_ptr<Player> player) abstract;
 
-protected:
-	// キャラと武器のモデル
-	int m_charModel;
-	int m_weaponModel;
-
-	// プレイヤーを探知する範囲
-	float m_findRadius;
-	// 攻撃状態に移行できる範囲
-	float m_attackRadius;
-	// HP
-	float m_hp;
-	float m_hpRate;
-	// 死んでいるかどうか
-	bool m_isDead;
-	// 攻撃フレーム
-	float m_attackFrame;
-	// アニメーション管理
-	Animator m_anim;
+	// プレイヤーを探知できる範囲
+	float m_playerFindRadius = 0.0f;
+	// 攻撃に移行できる範囲
+	float m_atkRadius = 0.0f;
 };
 
