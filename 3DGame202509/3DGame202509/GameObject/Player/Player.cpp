@@ -15,8 +15,6 @@ namespace
 	constexpr float kHP = 20;
 	// 攻撃力
 	constexpr float kDefaultAtk = 1.0f;
-	// 必殺技の攻撃力
-	constexpr float kSpecialAtk = 10.0f;
 	// スタミナの初期値、最大値
 	constexpr float kStamina = 100.0f;
 	// 待機状態、歩き状態で毎フレーム回復するスタミナ
@@ -948,8 +946,6 @@ void Player::ShotUpdate()
 
 void Player::SpecialUpdate()
 {
-	m_status.m_atk = kSpecialAtk;
-
 	++m_atkFrame;
 	SetActive(false);
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::Special), true);

@@ -7,7 +7,7 @@ namespace
 {
 	// 球の当たり判定の半径
 	constexpr float kRadius = 100.0f;
-	constexpr float kSpecialRadius = 1500.0f;
+	constexpr float kSpecialRadius = 2000.0f;
 
 	// モデルの拡大値
 	constexpr float kBladeModelScale = 0.01f;
