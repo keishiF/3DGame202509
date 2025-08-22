@@ -1,68 +1,68 @@
-ï»¿#include "GameObjectManager.h"
+#include "SubGameObjectManager.h"
 #include "Physics.h"
-#include "Player/Player.h"
-#include "Enemy/EnemyBase.h"
-#include "Enemy/EnemyMinion.h"
-#include "Enemy/EnemyMage.h"
-#include "Enemy/EnemyBoss.h"
+#include "SubPlayer/SubPlayer.h"
+#include "SubEnemy/SubEnemyBase.h"
+#include "SubEnemy/SubEnemyMage.h"
+#include "SubEnemy/SubEnemyMinion.h"
+#include "SubEnemy/SubEnemyBoss.h"
 #include "Camera/Camera.h"
 #include "SkyDome/SkyDome.h"
 #include "TransformDataLoader.h"
 
-GameObjectManager::GameObjectManager() :
+SubGameObjectManager::SubGameObjectManager() :
 	m_isClear(false),
 	m_isGameOver(false)
 {
 }
 
-GameObjectManager::~GameObjectManager()
+SubGameObjectManager::~SubGameObjectManager()
 {
 }
 
-void GameObjectManager::Init()
+void SubGameObjectManager::Init()
 {
 	TransformDataLoader loader;
 	auto transformDataList = loader.LoadDataCSV("Data/CSV/CharacterTransformData.csv");
 
 	for (const auto& data : transformDataList)
 	{
-		// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåãŒKnightã ã£ãŸã‚‰
+		// ƒIƒuƒWƒFƒNƒg–¼‚ªKnight‚¾‚Á‚½‚ç
 		if (data.name == "Knight")
 		{
-			// Playerã«é…ç½®ãƒ‡ãƒ¼ã‚¿ã‚’æ¸¡ã—ã¦åˆæœŸåŒ–
-			m_player   = std::make_shared<Player>();
-			Vector3 pos   = { data.pos.x, data.pos.y, data.pos.z };
-			Vector3 rot   = { data.rot.x, data.rot.y, data.rot.z };
+			// Player‚É”z’uƒf[ƒ^‚ğ“n‚µ‚Ä‰Šú‰»
+			m_player = std::make_shared<SubPlayer>();
+			Vector3 pos = { data.pos.x, data.pos.y, data.pos.z };
+			Vector3 rot = { data.rot.x, data.rot.y, data.rot.z };
 			Vector3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			m_player->Init(pos, rot, scale);
 		}
-		// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåãŒSkeleton_Minionã ã£ãŸã‚‰
+		// ƒIƒuƒWƒFƒNƒg–¼‚ªSkeleton_Minion‚¾‚Á‚½‚ç
 		else if (data.name == "Skeleton_Minion")
 		{
-			// EnemyMinionã«é…ç½®ãƒ‡ãƒ¼ã‚¿ã‚’æ¸¡ã—ã¦åˆæœŸåŒ–
-			auto minion = std::make_shared<EnemyMinion>();
+			// EnemyMinion‚É”z’uƒf[ƒ^‚ğ“n‚µ‚Ä‰Šú‰»
+			auto minion = std::make_shared<SubEnemyMinion>();
 			Vector3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vector3 rot = { data.rot.x, data.rot.y, data.rot.z };
 			Vector3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			minion->Init(pos, rot, scale);
 			m_minions.emplace_back(minion);
 		}
-		// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåãŒSkeleton_Mageã ã£ãŸã‚‰
+		// ƒIƒuƒWƒFƒNƒg–¼‚ªSkeleton_Mage‚¾‚Á‚½‚ç
 		else if (data.name == "Skeleton_Mage")
 		{
-			// EnemyMageã«é…ç½®ãƒ‡ãƒ¼ã‚¿ã‚’æ¸¡ã—ã¦åˆæœŸåŒ–
-			auto mage = std::make_shared<EnemyMage>();
+			// EnemyMage‚É”z’uƒf[ƒ^‚ğ“n‚µ‚Ä‰Šú‰»
+			auto mage = std::make_shared<SubEnemyMage>();
 			Vector3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vector3 rot = { data.rot.x, data.rot.y, data.rot.z };
 			Vector3 scale = { data.scale.x, data.scale.y , data.scale.z };
 			mage->Init(pos, rot, scale);
 			m_mages.emplace_back(mage);
 		}
-		// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåãŒSkeleton_Warriorã ã£ãŸã‚‰
+		// ƒIƒuƒWƒFƒNƒg–¼‚ªSkeleton_Warrior‚¾‚Á‚½‚ç
 		else if (data.name == "Skeleton_Warrior")
 		{
-			// EnemyBossã«é…ç½®ãƒ‡ãƒ¼ã‚¿ã‚’æ¸¡ã—ã¦åˆæœŸåŒ–
-			m_boss = std::make_shared<EnemyBoss>();
+			// EnemyBoss‚É”z’uƒf[ƒ^‚ğ“n‚µ‚Ä‰Šú‰»
+			m_boss = std::make_shared<SubEnemyBoss>();
 			Vector3 pos = { data.pos.x, data.pos.y, data.pos.z };
 			Vector3 rot = { data.rot.x, data.rot.y, data.rot.z };
 			Vector3 scale = { data.scale.x, data.scale.y , data.scale.z };
@@ -82,7 +82,7 @@ void GameObjectManager::Init()
 	m_skyDome->Init(m_camera);
 }
 
-void GameObjectManager::Update()
+void SubGameObjectManager::Update()
 {
 	if (!m_player) return;
 
@@ -117,7 +117,7 @@ void GameObjectManager::Update()
 	m_isClear = m_boss->IsDead();
 }
 
-void GameObjectManager::Draw()
+void SubGameObjectManager::Draw()
 {
 #ifdef _DEBUG
 	Physics::Instance().DebugDraw();
@@ -140,7 +140,7 @@ void GameObjectManager::Draw()
 	m_boss->Draw();
 }
 
-void GameObjectManager::Finalize()
+void SubGameObjectManager::Finalize()
 {
 	if (m_player) m_player->Final();
 	if (m_boss) m_boss->Final();
@@ -153,27 +153,27 @@ void GameObjectManager::Finalize()
 	m_skyDome = nullptr;
 }
 
-std::vector<std::shared_ptr<EnemyBase>> GameObjectManager::GetEnemies()  
-{  
-    std::vector<std::shared_ptr<EnemyBase>> result;  
-    for (const auto& minion : m_minions)   
-    {  
-        if (minion) result.push_back(minion);  
-    }  
-    for (const auto& mage : m_mages)   
-    {  
-        if (mage) result.push_back(mage);  
-    }  
-    if (m_boss)
-	{  
-        result.push_back(m_boss);  
-    }  
-    return result;  
+std::vector<std::shared_ptr<SubEnemyBase>> SubGameObjectManager::GetEnemies()
+{
+	std::vector<std::shared_ptr<SubEnemyBase>> result;
+	for (const auto& minion : m_minions)
+	{
+		if (minion) result.push_back(minion);
+	}
+	for (const auto& mage : m_mages)
+	{
+		if (mage) result.push_back(mage);
+	}
+	if (m_boss)
+	{
+		result.push_back(m_boss);
+	}
+	return result;
 }
 
-GameObjectManager& GameObjectManager::Instance()
+SubGameObjectManager& SubGameObjectManager::Instance()
 {
-	// TODO: return ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¡ãƒ³ãƒˆã‚’ã“ã“ã«æŒ¿å…¥ã—ã¾ã™
-	static GameObjectManager instance;
+	// TODO: return ƒXƒe[ƒgƒƒ“ƒg‚ğ‚±‚±‚É‘}“ü‚µ‚Ü‚·
+	static SubGameObjectManager instance;
 	return instance;
 }

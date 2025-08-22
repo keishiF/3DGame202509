@@ -6,6 +6,8 @@
 class GameObjectManager;
 class Physics;
 class StageObjectManager;
+class SubGameObjectManager;
+class UIManager;
 class GameScene final : public SceneBase
 {
 public:
@@ -27,8 +29,10 @@ private:
 
 	std::shared_ptr<Physics> m_physics;
 	std::shared_ptr<StageObjectManager> m_stageObjectManager;
+	std::shared_ptr<UIManager> m_uiManager;
 
 	GameObjectManager& m_gameObjectManager;
+	SubGameObjectManager& m_subGameObjectManager;
 
 	// 通常時更新処理
 	void NormalUpdate();

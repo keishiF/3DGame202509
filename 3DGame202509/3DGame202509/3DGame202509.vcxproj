@@ -178,6 +178,7 @@
     <ClCompile Include="GameObject\SubEnemy\SubEnemyBossRightWeapon.cpp" />
     <ClCompile Include="GameObject\SubEnemy\SubEnemyMage.cpp" />
     <ClCompile Include="GameObject\SubEnemy\SubEnemyMinion.cpp" />
+    <ClCompile Include="GameObject\SubGameObjectManager.cpp" />
     <ClCompile Include="GameObject\SubPlayer\PlayerWeapon.cpp" />
     <ClCompile Include="GameObject\SubPlayer\SubPlayer.cpp" />
     <ClCompile Include="General\Application.cpp" />
@@ -237,6 +238,7 @@
     <ClInclude Include="GameObject\SubEnemy\SubEnemyBossRightWeapon.h" />
     <ClInclude Include="GameObject\SubEnemy\SubEnemyMage.h" />
     <ClInclude Include="GameObject\SubEnemy\SubEnemyMinion.h" />
+    <ClInclude Include="GameObject\SubGameObjectManager.h" />
     <ClInclude Include="GameObject\SubPlayer\PlayerAtkColTiming.h" />
     <ClInclude Include="GameObject\SubPlayer\PlayerWeapon.h" />
     <ClInclude Include="GameObject\SubPlayer\SubPlayer.h" />

@@ -1,4 +1,5 @@
 ﻿#include "CapsuleColliderData.h"
+#include "Enemy/EnemyBase.h"
 #include "SubEnemy/SubEnemyBase.h"
 #include "GameObjectManager.h"
 #include "Input.h"
@@ -134,6 +135,9 @@ void SubPlayer::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	// アニメーター
 	m_anim.Init(m_model);
 	m_anim.AttachAnim(m_anim.GetNextAnim(), kIdleAnimName, kIdleAnimSpeed, true);
+
+	m_weapon = std::make_shared<PlayerWeapon>();
+	m_weapon->Init();
 }
 
 void SubPlayer::Draw()
@@ -151,6 +155,7 @@ void SubPlayer::Draw()
 		DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kAttackOffsetRadius, 16, 0xff0000, 0xff0000, false);
 #endif
 		MV1DrawModel(m_model);
+		m_weapon->Draw();
 	}
 }
 
@@ -1039,12 +1044,12 @@ void SubPlayer::RotateToNearestEnemy(float radius)
 	}
 }
 
-std::shared_ptr<SubEnemyBase> SubPlayer::FindNearestEnemy(float radius)
+std::shared_ptr<EnemyBase> SubPlayer::FindNearestEnemy(float radius)
 {
-	std::shared_ptr<SubEnemyBase> nearest = nullptr;
+	std::shared_ptr<EnemyBase> nearest = nullptr;
 	float minDist = radius;
 
-	auto enemies = GameObjectManager::Instance().GetSubEnemies();
+	auto enemies = GameObjectManager::Instance().GetEnemies();
 	Vector3 myPos = m_rigidbody.GetPos();
 
 	for (auto& enemy : enemies)

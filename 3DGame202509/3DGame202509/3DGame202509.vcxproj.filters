@@ -263,6 +263,9 @@
     <ClCompile Include="GameObject\SubEnemy\SubEnemyBossRightWeapon.cpp">
       <Filter>ソース ファイル\GameObject\SubEnemy</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject\SubGameObjectManager.cpp">
+      <Filter>ソース ファイル\GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="General\Application.h">
@@ -450,6 +453,9 @@
     </ClInclude>
     <ClInclude Include="GameObject\SubEnemy\SubEnemyBossRightWeapon.h">
       <Filter>ヘッダー ファイル\GameObject\SubEnemy</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\SubGameObjectManager.h">
+      <Filter>ヘッダー ファイル\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

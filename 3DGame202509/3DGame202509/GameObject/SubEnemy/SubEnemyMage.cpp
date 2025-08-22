@@ -37,13 +37,13 @@ namespace
 
 	// アニメーション名
 	// 待機
-	const char* kFindAnimName = "2H_Melee_Idle";
+	const char* kFindAnimName = "Idle_B";
 	// 歩き
 	const char* kWalkAnimName = "Walking_D_Skeletons";
 	// 発見
-	const char* kChaseAnimName = "Running_C";
+	const char* kChaseAnimName = "Running_B";
 	// 攻撃
-	const char* kAttackAnimName = "1H_Melee_Attack_Slice_Diagonal";
+	const char* kAttackAnimName = "1H_Melee_Attack_Stab";
 	// 被弾
 	const char* kHitAnimName = "Hit_B";
 	// 死亡
@@ -59,7 +59,7 @@ namespace
 }
 
 SubEnemyMage::SubEnemyMage() :
-	SubEnemyBase(ObjectTag::Enemy, ObjectPriority::Low, ColliderData::Kind::Polygon)
+	SubEnemyBase(ObjectTag::Enemy, ObjectPriority::Low, ColliderData::Kind::Capsule)
 {
 }
 
@@ -90,8 +90,10 @@ void SubEnemyMage::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_isDead = false;
 
 	// モデルのロード
-	m_model = MV1LoadModel("Data/Model/Enemy/Minion/Minion.mv1");
+	m_model = MV1LoadModel("Data/Model/Enemy/Mage/Mage.mv1");
 	assert(m_model >= 0);
+	m_weaponModel = MV1LoadModel("Data/Model/Enemy/Mage/Staff.mv1");
+	assert(m_weaponModel >= 0);
 
 	VECTOR modelScale = VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale);
 	MV1SetScale(m_model, modelScale);
@@ -200,6 +202,27 @@ void SubEnemyMage::Update(std::shared_ptr<SubPlayer> player)
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
 	m_anim.UpdateAnimBlend();
+
+	// アタッチするモデルのMV1SetMatrixの設定を無効化する
+	MV1SetMatrix(m_weaponModel, MGetIdent());
+	// アタッチするモデルのフレームの座標を取得する
+	VECTOR position = MV1GetFramePosition(m_weaponModel, 0);
+	// アタッチするモデルを,フレームの座標を原点にするための平行移動行列を作成
+	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
+	// アタッチされるモデルのフレームの行列を取得
+	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(m_model, 14);
+	// アタッチするモデルの拡大行列を取得
+	MATRIX scaleMat = MGetScale(VGet(kWeaponModelScale, kWeaponModelScale, kWeaponModelScale));
+	// アタッチするモデルの回転行列を取得
+	MATRIX yMat = MGetRotY(DX_PI_F);
+	// 各行列を合成
+	MATRIX mixMat = MGetIdent();
+	mixMat = MMult(transMat, mixMat);
+	mixMat = MMult(frameMat, mixMat);
+	mixMat = MMult(scaleMat, mixMat);
+	mixMat = MMult(yMat, mixMat);
+	// 合成した行列をモデルにセット
+	MV1SetMatrix(m_weaponModel, mixMat);
 
 	switch (m_state)
 	{
