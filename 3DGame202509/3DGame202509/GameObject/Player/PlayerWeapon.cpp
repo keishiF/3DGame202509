@@ -7,7 +7,7 @@ namespace
 {
 	// 球の当たり判定の半径
 	constexpr float kRadius = 100.0f;
-	constexpr float kSpecialRadius = 500.0f;
+	constexpr float kSpecialRadius = 1500.0f;
 
 	// モデルの拡大値
 	constexpr float kBladeModelScale = 0.01f;
@@ -43,7 +43,7 @@ void PlayerWeapon::Update(int model, float currentFrame, const AtkTiming& timing
 		// 必殺技状態に移行
 		SpecialUpdate(model);
 	}
-	if (currentFrame >= timing.start && currentFrame < timing.end && !specialFlag)
+	else if (currentFrame >= timing.start && currentFrame < timing.end && !specialFlag)
 	{
 		AttackUpdate(model); // 攻撃判定ON
 	}
