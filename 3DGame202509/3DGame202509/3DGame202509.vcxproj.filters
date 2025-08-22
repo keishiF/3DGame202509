@@ -113,9 +113,6 @@
     <ClCompile Include="MyLib\Input.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\Player\Player2.cpp">
-      <Filter>ソース ファイル\GameObject\Player</Filter>
-    </ClCompile>
     <ClCompile Include="MyLib\Physics.cpp">
       <Filter>ソース ファイル\MyLib</Filter>
     </ClCompile>
@@ -255,9 +252,6 @@
     </ClInclude>
     <ClInclude Include="MyLib\Input.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\Player\Player2.h">
-      <Filter>ヘッダー ファイル\GameObject\Player</Filter>
     </ClInclude>
     <ClInclude Include="MyLib\Physics.h">
       <Filter>ヘッダー ファイル\MyLib</Filter>

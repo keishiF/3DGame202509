@@ -23,7 +23,6 @@ enum class PlayerState
 };
 
 class EnemyBase;
-class EnemyBase;
 class PlayerBullet;
 class PlayerWeapon;
 class Player : public CharacterBase

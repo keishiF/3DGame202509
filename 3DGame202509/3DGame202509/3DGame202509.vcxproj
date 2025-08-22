@@ -162,7 +162,6 @@
     <ClCompile Include="GameObject\Enemy\EnemyBossLeftWeapon.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyBossRightWeapon.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyMage.cpp" />
-    <ClCompile Include="GameObject\Player\Player2.cpp" />
     <ClCompile Include="GameObject\Player\PlayerWeapon.cpp" />
     <ClCompile Include="GameObject\Player\Player.cpp" />
     <ClCompile Include="GameObject\SkyDome\SkyDome.cpp" />
@@ -213,7 +212,6 @@
     <ClInclude Include="GameObject\Enemy\EnemyBossLeftWeapon.h" />
     <ClInclude Include="GameObject\Enemy\EnemyBossRightWeapon.h" />
     <ClInclude Include="GameObject\Enemy\EnemyMage.h" />
-    <ClInclude Include="GameObject\Player\Player2.h" />
     <ClInclude Include="GameObject\Player\PlayerAtkColTiming.h" />
     <ClInclude Include="GameObject\Player\PlayerWeapon.h" />
     <ClInclude Include="GameObject\Player\Player.h" />

@@ -269,7 +269,6 @@ void Player::Update()
 		if (++m_frame >= kSpecialGaugeTime)
 		{
 			m_specialGauge += kTimeSpecialGauge;
-			//m_specialGaugeRate = std::clamp(m_specialGaugeRate, 0.0f, 1.0f);
 
 			m_frame = 0.0f;
 		}
@@ -397,7 +396,6 @@ void Player::IdleUpdate()
 		ChangeState(PlayerState::Shot);
 	}
 
-#ifdef _DEBUG
 	// 左スティックを押し込んだ時に必殺技ゲージが最大でなければ最大にする
 	if (input.IsPress("LPush"))
 	{
@@ -406,22 +404,12 @@ void Player::IdleUpdate()
 			m_specialGauge += kMaxSpecialGauge;
 		}
 	}
-#endif
 
 	// LBボタンの入力があれば必殺技状態に移行する
 	if (input.IsTrigger("Special"))
 	{
-		if (m_specialGauge < kMaxSpecialGauge)
-		{
-#ifdef _DEBUG
-			printfDx("必殺技打てないよ！\n");
-#endif
-		}
 		if (m_specialGauge >= kMaxSpecialGauge)
 		{
-#ifdef _DEBUG
-			printfDx("必殺技発動！\n");
-#endif
 			ChangeState(PlayerState::Special);
 		}
 	}

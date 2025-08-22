@@ -60,6 +60,9 @@ namespace
 }
 
 EnemyMage::EnemyMage() :
+	m_angle(0.0f),
+	m_rotSpeed(1.5f),
+	m_angleMax(DX_PI_F / 4.0f),
 	EnemyBase(ObjectTag::Enemy, ObjectPriority::Low, ColliderData::Kind::Capsule)
 {
 }
