@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "EnemyBase.h"
 
+class EnemyMageBullet;
 class EnemyMage : public EnemyBase
 {
 public:
@@ -38,5 +39,7 @@ private:
 	float m_angle = 0.0f;
 	float m_rotSpeed = 0.0f;
 	float m_angleMax = 0.0f;
+
+	std::vector<std::shared_ptr<EnemyMageBullet>> m_bullets;
 };
 

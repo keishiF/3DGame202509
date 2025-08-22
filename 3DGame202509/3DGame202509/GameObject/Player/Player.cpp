@@ -1,11 +1,12 @@
-﻿#include "CapsuleColliderData.h"
+﻿#include "Bullet/PlayerBullet.h"
+#include "CapsuleColliderData.h"
 #include "Enemy/EnemyBase.h"
 #include "Enemy/EnemyBase.h"
 #include "GameObjectManager.h"
 #include "Input.h"
+#include "Player.h"
 #include "PlayerAtkColTiming.h"
 #include "PlayerWeapon.h"
-#include "Player.h"
 
 namespace
 {
@@ -51,6 +52,9 @@ namespace
 	constexpr float kColScale = 140.0f;
 	// 攻撃をある程度敵の方向に向かせれる範囲
 	constexpr float kAttackOffsetRadius = 230.0f;
+
+	// 弾を生成するタイミング
+	constexpr float kShotTiming = 10.0f;
 
 	// アニメーション名
 	// 待機
@@ -138,6 +142,8 @@ void Player::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 
 	m_weapon = std::make_shared<PlayerWeapon>();
 	m_weapon->Init();
+
+
 }
 
 void Player::Draw()
@@ -323,6 +329,22 @@ void Player::Update()
 	float angleY = -rotVec.y;
 	m_forward = Vector3(std::sin(angleY), 0.0f, -std::cos(angleY));
 	m_forward.Normalize();
+
+	for (auto& bullet : m_bullets)
+	{
+		bullet->Update();
+	}
+	m_bullets.erase(std::remove_if(m_bullets.begin(), m_bullets.end(), [this](const std::shared_ptr<PlayerBullet>& b)
+	{
+			if (b->IsDead())
+			{
+				b->Final();
+				return true;
+			}
+			return false;
+		}),
+		m_bullets.end()
+	);
 }
 
 void Player::IdleUpdate()
@@ -898,16 +920,16 @@ void Player::ShotUpdate()
 	++m_atkFrame;
 	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::Shot), false);
 
-	//if (m_atkFrame == kShotTiming)
-	//{
-	//	// 弾を生成
-	//	Vector3 myPos = m_rigidbody.GetPos();
-	//	myPos.y += 50.0f;
+	if (m_atkFrame == kShotTiming)
+	{
+		// 弾を生成
+		Vector3 myPos = m_rigidbody.GetPos();
+		myPos.y += 50.0f;
 
-	//	auto bullet = std::make_shared<PlayerBullet>();
-	//	bullet->Init(myPos, m_forward);
-	//	m_bullets.push_back(bullet);
-	//}
+		auto bullet = std::make_shared<PlayerBullet>();
+		bullet->Init(myPos, m_forward);
+		m_bullets.push_back(bullet);
+	}
 
 	if (m_anim.GetNextAnim().isEnd)
 	{

@@ -24,6 +24,7 @@ enum class PlayerState
 
 class EnemyBase;
 class EnemyBase;
+class PlayerBullet;
 class PlayerWeapon;
 class Player : public CharacterBase
 {
@@ -100,5 +101,7 @@ private:
 	Quaternion m_currentRot = { 1.0f, 0.0f, 0.0, 0.0f };
 	// 武器を持つ
 	std::shared_ptr<PlayerWeapon> m_weapon;
+	// 弾を持つ
+	std::vector<std::shared_ptr<PlayerBullet>> m_bullets;
 };
 

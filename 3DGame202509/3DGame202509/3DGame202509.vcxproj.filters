@@ -84,6 +84,12 @@
     <Filter Include="ヘッダー ファイル\UI">
       <UniqueIdentifier>{223cc11c-7680-4b08-94e5-97780fbb34c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\GameObject\Bullet">
+      <UniqueIdentifier>{73b7c076-00bb-42d2-867c-94c615cc5a9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameObject\Bullet">
+      <UniqueIdentifier>{b3074c23-73ad-4927-b8ec-aae5bb7615ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="General\Application.cpp">
@@ -185,7 +191,7 @@
     <ClCompile Include="UI\SpecialGauge.cpp">
       <Filter>ソース ファイル\UI</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\Player\PlayerBullet.cpp">
+    <ClCompile Include="GameObject\Player\oldPlayerBullet.cpp">
       <Filter>ソース ファイル\GameObject\Player</Filter>
     </ClCompile>
     <ClCompile Include="GameObject\StatusComponent.cpp">
@@ -220,6 +226,15 @@
     </ClCompile>
     <ClCompile Include="GameObject\Enemy\EnemyMage.cpp">
       <Filter>ソース ファイル\GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletBase.cpp">
+      <Filter>ソース ファイル\GameObject\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Bullet\PlayerBullet.cpp">
+      <Filter>ソース ファイル\GameObject\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Bullet\EnemyMageBullet.cpp">
+      <Filter>ソース ファイル\GameObject\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -334,7 +349,7 @@
     <ClInclude Include="UI\SpecialGauge.h">
       <Filter>ヘッダー ファイル\UI</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\Player\PlayerBullet.h">
+    <ClInclude Include="GameObject\Player\oldPlayerBullet.h">
       <Filter>ヘッダー ファイル\GameObject\Player</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\StatusComponent.h">
@@ -378,6 +393,15 @@
     </ClInclude>
     <ClInclude Include="GameObject\Enemy\EnemyMage.h">
       <Filter>ヘッダー ファイル\GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletBase.h">
+      <Filter>ヘッダー ファイル\GameObject\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Bullet\EnemyMageBullet.h">
+      <Filter>ヘッダー ファイル\GameObject\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Bullet\PlayerBullet.h">
+      <Filter>ヘッダー ファイル\GameObject\Bullet</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

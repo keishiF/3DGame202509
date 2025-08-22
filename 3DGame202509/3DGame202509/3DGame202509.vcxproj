@@ -148,8 +148,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animator\Animator.cpp" />
+    <ClCompile Include="BulletBase.cpp" />
     <ClCompile Include="Effect\Effect.cpp" />
     <ClCompile Include="Effect\EffectManager.cpp" />
+    <ClCompile Include="GameObject\Bullet\EnemyMageBullet.cpp" />
+    <ClCompile Include="GameObject\Bullet\PlayerBullet.cpp" />
     <ClCompile Include="GameObject\Camera\Camera.cpp" />
     <ClCompile Include="GameObject\CharacterBase.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyBase.cpp" />
@@ -160,7 +163,7 @@
     <ClCompile Include="GameObject\Enemy\EnemyBossRightWeapon.cpp" />
     <ClCompile Include="GameObject\Enemy\EnemyMage.cpp" />
     <ClCompile Include="GameObject\Player\Player2.cpp" />
-    <ClCompile Include="GameObject\Player\PlayerBullet.cpp" />
+    <ClCompile Include="GameObject\Player\oldPlayerBullet.cpp" />
     <ClCompile Include="GameObject\Player\PlayerWeapon.cpp" />
     <ClCompile Include="GameObject\Player\Player.cpp" />
     <ClCompile Include="GameObject\SkyDome\SkyDome.cpp" />
@@ -195,8 +198,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animator\Animator.h" />
+    <ClInclude Include="BulletBase.h" />
     <ClInclude Include="Effect\Effect.h" />
     <ClInclude Include="Effect\EffectManager.h" />
+    <ClInclude Include="GameObject\Bullet\EnemyMageBullet.h" />
+    <ClInclude Include="GameObject\Bullet\PlayerBullet.h" />
     <ClInclude Include="GameObject\Camera\Camera.h" />
     <ClInclude Include="GameObject\CharacterBase.h" />
     <ClInclude Include="GameObject\Enemy\EnemyBase.h" />
@@ -210,7 +216,7 @@
     <ClInclude Include="GameObject\Enemy\EnemyMage.h" />
     <ClInclude Include="GameObject\Player\Player2.h" />
     <ClInclude Include="GameObject\Player\PlayerAtkColTiming.h" />
-    <ClInclude Include="GameObject\Player\PlayerBullet.h" />
+    <ClInclude Include="GameObject\Player\oldPlayerBullet.h" />
     <ClInclude Include="GameObject\Player\PlayerWeapon.h" />
     <ClInclude Include="GameObject\Player\Player.h" />
     <ClInclude Include="GameObject\SkyDome\SkyDome.h" />

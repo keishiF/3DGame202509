@@ -506,7 +506,6 @@ void EnemyBoss::HitUpdate(std::shared_ptr<Player> player)
 void EnemyBoss::DeadUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
-	player->SetSpecialGauge(kSpecialGaugePoint);
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Dead));
 	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Dead));
 

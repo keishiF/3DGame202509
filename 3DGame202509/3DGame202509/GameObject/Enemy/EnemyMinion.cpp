@@ -309,7 +309,6 @@ void EnemyMinion::HitUpdate(std::shared_ptr<Player> player)
 void EnemyMinion::DeadUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
-	player->SetSpecialGauge(kSpecialGaugePoint);
 	m_weapon->Update(m_model, m_atkFrame, MinionAtk::kColTimingTable.at(EnemyState::Dead));
 
 	// アニメーションが終了したら待機状態に戻る
@@ -321,6 +320,7 @@ void EnemyMinion::DeadUpdate(std::shared_ptr<Player> player)
 			m_model = -1;
 		}
 		m_isDead = true;
+		player->SetSpecialGauge(kSpecialGaugePoint);
 		return;
 	}
 }

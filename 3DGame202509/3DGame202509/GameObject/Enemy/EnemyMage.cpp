@@ -1,4 +1,5 @@
 ﻿#include "CapsuleColliderData.h"
+#include "Bullet/EnemyMageBullet.h"
 #include "Player/Player.h"
 #include "EnemyMage.h"
 
@@ -118,6 +119,11 @@ void EnemyMage::Draw()
 
 	MV1DrawModel(m_model);
 	MV1DrawModel(m_weaponModel);
+
+	for (auto& bullet : m_bullets)
+	{
+		bullet->Draw();
+	}
 
 	Vector3 pos = m_rigidbody.GetPos();
 	VECTOR base = pos.ToDxVECTOR();
@@ -253,6 +259,22 @@ void EnemyMage::Update(std::shared_ptr<Player> player)
 	colData->m_startPos = colPos;
 
 	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
+
+	for (auto& bullet : m_bullets)
+	{
+		bullet->Update();
+	}
+	m_bullets.erase(std::remove_if(m_bullets.begin(), m_bullets.end(), [this](const std::shared_ptr<EnemyMageBullet>& b)
+		{
+			if (b->IsDead())
+			{
+				b->Final();
+				return true;
+			}
+			return false;
+		}),
+		m_bullets.end()
+	);
 }
 
 void EnemyMage::FindUpdate(std::shared_ptr<Player> player)
@@ -354,17 +376,18 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 		}
 	}
 
-	//if (m_attackFrame == kAttackFrame)
-	//{
-	//	// 弾を生成
-	//	Vector3 myPos = m_rigidbody.GetPos();
-	//	myPos.y += 50.0f;
-	//	Vector3 playerPos = player->GetPos();
+	if (m_atkFrame == kAtkFrame)
+	{
+		// 弾を生成
+		Vector3 myPos = m_rigidbody.GetPos();
+		myPos.y += 50.0f;
+		Vector3 playerPos = player->GetPos();
+		Vector3 playerDir = playerPos - myPos;
 
-	//	auto bullet = std::make_shared<EnemyMageBullet>();
-	//	bullet->Init(myPos, playerPos);
-	//	m_bullets.push_back(bullet);
-	//}
+		auto bullet = std::make_shared<EnemyMageBullet>();
+		bullet->Init(myPos, playerDir);
+		m_bullets.push_back(bullet);
+	}
 
 	if (m_anim.GetNextAnim().isEnd)
 	{
@@ -389,7 +412,6 @@ void EnemyMage::HitUpdate(std::shared_ptr<Player> player)
 void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
-	player->SetSpecialGauge(kSpecialGaugePoint);
 
 	/*for (auto& bullet : m_bullets)
 	{
@@ -406,6 +428,7 @@ void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)
 			m_model = -1;
 		}
 		m_isDead = true;
+		player->SetSpecialGauge(kSpecialGaugePoint);
 		return;
 	}
 }
