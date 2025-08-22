@@ -38,7 +38,6 @@ void PlayerBullet::Update()
 {
 	++m_lifeFrame;
 	// 移動処理
-	m_dir.Normalize();
 	m_rigidbody.SetVelo(m_dir * kRunSpeed);
 	
 	if (m_lifeFrame >= kLifeFrame)

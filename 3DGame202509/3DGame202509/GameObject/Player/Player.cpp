@@ -169,6 +169,11 @@ void Player::Draw()
 #endif
 		MV1DrawModel(m_model);
 		m_weapon->Draw();
+
+		for (auto& bullet : m_bullets)
+		{
+			bullet->Draw();
+		}
 	}
 }
 
@@ -940,7 +945,7 @@ void Player::SpecialUpdate()
 
 	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 
-	if (!(playCount % kEffectPlayInterval))
+	if (m_playingEffect == -1)
 	{
 		m_playingEffect = PlayEffekseer3DEffect(m_specialAtkEffect);
 	}
@@ -949,6 +954,13 @@ void Player::SpecialUpdate()
 		m_rigidbody.GetPos().ToDxVECTOR().x,
 		m_rigidbody.GetPos().ToDxVECTOR().y,
 		m_rigidbody.GetPos().ToDxVECTOR().z);
+
+	if (IsEffekseer3DEffectPlaying(m_playingEffect))
+	{
+		m_specialGauge = 0;
+		m_playingEffect = -1;
+		ChangeState(PlayerState::Idle);
+	}
 
 	//// アニメーションが終了したら待機状態に戻る
 	//if (m_anim.GetNextAnim().isEnd)
