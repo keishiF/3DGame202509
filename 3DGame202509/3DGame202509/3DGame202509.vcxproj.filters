@@ -191,9 +191,6 @@
     <ClCompile Include="UI\SpecialGauge.cpp">
       <Filter>ソース ファイル\UI</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\Player\oldPlayerBullet.cpp">
-      <Filter>ソース ファイル\GameObject\Player</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject\StatusComponent.cpp">
       <Filter>ソース ファイル\GameObject</Filter>
     </ClCompile>
@@ -348,9 +345,6 @@
     </ClInclude>
     <ClInclude Include="UI\SpecialGauge.h">
       <Filter>ヘッダー ファイル\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\Player\oldPlayerBullet.h">
-      <Filter>ヘッダー ファイル\GameObject\Player</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\StatusComponent.h">
       <Filter>ヘッダー ファイル\GameObject</Filter>

@@ -11,6 +11,7 @@
 #include "UIManager.h"
 #include <cassert>
 #include <DxLib.h>
+#include <EffekseerForDxLib.h>
 
 namespace
 {
@@ -30,6 +31,10 @@ GameScene::GameScene(SceneController& controller) :
 	m_update(&GameScene::FadeInUpdate),
 	m_draw(&GameScene::FadeDraw)
 {
+	Effekseer_Init(20000);
+	SetChangeScreenModeGraphicsSystemResetFlag(false);
+	Effekseer_InitDistortion();
+
 	m_gameObjectManager.Init();
 
 	m_stageObjectManager = std::make_shared<StageObjectManager>();
@@ -61,6 +66,8 @@ void GameScene::NormalUpdate()
 {
 	++m_frame;
 	++m_blinkFrame;
+
+	UpdateEffekseer3D();
 
 	m_gameObjectManager.Update();
 	if (m_gameObjectManager.IsGameOver())
@@ -107,6 +114,9 @@ void GameScene::NormalDraw()
 	}
 #endif
 	printf("frame %d\n", m_frame);
+
+	Effekseer_Sync3DSetting();
+	DrawEffekseer3D();
 
 	m_stageObjectManager->Draw();
 	m_gameObjectManager.Draw();

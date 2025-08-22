@@ -103,5 +103,10 @@ private:
 	std::shared_ptr<PlayerWeapon> m_weapon;
 	// 弾を持つ
 	std::vector<std::shared_ptr<PlayerBullet>> m_bullets;
+
+	// テスト
+	int m_specialAtkEffect = -1;
+	int m_playingEffect = -1;
+	int playCount = 0;
 };
 

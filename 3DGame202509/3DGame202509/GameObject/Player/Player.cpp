@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "PlayerAtkColTiming.h"
 #include "PlayerWeapon.h"
+#include <EffekseerForDxLib.h>
 
 namespace
 {
@@ -90,6 +91,10 @@ namespace
 	constexpr float kTiredRunAnimSpeed = 0.5f;
 	// 必殺技
 	constexpr float kSpecialAnimSpeed  = 0.5f;
+
+
+	// テスト
+	constexpr int kEffectPlayInterval = 300.0f;
 }
 
 Player::Player() :
@@ -143,7 +148,9 @@ void Player::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_weapon = std::make_shared<PlayerWeapon>();
 	m_weapon->Init();
 
-
+	// テスト
+	m_specialAtkEffect = LoadEffekseerEffect("Data/Effect/PlayerSpecialAttack.efkefc", 100.0f);
+	assert(m_specialAtkEffect >= 0);
 }
 
 void Player::Draw()
@@ -945,7 +952,17 @@ void Player::SpecialUpdate()
 
 	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 
-		// アニメーションが終了したら待機状態に戻る
+	if (!(playCount % kEffectPlayInterval))
+	{
+		m_playingEffect = PlayEffekseer3DEffect(m_specialAtkEffect);
+	}
+	++playCount;
+	SetPosPlayingEffekseer3DEffect(m_playingEffect,
+		m_rigidbody.GetPos().ToDxVECTOR().x,
+		m_rigidbody.GetPos().ToDxVECTOR().y,
+		m_rigidbody.GetPos().ToDxVECTOR().z);
+
+	// アニメーションが終了したら待機状態に戻る
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		m_specialGauge = 0;
