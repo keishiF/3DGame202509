@@ -48,6 +48,7 @@ public:
 	PlayerState GetPlayerState() const { return m_state; }
 	Vector3 GetPos() const { return m_rigidbody.GetPos(); }
 
+	// 必殺技ゲージを増やす
 	void SetSpecialGauge(int specialGaugePoint);
 
 	void Update();
