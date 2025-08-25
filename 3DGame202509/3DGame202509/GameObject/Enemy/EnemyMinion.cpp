@@ -54,6 +54,9 @@ namespace
 
 	// 倒されたときにプレイヤーの必殺技ゲージを増やす量
 	constexpr int kSpecialGaugePoint = 10;
+
+	// ノックバック
+	constexpr float kKnockBackSpeed = 16.0f;
 }
 
 EnemyMinion::EnemyMinion() :
@@ -201,6 +204,11 @@ void EnemyMinion::WalkUpdate(std::shared_ptr<Player> player)
 			// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
 			float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
 			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
+			// m_forwardを回転角に合わせて更新
+			m_forward.x = std::sin(-angleY);
+			m_forward.y = 0.0f;
+			m_forward.z = std::cos(-angleY);
+			m_forward.Normalize();
 		}
 	}
 
@@ -242,6 +250,11 @@ void EnemyMinion::ChaseUpdate(std::shared_ptr<Player> player)
 			// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
 			float angleY = std::atan2(m_rigidbody.GetVelo().x, -m_rigidbody.GetVelo().z);
 			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
+			// m_forwardを回転角に合わせて更新
+			m_forward.x = std::sin(-angleY);
+			m_forward.y = 0.0f;
+			m_forward.z = std::cos(-angleY);
+			m_forward.Normalize();
 		}
 	}
 
@@ -276,6 +289,11 @@ void EnemyMinion::AttackUpdate(std::shared_ptr<Player> player)
 			// atan2でY軸回転角を計算（Zが前、Xが右の座標系の場合）
 			float angleY = std::atan2(dir.x, -dir.z);
 			MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
+			// m_forwardを回転角に合わせて更新
+			m_forward.x = std::sin(-angleY);
+			m_forward.y = 0.0f;
+			m_forward.z = std::cos(-angleY);
+			m_forward.Normalize();
 		}
 	}
 
@@ -297,6 +315,13 @@ void EnemyMinion::HitUpdate(std::shared_ptr<Player> player)
 {
 	SetActive(false);
 	m_weapon->Update(m_model, m_atkFrame, MinionAtk::kColTimingTable.at(EnemyState::Hit));
+
+	// プレイヤーがSpin状態ならノックバック
+	if (player->GetPlayerState() == PlayerState::Spin)
+	{
+		Vector3 knockbackDir = m_forward.GetNormalize();
+		m_rigidbody.SetVelo(knockbackDir * kKnockBackSpeed);
+	}
 
 	MV1SetPosition(m_model, m_rigidbody.GetPos().ToDxVECTOR());
 	// アニメーションが終了したら待機状態に戻る
