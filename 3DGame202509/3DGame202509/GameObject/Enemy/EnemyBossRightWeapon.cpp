@@ -1,4 +1,5 @@
 #include "CapsuleColliderData.h"
+#include "CharacterBase.h"
 #include "EnemyBossRightWeapon.h"
 
 namespace
@@ -109,6 +110,20 @@ void EnemyBossRightWeapon::Draw()
 	MV1DrawModel(m_model);
 }
 
+void EnemyBossRightWeapon::SetOwner(std::shared_ptr<CharacterBase> owner)
+{
+	m_owner = owner;
+}
+
 void EnemyBossRightWeapon::OnCollide(std::shared_ptr<Collidable> collider)
 {
+}
+
+float EnemyBossRightWeapon::GetAtk() const
+{
+	if (auto owner = m_owner.lock())
+	{
+		return owner->GetStatusComp().m_atk;
+	}
+	return 0.0f;
 }

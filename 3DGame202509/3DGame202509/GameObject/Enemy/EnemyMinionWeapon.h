@@ -23,5 +23,8 @@ public:
 	virtual float GetAtk() const override;
 
 	int m_model = -1;
+
+private:
+	std::weak_ptr<CharacterBase> m_owner;
 };
 

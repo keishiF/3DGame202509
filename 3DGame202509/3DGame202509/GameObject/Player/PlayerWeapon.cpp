@@ -1,4 +1,5 @@
-﻿#include "PlayerWeapon.h"
+﻿#include "CharacterBase.h"
+#include "PlayerWeapon.h"
 #include "SphereColliderData.h"
 #include <cassert>
 #include <DxLib.h>
