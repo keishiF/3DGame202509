@@ -22,6 +22,8 @@ public:
 	void SetActive(bool active) { m_isActive = active; }
 	bool IsActive() const { return m_isActive; }
 
+	virtual float GetAtk() const abstract;
+
 protected:
 	Rigidbody m_rigidbody;
 	float m_colRadius;

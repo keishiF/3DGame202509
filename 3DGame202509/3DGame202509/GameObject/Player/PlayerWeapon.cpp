@@ -179,7 +179,21 @@ void PlayerWeapon::Draw()
 	MV1DrawModel(m_model);
 }
 
+void PlayerWeapon::SetOwner(std::shared_ptr<CharacterBase> owner)
+{
+	m_owner = owner;
+}
+
 void PlayerWeapon::OnCollide(std::shared_ptr<Collidable> collider)
 {
 
+}
+
+float PlayerWeapon::GetAtk() const
+{
+	if (auto owner = m_owner.lock())
+	{
+		return owner->GetStatusComp().m_atk;
+	}
+	return 0.0f;
 }

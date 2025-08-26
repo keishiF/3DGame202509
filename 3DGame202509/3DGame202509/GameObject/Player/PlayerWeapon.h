@@ -2,6 +2,7 @@
 #include "Collidable.h"
 #include "PlayerAtkColTiming.h"
 
+class CharacterBase;
 class PlayerWeapon : public Collidable
 {
 public:
@@ -20,9 +21,15 @@ public:
 	void SpecialUpdate(int model);
 	// 描画
 	void Draw();
+	// 持ち主をセット
+	void SetOwner(std::shared_ptr<CharacterBase> owner);
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
+	virtual float GetAtk() const override;
 
 	int m_model;
+
+private:
+	std::weak_ptr<CharacterBase> m_owner;
 };
 

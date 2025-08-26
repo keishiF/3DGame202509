@@ -2,6 +2,7 @@
 #include "Collidable.h"
 #include "EnemyBossAtkColTiming.h"
 
+class CharacterBase;
 class EnemyBossLeftWeapon : public Collidable
 {
  public:
@@ -15,8 +16,11 @@ class EnemyBossLeftWeapon : public Collidable
 	// 各攻撃状態
 	void AttackUpdate(int model);
 	void Draw();
+	// 持ち主をセット
+	void SetOwner(std::shared_ptr<CharacterBase> owner);
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
+	virtual float GetAtk() const override;
 
 	int m_model = -1;
 };
