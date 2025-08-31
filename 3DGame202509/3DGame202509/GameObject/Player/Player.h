@@ -25,7 +25,7 @@ enum class PlayerState
 class EnemyBase;
 class PlayerBullet;
 class PlayerWeapon;
-class Player : public CharacterBase
+class Player : public CharacterBase, std::enable_shared_from_this<Player>
 {
 public:
 	Player();
@@ -47,6 +47,8 @@ public:
 	// 状態取得
 	PlayerState GetPlayerState() const { return m_state; }
 	Vector3 GetPos() const { return m_rigidbody.GetPos(); }
+	// 武器を取得
+	std::shared_ptr<PlayerWeapon> GetWeapon() const { return m_weapon; }
 
 	// 必殺技ゲージを増やす
 	void SetSpecialGauge(int specialGaugePoint);

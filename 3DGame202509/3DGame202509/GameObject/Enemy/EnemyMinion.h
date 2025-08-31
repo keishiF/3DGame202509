@@ -2,7 +2,7 @@
 #include "EnemyBase.h"
 
 class EnemyMinionWeapon;
-class EnemyMinion : public EnemyBase
+class EnemyMinion : public EnemyBase, std::enable_shared_from_this<EnemyMinion>
 {
 public:
 	EnemyMinion();

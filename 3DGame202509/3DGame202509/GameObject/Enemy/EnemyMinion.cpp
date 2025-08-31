@@ -106,6 +106,7 @@ void EnemyMinion::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	// 武器
 	m_weapon = std::make_shared<EnemyMinionWeapon>();
 	m_weapon->Init();
+	m_weapon->SetOwner(std::enable_shared_from_this<EnemyMinion>::shared_from_this());
 }
 
 void EnemyMinion::Draw()
