@@ -25,7 +25,7 @@ enum class PlayerState
 class EnemyBase;
 class PlayerBullet;
 class PlayerWeapon;
-class Player : public CharacterBase, std::enable_shared_from_this<Player>
+class Player : public CharacterBase
 {
 public:
 	Player();

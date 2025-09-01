@@ -147,7 +147,6 @@ void Player::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 
 	m_weapon = std::make_shared<PlayerWeapon>();
 	m_weapon->Init();
-	m_weapon->SetOwner(std::enable_shared_from_this<Player>::shared_from_this());
 
 	// テスト
 	m_specialAtkEffect = LoadEffekseerEffect("Data/Effect/PlayerSpecialAttack.efkefc", 100.0f);

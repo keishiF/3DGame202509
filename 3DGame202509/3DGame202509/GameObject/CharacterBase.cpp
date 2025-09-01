@@ -11,9 +11,5 @@ CharacterBase::~CharacterBase()
 
 void CharacterBase::OnCollide(std::shared_ptr<Collidable> collider)
 {
-	float damage = collider->GetAtk();
-	if (damage > 0.0f)
-	{
-		OnDamage(damage);
-	}
+	OnDamage(m_status.m_atk);
 }

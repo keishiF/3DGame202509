@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Collidable.h"
 
+class CharacterBase;
 class BulletBase : public Collidable
 {
 public:
@@ -12,7 +13,6 @@ public:
 	virtual void Draw() abstract;
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
-
 	bool IsDead() const { return m_isDead; }
 
 protected:

@@ -110,10 +110,8 @@ void EnemyBoss::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	// •Ší
 	m_leftWeapon = std::make_shared<EnemyBossLeftWeapon>();
 	m_leftWeapon->Init();
-	m_leftWeapon->SetOwner(std::enable_shared_from_this<EnemyBoss>::shared_from_this());
 	m_rightWeapon = std::make_shared<EnemyBossRightWeapon>();
 	m_rightWeapon->Init();
-	m_rightWeapon->SetOwner(std::enable_shared_from_this<EnemyBoss>::shared_from_this());
 }
 
 void EnemyBoss::Draw()

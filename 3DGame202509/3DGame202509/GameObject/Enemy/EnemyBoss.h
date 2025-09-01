@@ -3,7 +3,7 @@
 
 class EnemyBossLeftWeapon;
 class EnemyBossRightWeapon;
-class EnemyBoss : public EnemyBase, std::enable_shared_from_this<EnemyBoss>
+class EnemyBoss : public EnemyBase
 {
 public:
 	EnemyBoss();
