@@ -95,7 +95,7 @@ void EnemyBoss::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_isDead = false;
 
 	// ƒ‚ƒfƒ‹‚Ìƒ[ƒh
-	m_model = MV1LoadModel("Data/Model/Enemy/Minion/Minion.mv1");
+	m_model = MV1LoadModel("Data/Model/Enemy/Boss/Boss.mv1");
 	assert(m_model >= 0);
 
 	VECTOR modelScale = VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale);
@@ -157,6 +157,18 @@ void EnemyBoss::Update(std::shared_ptr<Player> player)
 		break;
 	case EnemyState::Attack:
 		AttackUpdate(player);
+		break;
+	case EnemyState::Chop:
+		ChopUpdate(player);
+		break;
+	case EnemyState::Slice:
+		SliceUpdate(player);
+		break;
+	case EnemyState::Stab:
+		StabUpdate(player);
+		break;
+	case EnemyState::Spin:
+		SpinUpdate(player);
 		break;
 	case EnemyState::Hit:
 		HitUpdate(player);

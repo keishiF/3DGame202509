@@ -158,6 +158,8 @@ bool Physics::SkipCheckCollide(std::shared_ptr<Collidable> primary, std::shared_
 		(primary->GetTag() == ObjectTag::PlayerWeapon && secondary->GetTag() == ObjectTag::Player) ||
 		(primary->GetTag() == ObjectTag::Enemy && secondary->GetTag() == ObjectTag::EnemyWeapon) ||
 		(primary->GetTag() == ObjectTag::EnemyWeapon && secondary->GetTag() == ObjectTag::Enemy) ||
+		(primary->GetTag() == ObjectTag::Boss && secondary->GetTag() == ObjectTag::EnemyWeapon) ||
+		(primary->GetTag() == ObjectTag::EnemyWeapon && secondary->GetTag() == ObjectTag::Boss) ||
 		(primary->GetTag() == ObjectTag::Enemy && secondary->GetTag() == ObjectTag::Bullet) ||
 		(primary->GetTag() == ObjectTag::Bullet && secondary->GetTag() == ObjectTag::Enemy) ||
 		(primary->GetTag() == ObjectTag::Enemy && secondary->GetTag() == ObjectTag::Enemy))

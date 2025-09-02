@@ -53,7 +53,7 @@ void EnemyBossLeftWeapon::IdleUpdate(int model)
 	// アタッチするモデルを,フレームの座標を原点にするための平行移動行列を作成
 	MATRIX transMat = MGetTranslate(VScale(position, -1.0f));
 	// アタッチされるモデルのフレームの行列を取得
-	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 14);
+	MATRIX frameMat = MV1GetFrameLocalWorldMatrix(model, 9);
 	// アタッチするモデルの拡大行列を取得
 	MATRIX scaleMat = MGetScale(VGet(kBladeModelScale, kBladeModelScale, kBladeModelScale));
 	// アタッチするモデルの回転行列を取得

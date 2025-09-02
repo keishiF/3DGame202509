@@ -29,6 +29,9 @@ TitleScene::TitleScene(SceneController& controller) :
 	m_titleHandle = LoadGraph("Data/UI/Title2.png");
 	assert(m_titleHandle >= 0);
 
+	m_fontHandle = CreateFontToHandle("Algerian", 48, -1, DX_FONTTYPE_ANTIALIASING_8X8);
+	assert(m_fontHandle != -1);
+
 	MV1SetScale(m_skyModel, VGet(kSkyModelScale, kSkyModelScale, kSkyModelScale));
 }
 
@@ -51,7 +54,7 @@ void TitleScene::NormalUpdate()
 {
 	++m_blinkFrame;
 
-	if (Input::GetInstance().IsPress("OK"))
+	if (Input::GetInstance().IsPress("B"))
 	{
 		m_update = &TitleScene::FadeOutUpdate;
 		m_draw = &TitleScene::FadeDraw;
@@ -84,13 +87,22 @@ void TitleScene::NormalDraw()
 	MV1DrawModel(m_skyModel);
 	DrawGraph(0, 0, m_titleHandle, true);
 
-#ifdef _DEBUG
-	// 点滅効果のための条件
+	// 点滅効果付きで「PRESS A BUTTON」「START」を中央表示
 	if ((m_blinkFrame / 30) % 2 == 0)
 	{
-		DrawString(0, 0, "Title Scene", 0x000000);
+		const char* pressText = "PRESS A BUTTON";
+		const char* startText = "START";
+		int pressWidth = GetDrawStringWidthToHandle(pressText, strlen(pressText), m_fontHandle);
+		int startWidth = GetDrawStringWidthToHandle(startText, strlen(startText), m_fontHandle);
+		int centerX = Game::kScreenWidth / 2;
+		int centerY = 500;
+
+		// 「PRESS A BUTTON」を中央に描画
+		DrawStringToHandle(centerX - pressWidth / 2, centerY, pressText, 0x7cfc00, m_fontHandle);
+
+		// 「START」をその下に描画
+		DrawStringToHandle(centerX - startWidth / 2, centerY + 50, startText, 0x7cfc00, m_fontHandle);
 	}
-#endif
 }
 
 void TitleScene::FadeDraw()
