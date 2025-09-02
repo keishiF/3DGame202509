@@ -21,16 +21,36 @@ void EnemyBase::Draw()
 
 void EnemyBase::OnDamage(float atk)
 {
+    // ダメージクールダウン中は処理しない
+    if (m_hitFrame > 0) return;
+
     m_status.m_hp -= atk;
 
-    if (m_status.m_hp <= 0 && !m_isDead)
+    m_hitFrame = 30;
+
+    /*if (m_status.m_hp <= 0 && !m_isDead)
     {
         ChangeState(EnemyState::Dead);
     }
     else
     {
         ChangeState(EnemyState::Hit);
+    }*/
+
+    // HPが0以下になったら死亡状態へ
+    if (m_status.m_hp <= 0 && !m_isDead)
+    {
+        ChangeState(EnemyState::Dead);
+        return;
     }
+    
+    // 疲れ状態の時は被弾状態に遷移しない
+    if (m_state == EnemyState::Tired)
+    {
+        return;
+    }
+    // それ以外の状態なら被弾状態へ
+    ChangeState(EnemyState::Hit);
 }
 
 Vector3 EnemyBase::GetScreenPos() const
@@ -60,8 +80,10 @@ Vector3 EnemyBase::GetScreenPos() const
 void EnemyBase::ChangeState(EnemyState newState)
 {
     // 現在の状態と次の状態が同じ場合return
-    // Hitだけ例外処理
+    // (Hitは除く)
     if (m_state == newState && m_state != EnemyState::Hit) return;
+    // 疲れ状態の時に被弾しても被弾状態には遷移しない
+    if (m_state == EnemyState::Tired && newState == EnemyState::Hit) return;
 
     m_prevState = m_state;
     m_state = newState;

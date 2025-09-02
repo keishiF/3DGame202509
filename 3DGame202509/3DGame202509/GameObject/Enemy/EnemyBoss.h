@@ -36,8 +36,12 @@ private:
 	void HitUpdate(std::shared_ptr<Player> player) override;
 	// €–Só‘Ô
 	void DeadUpdate(std::shared_ptr<Player> player) override;
+	// À‚èó‘Ô
+	void TiredUpdate(std::shared_ptr<Player> player);
 
 	float m_walkFrame = 0.0f;
+	float m_tiredFrame = 0.0f;
+	int m_atkCount = 0;
 
 	std::shared_ptr<EnemyBossLeftWeapon> m_leftWeapon;
 	std::shared_ptr<EnemyBossRightWeapon> m_rightWeapon;

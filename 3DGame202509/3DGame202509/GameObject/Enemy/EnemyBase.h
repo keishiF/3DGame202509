@@ -12,7 +12,8 @@ enum class EnemyState
 	Stab,
 	Spin,
 	Hit,
-	Dead
+	Dead,
+	Tired
 };
 
 class Player;
@@ -56,5 +57,7 @@ protected:
 	float m_playerFindRadius = 0.0f;
 	// 攻撃に移行できる範囲
 	float m_atkRadius = 0.0f;
+	
+	int m_hitFrame = 0;
 };
 

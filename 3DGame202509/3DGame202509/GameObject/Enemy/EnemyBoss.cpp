@@ -49,6 +49,8 @@ namespace
 	const char* kHitAnimName = "Hit_B";
 	// 死亡
 	const char* kDeadAnimName = "Death_B";
+	// 座り
+	const char* kTiredAnimName = "Sit_Floor_Idle";
 
 	// アニメーションの再生速度
 	// 通常速度
@@ -60,10 +62,15 @@ namespace
 
 	// 倒されたときにプレイヤーの必殺技ゲージを増やす量
 	constexpr int kSpecialGaugePoint = 10;
+
+	constexpr float kTiredFrame = 300.0f;
+	constexpr int kAtkCount = 3;
 }
 
 EnemyBoss::EnemyBoss() :
 	m_walkFrame(0.0f),
+	m_tiredFrame(0.0f),
+	m_atkCount(kAtkCount),
 	EnemyBase(ObjectTag::Boss, ObjectPriority::Middle, ColliderData::Kind::Capsule)
 {
 }
@@ -176,6 +183,9 @@ void EnemyBoss::Update(std::shared_ptr<Player> player)
 	case EnemyState::Dead:
 		DeadUpdate(player);
 		break;
+	case EnemyState::Tired:
+		TiredUpdate(player);
+		break;
 	}
 
 	//当たり判定
@@ -202,6 +212,10 @@ void EnemyBoss::FindUpdate(std::shared_ptr<Player> player)
 
 void EnemyBoss::WalkUpdate(std::shared_ptr<Player> player)
 {
+	if (m_hitFrame > 0)
+	{
+		m_hitFrame--;
+	}
 	SetActive(false);
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Walk));
 	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Walk));
@@ -234,6 +248,7 @@ void EnemyBoss::WalkUpdate(std::shared_ptr<Player> player)
 
 		if (distance <= (m_atkRadius + player->GetRadius()))
 		{
+			m_atkCount -= 1;
 			if (distance > 500.0f && m_prevState != EnemyState::Stab)
 			{
 				ChangeState(EnemyState::Stab);
@@ -260,6 +275,10 @@ void EnemyBoss::WalkUpdate(std::shared_ptr<Player> player)
 
 void EnemyBoss::ChaseUpdate(std::shared_ptr<Player> player)
 {
+	if (m_hitFrame > 0)
+	{
+		m_hitFrame--;
+	}
 	SetActive(true);
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Chase));
 	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Chase));
@@ -293,6 +312,7 @@ void EnemyBoss::ChaseUpdate(std::shared_ptr<Player> player)
 
 	if (distance <= (m_atkRadius + player->GetRadius()))
 	{
+		m_atkCount -= 1;
 		if (distance > 500.0f && m_prevState != EnemyState::Stab)
 		{
 			ChangeState(EnemyState::Stab);
@@ -318,6 +338,10 @@ void EnemyBoss::ChaseUpdate(std::shared_ptr<Player> player)
 
 void EnemyBoss::AttackUpdate(std::shared_ptr<Player> player)
 {
+	if (m_hitFrame > 0)
+	{
+		m_hitFrame--;
+	}
 	SetActive(true);
 	++m_atkFrame;
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Attack));
@@ -355,6 +379,10 @@ void EnemyBoss::AttackUpdate(std::shared_ptr<Player> player)
 
 void EnemyBoss::ChopUpdate(std::shared_ptr<Player> player)
 {
+	if (m_hitFrame > 0)
+	{
+		m_hitFrame--;
+	}
 	SetActive(true);
 	++m_atkFrame;
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Chop));
@@ -379,7 +407,11 @@ void EnemyBoss::ChopUpdate(std::shared_ptr<Player> player)
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		float distance = (myPos - player->GetPos()).Length();
-		if (distance >= (m_playerFindRadius + player->GetRadius()))
+		if (m_atkCount <= 0)
+		{
+			ChangeState(EnemyState::Tired);
+		}
+		else if (distance >= (m_playerFindRadius + player->GetRadius()))
 		{
 			ChangeState(EnemyState::Find);
 		}
@@ -392,6 +424,10 @@ void EnemyBoss::ChopUpdate(std::shared_ptr<Player> player)
 
 void EnemyBoss::SliceUpdate(std::shared_ptr<Player> player)
 {
+	if (m_hitFrame > 0)
+	{
+		m_hitFrame--;
+	}
 	SetActive(true);
 	++m_atkFrame;
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Slice));
@@ -416,7 +452,11 @@ void EnemyBoss::SliceUpdate(std::shared_ptr<Player> player)
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		float distance = (myPos - player->GetPos()).Length();
-		if (distance >= (m_playerFindRadius + player->GetRadius()))
+		if (m_atkCount <= 0)
+		{
+			ChangeState(EnemyState::Tired);
+		}
+		else if (distance >= (m_playerFindRadius + player->GetRadius()))
 		{
 			ChangeState(EnemyState::Find);
 		}
@@ -429,6 +469,10 @@ void EnemyBoss::SliceUpdate(std::shared_ptr<Player> player)
 
 void EnemyBoss::StabUpdate(std::shared_ptr<Player> player)
 {
+	if (m_hitFrame > 0)
+	{
+		m_hitFrame--;
+	}
 	SetActive(true);
 	++m_atkFrame;
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Stab));
@@ -453,7 +497,11 @@ void EnemyBoss::StabUpdate(std::shared_ptr<Player> player)
 	if (m_anim.GetNextAnim().isEnd)
 	{
 		float distance = (myPos - player->GetPos()).Length();
-		if (distance >= (m_playerFindRadius + player->GetRadius()))
+		if (m_atkCount <= 0)
+		{
+			ChangeState(EnemyState::Tired);
+		}
+		else if (distance >= (m_playerFindRadius + player->GetRadius()))
 		{
 			ChangeState(EnemyState::Find);
 		}
@@ -466,6 +514,10 @@ void EnemyBoss::StabUpdate(std::shared_ptr<Player> player)
 
 void EnemyBoss::SpinUpdate(std::shared_ptr<Player> player)
 {
+	if (m_hitFrame > 0)
+	{
+		m_hitFrame--;
+	}
 	SetActive(true);
 	++m_atkFrame;
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Spin));
@@ -490,7 +542,11 @@ void EnemyBoss::SpinUpdate(std::shared_ptr<Player> player)
 	if (m_atkFrame >= 180.0f)
 	{
 		float distance = (myPos - player->GetPos()).Length();
-		if (distance >= (m_playerFindRadius + player->GetRadius()))
+		if (m_atkCount <= 0)
+		{
+			ChangeState(EnemyState::Tired);
+		}
+		else if (distance >= (m_playerFindRadius + player->GetRadius()))
 		{
 			ChangeState(EnemyState::Find);
 		}
@@ -533,6 +589,27 @@ void EnemyBoss::DeadUpdate(std::shared_ptr<Player> player)
 	}
 }
 
+void EnemyBoss::TiredUpdate(std::shared_ptr<Player> player)
+{
+	if (m_hitFrame > 0)
+	{
+		m_hitFrame--;
+	}
+
+	// 当たり判定をオンにする
+	SetActive(true);
+	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Tired));
+	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Tired));
+
+	++m_tiredFrame;
+	// 一定フレーム経過したら待機状態に戻る
+	if (m_tiredFrame >= kTiredFrame)
+	{
+		m_atkCount = kAtkCount;
+		ChangeState(EnemyState::Find);
+	}
+}
+
 const char* EnemyBoss::GetAnimName(EnemyState state) const
 {
 	switch (state)
@@ -557,6 +634,8 @@ const char* EnemyBoss::GetAnimName(EnemyState state) const
 		return kHitAnimName;
 	case EnemyState::Dead:
 		return kDeadAnimName;
+	case EnemyState::Tired:
+		return kTiredAnimName;
 	default:
 		return "";
 		assert(0 && "存在しないアニメーション");
@@ -587,6 +666,8 @@ float EnemyBoss::GetAnimPlaySpeed(EnemyState state) const
 		return kDefaultAnimSpeed;
 	case EnemyState::Dead:
 		return kDefaultAnimSpeed;
+	case EnemyState::Tired:
+		return kDefaultAnimSpeed;
 	}
 }
 
@@ -614,6 +695,8 @@ bool EnemyBoss::IsLoopAnim(EnemyState state) const
 		return false;
 	case EnemyState::Dead:
 		return false;
+	case EnemyState::Tired:
+		return true;
 	default:
 		return "";
 		assert(0 && "存在しないステート");

@@ -149,7 +149,7 @@ void Player::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_weapon->Init();
 
 	// テスト
-	m_specialAtkEffect = LoadEffekseerEffect("Data/Effect/PlayerSpecialAttack2.efkefc", 100.0f);
+	m_specialAtkEffect = LoadEffekseerEffect("Data/Effect/PlayerSpecialAttack.efkefc", 50.0f);
 	assert(m_specialAtkEffect >= 0);
 }
 
