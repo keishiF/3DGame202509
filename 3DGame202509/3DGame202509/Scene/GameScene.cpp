@@ -115,12 +115,12 @@ void GameScene::NormalDraw()
 #endif
 	printf("frame %d\n", m_frame);
 
-	Effekseer_Sync3DSetting();
-	DrawEffekseer3D();
-
 	m_stageObjectManager->Draw();
 	m_gameObjectManager.Draw();
 	m_uiManager->Draw();
+
+	Effekseer_Sync3DSetting();
+	DrawEffekseer3D();
 }
 
 void GameScene::FadeDraw()
