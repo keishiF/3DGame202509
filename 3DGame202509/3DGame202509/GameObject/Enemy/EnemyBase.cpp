@@ -21,36 +21,16 @@ void EnemyBase::Draw()
 
 void EnemyBase::OnDamage(float atk)
 {
-    // ダメージクールダウン中は処理しない
-    if (m_hitFrame > 0) return;
-
     m_status.m_hp -= atk;
 
-    m_hitFrame = 30;
-
-    /*if (m_status.m_hp <= 0 && !m_isDead)
+    if (m_status.m_hp <= 0 && !m_isDead)
     {
         ChangeState(EnemyState::Dead);
     }
     else
     {
         ChangeState(EnemyState::Hit);
-    }*/
-
-    // HPが0以下になったら死亡状態へ
-    if (m_status.m_hp <= 0 && !m_isDead)
-    {
-        ChangeState(EnemyState::Dead);
-        return;
     }
-    
-    // 疲れ状態の時は被弾状態に遷移しない
-    if (m_state == EnemyState::Tired)
-    {
-        return;
-    }
-    // それ以外の状態なら被弾状態へ
-    ChangeState(EnemyState::Hit);
 }
 
 Vector3 EnemyBase::GetScreenPos() const
@@ -88,7 +68,7 @@ void EnemyBase::ChangeState(EnemyState newState)
     m_prevState = m_state;
     m_state = newState;
     m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
-    m_atkFrame = 0.0f;
+    m_atkFrame = 0;
 
     const char* animName = GetAnimName(m_state);
     float animPlaySpeed = GetAnimPlaySpeed(m_state);

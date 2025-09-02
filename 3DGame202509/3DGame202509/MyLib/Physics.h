@@ -21,6 +21,8 @@ public:
 	void DebugDraw();
 
 private:
+	int m_hitEffect = -1;
+	int m_playingEffect = -1;
 	std::list<std::shared_ptr<Collidable>> m_collidables;
 
 	// OnCollideの衝突通知のためのデータ

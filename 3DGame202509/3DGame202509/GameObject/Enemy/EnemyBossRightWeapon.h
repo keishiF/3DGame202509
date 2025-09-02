@@ -10,7 +10,7 @@ public:
 	~EnemyBossRightWeapon();
 
 	void Init();
-	void Update(int model, float currentFrame, const BossAtk::AtkTiming& timing);
+	void Update(int model, int currentFrame, const BossAtk::AtkTiming& timing);
 	// ‘Ò‹@ó‘Ô
 	void IdleUpdate(int model);
 	// ŠeUŒ‚ó‘Ô

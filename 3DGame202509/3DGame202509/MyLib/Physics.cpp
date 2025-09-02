@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <cassert>
 #include <DxLib.h>
+#include <EffekseerForDxLib.h>
 
 namespace
 {
@@ -19,7 +20,8 @@ namespace
 Physics::Physics() :
 	m_wall()
 {
-
+	m_hitEffect = LoadEffekseerEffect("Data/Effect/HitEffect.efkefc", 75.0f);
+	assert(m_hitEffect >= 0);
 }
 
 Physics& Physics::Instance()
@@ -76,6 +78,18 @@ void Physics::Update()
 		if (ShouldCallOnCollide(tagA, tagB))
 		{
 			item.owner->OnCollide(item.collider);
+			if (m_playingEffect == -1)
+			{
+				m_playingEffect = PlayEffekseer3DEffect(m_hitEffect);
+			}
+			SetPosPlayingEffekseer3DEffect(m_playingEffect,
+				item.owner->m_rigidbody.GetPos().ToDxVECTOR().x,
+				item.owner->m_rigidbody.GetPos().ToDxVECTOR().y,
+				item.owner->m_rigidbody.GetPos().ToDxVECTOR().z);
+			if (IsEffekseer3DEffectPlaying(m_playingEffect))
+			{
+				m_playingEffect = -1;
+			}
 		}
 	}
 

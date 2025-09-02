@@ -18,13 +18,15 @@ namespace
 	// スタミナの初期値、最大値
 	constexpr float kStamina = 100.0f;
 	// 待機状態、歩き状態で毎フレーム回復するスタミナ
-	constexpr float kRegeneStamina = 0.34f;
+	constexpr float kRegeneStamina = 0.17f;
 	// 疲れ状態で毎フレーム回復するスタミナ
 	constexpr float kTiredRegeneStamina = 0.17f;
 	// 走っている際に消費するスタミナ
 	constexpr float kRunStamina = 0.25f;
 	// 強攻撃をした際に消費するスタミナ
 	constexpr float kSpinStamina = 15.0f;
+	// 回避で消費するスタミナ
+	constexpr float kDodgeStamina = 35.0f;
 	// スタミナがこの値を下回ったら走るのが遅くなるライン
 	constexpr float kRunSpeedDownStaminaRate = 35.0f;
 	// 必殺技ゲージの最大値
@@ -94,7 +96,7 @@ namespace
 
 
 	// テスト
-	constexpr int kEffectPlayInterval = 300.0f;
+	constexpr int kEffectPlayInterval = 300;
 }
 
 Player::Player() :
@@ -137,7 +139,7 @@ void Player::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_maxStamina = kStamina;
 	m_specialGauge = 0.0f;
 	m_maxSpecialGauge = kMaxSpecialGauge;
-	m_atkFrame = 0.0f;
+	m_atkFrame = 0;
 	m_isCombo = false;
 	m_isDead = false;
 
@@ -204,7 +206,7 @@ void Player::ChangeState(PlayerState newState)
 
 	// 状態遷移時に攻撃フレームなどを0にしてリセットする
 	m_rigidbody.SetVelo({ 0.0f, 0.0f, 0.0f });
-	m_atkFrame = 0.0f;
+	m_atkFrame = 0;
 	m_blinkFrame = 0;
 	m_isCombo = false;
 
@@ -275,7 +277,7 @@ void Player::Update()
 		{
 			m_specialGauge += kTimeSpecialGauge;
 
-			m_frame = 0.0f;
+			m_frame = 0;
 		}
 	}
 
@@ -532,7 +534,11 @@ void Player::WalkUpdate()
 	// Bボタンの入力があれば回避状態に移行する
 	if (input.IsTrigger("B"))
 	{
-		ChangeState(PlayerState::Dodge);
+		if (m_stamina >= kDodgeStamina)
+		{
+			m_stamina -= kDodgeStamina;
+			ChangeState(PlayerState::Dodge);
+		}
 	}
 }
 
@@ -647,7 +653,11 @@ void Player::RunUpdate()
 	// Bボタンの入力があれば回避状態に移行する
 	if (input.IsTrigger("B"))
 	{
-		ChangeState(PlayerState::Dodge);
+		if (m_stamina >= kDodgeStamina)
+		{
+			m_stamina -= kDodgeStamina;
+			ChangeState(PlayerState::Dodge);
+		}
 	}
 }
 
@@ -751,7 +761,11 @@ void Player::TiredRunUpdate()
 	// Bボタンの入力があれば回避状態に移行する
 	if (input.IsTrigger("B"))
 	{
-		ChangeState(PlayerState::Dodge);
+		if (m_stamina >= kDodgeStamina)
+		{
+			m_stamina -= kDodgeStamina;
+			ChangeState(PlayerState::Dodge);
+		}
 	}
 }
 

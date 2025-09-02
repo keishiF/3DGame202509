@@ -87,7 +87,7 @@ void EnemyMinion::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_status.m_hp = kHP;
 	m_status.m_maxHP = kHP;
 	m_status.m_atk = kDefaultAtk;
-	m_atkFrame = 0.0f;
+	m_atkFrame = 0;
 	m_isDead = false;
 
 	// モデルのロード
@@ -388,6 +388,8 @@ float EnemyMinion::GetAnimPlaySpeed(EnemyState state) const
 		return kHitAnimSpeed;
 	case EnemyState::Dead:
 		return kDefaultAnimSpeed;
+	default:
+		return -1.0f;
 	}
 }
 

@@ -182,7 +182,6 @@
     <ClCompile Include="MyLib\Rigidbody.cpp" />
     <ClCompile Include="MyLib\SphereColliderData.cpp" />
     <ClCompile Include="MyLib\TransformDataLoader.cpp" />
-    <ClCompile Include="MyLib\Utility.cpp" />
     <ClCompile Include="Scene\ClearScene.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\ResultScene.cpp" />
@@ -236,7 +235,6 @@
     <ClInclude Include="MyLib\Rigidbody.h" />
     <ClInclude Include="MyLib\SphereColliderData.h" />
     <ClInclude Include="MyLib\TransformDataLoader.h" />
-    <ClInclude Include="MyLib\Utility.h" />
     <ClInclude Include="MyLib\Vector3.h" />
     <ClInclude Include="Scene\ClearScene.h" />
     <ClInclude Include="Scene\GameScene.h" />

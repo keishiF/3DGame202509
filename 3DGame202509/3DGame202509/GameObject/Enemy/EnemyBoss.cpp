@@ -3,11 +3,12 @@
 #include "EnemyBossLeftWeapon.h"
 #include "EnemyBossRightWeapon.h"
 #include "Player/Player.h"
+#include <EffekseerForDxLib.h>
 
 namespace
 {
 	// HPの初期値、最大値
-	constexpr float kHP = 15.0f;
+	constexpr float kHP = 1.0f;
 	// 攻撃力
 	constexpr float kDefaultAtk = 1.0f;
 
@@ -59,6 +60,7 @@ namespace
 	constexpr float kSliceAnimSpeed = 0.4f;
 	constexpr float kStabAnimSpeed = 0.4f;
 	constexpr float kSpinAnimSpeed = 0.4f;
+	constexpr float kHitAnimSpeed = 1.0f;
 
 	// 倒されたときにプレイヤーの必殺技ゲージを増やす量
 	constexpr int kSpecialGaugePoint = 10;
@@ -68,11 +70,15 @@ namespace
 }
 
 EnemyBoss::EnemyBoss() :
+	m_deadEffect(-1),
+	m_playingEffect(-1),
 	m_walkFrame(0.0f),
 	m_tiredFrame(0.0f),
 	m_atkCount(kAtkCount),
 	EnemyBase(ObjectTag::Boss, ObjectPriority::Middle, ColliderData::Kind::Capsule)
 {
+	m_deadEffect = LoadEffekseerEffect("Data/Effect/BossDeadEffect.efkefc", 50.0f);
+	assert(m_deadEffect >= 0);
 }
 
 EnemyBoss::~EnemyBoss()
@@ -98,7 +104,7 @@ void EnemyBoss::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_status.m_hp = kHP;
 	m_status.m_maxHP = kHP;
 	m_status.m_atk = kDefaultAtk;
-	m_atkFrame = 0.0f;
+	m_atkFrame = 0;
 	m_isDead = false;
 
 	// モデルのロード
@@ -212,10 +218,6 @@ void EnemyBoss::FindUpdate(std::shared_ptr<Player> player)
 
 void EnemyBoss::WalkUpdate(std::shared_ptr<Player> player)
 {
-	if (m_hitFrame > 0)
-	{
-		m_hitFrame--;
-	}
 	SetActive(false);
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Walk));
 	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Walk));
@@ -275,10 +277,6 @@ void EnemyBoss::WalkUpdate(std::shared_ptr<Player> player)
 
 void EnemyBoss::ChaseUpdate(std::shared_ptr<Player> player)
 {
-	if (m_hitFrame > 0)
-	{
-		m_hitFrame--;
-	}
 	SetActive(true);
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Chase));
 	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Chase));
@@ -338,10 +336,6 @@ void EnemyBoss::ChaseUpdate(std::shared_ptr<Player> player)
 
 void EnemyBoss::AttackUpdate(std::shared_ptr<Player> player)
 {
-	if (m_hitFrame > 0)
-	{
-		m_hitFrame--;
-	}
 	SetActive(true);
 	++m_atkFrame;
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Attack));
@@ -379,10 +373,6 @@ void EnemyBoss::AttackUpdate(std::shared_ptr<Player> player)
 
 void EnemyBoss::ChopUpdate(std::shared_ptr<Player> player)
 {
-	if (m_hitFrame > 0)
-	{
-		m_hitFrame--;
-	}
 	SetActive(true);
 	++m_atkFrame;
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Chop));
@@ -424,10 +414,6 @@ void EnemyBoss::ChopUpdate(std::shared_ptr<Player> player)
 
 void EnemyBoss::SliceUpdate(std::shared_ptr<Player> player)
 {
-	if (m_hitFrame > 0)
-	{
-		m_hitFrame--;
-	}
 	SetActive(true);
 	++m_atkFrame;
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Slice));
@@ -469,10 +455,6 @@ void EnemyBoss::SliceUpdate(std::shared_ptr<Player> player)
 
 void EnemyBoss::StabUpdate(std::shared_ptr<Player> player)
 {
-	if (m_hitFrame > 0)
-	{
-		m_hitFrame--;
-	}
 	SetActive(true);
 	++m_atkFrame;
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Stab));
@@ -514,10 +496,6 @@ void EnemyBoss::StabUpdate(std::shared_ptr<Player> player)
 
 void EnemyBoss::SpinUpdate(std::shared_ptr<Player> player)
 {
-	if (m_hitFrame > 0)
-	{
-		m_hitFrame--;
-	}
 	SetActive(true);
 	++m_atkFrame;
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Spin));
@@ -577,8 +555,16 @@ void EnemyBoss::DeadUpdate(std::shared_ptr<Player> player)
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Dead));
 	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Dead));
 
-	// アニメーションが終了したら待機状態に戻る
-	if (m_anim.GetNextAnim().isEnd)
+	if (m_playingEffect == -1)
+	{
+		m_playingEffect = PlayEffekseer3DEffect(m_deadEffect);
+	}
+	SetPosPlayingEffekseer3DEffect(m_playingEffect,
+		m_rigidbody.GetPos().ToDxVECTOR().x,
+		m_rigidbody.GetPos().ToDxVECTOR().y,
+		m_rigidbody.GetPos().ToDxVECTOR().z);
+
+	if (IsEffekseer3DEffectPlaying(m_playingEffect))
 	{
 		if (m_model >= 0)
 		{
@@ -587,15 +573,21 @@ void EnemyBoss::DeadUpdate(std::shared_ptr<Player> player)
 		}
 		m_isDead = true;
 	}
+
+	//// アニメーションが終了したら待機状態に戻る
+	//if (m_anim.GetNextAnim().isEnd)
+	//{
+	//	if (m_model >= 0)
+	//	{
+	//		MV1DeleteModel(m_model);
+	//		m_model = -1;
+	//	}
+	//	m_isDead = true;
+	//}
 }
 
 void EnemyBoss::TiredUpdate(std::shared_ptr<Player> player)
 {
-	if (m_hitFrame > 0)
-	{
-		m_hitFrame--;
-	}
-
 	// 当たり判定をオンにする
 	SetActive(true);
 	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Tired));
@@ -663,11 +655,13 @@ float EnemyBoss::GetAnimPlaySpeed(EnemyState state) const
 	case EnemyState::Spin:
 		return kSpinAnimSpeed;
 	case EnemyState::Hit:
-		return kDefaultAnimSpeed;
+		return kHitAnimSpeed;
 	case EnemyState::Dead:
 		return kDefaultAnimSpeed;
 	case EnemyState::Tired:
 		return kDefaultAnimSpeed;
+	default:
+		return -1.0f;
 	}
 }
 

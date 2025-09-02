@@ -19,7 +19,7 @@ const std::unordered_map<PlayerState, AtkTiming> kColTimingTable =
 	{PlayerState::Stab,		  {16, 28}},
 	{PlayerState::Spin,       {16, 36}},
 	{PlayerState::Shot,       { 0,  0}},
-	{PlayerState::Special,    { 0, 250}},
+	{PlayerState::Special,   { 0, 100}},
 	{PlayerState::Dodge,	  { 0,  0}},
 	{PlayerState::Hit,		  { 0,  0}},
 	{PlayerState::Dead,		  { 0,  0}}

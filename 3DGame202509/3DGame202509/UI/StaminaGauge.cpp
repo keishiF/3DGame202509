@@ -33,7 +33,7 @@ void StaminaGauge::Draw()
 	float playerStaminaRate = playerCurrentStamina / playerMaxStamina;
 	playerStaminaRate = std::clamp(playerStaminaRate, 0.0f, 1.0f);
 
-	DrawBox(kPlayerStaminaPosX, 
+	DrawBox(static_cast<int>(kPlayerStaminaPosX), 
 		kPlayerStaminaPosY,
 		kPlayerStaminaPosX + kStaminaGaugeWidth, 
 		kPlayerStaminaPosY + kStaminaGaugeHeight,

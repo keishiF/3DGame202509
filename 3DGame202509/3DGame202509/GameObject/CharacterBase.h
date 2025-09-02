@@ -48,9 +48,9 @@ protected:
 	// 経過フレームを測る
 	int m_frame = 0;
 	// 攻撃フレーム
-	int m_atkFrame = 0.0f;
+	int m_atkFrame = 0;
 	// 点滅フレーム
-	int m_blinkFrame = 0.0f;
+	int m_blinkFrame = 0;
 	// 正面ベクトル
 	Vector3 m_forward = { 0.0f, 0.0f, 1.0f };
 	// アニメーション

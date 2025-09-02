@@ -29,7 +29,7 @@ void EnemyMinionWeapon::Init()
 	assert(m_model >= 0);
 }
 
-void EnemyMinionWeapon::Update(int model, float currentFrame, const MinionAtk::AtkTiming& timing)
+void EnemyMinionWeapon::Update(int model, int currentFrame, const MinionAtk::AtkTiming& timing)
 {
 	if (currentFrame >= timing.start && currentFrame < timing.end)
 	{

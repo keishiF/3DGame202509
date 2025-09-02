@@ -29,7 +29,7 @@ void EnemyBossLeftWeapon::Init()
 	assert(m_model >= 0);
 }
 
-void EnemyBossLeftWeapon::Update(int model, float currentFrame, const BossAtk::AtkTiming& timing)
+void EnemyBossLeftWeapon::Update(int model, int currentFrame, const BossAtk::AtkTiming& timing)
 {
 	if (currentFrame >= timing.start && currentFrame < timing.end)
 	{

@@ -11,7 +11,7 @@ public:
 	// 初期化
 	void Init();
 	// 更新
-	void Update(int model, float currentFrame, const AtkTiming& timing, bool specialFlag);
+	void Update(int model, int currentFrame, const AtkTiming& timing, bool specialFlag);
 	// 待機状態
 	void IdleUpdate(int model);
 	// 攻撃状態

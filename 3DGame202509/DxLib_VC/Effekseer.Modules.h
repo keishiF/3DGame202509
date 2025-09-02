@@ -1261,11 +1261,27 @@ private:
 	}
 
 public:
-	Curve()
+	Curve() :
+		mControllPoint{},
+		mControllPointCount(0),
+		mDimension(0),
+		mKnotCount(0),
+		mLength(0),
+		mStep(0),
+		mType(0),
+		mOrder(0)
 	{
 	}
 
-	Curve(const void* data, int32_t size)
+	Curve(const void* data, int32_t size) :
+		mControllPoint{},
+		mControllPointCount(0),
+		mDimension(0),
+		mKnotCount(0),
+		mLength(0),
+		mStep(0),
+		mType(0),
+		mOrder(0)
 	{
 		uint8_t* pData = new uint8_t[size];
 		memcpy(pData, data, size);

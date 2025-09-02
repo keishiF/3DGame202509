@@ -39,6 +39,9 @@ private:
 	// À‚èó‘Ô
 	void TiredUpdate(std::shared_ptr<Player> player);
 
+	int m_deadEffect = -1;
+	int m_playingEffect = -1;
+
 	float m_walkFrame = 0.0f;
 	float m_tiredFrame = 0.0f;
 	int m_atkCount = 0;

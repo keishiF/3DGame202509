@@ -18,7 +18,7 @@ namespace
 	constexpr float kWeaponModelScale = 0.01f;
 
 	// 攻撃フレーム
-	constexpr float kAtkFrame = 32.0f;
+	constexpr float kAtkFrame = 28.0f;
 
 	// 当たり判定
 	// カプセルの半径
@@ -53,7 +53,7 @@ namespace
 	// アニメーションの再生速度
 	// 通常速度
 	constexpr float kDefaultAnimSpeed = 1.0f;
-	constexpr float kAtkAnimSpeed = 0.5f;
+	constexpr float kAtkAnimSpeed = 1.25f;
 
 	// 倒されたときにプレイヤーの必殺技ゲージを増やす量
 	constexpr int kSpecialGaugePoint = 10;
@@ -90,7 +90,7 @@ void EnemyMage::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_status.m_hp = kHP;
 	m_status.m_maxHP = kHP;
 	m_status.m_atk = kDefaultAtk;
-	m_atkFrame = 0.0f;
+	m_atkFrame = 0;
 	m_isDead = false;
 
 	// モデルのロード
@@ -495,6 +495,9 @@ float EnemyMage::GetAnimPlaySpeed(EnemyState state) const
 		return kDefaultAnimSpeed;
 	case EnemyState::Dead:
 		return kDefaultAnimSpeed;
+	default:
+		return 0.0f;
+		assert(0 && "存在しないステート");
 	}
 }
 

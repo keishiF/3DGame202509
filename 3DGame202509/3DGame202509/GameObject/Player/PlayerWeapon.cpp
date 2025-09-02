@@ -36,7 +36,7 @@ void PlayerWeapon::Init()
 	assert(m_model >= 0);
 }
 
-void PlayerWeapon::Update(int model, float currentFrame, const AtkTiming& timing, bool specialFlag)
+void PlayerWeapon::Update(int model, int currentFrame, const AtkTiming& timing, bool specialFlag)
 {
 	if (currentFrame >= timing.start && currentFrame < timing.end && specialFlag)
 	{

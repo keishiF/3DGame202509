@@ -6,9 +6,9 @@ namespace
 	// 弾速
 	constexpr float kRunSpeed = 15.0f;
 	// 弾の生存時間
-	constexpr float kLifeFrame = 300.0f;
+	constexpr float kLifeFrame = 100.0f;
 	// 弾の半径
-	constexpr float kColRadius = 50.0f;
+	constexpr float kColRadius = 30.0f;
 }
 
 PlayerBullet::PlayerBullet() :
