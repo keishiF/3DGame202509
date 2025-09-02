@@ -18,7 +18,7 @@ namespace
 	// スタミナの初期値、最大値
 	constexpr float kStamina = 100.0f;
 	// 待機状態、歩き状態で毎フレーム回復するスタミナ
-	constexpr float kRegeneStamina = 0.17f;
+	constexpr float kRegeneStamina = 0.34f;
 	// 疲れ状態で毎フレーム回復するスタミナ
 	constexpr float kTiredRegeneStamina = 0.17f;
 	// 走っている際に消費するスタミナ
@@ -93,10 +93,6 @@ namespace
 	constexpr float kTiredRunAnimSpeed = 0.5f;
 	// 必殺技
 	constexpr float kSpecialAnimSpeed  = 0.5f;
-
-
-	// テスト
-	constexpr int kEffectPlayInterval = 300;
 }
 
 Player::Player() :
@@ -150,9 +146,18 @@ void Player::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	m_weapon = std::make_shared<PlayerWeapon>();
 	m_weapon->Init();
 
-	// テスト
+	// エフェクトのロード
 	m_specialAtkEffect = LoadEffekseerEffect("Data/Effect/PlayerSpecialAttack.efkefc", 50.0f);
 	assert(m_specialAtkEffect >= 0);
+	// SEハンドル
+	m_atkSE = LoadSoundMem("Data/Sound/SE/PlayerAtkSE.mp3");
+	assert(m_atkSE >= 0);
+	m_shotSE = LoadSoundMem("Data/Sound/SE/BulletSE.mp3");
+	assert(m_shotSE >= 0);
+	m_dodgeSE = LoadSoundMem("Data/Sound/SE/PlayerDodgeSE.mp3");
+	assert(m_dodgeSE >= 0);
+	m_specialAtkSE = LoadSoundMem("Data/Sound/SE/PlayerSpecialAtkSE.mp3");
+	assert(m_specialAtkSE >= 0);
 }
 
 void Player::Draw()
@@ -234,24 +239,30 @@ void Player::ChangeState(PlayerState newState)
 		break;
 	case PlayerState::Chop:
 		m_anim.ChangeAnim(kChopAnimName, kDefaultAnimSpeed, false);
+		PlaySoundMem(m_atkSE, DX_PLAYTYPE_BACK);
 		break;
 	case PlayerState::Slice:
 		m_anim.ChangeAnim(kSliceAnimName, kDefaultAnimSpeed, false);
+		PlaySoundMem(m_atkSE, DX_PLAYTYPE_BACK);
 		break;
 	case PlayerState::Stab:
 		m_anim.ChangeAnim(kStabAnimName, kDefaultAnimSpeed, false);
+		PlaySoundMem(m_atkSE, DX_PLAYTYPE_BACK);
 		break;
 	case PlayerState::Spin:
 		m_anim.ChangeAnim(kSpinAnimName, kDefaultAnimSpeed, false);
+		PlaySoundMem(m_atkSE, DX_PLAYTYPE_BACK);
 		break;
 	case PlayerState::Shot:
 		m_anim.ChangeAnim(kStabAnimName, kDefaultAnimSpeed, false);
 		break;
 	case PlayerState::Special:
 		m_anim.ChangeAnim(kSpecialAnimName, kSpecialAnimSpeed, false);
+		PlaySoundMem(m_specialAtkSE, DX_PLAYTYPE_BACK);
 		break;
 	case PlayerState::Dodge:
 		m_anim.ChangeAnim(kDodgeAnimName, kDefaultAnimSpeed, false);
+		PlaySoundMem(m_dodgeSE, DX_PLAYTYPE_BACK);
 		break;
 	case PlayerState::Hit:
 		m_anim.ChangeAnim(kHitAnimName, kDefaultAnimSpeed, false);
@@ -936,6 +947,7 @@ void Player::ShotUpdate()
 
 	if (m_atkFrame == kShotTiming)
 	{
+		PlaySoundMem(m_shotSE, DX_PLAYTYPE_BACK);
 		// 弾を生成
 		Vector3 myPos = m_rigidbody.GetPos();
 		myPos.y += 50.0f;
@@ -963,7 +975,6 @@ void Player::SpecialUpdate()
 	{
 		m_playingEffect = PlayEffekseer3DEffect(m_specialAtkEffect);
 	}
-	++playCount;
 	SetPosPlayingEffekseer3DEffect(m_playingEffect,
 		m_rigidbody.GetPos().ToDxVECTOR().x,
 		m_rigidbody.GetPos().ToDxVECTOR().y,

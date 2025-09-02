@@ -42,6 +42,8 @@ private:
 	int m_deadEffect = -1;
 	int m_playingEffect = -1;
 
+	int m_chopSE = -1;
+
 	float m_walkFrame = 0.0f;
 	float m_tiredFrame = 0.0f;
 	int m_atkCount = 0;

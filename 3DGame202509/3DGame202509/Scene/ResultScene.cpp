@@ -17,6 +17,7 @@ namespace
 ResultScene::ResultScene(SceneController& controller) :
 	SceneBase(controller),
 	m_skyModel(-1),
+	m_bgmHandle(-1),
 	m_fadeFrame(kFadeInterval),
 	m_blinkFrame(0),
 	m_update(&ResultScene::FadeInUpdate),
@@ -25,6 +26,11 @@ ResultScene::ResultScene(SceneController& controller) :
 	m_skyModel = MV1LoadModel("Data/Model/Sky/Sky_Daylight01.mv1");
 	assert(m_skyModel >= 0);
 	MV1SetScale(m_skyModel, VGet(kSkyModelScale, kSkyModelScale, kSkyModelScale));
+
+	m_bgmHandle = LoadSoundMem("Data/Sound/BGM/ResultBGM.mp3");
+	assert(m_bgmHandle > 0);
+	ChangeVolumeSoundMem(128, m_bgmHandle);
+	PlaySoundMem(m_bgmHandle, DX_PLAYTYPE_LOOP);
 }
 
 ResultScene::~ResultScene()
@@ -48,6 +54,7 @@ void ResultScene::NormalUpdate()
 
 	if (Input::GetInstance().IsPress("LB"))
 	{
+		StopSoundMem(m_bgmHandle);
 		m_update = &ResultScene::FadeOutUpdate;
 		m_draw = &ResultScene::FadeDraw;
 		m_fadeFrame = 0;

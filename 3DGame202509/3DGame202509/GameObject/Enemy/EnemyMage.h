@@ -35,6 +35,7 @@ private:
 	bool IsPlayerFind(const std::shared_ptr<Player>& player, const Vector3& centerDir, float viewAngleRad, float viewDistance);
 
 	int m_weaponModel = -1;
+	int m_shotSE = -1;
 
 	float m_angle = 0.0f;
 	float m_rotSpeed = 0.0f;

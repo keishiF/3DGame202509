@@ -17,6 +17,7 @@ public:
 	virtual void Draw() override;
 
 private:
+	int m_bgmHandle;
 	int m_frame;
 	int m_fadeFrame;
 	int m_blinkFrame;

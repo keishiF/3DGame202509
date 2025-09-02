@@ -98,6 +98,9 @@ void EnemyMage::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	assert(m_model >= 0);
 	m_weaponModel = MV1LoadModel("Data/Model/Enemy/Mage/Staff.mv1");
 	assert(m_weaponModel >= 0);
+	// SEのロード
+	m_shotSE = LoadSoundMem("Data/Sound/SE/BulletSE.mp3");
+	assert(m_shotSE >= 0);
 
 	VECTOR modelScale = VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale);
 	MV1SetScale(m_model, modelScale);
@@ -381,6 +384,7 @@ void EnemyMage::AttackUpdate(std::shared_ptr<Player> player)
 
 	if (m_atkFrame == kAtkFrame)
 	{
+		PlaySoundMem(m_shotSE, DX_PLAYTYPE_BACK);
 		// 弾を生成
 		Vector3 myPos = m_rigidbody.GetPos();
 		myPos.y += 50.0f;

@@ -105,9 +105,14 @@ private:
 	// 弾を持つ
 	std::vector<std::shared_ptr<PlayerBullet>> m_bullets;
 
-	// テスト
+	// 各ハンドル
+	// エフェクトハンドル
 	int m_specialAtkEffect = -1;
 	int m_playingEffect = -1;
-	int playCount = 0;
+	// SEハンドル
+	int m_atkSE = -1;
+	int m_shotSE = -1;
+	int m_dodgeSE = -1;
+	int m_specialAtkSE = -1;
 };
 

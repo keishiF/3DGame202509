@@ -15,6 +15,7 @@ private:
 	int m_skyModel;
 	int m_titleHandle;
 	int m_fontHandle;
+	int m_bgmHandle;
 
 	int m_fadeFrame;
 	int m_blinkFrame;

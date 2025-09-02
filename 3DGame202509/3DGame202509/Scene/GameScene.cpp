@@ -24,6 +24,7 @@ namespace
 
 GameScene::GameScene(SceneController& controller) :
 	SceneBase(controller),
+	m_bgmHandle(-1),
 	m_frame(0),
 	m_fadeFrame(kFadeInterval),
 	m_blinkFrame(0),
@@ -34,6 +35,11 @@ GameScene::GameScene(SceneController& controller) :
 	Effekseer_Init(20000);
 	SetChangeScreenModeGraphicsSystemResetFlag(false);
 	Effekseer_InitDistortion();
+
+	m_bgmHandle = LoadSoundMem("Data/Sound/BGM/GameBGM.mp3");
+	assert(m_bgmHandle > 0);
+	ChangeVolumeSoundMem(128, m_bgmHandle);
+	PlaySoundMem(m_bgmHandle, DX_PLAYTYPE_LOOP);
 
 	m_gameObjectManager.Init();
 
@@ -72,12 +78,14 @@ void GameScene::NormalUpdate()
 	m_gameObjectManager.Update();
 	if (m_gameObjectManager.IsGameOver())
 	{
+		StopSoundMem(m_bgmHandle);
 		m_update = &GameScene::FadeOutUpdate;
 		m_draw = &GameScene::FadeDraw;
 		m_fadeFrame = 0;
 	}
 	else if (m_gameObjectManager.IsClear())
 	{
+		StopSoundMem(m_bgmHandle);
 		m_update = &GameScene::FadeOutUpdate;
 		m_draw = &GameScene::FadeDraw;
 		m_fadeFrame = 0;

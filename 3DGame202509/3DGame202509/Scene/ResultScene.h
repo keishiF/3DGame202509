@@ -12,6 +12,7 @@ public:
 
 private:
 	int m_skyModel;
+	int m_bgmHandle;
 
 	float m_fadeFrame;
 	int m_blinkFrame;

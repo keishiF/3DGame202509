@@ -18,6 +18,7 @@ TitleScene::TitleScene(SceneController& controller) :
 	SceneBase(controller),
 	m_skyModel(-1),
 	m_titleHandle(-1),
+	m_bgmHandle(-1),
 	m_fadeFrame(kFadeInterval),
 	m_blinkFrame(0),
 	m_update(&TitleScene::FadeInUpdate),
@@ -32,12 +33,18 @@ TitleScene::TitleScene(SceneController& controller) :
 	m_fontHandle = CreateFontToHandle("Algerian", 48, -1, DX_FONTTYPE_ANTIALIASING_8X8);
 	assert(m_fontHandle != -1);
 
+	m_bgmHandle = LoadSoundMem("Data/Sound/BGM/TitleBGM.mp3");
+	assert(m_bgmHandle > 0);
+	ChangeVolumeSoundMem(128, m_bgmHandle);
+	PlaySoundMem(m_bgmHandle, DX_PLAYTYPE_LOOP);
+
 	MV1SetScale(m_skyModel, VGet(kSkyModelScale, kSkyModelScale, kSkyModelScale));
 }
 
 TitleScene::~TitleScene()
 {
 	MV1DeleteModel(m_skyModel);
+	StopSoundMem(m_bgmHandle);
 }
 
 void TitleScene::Update()
@@ -56,6 +63,7 @@ void TitleScene::NormalUpdate()
 
 	if (Input::GetInstance().IsPress("B"))
 	{
+		StopSoundMem(m_bgmHandle);
 		m_update = &TitleScene::FadeOutUpdate;
 		m_draw = &TitleScene::FadeDraw;
 		m_fadeFrame = 0;

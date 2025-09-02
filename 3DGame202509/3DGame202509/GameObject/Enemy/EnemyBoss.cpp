@@ -77,8 +77,6 @@ EnemyBoss::EnemyBoss() :
 	m_atkCount(kAtkCount),
 	EnemyBase(ObjectTag::Boss, ObjectPriority::Middle, ColliderData::Kind::Capsule)
 {
-	m_deadEffect = LoadEffekseerEffect("Data/Effect/BossDeadEffect.efkefc", 50.0f);
-	assert(m_deadEffect >= 0);
 }
 
 EnemyBoss::~EnemyBoss()
@@ -110,6 +108,10 @@ void EnemyBoss::Init(Vector3& pos, Vector3& rot, Vector3& scale)
 	// ƒ‚ƒfƒ‹‚Ìƒ[ƒh
 	m_model = MV1LoadModel("Data/Model/Enemy/Boss/Boss.mv1");
 	assert(m_model >= 0);
+	m_deadEffect = LoadEffekseerEffect("Data/Effect/BossDeadEffect.efkefc", 50.0f);
+	assert(m_deadEffect >= 0);
+	m_chopSE = LoadSoundMem("Data/Sound/SE/BossChopSE.mp3");
+	assert(m_chopSE >= 0);
 
 	VECTOR modelScale = VGet(scale.x * kModelScale, scale.y * kModelScale, scale.z * kModelScale);
 	MV1SetScale(m_model, modelScale);
@@ -172,6 +174,7 @@ void EnemyBoss::Update(std::shared_ptr<Player> player)
 		AttackUpdate(player);
 		break;
 	case EnemyState::Chop:
+		PlaySoundMem(m_chopSE, DX_PLAYTYPE_BACK);
 		ChopUpdate(player);
 		break;
 	case EnemyState::Slice:
