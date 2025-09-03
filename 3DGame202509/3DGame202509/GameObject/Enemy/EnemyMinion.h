@@ -33,5 +33,7 @@ private:
 	void DeadUpdate(std::shared_ptr<Player> player) override;
 
 	std::shared_ptr<EnemyMinionWeapon> m_weapon;
+
+	bool m_isScoreAdded = false;
 };
 

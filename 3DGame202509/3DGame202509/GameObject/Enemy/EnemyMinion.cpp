@@ -1,7 +1,8 @@
 ﻿#include "CapsuleColliderData.h"
+#include "EnemyMinion.h"
 #include "EnemyMinionWeapon.h"
 #include "Player/Player.h"
-#include "EnemyMinion.h"
+#include "ScoreManager.h"
 
 namespace
 {
@@ -54,6 +55,8 @@ namespace
 
 	// 倒されたときにプレイヤーの必殺技ゲージを増やす量
 	constexpr int kSpecialGaugePoint = 10;
+	// 倒されたときに加算するスコア
+	constexpr int kScore = 100;
 
 	// ノックバック
 	constexpr float kKnockBackSpeed = 16.0f;
@@ -132,6 +135,8 @@ void EnemyMinion::Update(std::shared_ptr<Player> player)
 	{
 		return;
 	}
+
+	m_isInvincible = false;
 
 	// アニメーションの更新
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
@@ -346,6 +351,12 @@ void EnemyMinion::DeadUpdate(std::shared_ptr<Player> player)
 		}
 		m_isDead = true;
 		player->SetSpecialGauge(kSpecialGaugePoint);
+		// スコアがまだ加算されていない場合のみ処理
+		if (!m_isScoreAdded)
+		{
+			ScoreManager::Instance().AddEnemyScore(kScore);
+			m_isScoreAdded = true;
+		}
 		return;
 	}
 }

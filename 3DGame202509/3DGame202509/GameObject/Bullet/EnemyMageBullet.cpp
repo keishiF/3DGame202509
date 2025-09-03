@@ -5,7 +5,7 @@
 namespace
 {
 	// 弾速
-	constexpr float kRunSpeed = 15.0f;
+	constexpr float kRunSpeed = 10.0f;
 	// 弾の生存時間
 	constexpr float kLifeFrame = 420.0f;
 	// 弾の半径
@@ -67,4 +67,9 @@ void EnemyMageBullet::Update()
 void EnemyMageBullet::Draw()
 {
 	//DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kColRadius, 16, 0xff0000, 0xff0000, true);
+}
+
+float EnemyMageBullet::GetAttackPower() const
+{
+	return 1.0f;
 }

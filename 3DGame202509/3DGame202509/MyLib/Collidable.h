@@ -18,6 +18,7 @@ public:
 	ObjectPriority GetPriority() const { return m_priority; }
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) abstract;
+	virtual float GetAttackPower() const { return 0.0f; }
 
 	void SetActive(bool active) { m_isActive = active; }
 	bool IsActive() const { return m_isActive; }

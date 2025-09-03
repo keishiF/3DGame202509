@@ -3,18 +3,19 @@
 #include "EnemyBossLeftWeapon.h"
 #include "EnemyBossRightWeapon.h"
 #include "Player/Player.h"
+#include "ScoreManager.h"
 #include <EffekseerForDxLib.h>
 
 namespace
 {
 	// HPの初期値、最大値
-	constexpr float kHP = 20.0f;
+	constexpr float kHP = 25.0f;
 	// 攻撃力
 	constexpr float kDefaultAtk = 1.0f;
 
 	// 移動速度
 	constexpr float kWalkSpeed = 2.0f;
-	constexpr float kChaseSpeed = 10.0f;
+	constexpr float kChaseSpeed = 7.5f;
 
 	// モデルの拡大値
 	constexpr float kModelScale = 200.0f;
@@ -64,6 +65,8 @@ namespace
 
 	// 倒されたときにプレイヤーの必殺技ゲージを増やす量
 	constexpr int kSpecialGaugePoint = 10;
+	// 倒されたときに加算するスコア
+	constexpr int kScore = 5000;
 
 	constexpr float kTiredFrame = 300.0f;
 	constexpr int kAtkCount = 3;
@@ -154,6 +157,16 @@ void EnemyBoss::Update(std::shared_ptr<Player> player)
 		return;
 	}
 
+	if (m_isInvincible)
+	{
+		m_invincibleFrame--;
+		if (m_invincibleFrame <= 0)
+		{
+			// 無敵時間終了
+			m_isInvincible = false;
+		}
+	}
+
 	// アニメーションの更新
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
 	m_anim.UpdateAnim(m_anim.GetNextAnim());
@@ -221,7 +234,7 @@ void EnemyBoss::FindUpdate(std::shared_ptr<Player> player)
 
 void EnemyBoss::WalkUpdate(std::shared_ptr<Player> player)
 {
-	SetActive(false);
+	SetActive(true);
 	m_rightWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Walk));
 	m_leftWeapon->Update(m_model, m_atkFrame, BossAtk::kColTimingTable.at(EnemyState::Walk));
 
@@ -243,7 +256,7 @@ void EnemyBoss::WalkUpdate(std::shared_ptr<Player> player)
 		MV1SetRotationXYZ(m_model, VGet(0.0f, -angleY, 0.0f));
 	}
 
-	if (m_walkFrame >= 120.0f)
+	if (m_walkFrame >= 90.0f)
 	{
 		float distance = (myPos - player->GetPos()).Length();
 		if (distance >= (m_playerFindRadius + player->GetRadius()))
@@ -402,6 +415,7 @@ void EnemyBoss::ChopUpdate(std::shared_ptr<Player> player)
 		float distance = (myPos - player->GetPos()).Length();
 		if (m_atkCount <= 0)
 		{
+			m_tiredFrame = 0.0f;
 			ChangeState(EnemyState::Tired);
 		}
 		else if (distance >= (m_playerFindRadius + player->GetRadius()))
@@ -410,6 +424,7 @@ void EnemyBoss::ChopUpdate(std::shared_ptr<Player> player)
 		}
 		else
 		{
+			m_walkFrame = 0.0f;
 			ChangeState(EnemyState::Walk);
 		}
 	}
@@ -443,6 +458,7 @@ void EnemyBoss::SliceUpdate(std::shared_ptr<Player> player)
 		float distance = (myPos - player->GetPos()).Length();
 		if (m_atkCount <= 0)
 		{
+			m_tiredFrame = 0.0f;
 			ChangeState(EnemyState::Tired);
 		}
 		else if (distance >= (m_playerFindRadius + player->GetRadius()))
@@ -451,6 +467,7 @@ void EnemyBoss::SliceUpdate(std::shared_ptr<Player> player)
 		}
 		else
 		{
+			m_walkFrame = 0.0f;
 			ChangeState(EnemyState::Walk);
 		}
 	}
@@ -484,6 +501,7 @@ void EnemyBoss::StabUpdate(std::shared_ptr<Player> player)
 		float distance = (myPos - player->GetPos()).Length();
 		if (m_atkCount <= 0)
 		{
+			m_tiredFrame = 0.0f;
 			ChangeState(EnemyState::Tired);
 		}
 		else if (distance >= (m_playerFindRadius + player->GetRadius()))
@@ -492,6 +510,7 @@ void EnemyBoss::StabUpdate(std::shared_ptr<Player> player)
 		}
 		else
 		{
+			m_walkFrame = 0.0f;
 			ChangeState(EnemyState::Walk);
 		}
 	}
@@ -525,6 +544,7 @@ void EnemyBoss::SpinUpdate(std::shared_ptr<Player> player)
 		float distance = (myPos - player->GetPos()).Length();
 		if (m_atkCount <= 0)
 		{
+			m_tiredFrame = 0.0f;
 			ChangeState(EnemyState::Tired);
 		}
 		else if (distance >= (m_playerFindRadius + player->GetRadius()))
@@ -533,6 +553,7 @@ void EnemyBoss::SpinUpdate(std::shared_ptr<Player> player)
 		}
 		else
 		{
+			m_walkFrame = 0.0f;
 			ChangeState(EnemyState::Walk);
 		}
 	}
@@ -574,19 +595,14 @@ void EnemyBoss::DeadUpdate(std::shared_ptr<Player> player)
 			MV1DeleteModel(m_model);
 			m_model = -1;
 		}
+		// スコアがまだ加算されていない場合のみ処理
+		if (!m_isScoreAdded)
+		{
+			ScoreManager::Instance().AddEnemyScore(kScore);
+			m_isScoreAdded = true;
+		}
 		m_isDead = true;
 	}
-
-	//// アニメーションが終了したら待機状態に戻る
-	//if (m_anim.GetNextAnim().isEnd)
-	//{
-	//	if (m_model >= 0)
-	//	{
-	//		MV1DeleteModel(m_model);
-	//		m_model = -1;
-	//	}
-	//	m_isDead = true;
-	//}
 }
 
 void EnemyBoss::TiredUpdate(std::shared_ptr<Player> player)
@@ -601,7 +617,8 @@ void EnemyBoss::TiredUpdate(std::shared_ptr<Player> player)
 	if (m_tiredFrame >= kTiredFrame)
 	{
 		m_atkCount = kAtkCount;
-		ChangeState(EnemyState::Find);
+		m_walkFrame = 0.0f;
+		ChangeState(EnemyState::Walk);
 	}
 }
 

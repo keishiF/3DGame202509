@@ -11,5 +11,12 @@ CharacterBase::~CharacterBase()
 
 void CharacterBase::OnCollide(std::shared_ptr<Collidable> collider)
 {
-	OnDamage(m_status.m_atk);
+    // 衝突相手の攻撃力を取得する
+    float damage = collider->GetAttackPower();
+    
+    // ダメージが0より大きい場合のみ処理する
+    if (damage > 0.0f)
+    {
+        OnDamage(damage);
+    }
 }

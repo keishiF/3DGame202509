@@ -1,5 +1,10 @@
 ﻿#include "EnemyBase.h"
 
+namespace
+{
+    constexpr int kInvincibilityDuration = 30;
+}
+
 EnemyBase::EnemyBase(ObjectTag tag, ObjectPriority priority, ColliderData::Kind colliderKind) :
     m_state(EnemyState::Find),
     m_prevState(m_state),
@@ -21,7 +26,17 @@ void EnemyBase::Draw()
 
 void EnemyBase::OnDamage(float atk)
 {
+    // 無敵時間中は何もしない
+    if (m_isInvincible)
+    {
+        return;
+    }
+
     m_status.m_hp -= atk;
+
+    // ダメージを受けたら無敵時間を開始する
+    m_isInvincible = true;
+    m_invincibleFrame = kInvincibilityDuration;
 
     if (m_status.m_hp <= 0 && !m_isDead)
     {

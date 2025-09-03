@@ -57,5 +57,8 @@ protected:
 	float m_playerFindRadius = 0.0f;
 	// 攻撃に移行できる範囲
 	float m_atkRadius = 0.0f;
+
+	bool m_isInvincible = false;    // 無敵状態かどうか
+	int m_invincibleFrame = 0;      // 無敵状態の残りフレーム数
 };
 

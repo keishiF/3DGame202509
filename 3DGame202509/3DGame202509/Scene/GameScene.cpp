@@ -5,8 +5,8 @@
 #include "Physics.h"
 #include "ResultScene.h"
 #include "SceneController.h"
+#include "ScoreManager.h"
 #include "Stage/StageObjectManager.h"
-#include "GameObjectManager.h"
 #include "TitleScene.h"
 #include "UIManager.h"
 #include <cassert>
@@ -47,6 +47,9 @@ GameScene::GameScene(SceneController& controller) :
 	m_stageObjectManager->Init();
 
 	m_uiManager = std::make_shared<UIManager>();
+
+	// ScoreManagerのタイマーを開始
+	ScoreManager::Instance().Start();
 }
 
 GameScene::~GameScene()
@@ -90,6 +93,16 @@ void GameScene::NormalUpdate()
 		m_draw = &GameScene::FadeDraw;
 		m_fadeFrame = 0;
 	}
+
+	if (m_gameObjectManager.IsGameOver() || m_gameObjectManager.IsClear())
+	{
+		// ゲームが終了したらタイマーを停止
+		ScoreManager::Instance().Stop();
+		StopSoundMem(m_bgmHandle);
+		m_update = &GameScene::FadeOutUpdate;
+		m_draw = &GameScene::FadeDraw;
+		m_fadeFrame = 0;
+	}
 }
 
 void GameScene::FadeInUpdate()
@@ -105,7 +118,8 @@ void GameScene::FadeOutUpdate()
 {
 	if (m_fadeFrame++ >= kFadeInterval)
 	{
-		m_controller.ChangeScene(std::make_shared<ResultScene>(m_controller));
+		bool isClear = m_gameObjectManager.IsClear();
+		m_controller.ChangeScene(std::make_shared<ResultScene>(m_controller, isClear));
 
 		// 自分が死んでいるのでもし余計な処理が入っているとまずいのでreturn;
 		return;

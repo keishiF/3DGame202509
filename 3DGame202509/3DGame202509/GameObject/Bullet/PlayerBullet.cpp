@@ -10,6 +10,8 @@ namespace
 	constexpr float kLifeFrame = 90.0f;
 	// 弾の半径
 	constexpr float kColRadius = 30.0f;
+
+	constexpr float kShotAtk = 1.0f;
 }
 
 PlayerBullet::PlayerBullet() :
@@ -67,4 +69,9 @@ void PlayerBullet::Update()
 void PlayerBullet::Draw()
 {
 	//DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kColRadius, 16, 0xff0000, 0xff0000, true);
+}
+
+float PlayerBullet::GetAttackPower() const
+{
+	return kShotAtk;
 }

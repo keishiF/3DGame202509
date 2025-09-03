@@ -1,6 +1,7 @@
 ﻿#include "Enemy/EnemyBoss.h"
 #include "Enemy/EnemyMage.h"
 #include "Enemy/EnemyMinion.h"
+#include "GameTimer.h"
 #include "HPGauge.h"
 #include "Player/Player.h"
 #include "SpecialGauge.h"
@@ -22,6 +23,10 @@ namespace
 
 UIManager::UIManager()
 {
+	m_gameTimer = std::make_shared<GameTimer>();
+	m_hpGauge = std::make_shared<HPGauge>();
+	m_staminaGauge = std::make_shared<StaminaGauge>();
+	m_specialGauge = std::make_shared<SpecialGauge>();
 }
 
 UIManager::~UIManager()
@@ -30,6 +35,7 @@ UIManager::~UIManager()
 
 void UIManager::Draw()
 {
+	//m_gameTimer->Draw();
 	// プレイヤーのゲージ描画
 	m_hpGauge->Draw();
 	m_staminaGauge->Draw();

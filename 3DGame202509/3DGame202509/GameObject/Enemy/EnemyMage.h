@@ -42,5 +42,7 @@ private:
 	float m_angleMax = 0.0f;
 
 	std::vector<std::shared_ptr<EnemyMageBullet>> m_bullets;
+
+	bool m_isScoreAdded = false;
 };
 

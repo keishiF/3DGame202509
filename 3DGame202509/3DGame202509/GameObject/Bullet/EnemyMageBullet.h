@@ -11,6 +11,8 @@ public:
 	virtual void Update() override;
 	virtual void Draw() override;
 
+	virtual float GetAttackPower() const override;
+
 private:
 	int m_bulletEffect = -1;
 	int m_playingEffect = -1;

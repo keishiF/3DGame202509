@@ -1,7 +1,8 @@
-﻿#include "CapsuleColliderData.h"
-#include "Bullet/EnemyMageBullet.h"
-#include "Player/Player.h"
+﻿#include "Bullet/EnemyMageBullet.h"
+#include "CapsuleColliderData.h"
 #include "EnemyMage.h"
+#include "Player/Player.h"
+#include "ScoreManager.h"
 
 namespace
 {
@@ -53,10 +54,12 @@ namespace
 	// アニメーションの再生速度
 	// 通常速度
 	constexpr float kDefaultAnimSpeed = 1.0f;
-	constexpr float kAtkAnimSpeed = 0.8f;
+	constexpr float kAtkAnimSpeed = 0.75f;
 
 	// 倒されたときにプレイヤーの必殺技ゲージを増やす量
 	constexpr int kSpecialGaugePoint = 10;
+	// 倒されたときに加算するスコア
+	constexpr int kScore = 100;
 }
 
 EnemyMage::EnemyMage() :
@@ -209,6 +212,8 @@ void EnemyMage::Update(std::shared_ptr<Player> player)
 	{
 		return;
 	}
+
+	m_isInvincible = false;
 
 	// アニメーションの更新
 	m_anim.UpdateAnim(m_anim.GetPrevAnim());
@@ -436,6 +441,12 @@ void EnemyMage::DeadUpdate(std::shared_ptr<Player> player)
 		}
 		m_isDead = true;
 		player->SetSpecialGauge(kSpecialGaugePoint);
+		// スコアがまだ加算されていない場合のみ処理
+		if (!m_isScoreAdded)
+		{
+			ScoreManager::Instance().AddEnemyScore(kScore);
+			m_isScoreAdded = true;
+		}
 		return;
 	}
 }

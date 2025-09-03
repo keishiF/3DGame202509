@@ -36,8 +36,15 @@ void PlayerWeapon::Init()
 	assert(m_model >= 0);
 }
 
-void PlayerWeapon::Update(int model, int currentFrame, const AtkTiming& timing, bool specialFlag)
+void PlayerWeapon::Update(int model, 
+	int currentFrame, 
+	const AtkTiming& timing, 
+	bool specialFlag,
+	float attackPower)
 {
+	// プレイヤーから渡された攻撃力を保持する
+	m_currentAttackPower = attackPower;
+
 	if (currentFrame >= timing.start && currentFrame < timing.end && specialFlag)
 	{
 		// 必殺技状態に移行
@@ -49,6 +56,7 @@ void PlayerWeapon::Update(int model, int currentFrame, const AtkTiming& timing, 
 	}
 	else
 	{
+		m_currentAttackPower = 0.0f;
 		IdleUpdate(model);   // 攻撃判定OFF
 	}
 }
@@ -182,4 +190,9 @@ void PlayerWeapon::Draw()
 void PlayerWeapon::OnCollide(std::shared_ptr<Collidable> collider)
 {
 
+}
+
+float PlayerWeapon::GetAttackPower() const
+{
+	return IsActive() ? m_currentAttackPower : 0.0f;
 }

@@ -186,6 +186,8 @@
     <ClCompile Include="Scene\SceneBase.cpp" />
     <ClCompile Include="Scene\SceneController.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
+    <ClCompile Include="ScoreManager.cpp" />
+    <ClCompile Include="UI\GameTimer.cpp" />
     <ClCompile Include="UI\HPGauge.cpp" />
     <ClCompile Include="UI\SpecialGauge.cpp" />
     <ClCompile Include="UI\StaminaGauge.cpp" />
@@ -238,6 +240,8 @@
     <ClInclude Include="Scene\SceneBase.h" />
     <ClInclude Include="Scene\SceneController.h" />
     <ClInclude Include="Scene\TitleScene.h" />
+    <ClInclude Include="ScoreManager.h" />
+    <ClInclude Include="UI\GameTimer.h" />
     <ClInclude Include="UI\HPGauge.h" />
     <ClInclude Include="UI\SpecialGauge.h" />
     <ClInclude Include="UI\StaminaGauge.h" />

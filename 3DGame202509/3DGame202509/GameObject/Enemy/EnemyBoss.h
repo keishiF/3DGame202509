@@ -50,5 +50,7 @@ private:
 
 	std::shared_ptr<EnemyBossLeftWeapon> m_leftWeapon;
 	std::shared_ptr<EnemyBossRightWeapon> m_rightWeapon;
+
+	bool m_isScoreAdded = false;
 };
 

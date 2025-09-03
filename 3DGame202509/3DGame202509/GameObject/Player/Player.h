@@ -19,8 +19,7 @@ enum class PlayerState
 	Special,    // 必殺技
 	Dodge,      // 回避
 	Hit,        // 被弾
-	Dead,       // 死亡
-	Clear       // クリア
+	Dead       // 死亡
 };
 
 class EnemyBase;
@@ -34,6 +33,7 @@ public:
 
 	virtual void Init(Vector3& pos, Vector3& rot, Vector3& scale) override;
 	virtual void Draw() override;
+	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
 	virtual void OnDamage(float atk) override;
 
 	// ゲッター
@@ -83,8 +83,6 @@ private:
 	void HitUpdate();
 	// 死亡状態
 	void DeadUpdate();
-	// クリア状態
-	void ClearUpdate();
 
 private:
 	void RotateToNearestEnemy(float radius);

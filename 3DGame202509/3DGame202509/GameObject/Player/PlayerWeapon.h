@@ -11,7 +11,11 @@ public:
 	// 初期化
 	void Init();
 	// 更新
-	void Update(int model, int currentFrame, const AtkTiming& timing, bool specialFlag);
+	void Update(int model, 
+		int currentFrame, 
+		const AtkTiming& timing, 
+		bool specialFlag, 
+		float attackPower);
 	// 待機状態
 	void IdleUpdate(int model);
 	// 攻撃状態
@@ -22,9 +26,11 @@ public:
 	void Draw();
 
 	virtual void OnCollide(std::shared_ptr<Collidable> collider) override;
+	virtual float GetAttackPower() const override;
 
 	int m_model;
 
 private:
+	float m_currentAttackPower = 0.0f;
 };
 
