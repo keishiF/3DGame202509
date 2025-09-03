@@ -53,8 +53,10 @@ void HPGauge::DrawPlayerHP()
 	playerHPRate = std::clamp(playerHPRate, 0.0f, 1.0f);
 
 	// HPが減った部分を灰色で描画
-	DrawBox(kPlayerHPPosX, kPlayerHPPosY,
-		kPlayerHPPosX + kPlayerHPGaugeWidth, kPlayerHPPosY + kPlayerHPGaugeHeight,
+	DrawBox(static_cast<int>(kPlayerHPPosX), 
+		static_cast<int>(kPlayerHPPosY),
+		static_cast<int>(kPlayerHPPosX + kPlayerHPGaugeWidth),
+		static_cast<int>(kPlayerHPPosY + kPlayerHPGaugeHeight),
 		0x808080, true);
 
 	// 現在のHPの割合で描画するHPゲージの色を変える
@@ -77,13 +79,17 @@ void HPGauge::DrawPlayerHP()
 
 	// HPゲージ部分の描画
 	int hpBarWidth = static_cast<int>(kPlayerHPGaugeWidth * playerHPRate);
-	DrawBox(kPlayerHPPosX, kPlayerHPPosY,
-		kPlayerHPPosX + hpBarWidth, kPlayerHPPosY + kPlayerHPGaugeHeight,
+	DrawBox(static_cast<int>(kPlayerHPPosX),
+		static_cast<int>(kPlayerHPPosY),
+		static_cast<int>(kPlayerHPPosX + hpBarWidth),
+		static_cast<int>(kPlayerHPPosY + kPlayerHPGaugeHeight),
 		hpColor, true);
 
 	// 境界線として塗りつぶしのない黒いボックスを描画HPゲージを少し強調
-	DrawBox(kPlayerHPPosX, kPlayerHPPosY,
-		kPlayerHPPosX + kPlayerHPGaugeWidth, kPlayerHPPosY + kPlayerHPGaugeHeight,
+	DrawBox(static_cast<int>(kPlayerHPPosX),
+		static_cast<int>(kPlayerHPPosY),
+		static_cast<int>(kPlayerHPPosX + kPlayerHPGaugeWidth),
+		static_cast<int>(kPlayerHPPosY + kPlayerHPGaugeHeight),
 		0x000000, false);
 }
 
@@ -101,17 +107,23 @@ void HPGauge::DrawBossHP()
 	float bossPosX = boss->GetScreenPos().x;
 	float bossPosY = boss->GetScreenPos().y;
 
-	DrawBox(bossPosX, bossPosY,
-		bossPosX + kBossHPGaugeWidth, bossPosY + kBossHPGaugeHeight,
+	DrawBox(static_cast<int>(bossPosX),
+		static_cast<int>(bossPosY),
+		static_cast<int>(bossPosX + kBossHPGaugeWidth),
+		static_cast<int>(bossPosY + kBossHPGaugeHeight),
 		0x808080, true);
 
 	int hpBarWidth = static_cast<int>(kBossHPGaugeWidth * bossHPRate);
-	DrawBox(bossPosX, bossPosY,
-		bossPosX + hpBarWidth, bossPosY + kBossHPGaugeHeight,
+	DrawBox(static_cast<int>(bossPosX),
+		static_cast<int>(bossPosY),
+		static_cast<int>(bossPosX + hpBarWidth),
+		static_cast<int>(bossPosY + kBossHPGaugeHeight),
 		0xff0000, true);
 
-	DrawBox(bossPosX, bossPosY,
-		bossPosX + kBossHPGaugeWidth, bossPosY + kBossHPGaugeHeight,
+	DrawBox(static_cast<int>(bossPosX),
+		static_cast<int>(bossPosY),
+		static_cast<int>(bossPosX + kBossHPGaugeWidth),
+		static_cast<int>(bossPosY + kBossHPGaugeHeight),
 		0x000000, false);
 }
 
@@ -136,17 +148,23 @@ void HPGauge::DrawMageHP()
 		float magePosX = mage->GetScreenPos().x;
 		float magePosY = mage->GetScreenPos().y;
 
-		DrawBox(magePosX, magePosY,
-			magePosX + kEnemyHPGaugeWidth, magePosY + kEnemyHPGaugeHeight,
+		DrawBox(static_cast<int>(magePosX),
+			static_cast<int>(magePosY),
+			static_cast<int>(magePosX + kEnemyHPGaugeWidth),
+			static_cast<int>(magePosY + kEnemyHPGaugeHeight),
 			0x808080, true);
 
 		int hpBarWidth = static_cast<int>(kEnemyHPGaugeWidth * mageHPRate);
-		DrawBox(magePosX, magePosY,
-			magePosX + hpBarWidth, magePosY + kEnemyHPGaugeHeight,
+		DrawBox(static_cast<int>(magePosX),
+			static_cast<int>(magePosY),
+			static_cast<int>(magePosX + hpBarWidth),
+			static_cast<int>(magePosY + kEnemyHPGaugeHeight),
 			0xff0000, true);
 
-		DrawBox(magePosX, magePosY,
-			magePosX + kEnemyHPGaugeWidth, magePosY + kEnemyHPGaugeHeight,
+		DrawBox(static_cast<int>(magePosX),
+			static_cast<int>(magePosY),
+			static_cast<int>(magePosX + kEnemyHPGaugeWidth),
+			static_cast<int>(magePosY + kEnemyHPGaugeHeight),
 			0x000000, false);
 	}
 }
@@ -172,17 +190,23 @@ void HPGauge::DrawMinionHP()
 		float minionPosX = minion->GetScreenPos().x;
 		float minionPosY = minion->GetScreenPos().y;
 
-		DrawBox(minionPosX, minionPosY,
-			minionPosX + kEnemyHPGaugeWidth, minionPosY + kEnemyHPGaugeHeight,
+		DrawBox(static_cast<int>(minionPosX),
+			static_cast<int>(minionPosY),
+			static_cast<int>(minionPosX + kEnemyHPGaugeWidth),
+			static_cast<int>(minionPosY + kEnemyHPGaugeHeight),
 			0x808080, true);
 
 		int hpBarWidth = static_cast<int>(kEnemyHPGaugeWidth * minionHPRate);
-		DrawBox(minionPosX, minionPosY,
-			minionPosX + hpBarWidth, minionPosY + kEnemyHPGaugeHeight,
+		DrawBox(static_cast<int>(minionPosX),
+			static_cast<int>(minionPosY),
+			static_cast<int>(minionPosX + hpBarWidth),
+			static_cast<int>(minionPosY + kEnemyHPGaugeHeight),
 			0xff0000, true);
 
-		DrawBox(minionPosX, minionPosY,
-			minionPosX + kEnemyHPGaugeWidth, minionPosY + kEnemyHPGaugeHeight,
+		DrawBox(static_cast<int>(minionPosX),
+			static_cast<int>(minionPosY),
+			static_cast<int>(minionPosX + kEnemyHPGaugeWidth),
+			static_cast<int>(minionPosY + kEnemyHPGaugeHeight),
 			0x000000, false);
 	}
 }

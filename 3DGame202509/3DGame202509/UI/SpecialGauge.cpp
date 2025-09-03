@@ -29,8 +29,8 @@ void SpecialGauge::Draw()
 	if (!player) return;
 
 	// 必殺技ゲージの描画位置
-	int specialGaugePosX = (Game::kScreenWidth - kSpecialGaugeWidth) * 0.5f;
-	int specialGaugePosY = Game::kScreenHeight - kSpecialGaugeHeight - kGaugeOffset;
+	float specialGaugePosX = (Game::kScreenWidth - kSpecialGaugeWidth) * 0.5f;
+	float specialGaugePosY = Game::kScreenHeight - kSpecialGaugeHeight - kGaugeOffset;
 
 	// 必殺技ゲージ量
 	float playerCurrentSpecialGauge = player->GetSpecialGauge();
@@ -38,22 +38,22 @@ void SpecialGauge::Draw()
 	float playerSpecialGaugeRate = playerCurrentSpecialGauge / playerMaxSpecialGauge;
 	playerSpecialGaugeRate = std::clamp(playerSpecialGaugeRate, 0.0f, 1.0f);
 
-	DrawBox(specialGaugePosX, 
-		specialGaugePosY,
-		specialGaugePosX + kSpecialGaugeWidth, 
-		specialGaugePosY + kSpecialGaugeHeight,
+	DrawBox(static_cast<int>(specialGaugePosX), 
+		static_cast<int>(specialGaugePosY),
+		static_cast<int>(specialGaugePosX + kSpecialGaugeWidth),
+		static_cast<int>(specialGaugePosY + kSpecialGaugeHeight),
 		0x808080, true);
 
 	int hpBarWidth = static_cast<int>(kSpecialGaugeWidth * playerSpecialGaugeRate);
-	DrawBox(specialGaugePosX, 
-		specialGaugePosY,
-		specialGaugePosX + hpBarWidth, 
-		specialGaugePosY + kSpecialGaugeHeight,
+	DrawBox(static_cast<int>(specialGaugePosX),
+		static_cast<int>(specialGaugePosY),
+		static_cast<int>(specialGaugePosX + hpBarWidth),
+		static_cast<int>(specialGaugePosY + kSpecialGaugeHeight),
 		0x66ffff, true);
 
-	DrawBox(specialGaugePosX, 
-		specialGaugePosY,
-		specialGaugePosX + kSpecialGaugeWidth, 
-		specialGaugePosY + kSpecialGaugeHeight,
+	DrawBox(static_cast<int>(specialGaugePosX),
+		static_cast<int>(specialGaugePosY),
+		static_cast<int>(specialGaugePosX + kSpecialGaugeWidth),
+			static_cast<int>(specialGaugePosY + kSpecialGaugeHeight),
 		0x000000, false);
 }

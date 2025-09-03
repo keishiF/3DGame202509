@@ -34,21 +34,21 @@ void StaminaGauge::Draw()
 	playerStaminaRate = std::clamp(playerStaminaRate, 0.0f, 1.0f);
 
 	DrawBox(static_cast<int>(kPlayerStaminaPosX), 
-		kPlayerStaminaPosY,
-		kPlayerStaminaPosX + kStaminaGaugeWidth, 
-		kPlayerStaminaPosY + kStaminaGaugeHeight,
+		static_cast<int>(kPlayerStaminaPosY),
+		static_cast<int>(kPlayerStaminaPosX + kStaminaGaugeWidth),
+		static_cast<int>(kPlayerStaminaPosY + kStaminaGaugeHeight),
 		0x808080, true);
 
 	int staminaBarWidth = static_cast<int>(kStaminaGaugeWidth * playerStaminaRate);
-	DrawBox(kPlayerStaminaPosX, 
-		kPlayerStaminaPosY,
-		kPlayerStaminaPosX + staminaBarWidth, 
-		kPlayerStaminaPosY + kStaminaGaugeHeight,
+	DrawBox(static_cast<int>(kPlayerStaminaPosX),
+		static_cast<int>(kPlayerStaminaPosY),
+		static_cast<int>(kPlayerStaminaPosX + staminaBarWidth),
+		static_cast<int>(kPlayerStaminaPosY + kStaminaGaugeHeight),
 		0xffff00, true);
 
-	DrawBox(kPlayerStaminaPosX, 
-		kPlayerStaminaPosY,
-		kPlayerStaminaPosX + kStaminaGaugeWidth, 
-		kPlayerStaminaPosY + kStaminaGaugeHeight,
+	DrawBox(static_cast<int>(kPlayerStaminaPosX),
+		static_cast<int>(kPlayerStaminaPosY),
+		static_cast<int>(kPlayerStaminaPosX + kStaminaGaugeWidth),
+		static_cast<int>(kPlayerStaminaPosY + kStaminaGaugeHeight),
 		0x000000, false);
 }
