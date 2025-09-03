@@ -1,7 +1,6 @@
 ﻿#include "game.h"
 #include "Input.h"
 #include "ResultScene.h"
-#include "Player/Player.h"
 #include "SceneController.h"
 #include "TitleScene.h"
 #include <cassert>

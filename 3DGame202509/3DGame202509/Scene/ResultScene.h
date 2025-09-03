@@ -19,8 +19,6 @@ private:
 	float m_fadeFrame;
 	int m_blinkFrame;
 
-	std::shared_ptr<Player> m_player;
-
 	using UpdateFunc_t = void(ResultScene::*)();
 	using DrawFunc_t = void(ResultScene::*)();
 
