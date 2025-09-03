@@ -148,8 +148,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animator\Animator.cpp" />
-    <ClCompile Include="Effect\Effect.cpp" />
-    <ClCompile Include="Effect\EffectManager.cpp" />
     <ClCompile Include="GameObject\Bullet\BulletBase.cpp" />
     <ClCompile Include="GameObject\Bullet\EnemyMageBullet.cpp" />
     <ClCompile Include="GameObject\Bullet\PlayerBullet.cpp" />
@@ -195,8 +193,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animator\Animator.h" />
-    <ClInclude Include="Effect\Effect.h" />
-    <ClInclude Include="Effect\EffectManager.h" />
     <ClInclude Include="GameObject\Bullet\BulletBase.h" />
     <ClInclude Include="GameObject\Bullet\EnemyMageBullet.h" />
     <ClInclude Include="GameObject\Bullet\PlayerBullet.h" />
