@@ -35,7 +35,7 @@ namespace
 	// 視野角
 	constexpr float kViewAngleRad = DX_PI_F / 2.0f; // 90度
 	// 見える距離
-	constexpr float kViewDistance = 1500.0f;
+	constexpr float kViewDistance = 1000.0f;
 
 	// アニメーション名
 	// 待機
