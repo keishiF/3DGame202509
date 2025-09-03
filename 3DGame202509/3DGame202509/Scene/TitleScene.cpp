@@ -100,8 +100,8 @@ void TitleScene::NormalDraw()
 	{
 		const char* pressText = "PRESS A BUTTON";
 		const char* startText = "START";
-		int pressWidth = GetDrawStringWidthToHandle(pressText, strlen(pressText), m_fontHandle);
-		int startWidth = GetDrawStringWidthToHandle(startText, strlen(startText), m_fontHandle);
+		int pressWidth = GetDrawStringWidthToHandle(pressText, static_cast<int>(strlen(pressText)), m_fontHandle);
+		int startWidth = GetDrawStringWidthToHandle(startText, static_cast<int>(strlen(startText)), m_fontHandle);
 		int centerX = Game::kScreenWidth / 2;
 		int centerY = 500;
 
