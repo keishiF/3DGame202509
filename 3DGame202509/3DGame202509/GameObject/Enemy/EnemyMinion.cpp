@@ -27,9 +27,9 @@ namespace
 	constexpr float kColScale = 140.0f;
 	// 状態遷移に使う半径
 	// プレイヤーを探知できる範囲
-	constexpr float kPlayerFindRadius = 900.0f;
+	constexpr float kPlayerFindRadius = 1100.0f;
 	// 走り状態に移行する範囲
-	constexpr float kRunRadius = 450.0f;
+	constexpr float kRunRadius = 600.0f;
 	// 攻撃状態に移行する範囲
 	constexpr float kAtkRadius = 100.0f;
 
