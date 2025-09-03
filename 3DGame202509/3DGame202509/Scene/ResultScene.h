@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "SceneBase.h"
+#include <memory>
 
+class Player;
 class ResultScene final : public SceneBase
 {
 public:
@@ -16,6 +18,8 @@ private:
 
 	float m_fadeFrame;
 	int m_blinkFrame;
+
+	std::shared_ptr<Player> m_player;
 
 	using UpdateFunc_t = void(ResultScene::*)();
 	using DrawFunc_t = void(ResultScene::*)();

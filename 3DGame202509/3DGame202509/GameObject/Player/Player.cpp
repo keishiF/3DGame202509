@@ -11,7 +11,7 @@
 namespace
 {
 	// HPの初期値、最大値
-	constexpr float kHP = 20;
+	constexpr float kHP = 30;
 	// 攻撃力
 	constexpr float kDefaultAtk = 1.0f;
 	// スタミナの初期値、最大値
@@ -80,6 +80,8 @@ namespace
 	const char* kHitAnimName     = "Hit_B";
 	// 死亡
 	const char* kDeadAnimName    = "Death_B";
+	// クリア
+	const char* kClearAnimName   = "Cheer";
 
 	// アニメーションの再生速度
 	// 通常速度
@@ -269,6 +271,9 @@ void Player::ChangeState(PlayerState newState)
 	case PlayerState::Dead:
 		m_anim.ChangeAnim(kDeadAnimName, kDefaultAnimSpeed, false);
 		break;
+	case PlayerState::Clear:
+		m_anim.ChangeAnim(kClearAnimName, kDefaultAnimSpeed, true);
+		break;
 	}
 }
 
@@ -340,6 +345,9 @@ void Player::Update()
 	case PlayerState::Dead:
 		DeadUpdate();
 		break;
+	case PlayerState::Clear:
+		ClearUpdate();
+		break;
 	}
 
 	//当たり判定
@@ -368,6 +376,11 @@ void Player::Update()
 		}),
 		m_bullets.end()
 	);
+
+	if (GameObjectManager::Instance().IsClear())
+	{
+		ChangeState(PlayerState::Clear);
+	}
 }
 
 void Player::IdleUpdate()
@@ -1045,6 +1058,12 @@ void Player::DeadUpdate()
 		}
 		m_isDead = true;
 	}
+}
+
+void Player::ClearUpdate()
+{
+	SetActive(false);
+	m_weapon->Update(m_model, m_atkFrame, kColTimingTable.at(PlayerState::Clear), false);
 }
 
 void Player::SetSpecialGauge(int specialGaugePoint)

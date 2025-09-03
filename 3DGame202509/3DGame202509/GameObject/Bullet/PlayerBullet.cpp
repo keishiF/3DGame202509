@@ -1,5 +1,6 @@
 ﻿#include "PlayerBullet.h"
 #include "SphereColliderData.h"
+#include <EffekseerForDxLib.h>
 
 namespace
 {
@@ -32,6 +33,9 @@ void PlayerBullet::Init(Vector3 pos, Vector3 dir)
 
 	auto colData = std::dynamic_pointer_cast<SphereColliderData>(m_colliderData);
 	colData->m_radius = kColRadius;
+
+	m_bulletEffect = LoadEffekseerEffect("Data/Effect/BulletEffect.efkefc", 100.0f);
+	assert(m_bulletEffect >= 0);
 }
 
 void PlayerBullet::Update()
@@ -40,6 +44,15 @@ void PlayerBullet::Update()
 	// 移動処理
 	m_rigidbody.SetVelo(m_dir * kRunSpeed);
 	
+	if (m_playingEffect == -1)
+	{
+		m_playingEffect = PlayEffekseer3DEffect(m_bulletEffect);
+	}
+	SetPosPlayingEffekseer3DEffect(m_playingEffect,
+		m_rigidbody.GetPos().x,
+		m_rigidbody.GetPos().y,
+		m_rigidbody.GetPos().z);
+
 	if (m_lifeFrame >= kLifeFrame)
 	{
 		m_isDead = true;

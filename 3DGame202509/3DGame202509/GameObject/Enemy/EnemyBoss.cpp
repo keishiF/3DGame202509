@@ -8,7 +8,7 @@
 namespace
 {
 	// HP‚Ì‰Šú’lAÅ‘å’l
-	constexpr float kHP = 1.0f;
+	constexpr float kHP = 20.0f;
 	// UŒ‚—Í
 	constexpr float kDefaultAtk = 1.0f;
 

@@ -19,7 +19,8 @@ enum class PlayerState
 	Special,    // 必殺技
 	Dodge,      // 回避
 	Hit,        // 被弾
-	Dead        // 死亡
+	Dead,       // 死亡
+	Clear       // クリア
 };
 
 class EnemyBase;
@@ -82,6 +83,8 @@ private:
 	void HitUpdate();
 	// 死亡状態
 	void DeadUpdate();
+	// クリア状態
+	void ClearUpdate();
 
 private:
 	void RotateToNearestEnemy(float radius);

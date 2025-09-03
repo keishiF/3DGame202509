@@ -53,7 +53,7 @@ namespace
 	// アニメーションの再生速度
 	// 通常速度
 	constexpr float kDefaultAnimSpeed = 1.0f;
-	constexpr float kAtkAnimSpeed = 1.25f;
+	constexpr float kAtkAnimSpeed = 1.0f;
 
 	// 倒されたときにプレイヤーの必殺技ゲージを増やす量
 	constexpr int kSpecialGaugePoint = 10;
