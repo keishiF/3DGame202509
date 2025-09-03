@@ -34,7 +34,7 @@ void PlayerBullet::Init(Vector3 pos, Vector3 dir)
 	auto colData = std::dynamic_pointer_cast<SphereColliderData>(m_colliderData);
 	colData->m_radius = kColRadius;
 
-	m_bulletEffect = LoadEffekseerEffect("Data/Effect/BulletEffect.efkefc", 100.0f);
+	m_bulletEffect = LoadEffekseerEffect("Data/Effect/BulletEffect.efkefc", 50.0f);
 	assert(m_bulletEffect >= 0);
 }
 
@@ -53,10 +53,10 @@ void PlayerBullet::Update()
 		m_rigidbody.GetPos().y,
 		m_rigidbody.GetPos().z);
 
-	//float angleY = std::atan2(m_dir.x, m_dir.z);
-	float angleX = DX_PI_F / 2.0f;
+	float angleY = std::atan2(m_dir.x, m_dir.z);
+	float angleX = -DX_PI_F / 2.0f;
 	// エフェクトの向きを進行方向に合わせる
-	SetRotationPlayingEffekseer3DEffect(m_playingEffect, -angleX, 0.0f, 0.0f);
+	SetRotationPlayingEffekseer3DEffect(m_playingEffect, angleX, angleY, 0.0f);
 
 	if (m_lifeFrame >= kLifeFrame)
 	{
@@ -66,5 +66,5 @@ void PlayerBullet::Update()
 
 void PlayerBullet::Draw()
 {
-	DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kColRadius, 16, 0xff0000, 0xff0000, true);
+	//DrawSphere3D(m_rigidbody.GetPos().ToDxVECTOR(), kColRadius, 16, 0xff0000, 0xff0000, true);
 }
