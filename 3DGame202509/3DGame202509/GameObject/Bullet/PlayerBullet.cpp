@@ -53,6 +53,11 @@ void PlayerBullet::Update()
 		m_rigidbody.GetPos().y,
 		m_rigidbody.GetPos().z);
 
+	//float angleY = std::atan2(m_dir.x, m_dir.z);
+	float angleX = DX_PI_F / 2.0f;
+	// エフェクトの向きを進行方向に合わせる
+	SetRotationPlayingEffekseer3DEffect(m_playingEffect, -angleX, 0.0f, 0.0f);
+
 	if (m_lifeFrame >= kLifeFrame)
 	{
 		m_isDead = true;

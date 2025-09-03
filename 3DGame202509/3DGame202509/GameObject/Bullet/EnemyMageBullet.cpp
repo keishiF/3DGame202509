@@ -4,7 +4,7 @@
 namespace
 {
 	// 弾速
-	constexpr float kRunSpeed = 20.0f;
+	constexpr float kRunSpeed = 15.0f;
 	// 弾の生存時間
 	constexpr float kLifeFrame = 420.0f;
 	// 弾の半径
