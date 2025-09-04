@@ -106,10 +106,10 @@ void TitleScene::NormalDraw()
 		int centerY = 500;
 
 		// 「PRESS A BUTTON」を中央に描画
-		DrawStringToHandle(centerX - pressWidth / 2, centerY, pressText, 0x7cfc00, m_fontHandle);
+		DrawStringToHandle(centerX - pressWidth / 2, centerY, pressText, 0xffff00, m_fontHandle);
 
 		// 「START」をその下に描画
-		DrawStringToHandle(centerX - startWidth / 2, centerY + 50, startText, 0x7cfc00, m_fontHandle);
+		DrawStringToHandle(centerX - startWidth / 2, centerY + 50, startText, 0xffff00, m_fontHandle);
 	}
 }
 
