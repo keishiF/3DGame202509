@@ -149,7 +149,7 @@ void ResultScene::NormalUpdate()
 
     case DisplayState::DONE:
         m_blinkFrame++;
-        if (Input::GetInstance().IsTrigger("A"))
+        if (Input::GetInstance().IsTrigger("B"))
         {
             StopSoundMem(m_bgmHandle);
             m_update = &ResultScene::FadeOutUpdate;
