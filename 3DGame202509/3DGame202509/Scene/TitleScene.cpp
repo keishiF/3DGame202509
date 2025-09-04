@@ -61,7 +61,7 @@ void TitleScene::NormalUpdate()
 {
 	++m_blinkFrame;
 
-	if (Input::GetInstance().IsPress("A"))
+	if (Input::GetInstance().IsPress("B"))
 	{
 		StopSoundMem(m_bgmHandle);
 		m_update = &TitleScene::FadeOutUpdate;
