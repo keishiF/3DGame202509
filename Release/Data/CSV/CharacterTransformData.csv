@@ -1,0 +1,17 @@
+Name,PosX,PosY,PosZ,RotX,RotY,RotZ,ScaleX,ScaleY,ScaleZ
+Knight,30,0,-110,0,0,0,1,1,1
+Skeleton_Mage,4,0,-70,0,180,0,1,1,1
+Skeleton_Mage,20,0,-17,0,90,0,1,1,1
+Skeleton_Mage,20,0,-7,0,90,0,1,1,1
+Skeleton_Mage,20,0,20,0,180,0,1,1,1
+Skeleton_Mage,-15,0,17,0,0,0,1,1,1
+Skeleton_Mage,-25,0,17,0,0,0,1,1,1
+Skeleton_Minion,32.5,0,-90,0,0,0,1,1,1
+Skeleton_Minion,27.5,0,-90,0,0,0,1,1,1
+Skeleton_Minion,20,0,-50,0,0,0,1,1,1
+Skeleton_Minion,30,0,-50,0,0,0,1,1,1
+Skeleton_Minion,25,0,-47,0,0,0,1,1,1
+Skeleton_Minion,25,0,15,0,0,0,1,1,1
+Skeleton_Minion,15,0,15,0,0,0,1,1,1
+Skeleton_Minion,-27,0,10,0,90,0,1,1,1
+Skeleton_Warrior,-45,0,95,0,0,0,1,1,1
