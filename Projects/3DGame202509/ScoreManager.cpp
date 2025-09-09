@@ -7,13 +7,12 @@ namespace
     // タイムスコアの基準値（0秒でクリアした場合のスコア）
     constexpr int kMaxTimeScore = 20000;
     // 1秒経過するごとに減点されるスコア
-    constexpr int kTimeScorePenaltyPerSecond = 50;
+    constexpr int kTimeScoreSecond = 50;
 
     // ランク判定のしきい値
-    constexpr int kRankS_Threshold = 25000;
-    constexpr int kRankA_Threshold = 20000;
-    constexpr int kRankB_Threshold = 15000;
-    // 上記以外はCランク
+    constexpr int kRankS = 25000;
+    constexpr int kRankA = 20000;
+    constexpr int kRankB = 15000;
 }
 
 ScoreManager& ScoreManager::Instance()
@@ -44,7 +43,7 @@ ScoreManager::ScoreManager() :
 void ScoreManager::Start()
 {
     Reset();
-    m_startTime = GetNowCount(); // DxLibのミリ秒タイマーを開始
+    m_startTime = GetNowCount();
     m_isTiming = true;
 }
 
@@ -74,9 +73,7 @@ int ScoreManager::GetTimeScore() const
 {
     // クリアにかかった時間を秒に変換
     int clearTimeInSeconds = m_clearTime / 1000;
-    int timeScore = kMaxTimeScore - (clearTimeInSeconds *
-        kTimeScorePenaltyPerSecond);
-
+    int timeScore = kMaxTimeScore - (clearTimeInSeconds * kTimeScoreSecond);
 
     if (timeScore <= 0)
     {
@@ -93,8 +90,8 @@ int ScoreManager::GetTotalScore() const
 char ScoreManager::GetRank() const
 {
     int totalScore = GetTotalScore();
-    if (totalScore >= kRankS_Threshold) return 'S';
-    if (totalScore >= kRankA_Threshold) return 'A';
-    if (totalScore >= kRankB_Threshold) return 'B';
+    if (totalScore >= kRankS) return 'S';
+    if (totalScore >= kRankA) return 'A';
+    if (totalScore >= kRankB) return 'B';
     return 'C';
 }

@@ -3,7 +3,7 @@
 namespace Game
 {
 	// ウィンドウモード設定
-	constexpr bool kDefaultWindowMode = false;
+	constexpr bool kDefaultWindowMode = true;
 
 	// ウィンドウ名
 	const char* const kTitleText = "Knight Dungeon";

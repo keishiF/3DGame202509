@@ -1038,13 +1038,6 @@ void Player::SpecialUpdate()
 		m_playingEffect = -1;
 		ChangeState(PlayerState::Idle);
 	}
-
-	//// アニメーションが終了したら待機状態に戻る
-	//if (m_anim.GetNextAnim().isEnd)
-	//{
-	//	m_specialGauge = 0;
-	//	ChangeState(PlayerState::Idle);
-	//}
 }
 
 void Player::DodgeUpdate()
