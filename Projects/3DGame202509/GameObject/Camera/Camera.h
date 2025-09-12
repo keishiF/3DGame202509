@@ -4,7 +4,6 @@
 #include <memory>
 
 class Player;
-class Player;
 class Camera
 {
 public:
